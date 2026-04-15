@@ -5,41 +5,44 @@ accept/reject signals on Runneth's video review comments.
 
 ## Status
 
-- Rubric: not yet initialized
+- Rubric: starter template, not customer-initialized
 - Signals: 0
 - Agreement score: not computed
 
 ## Initialize the rubric
 
-### Option A — Document-seeded (fastest)
+### Customer examples first
 
-Upload any existing rubric, creative brief, QA framework, or slide deck to
-the conversation. Tell Runneth:
+Before QA-ing videos, feed Runneth whatever the customer already has. It can be
+a rubric, slide screenshot, creative brief, QA framework, bullet list, notes,
+approved/rejected examples, or a short blurb about what the reviewer looks for.
 
-> "Read this document and use it to write the initial rubric for the Video QA judge."
+Tell Runneth:
 
-Runneth will synthesize the criteria and write `rubric.md` here.
-Start QA-ing videos immediately. The review exercise will validate and refine it.
+> "Use these examples to initialize `rubric.md` for the Video QA judge. Synthesize what this customer checks for, write the first Analyze Media prompt, and keep uncertain assumptions explicit."
 
-### Option B — Review-exercise
+Runneth should rewrite `rubric.md` from the starter template into a
+customer-specific rubric. The rubric should include the Analyze Media prompt
+that Runneth will use before posting timestamped comments.
 
-Have the primary reviewer watch and comment on 15-20 videos in the app naturally.
-Once 50+ accept/reject signals exist, tell Runneth:
+If no examples exist, ask for a few before starting. Only use the generic
+starter rubric when the user explicitly wants a cold-start calibration.
 
-> "Synthesize the Video QA rubric from our training data."
+### Batch one calibration
 
-Runneth will call `/api/training-data`, extract patterns, and write `rubric.md`.
+Use the first batch of videos to test the initialized rubric.
 
-### Combining both (recommended)
-
-Use Option A to get a rubric fast, then Option B to validate it.
-The first agreement score shows where stated criteria match actual behavior.
+1. Runneth runs Analyze Media using the prompt in `rubric.md`.
+2. Runneth posts 3-6 timestamped comments per video.
+3. The human accepts, rejects, or annotates Runneth comments.
+4. Runneth calls `/api/training-data` and writes the snapshot to `training-log.json`.
+5. Runneth updates `rubric.md` based on the batch one signal.
 
 ## Files
 
 | file | purpose |
 |------|---------|
-| `rubric.md` | Current active rubric — written by Runneth |
+| `rubric.md` | Starter template, then current active rubric |
 | `rubric-history/` | Archived versions with dates |
 | `training-log.json` | Snapshot of signals from the app's SQLite |
 | `score-history.json` | Agreement score over time |
@@ -61,7 +64,7 @@ Refine when: 20+ new signals since last rubric version, or score drops >5%.
 1. Read new signals from `/api/training-data`
 2. Compare against current `rubric.md`
 3. Archive current → `rubric-history/vN-YYYY-MM-DD.md`
-4. Write updated `rubric.md`
+4. Write updated `rubric.md`, including the Analyze Media prompt
 5. Re-score against held-out videos → append to `score-history.json`
 
 ## One primary reviewer

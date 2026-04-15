@@ -37,7 +37,8 @@ cp -r brain-template /agent/brain/video-qa-judge
 ```
 
 This creates `/agent/brain/video-qa-judge/` with empty training log,
-score history, and the judge README. No rubric yet — that comes next.
+score history, the judge README, and a starter rubric template. The starter
+rubric is not customer-specific yet.
 
 ### 5. Get the app URL
 
@@ -47,24 +48,38 @@ app list
 
 Return a `link` widget with kind=app using the route shown.
 
-### 6. Initialize the rubric
+### 6. Feed customer examples and initialize the rubric
 
-**Option A — you have a rubric document:**
-Upload the document to the conversation and say:
-> "Read this and write the initial rubric for the Video QA judge."
+Before Runneth QA's videos, give it customer-specific review material. It can
+be rough: a bullet list, slide screenshot, creative brief, QA checklist,
+example notes, rejected/approved examples, or a short blurb describing what the
+reviewer looks for.
 
-Runneth synthesizes criteria from the doc and writes
-`/agent/brain/video-qa-judge/rubric.md`.
+Tell Runneth:
 
-**Option B — start from scratch:**
-Have the reviewer watch and comment on 15-20 videos in the app.
-Once there are 50+ accept/reject signals, say:
-> "Synthesize the Video QA rubric from our training data."
+> "Use these examples to initialize `/agent/brain/video-qa-judge/rubric.md` for Video QA. Synthesize what this customer checks for, write the first Analyze Media prompt, and keep uncertain assumptions explicit."
 
-Runneth calls `/api/training-data`, extracts patterns, writes the rubric.
+Runneth should update the workspace copy of `rubric.md`, not the repo template.
+The initial rubric should include:
 
-**Recommended: do A first, then B to validate.**
-The first agreement score shows where the document rubric matches actual taste.
+- review criteria
+- the Analyze Media prompt
+- timestamped comment rules
+- open questions or assumptions
+
+If no examples exist, ask for a few before starting. Only use the generic
+starter rubric when the user explicitly wants a cold-start calibration.
+
+### 7. Run batch one calibration
+
+Use the first batch of videos to test the initial rubric.
+
+1. Upload the first batch of videos.
+2. For each video, Runneth runs Analyze Media using the prompt in `rubric.md`.
+3. Runneth posts 3-6 timestamped QA comments.
+4. The human accepts, rejects, or annotates each Runneth comment.
+5. Sync `/api/training-data` into `training-log.json`.
+6. Review the agreement score and update `rubric.md` before the next batch.
 
 ---
 
@@ -74,7 +89,7 @@ The first agreement score shows where the document rubric matches actual taste.
 /agent/apps/video-qa/          ← the running app
 /agent/brain/video-qa-judge/   ← the judge (workspace-specific)
   README.md
-  rubric.md                    ← written by Runneth on initialization
+  rubric.md                    ← starter template, then customer-initialized
   rubric-history/              ← archived versions
   training-log.json            ← signal snapshot (live source is app SQLite)
   score-history.json           ← agreement score over time
@@ -85,15 +100,22 @@ The first agreement score shows where the document rubric matches actual taste.
 ## How Runneth runs a QA review
 
 ```
-1. Read /agent/brain/video-qa-judge/rubric.md
-2. Copy video to ./uploads/ → run motion analyze-media
+1. Read /agent/brain/video-qa-judge/rubric.md, especially the Analyze Media prompt
+2. Copy video to ./uploads/ → run motion analyze-media with that prompt
 3. POST /api/videos — create video record
 4. PUT /api/videos/:id/upload — upload raw binary (Content-Type: application/octet-stream)
 5. POST /api/videos/:id/comments — one comment per observation:
    { source: "runneth", user_name: "Runneth", text: "...", timestamp_seconds: N }
 ```
 
-Use exact timestamps from the media analysis. Post 3-6 comments per video.
+The media analysis should capture exact timestamps, scene changes, visible
+text, spoken words or voiceover summary, audio cues, product/offer/CTA
+mentions, pacing changes, and any moment that could confuse, distract, or fail
+to persuade the target viewer. The final QA comments should be based on the
+rubric, not generic taste.
+
+Use exact timestamps from the media analysis. Post 3-6 comments per video unless
+the rubric says otherwise.
 
 ---
 
@@ -145,7 +167,7 @@ Refine when 20+ new signals since last version, or score drops >5%.
 
 1. Sync training data → `training-log.json`
 2. Archive `rubric.md` → `rubric-history/vN-YYYY-MM-DD.md`
-3. Write updated `rubric.md`
+3. Write updated `rubric.md`, including the Analyze Media prompt
 4. Re-score on held-out videos → append to `score-history.json`
 
 ---
