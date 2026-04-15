@@ -426,11 +426,12 @@ function Home() {
 
 // ─── COMMENT CARD ────────────────────────────────────────────────────────────
 
-function CommentCard({ comment: c, onJump, onAccept, onReject, onAnnotate, onDelete, fmt }: {
+function CommentCard({ comment: c, onJump, onAccept, onReject, onUndo, onAnnotate, onDelete, fmt }: {
   comment: any;
   onJump: () => void;
   onAccept: () => void;
   onReject: () => void;
+  onUndo: () => void;
   onAnnotate: (text: string) => Promise<void>;
   onDelete: () => void;
   fmt: (s: number) => string;
@@ -491,8 +492,8 @@ function CommentCard({ comment: c, onJump, onAccept, onReject, onAnnotate, onDel
         <div style={row(4)} onClick={e => e.stopPropagation()}>
           {isRunneth ? (
             isReviewed ? (
-              // Already decided — show undo button
-              <button onClick={isAccepted ? onReject : onAccept} title="Change decision"
+              // Already decided — clear the decision so it can be reviewed again.
+              <button onClick={onUndo} title="Undo decision"
                 style={{ fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 6, border: "1px solid var(--gray-6)", background: "transparent", color: "var(--gray-9)", cursor: "pointer" }}>
                 Undo
               </button>
@@ -604,6 +605,11 @@ function VideoPage({ id }: { id: string }) {
     const cd = await apiFetch(`/videos/${id}/comments`); setComments(cd.comments);
   };
 
+  const undoDecision = async (cid: string) => {
+    await apiFetch(`/comments/${cid}`, { method: "PATCH", body: JSON.stringify({ resolved: false, rejected: false }) });
+    const cd = await apiFetch(`/videos/${id}/comments`); setComments(cd.comments);
+  };
+
   const saveAnnotation = async (cid: string, annotation: string) => {
     await apiFetch(`/comments/${cid}`, { method: "PATCH", body: JSON.stringify({ annotation }) });
     const cd = await apiFetch(`/videos/${id}/comments`); setComments(cd.comments);
@@ -697,6 +703,7 @@ function VideoPage({ id }: { id: string }) {
                 onJump={() => jump(c.timestamp_seconds)}
                 onAccept={() => accept(c.id)}
                 onReject={() => reject(c.id)}
+                onUndo={() => undoDecision(c.id)}
                 onAnnotate={(text) => saveAnnotation(c.id, text)}
                 onDelete={() => delComment(c.id)}
                 fmt={fmt}
