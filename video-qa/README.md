@@ -367,10 +367,10 @@ Include:
 - notable structural choices, such as hook mechanic, problem-solution sequence,
   proof before mechanism, risk reversal, creator testimonial, or demo
 
-## 8. Potential Rubric Evidence
+## 8. QA-Relevant Evidence Index
 
-List moments that may matter for QA review, without turning them into final
-comments yet.
+Index moments that may be relevant to the active rubric. Do not decide whether
+these are issues. Do not turn them into final comments yet.
 
 For each item include:
 - timestamp
@@ -382,8 +382,9 @@ For each item include:
 - confidence
 - uncertainty, if any
 
-Do not post or recommend a spelling, capitalization, or overlay-formatting
-comment unless the relevant text source is overlay_text or caption_subtitle.
+Do not label a moment as an issue unless the active rubric supports it. Do not
+post or recommend a spelling, capitalization, or overlay-formatting comment
+unless the relevant text source is overlay_text or caption_subtitle.
 
 ## 9. Uncertainties
 
