@@ -235,6 +235,67 @@ function Nav({ crumbs }: { crumbs?: { label: string; to?: string }[] }) {
 
 // ─── HOME ─────────────────────────────────────────────────────────────────────
 
+function VideoCard({ video: v, fmt, onDelete }: {
+  video: any;
+  fmt: (s: number | null) => string;
+  onDelete: (video: any) => Promise<void>;
+}) {
+  const [duration, setDuration] = useState<number | null>(v.duration || null);
+  const [deleting, setDeleting] = useState(false);
+  const reviewed = Number(v.runneth_count || 0) > 0 && Number(v.unreviewed_count || 0) === 0;
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!window.confirm(`Delete "${v.title}"? This also deletes its comments and share links.`)) return;
+    setDeleting(true);
+    try {
+      await onDelete(v);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  return (
+    <div onClick={() => go(`/v/${v.id}`)} style={{ border: "1px solid var(--gray-6)", borderRadius: "var(--radius-card)", overflow: "hidden", cursor: "pointer", background: "var(--gray-0)", transition: "border-color 75ms", animation: "fadeUp 0.2s ease", opacity: deleting ? 0.55 : 1 }}
+      onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-9)"}
+      onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-6)"}>
+      <div style={{ background: "var(--gray-12)", aspectRatio: "16/9", position: "relative", overflow: "hidden" }}>
+        <video
+          muted
+          playsInline
+          preload="metadata"
+          src={`${API}/videos/${v.id}/stream#t=0.1`}
+          onLoadedMetadata={e => {
+            const media = e.currentTarget;
+            if (media.duration) setDuration(media.duration);
+            try { media.currentTime = Math.min(0.1, media.duration || 0); } catch {}
+          }}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        />
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+            <polygon points="5,3 19,12 5,21" fill="rgba(255,255,255,0.55)" />
+          </svg>
+        </div>
+      </div>
+      <div style={{ padding: 14 }}>
+        <div style={{ ...row(8), justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
+          <span style={{ fontWeight: 500, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.title || v.id}</span>
+          <button onClick={handleDelete} disabled={deleting} title="Delete video"
+            style={{ border: "none", background: "transparent", color: "var(--gray-9)", cursor: deleting ? "default" : "pointer", fontSize: 12, padding: "0 2px", lineHeight: 1, flexShrink: 0 }}>
+            {deleting ? "..." : "Delete"}
+          </button>
+        </div>
+        <div style={{ ...row(12), color: "var(--gray-11)", fontSize: 12 }}>
+          {duration && <span>{fmt(duration)}</span>}
+          {v.file_size && <span>{(v.file_size / 1024 / 1024).toFixed(1)} MB</span>}
+          <Pill label={reviewed ? "Reviewed" : "In review"} variant={reviewed ? "done" : "review"} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Home() {
   const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -279,6 +340,11 @@ function Home() {
     finally { setUploading(false); setProgress(0); }
   };
 
+  const deleteVideo = async (video: any) => {
+    await apiFetch(`/videos/${video.id}`, { method: "DELETE" });
+    await load();
+  };
+
   const fmt = (s: number | null) => { if (!s) return ""; return `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, "0")}`; };
 
   return (
@@ -318,25 +384,7 @@ function Home() {
             )}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
               {videos.map(v => (
-                <div key={v.id} onClick={() => go(`/v/${v.id}`)} style={{ border: "1px solid var(--gray-6)", borderRadius: "var(--radius-card)", overflow: "hidden", cursor: "pointer", background: "var(--gray-0)", transition: "border-color 75ms", animation: "fadeUp 0.2s ease" }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-9)"}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-6)"}>
-                  <div style={{ background: "var(--gray-12)", aspectRatio: "16/9", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                      <polygon points="5,3 19,12 5,21" fill="rgba(255,255,255,0.25)" />
-                    </svg>
-                  </div>
-                  <div style={{ padding: 14 }}>
-                    <div style={{ ...row(8), justifyContent: "space-between", marginBottom: 6 }}>
-                      <span style={{ fontWeight: 500, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.title}</span>
-                    </div>
-                    <div style={{ ...row(12), color: "var(--gray-11)", fontSize: 12 }}>
-                      {v.uploader_name && <span>{v.uploader_name}</span>}
-                      {v.duration && <span>{fmt(v.duration)}</span>}
-                      {v.file_size && <span>{(v.file_size / 1024 / 1024).toFixed(1)} MB</span>}
-                    </div>
-                  </div>
-                </div>
+                <VideoCard key={v.id} video={v} fmt={fmt} onDelete={deleteVideo} />
               ))}
             </div>
           </div>

@@ -99,7 +99,17 @@ const who = (req: any) => (req.headers["x-user-name"] as string) || "Anonymous";
 // ── VIDEOS ────────────────────────────────────────────────────────────────────
 
 app.get("/api/videos", async () => ({
-  videos: db.prepare("SELECT * FROM videos ORDER BY created_at DESC").all()
+  videos: db.prepare(`
+    SELECT v.*,
+           SUM(CASE WHEN c.source = 'runneth' THEN 1 ELSE 0 END) AS runneth_count,
+           SUM(CASE WHEN c.source = 'runneth' AND c.resolved = 1 THEN 1 ELSE 0 END) AS accepted_count,
+           SUM(CASE WHEN c.source = 'runneth' AND c.rejected = 1 THEN 1 ELSE 0 END) AS rejected_count,
+           SUM(CASE WHEN c.source = 'runneth' AND c.resolved = 0 AND c.rejected = 0 THEN 1 ELSE 0 END) AS unreviewed_count
+    FROM videos v
+    LEFT JOIN comments c ON c.video_id = v.id
+    GROUP BY v.id
+    ORDER BY v.created_at DESC
+  `).all()
 }));
 
 // Step 1: create record, get ID
