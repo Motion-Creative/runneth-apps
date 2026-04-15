@@ -241,58 +241,84 @@ function VideoCard({ video: v, fmt, onDelete }: {
   onDelete: (video: any) => Promise<void>;
 }) {
   const [duration, setDuration] = useState<number | null>(v.duration || null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   const [deleting, setDeleting] = useState(false);
   const reviewed = Number(v.runneth_count || 0) > 0 && Number(v.unreviewed_count || 0) === 0;
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!window.confirm(`Delete "${v.title}"? This also deletes its comments and share links.`)) return;
+    setDeleteError("");
+    setConfirmDelete(true);
+  };
+
+  const confirmDeleteVideo = async () => {
     setDeleting(true);
     try {
       await onDelete(v);
+      setConfirmDelete(false);
+    } catch (e: any) {
+      setDeleteError(e.message || "Delete failed");
     } finally {
       setDeleting(false);
     }
   };
 
   return (
-    <div onClick={() => go(`/v/${v.id}`)} style={{ border: "1px solid var(--gray-6)", borderRadius: "var(--radius-card)", overflow: "hidden", cursor: "pointer", background: "var(--gray-0)", transition: "border-color 75ms", animation: "fadeUp 0.2s ease", opacity: deleting ? 0.55 : 1 }}
-      onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-9)"}
-      onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-6)"}>
-      <div style={{ background: "var(--gray-12)", aspectRatio: "16/9", position: "relative", overflow: "hidden" }}>
-        <video
-          muted
-          playsInline
-          preload="metadata"
-          src={`${API}/videos/${v.id}/stream#t=0.1`}
-          onLoadedMetadata={e => {
-            const media = e.currentTarget;
-            if (media.duration) setDuration(media.duration);
-            try { media.currentTime = Math.min(0.1, media.duration || 0); } catch {}
-          }}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-        />
-        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-            <polygon points="5,3 19,12 5,21" fill="rgba(255,255,255,0.55)" />
-          </svg>
+    <>
+      <div onClick={() => go(`/v/${v.id}`)} style={{ border: "1px solid var(--gray-6)", borderRadius: "var(--radius-card)", overflow: "hidden", cursor: "pointer", background: "var(--gray-0)", transition: "border-color 75ms", animation: "fadeUp 0.2s ease", opacity: deleting ? 0.55 : 1 }}
+        onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-9)"}
+        onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-6)"}>
+        <div style={{ background: "var(--gray-12)", aspectRatio: "16/9", position: "relative", overflow: "hidden" }}>
+          <video
+            muted
+            playsInline
+            preload="metadata"
+            src={`${API}/videos/${v.id}/stream#t=0.1`}
+            onLoadedMetadata={e => {
+              const media = e.currentTarget;
+              if (media.duration) setDuration(media.duration);
+              try { media.currentTime = Math.min(0.1, media.duration || 0); } catch {}
+            }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          />
+          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+              <polygon points="5,3 19,12 5,21" fill="rgba(255,255,255,0.55)" />
+            </svg>
+          </div>
+        </div>
+        <div style={{ padding: 14 }}>
+          <div style={{ ...row(8), justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
+            <span style={{ fontWeight: 500, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.title || v.id}</span>
+            <button onClick={handleDelete} disabled={deleting} title="Delete video"
+              style={{ border: "none", background: "transparent", color: "var(--gray-9)", cursor: deleting ? "default" : "pointer", fontSize: 12, padding: "0 2px", lineHeight: 1, flexShrink: 0 }}>
+              {deleting ? "..." : "Delete"}
+            </button>
+          </div>
+          <div style={{ ...row(12), color: "var(--gray-11)", fontSize: 12 }}>
+            {duration && <span>{fmt(duration)}</span>}
+            {v.file_size && <span>{(v.file_size / 1024 / 1024).toFixed(1)} MB</span>}
+            <Pill label={reviewed ? "Reviewed" : "In review"} variant={reviewed ? "done" : "review"} />
+          </div>
         </div>
       </div>
-      <div style={{ padding: 14 }}>
-        <div style={{ ...row(8), justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
-          <span style={{ fontWeight: 500, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.title || v.id}</span>
-          <button onClick={handleDelete} disabled={deleting} title="Delete video"
-            style={{ border: "none", background: "transparent", color: "var(--gray-9)", cursor: deleting ? "default" : "pointer", fontSize: 12, padding: "0 2px", lineHeight: 1, flexShrink: 0 }}>
-            {deleting ? "..." : "Delete"}
-          </button>
+
+      <Modal open={confirmDelete} onClose={() => !deleting && setConfirmDelete(false)} title="Delete video?">
+        <div style={{ ...col(16) }}>
+          <p style={{ color: "var(--gray-11)", fontSize: 13 }}>
+            This will permanently delete "{v.title || v.id}", including its comments and share links.
+          </p>
+          {deleteError && <ErrMsg msg={deleteError} />}
+          <div style={{ ...row(8), justifyContent: "flex-end" }}>
+            <Btn variant="secondary" onClick={() => setConfirmDelete(false)} disabled={deleting}>Cancel</Btn>
+            <Btn variant="danger" onClick={confirmDeleteVideo} disabled={deleting}>
+              {deleting ? "Deleting..." : "Delete video"}
+            </Btn>
+          </div>
         </div>
-        <div style={{ ...row(12), color: "var(--gray-11)", fontSize: 12 }}>
-          {duration && <span>{fmt(duration)}</span>}
-          {v.file_size && <span>{(v.file_size / 1024 / 1024).toFixed(1)} MB</span>}
-          <Pill label={reviewed ? "Reviewed" : "In review"} variant={reviewed ? "done" : "review"} />
-        </div>
-      </div>
-    </div>
+      </Modal>
+    </>
   );
 }
 
