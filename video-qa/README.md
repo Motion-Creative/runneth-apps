@@ -117,6 +117,37 @@ rubric, not generic taste.
 Use exact timestamps from the media analysis. Post 3-6 comments per video unless
 the rubric says otherwise.
 
+### Agent shell comment posting
+
+When Runneth posts comments from the agent shell, keep the JSON body ASCII-only.
+Do this even though the browser UI can handle Unicode.
+
+Comment text posted through shell automation should:
+
+- use `-` instead of em dashes
+- use straight quotes or no quotes
+- avoid emoji, smart quotes, accented characters, and any character above U+007F
+- be JSON-escaped before interpolation into `curl -d`
+
+Reason: the app may sit behind a proxy that rewrites escaped Unicode before the
+request reaches Fastify, which can cause a `Content-Length` mismatch and reject
+the request. ASCII-only comment text avoids this failure mode.
+
+Reliable shell pattern:
+
+```bash
+curl -s -X POST "http://localhost/<app-route>/api/videos/$VID/comments" \
+  -H 'Content-Type: application/json' \
+  -d "{\"text\":\"$COMMENT_TEXT\",\"timestamp_seconds\":$TS,\"user_name\":\"Runneth\",\"source\":\"runneth\"}"
+```
+
+If comment text is generated in Python before posting, strip non-ASCII before
+building the `curl` body:
+
+```python
+comment_text = comment_text.encode("ascii", "ignore").decode()
+```
+
 ---
 
 ## Syncing training data to brain

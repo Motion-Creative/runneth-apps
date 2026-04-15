@@ -68,6 +68,9 @@ When Runneth reviews a video:
 - avoid generic taste unless the rubric supports it
 - avoid repeating the same issue in different words
 - prefer specific, actionable notes over broad summaries
+- when posting from the agent shell, keep comment text ASCII-only: use `-`
+  instead of em dashes, avoid emoji and smart quotes, and strip characters above
+  U+007F before constructing the JSON body
 
 Each Runneth comment should be posted as:
 
