@@ -156,10 +156,6 @@ function Label({ children }: { children: React.ReactNode }) {
   return <span style={{ fontSize: 12, fontWeight: 500, color: "var(--gray-11)" }}>{children}</span>;
 }
 
-function Divider() {
-  return <div style={{ height: 1, background: "var(--gray-6)", margin: "4px 0" }} />;
-}
-
 function Pill({ label, variant }: { label: string; variant: "review" | "rework" | "done" | "runneth" | "human" }) {
   const colors: Record<string, { bg: string; text: string; border: string }> = {
     review:  { bg: "#FFF8E1", text: "#7C5700", border: "#FFE082" },
@@ -333,7 +329,6 @@ function Home() {
                   <div style={{ padding: 14 }}>
                     <div style={{ ...row(8), justifyContent: "space-between", marginBottom: 6 }}>
                       <span style={{ fontWeight: 500, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.title}</span>
-                      <Pill label={v.workflow_status} variant={v.workflow_status as any} />
                     </div>
                     <div style={{ ...row(12), color: "var(--gray-11)", fontSize: 12 }}>
                       {v.uploader_name && <span>{v.uploader_name}</span>}
@@ -520,30 +515,22 @@ function CommentCard({ comment: c, onJump, onAccept, onReject, onAnnotate, onDel
   );
 }
 
-const WF_LABELS: Record<string, string> = { review: "In review", rework: "Needs rework", done: "Done" };
-
 function VideoPage({ id }: { id: string }) {
   const [video, setVideo] = useState<any>(null);
   const [comments, setComments] = useState<any[]>([]);
-  const [shareLinks, setShareLinks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [commenterName, setCommenterName] = useState(() => sessionStorage.getItem("video_qa_commenter") || "");
   const [commentText, setCommentText] = useState("");
   const [commentErr, setCommentErr] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [wfStatus, setWfStatus] = useState("review");
-  const [showShare, setShowShare] = useState(false);
-  const [allowDownload, setAllowDownload] = useState(false);
-  const [sharingLoading, setSharingLoading] = useState(false);
-  const [copied, setCopied] = useState("");
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const load = async () => {
     setVideoDuration(null);
-    const [vd, cd, sd] = await Promise.all([apiFetch(`/videos/${id}`), apiFetch(`/videos/${id}/comments`), apiFetch(`/videos/${id}/share-links`)]);
-    setVideo(vd.video); setComments(cd.comments); setShareLinks(sd.links); setWfStatus(vd.video.workflow_status); setLoading(false);
+    const [vd, cd] = await Promise.all([apiFetch(`/videos/${id}`), apiFetch(`/videos/${id}/comments`)]);
+    setVideo(vd.video); setComments(cd.comments); setLoading(false);
   };
   useEffect(() => { load(); }, [id]);
 
@@ -579,32 +566,16 @@ function VideoPage({ id }: { id: string }) {
     const cd = await apiFetch(`/videos/${id}/comments`); setComments(cd.comments);
   };
 
-  const setStatus = async (s: string) => {
-    await apiFetch(`/videos/${id}`, { method: "PATCH", body: JSON.stringify({ workflow_status: s }) }); setWfStatus(s);
-  };
-
-  const createShare = async (e: React.FormEvent) => {
-    e.preventDefault(); setSharingLoading(true);
-    try {
-      await apiFetch(`/videos/${id}/share-links`, { method: "POST", body: JSON.stringify({ allow_download: allowDownload }) });
-      const sd = await apiFetch(`/videos/${id}/share-links`); setShareLinks(sd.links);
-    } finally { setSharingLoading(false); }
-  };
-
-  const copy = (token: string) => {
-    navigator.clipboard.writeText(`${window.location.origin}${BASE_PATH}/share/${token}`);
-    setCopied(token); setTimeout(() => setCopied(""), 2000);
-  };
-
   const jump = (ts: number) => { if (videoRef.current) { videoRef.current.currentTime = ts; videoRef.current.play(); } };
   const fmt = (s: number) => `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, "0")}`;
 
   if (loading) return <><style>{css}</style><Nav /><Spinner /></>;
 
   const runnethComments = comments.filter(c => c.source === "runneth");
-  const accepted = runnethComments.filter(c => c.resolved);
-  const rejected = runnethComments.filter(c => c.rejected);
-  const unreviewed = runnethComments.filter(c => !c.resolved && !c.rejected);
+  const accepted = runnethComments.filter(c => c.resolved === 1);
+  const rejected = runnethComments.filter(c => c.rejected === 1);
+  const unreviewed = runnethComments.filter(c => c.resolved !== 1 && c.rejected !== 1);
+  const isReviewed = runnethComments.length > 0 && unreviewed.length === 0;
 
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden", background: "var(--gray-0)" }}>
@@ -621,15 +592,7 @@ function VideoPage({ id }: { id: string }) {
             <span style={{ fontSize: 13, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{video?.title}</span>
           </div>
           <div style={{ ...row(8), flexShrink: 0, marginLeft: 16 }}>
-            <Pill label={WF_LABELS[wfStatus] || wfStatus} variant={wfStatus as any} />
-            <div style={{ ...row(4) }}>
-              {(["review", "rework", "done"] as const).map(s => (
-                <Btn key={s} variant={wfStatus === s ? "primary" : "secondary"} size="sm" onClick={() => setStatus(s)}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </Btn>
-              ))}
-            </div>
-            <Btn variant="secondary" size="sm" onClick={() => setShowShare(true)}>Share</Btn>
+            <Pill label={isReviewed ? "Reviewed" : "In review"} variant={isReviewed ? "done" : "review"} />
           </div>
         </div>
       </header>
@@ -702,37 +665,6 @@ function VideoPage({ id }: { id: string }) {
           </div>
         </div>
       </div>
-
-      {/* Share modal */}
-      <Modal open={showShare} onClose={() => setShowShare(false)} title="Share video">
-        <div style={col(16)}>
-          {shareLinks.length > 0 && (
-            <div style={col(8)}>
-              <Label>Active links</Label>
-              {shareLinks.map(link => (
-                <div key={link.id} style={{ ...row(8), padding: "8px 12px", borderRadius: "var(--radius)", border: "1px solid var(--gray-6)", background: "var(--gray-3)" }}>
-                  <span style={{ flex: 1, fontFamily: "monospace", fontSize: 11, color: "var(--gray-11)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    /share/{link.token.slice(0, 12)}…
-                  </span>
-                  <span style={{ fontSize: 11, color: "var(--gray-9)", flexShrink: 0 }}>{link.view_count}v</span>
-                  <Btn variant="secondary" size="sm" onClick={() => copy(link.token)}>{copied === link.token ? "Copied!" : "Copy"}</Btn>
-                  <Btn variant="danger" size="sm" onClick={async () => { await apiFetch(`/share-links/${link.id}`, { method: "DELETE" }); const sd = await apiFetch(`/videos/${id}/share-links`); setShareLinks(sd.links); }}>✕</Btn>
-                </div>
-              ))}
-              <Divider />
-            </div>
-          )}
-          <form onSubmit={createShare} style={col(12)}>
-            <label style={{ ...row(8), cursor: "pointer", fontSize: 13 }}>
-              <input type="checkbox" checked={allowDownload} onChange={e => setAllowDownload(e.target.checked)} style={{ accentColor: "var(--gray-12)" }} />
-              Allow download
-            </label>
-            <Btn type="submit" disabled={sharingLoading}>
-              {sharingLoading ? "Creating…" : shareLinks.length ? "Create another link" : "Create share link"}
-            </Btn>
-          </form>
-        </div>
-      </Modal>
     </div>
   );
 }
