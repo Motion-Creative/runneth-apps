@@ -393,8 +393,8 @@ function CommentCard({ comment: c, onJump, onAccept, onReject, onAnnotate, onDel
   fmt: (s: number) => string;
 }) {
   const isRunneth = c.source === "runneth";
-  const isAccepted = isRunneth && c.resolved;
-  const isRejected = isRunneth && c.rejected;
+  const isAccepted = isRunneth && c.resolved === 1;
+  const isRejected = isRunneth && c.rejected === 1;
   const isReviewed = isAccepted || isRejected;
   const [annotating, setAnnotating] = useState(false);
   const [annotationDraft, setAnnotationDraft] = useState(c.annotation || "");
@@ -416,6 +416,7 @@ function CommentCard({ comment: c, onJump, onAccept, onReject, onAnnotate, onDel
     background: isAccepted ? "#F0FDF4" : isRejected ? "#FFF0F0" : isRunneth ? "var(--gray-2)" : "var(--gray-0)",
     animation: "fadeUp 0.15s ease",
     opacity: isReviewed ? 0.85 : 1,
+    cursor: "pointer",
   };
 
   const handleSaveAnnotation = async () => {
@@ -428,11 +429,11 @@ function CommentCard({ comment: c, onJump, onAccept, onReject, onAnnotate, onDel
   };
 
   return (
-    <div style={cardStyle}>
+    <div style={cardStyle} onClick={onJump}>
       {/* Header row */}
       <div style={{ ...row(0), justifyContent: "space-between", marginBottom: 6 }}>
         <div style={{ ...row(6) }}>
-          <button onClick={onJump}
+          <button onClick={e => { e.stopPropagation(); onJump(); }}
             style={{ fontSize: 10, fontWeight: 600, background: "var(--gray-12)", color: "var(--gray-0)", border: "none", borderRadius: 4, padding: "1px 5px", cursor: "pointer", fontFamily: "monospace", flexShrink: 0 }}>
             {fmt(c.timestamp_seconds)}
           </button>
@@ -444,7 +445,7 @@ function CommentCard({ comment: c, onJump, onAccept, onReject, onAnnotate, onDel
         </div>
 
         {/* Actions */}
-        <div style={row(4)}>
+        <div style={row(4)} onClick={e => e.stopPropagation()}>
           {isRunneth ? (
             isReviewed ? (
               // Already decided — show undo button
@@ -480,7 +481,7 @@ function CommentCard({ comment: c, onJump, onAccept, onReject, onAnnotate, onDel
 
       {/* Annotation — shown after a decision is made on Runneth comments */}
       {isRunneth && isReviewed && (
-        <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid " + (isAccepted ? "#86EFAC" : "#FCA5A5") }}>
+        <div onClick={e => e.stopPropagation()} style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid " + (isAccepted ? "#86EFAC" : "#FCA5A5") }}>
           {c.annotation && !annotating ? (
             <div style={{ ...row(6), alignItems: "flex-start" }}>
               <p style={{ fontSize: 12, color: "var(--gray-11)", lineHeight: 1.4, flex: 1, fontStyle: "italic" }}>
@@ -536,9 +537,11 @@ function VideoPage({ id }: { id: string }) {
   const [allowDownload, setAllowDownload] = useState(false);
   const [sharingLoading, setSharingLoading] = useState(false);
   const [copied, setCopied] = useState("");
+  const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const load = async () => {
+    setVideoDuration(null);
     const [vd, cd, sd] = await Promise.all([apiFetch(`/videos/${id}`), apiFetch(`/videos/${id}/comments`), apiFetch(`/videos/${id}/share-links`)]);
     setVideo(vd.video); setComments(cd.comments); setShareLinks(sd.links); setWfStatus(vd.video.workflow_status); setLoading(false);
   };
@@ -642,10 +645,12 @@ function VideoPage({ id }: { id: string }) {
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
             src={`${API}/videos/${id}/stream`}
             onTimeUpdate={() => { if (videoRef.current) setCurrentTime(videoRef.current.currentTime); }}
+            onLoadedMetadata={() => { if (videoRef.current) setVideoDuration(videoRef.current.duration); }}
+            onClick={() => { if (videoRef.current) videoRef.current.paused ? videoRef.current.play() : videoRef.current.pause(); }}
           />
-          {video?.duration && comments.map(c => (
+          {videoDuration !== null && videoDuration > 0 && comments.map(c => (
             <div key={c.id} onClick={() => jump(c.timestamp_seconds)} title={`${fmt(c.timestamp_seconds)}: ${c.text}`}
-              style={{ position: "absolute", bottom: 52, left: `${Math.min(97, (c.timestamp_seconds / video.duration) * 100)}%`, transform: "translateX(-50%)", width: 8, height: 8, borderRadius: "50%", background: c.resolved ? "var(--success-9)" : c.source === "runneth" ? "var(--primary-11)" : "#ef4444", border: "1.5px solid rgba(255,255,255,0.8)", cursor: "pointer", zIndex: 10 }} />
+              style={{ position: "absolute", bottom: 52, left: `${Math.min(97, (c.timestamp_seconds / videoDuration) * 100)}%`, transform: "translateX(-50%)", width: 8, height: 8, borderRadius: "50%", background: c.resolved ? "var(--success-9)" : c.source === "runneth" ? "var(--primary-11)" : "#ef4444", border: "1.5px solid rgba(255,255,255,0.8)", cursor: "pointer", zIndex: 10 }} />
           ))}
         </div>
 
@@ -693,7 +698,7 @@ function VideoPage({ id }: { id: string }) {
             <span style={{ fontSize: 12, color: "var(--gray-11)" }}>{unreviewed.length} to review</span>
             <span style={{ fontSize: 12, color: "var(--success-9)", fontWeight: 500 }}>{accepted.length} accepted</span>
             <span style={{ fontSize: 12, color: "var(--error-9)", fontWeight: 500 }}>{rejected.length} rejected</span>
-            {video?.duration && <span style={{ fontSize: 12, color: "var(--gray-11)", marginLeft: "auto" }}>{fmt(video.duration)}</span>}
+            {videoDuration !== null && videoDuration > 0 && <span style={{ fontSize: 12, color: "var(--gray-11)", marginLeft: "auto" }}>{fmt(videoDuration)}</span>}
           </div>
         </div>
       </div>
