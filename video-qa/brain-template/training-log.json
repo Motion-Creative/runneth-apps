@@ -1,0 +1,15 @@
+{
+  "last_synced": null,
+  "stats": {
+    "total_runneth": 0,
+    "accepted": 0,
+    "rejected": 0,
+    "unreviewed": 0,
+    "annotated": 0,
+    "human_comments": 0,
+    "videos_reviewed": 0
+  },
+  "signals": [],
+  "human_comments": [],
+  "score_history": []
+}
