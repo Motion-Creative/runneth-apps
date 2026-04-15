@@ -57,7 +57,7 @@ reviewer looks for.
 
 Tell Runneth:
 
-> "Use these examples to initialize `/agent/brain/video-qa-judge/rubric.md` for Video QA. Synthesize what this customer checks for, write the first Analyze Media prompt, and keep uncertain assumptions explicit."
+> "Use these examples to initialize `/agent/brain/video-qa-judge/rubric.md` for Video QA. Synthesize what this customer checks for, start from the generic Analyze Media evidence prompt in the repo README, adapt it to this customer's rubric, and keep uncertain assumptions explicit."
 
 Runneth should update the workspace copy of `rubric.md`, not the repo template.
 The initial rubric should include:
@@ -116,6 +116,142 @@ rubric, not generic taste.
 
 Use exact timestamps from the media analysis. Post 3-6 comments per video unless
 the rubric says otherwise.
+
+### Updating an existing workspace rubric
+
+When pulling improvements from this repo into an existing Runneth workspace, do
+not overwrite `/agent/brain/video-qa-judge/rubric.md`.
+
+Instead, merge the reusable pieces:
+
+- keep the existing customer-specific review criteria
+- keep accepted/rejected learning notes and reviewer preferences
+- replace or improve only the `Analysis Prompt` section using the generic
+  evidence prompt below
+- add customer-specific checks after the generic evidence sections
+
+The generic prompt is meant to improve what Runneth can see in the video. The
+workspace rubric remains the judge.
+
+### Generic Analyze Media evidence prompt
+
+Use this as the default first-pass prompt for `motion analyze-media`. After
+customer examples exist, paste this into the workspace rubric's `Analysis
+Prompt` section and add customer-specific checks below it.
+
+```md
+You are creating a factual video record for a human QA review.
+
+Do not decide whether the video passes or fails. Do not write QA comments yet.
+Your job is to capture timestamped evidence that can later be checked against
+the active rubric.
+
+Base every observation only on what is visible, audible, or clearly implied in
+the video. If something is unclear, say unclear instead of guessing.
+
+Return the following sections.
+
+## 1. Spoken Transcript
+
+Create a timestamped transcript of all audible speech.
+
+Format:
+- 0:00 - "Exact spoken words..."
+- 0:04 - "Exact spoken words..."
+
+Rules:
+- Preserve wording as closely as possible.
+- Mark unclear audio as [unclear] or [inaudible].
+- Do not mix visual text into the spoken transcript.
+- If there is no speech, write: None used.
+
+## 2. Text Inventory
+
+List every meaningful piece of visible text.
+
+Use this table:
+
+| timecode | exact text | source_type | location | confidence | notes |
+|---|---|---|---|---|---|
+
+Use only these source_type values:
+
+- overlay_text: editorial text added on top of the video
+- caption_subtitle: subtitles or captions matching spoken words
+- product_packaging_text: text physically printed on a product, label, package, or bag
+- environmental_text: signs, posters, books, papers, walls, or other real-world text
+- interface_text: text inside a phone, website, app, social platform, or screen recording
+- unknown_text: visible text where the source is unclear
+
+Rules:
+- Do not call product packaging text an overlay.
+- Do not critique product_packaging_text as if it were editable video overlay text.
+- If text appears both as speech captions and product packaging, list them separately.
+- Preserve exact capitalization and spelling when readable.
+- If text is partially blocked or uncertain, note that in confidence/notes.
+
+## 3. Scene-by-Scene Record
+
+Go through the full video in chronological order.
+
+Start a new scene when any of these changes:
+- camera framing, angle, or POV
+- primary subject or action
+- location or background
+- visible text state
+- speaker, delivery style, or audio state
+- product interaction
+
+For each scene, use this format:
+
+### 0:00-0:04 - Short scene label
+
+Visuals:
+Describe the foreground, background, subject/action, product visibility,
+camera framing, and any meaningful product interaction.
+
+Spoken/audio:
+Summarize or quote the spoken words and note music, silence, sound effects,
+or delivery style.
+
+Visible text:
+Separate overlay/caption text from product/package/environment/UI text.
+
+Narrative function:
+State what this moment appears to do in the ad, such as hook, setup, problem,
+proof, product explanation, offer, CTA, or risk reversal.
+
+## 4. Product, Offer, CTA, and Claims
+
+List timestamped evidence for:
+- product names and variants
+- offer, discount, guarantee, or promo code
+- CTA
+- performance, health, quality, pricing, comparison, or other claims
+- proof points or demonstrations
+
+Do not judge whether claims are strong or compliant yet. Just record them.
+
+## 5. Potential Rubric Evidence
+
+List moments that may matter for QA review, without turning them into final
+comments yet.
+
+For each item include:
+- timestamp
+- evidence
+- why it may matter to the rubric
+- uncertainty, if any
+
+## 6. Uncertainties
+
+List anything important that was hard to determine:
+- unclear speech
+- unreadable text
+- ambiguous text source
+- uncertain product detail
+- unclear sequence or timestamp
+```
 
 ### Agent shell comment posting
 
