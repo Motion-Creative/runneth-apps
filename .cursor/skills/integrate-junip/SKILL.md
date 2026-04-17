@@ -16,6 +16,24 @@ Use for Junip private app auth, verification, and review retrieval from Admin v2
 - `api_version`: `admin/v2`
 - `last_verified`: `2026-04-16`
 
+## User Setup Steps
+
+1. Log in at `app.juniphq.com`.
+2. Open **Apps**, then create/open a private app.
+3. Ensure app audience is `All customers`.
+4. Ensure permission `reviews:read` is enabled.
+5. Install the app and copy the **API key** from **Credentials**.
+
+## Secret Registration
+
+- Register `JUNIP_API_KEY` via `secret-input`.
+- Use `allowedHosts: ["api.juniphq.com"]`.
+
+## Access/Permissions Setup
+
+- Integration must be installed on the store.
+- If review coverage is unexpectedly partial, verify audience is not scoped to members/team only.
+
 ## Core Workflow Checklist
 
 1. Collect secret `JUNIP_API_KEY` for host `api.juniphq.com` (never ask user to paste key in chat).
@@ -65,6 +83,11 @@ Run a small auth check and pass only if all are true:
 - parser uses v2 keys (`data`, `meta.after`) and not v1 keys (`product_reviews`, `meta.page.after`)
 
 If verification fails, stop and resolve auth/endpoint issues before full pull.
+
+## Official References
+
+- [Junip API docs hub](https://junip.co/docs/api)
+- [Junip Admin API v2](https://junip.co/docs/api/admin/v2)
 
 ## Critical Facts - Do Not Deviate
 

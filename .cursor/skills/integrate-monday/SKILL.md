@@ -29,6 +29,22 @@ If `sandbox-app-runtime` is not found under `/agent/skills/`, the backend contra
 - `api_version`: `v2` (GraphQL), pinned API header version `2026-04`
 - `last_verified`: `2026-04-15`
 
+## User Setup Steps
+
+1. In Monday, click profile avatar -> **Developers**.
+2. Open **API token** and click **Show**.
+3. Copy the token for the target account/workspace context.
+
+## Secret Registration
+
+- Register `MONDAY_API_KEY` via `secret-input`.
+- Use `allowedHosts: ["api.monday.com"]`.
+
+## Access/Permissions Setup
+
+- API token permissions mirror the user's Monday permissions.
+- Confirm the token owner can access target boards/groups before sync.
+
 ## Core Workflow Checklist
 
 1. Collect `MONDAY_API_KEY` via `secret-input` widget (`allowedHosts: ["api.monday.com"]`).
@@ -76,6 +92,12 @@ If verification fails, stop and resolve auth/scope/query issues before full exec
 - Use `items_page` cursor pagination; do not use removed `items` field
 - Check response `errors` even on HTTP `200`
 - Pin API version header (`API-Version: 2026-04`) and re-verify quarterly
+
+## Official References
+
+- [Monday authentication](https://developer.monday.com/api-reference/docs/authentication)
+- [Monday items_page](https://developer.monday.com/api-reference/docs/items_page)
+- [Monday API versioning](https://developer.monday.com/api-reference/docs/api-versioning)
 
 ---
 

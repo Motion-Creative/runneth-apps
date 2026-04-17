@@ -13,6 +13,13 @@ Walk the user through creating a Notion integration, securely registering the
 token, granting the integration access to Notion pages or databases, and
 optionally scaffolding an app or workflow that uses the Notion API.
 
+## User Setup Steps
+
+1. Create an internal integration in Notion.
+2. Copy the Internal Integration Secret from the integration configuration.
+3. Share required pages/databases with the integration.
+4. Verify token with `GET /v1/users/me` before building workflows.
+
 ---
 
 ## Step 1 - Clarify intent (skip if already clear)
@@ -47,6 +54,8 @@ label: "Notion Integration Secret"
 reason: "Authenticates API calls to Notion on your behalf"
 ```
 
+This is the required secret registration step for Notion API calls.
+
 ---
 
 ## Step 2.5 - Verify the token
@@ -77,6 +86,8 @@ to any pages or databases it needs to read or write:
 Remind them: the Notion API only returns content the integration has been
 explicitly shared with. If they see empty results later, this is the first thing
 to check.
+
+This is the required access/permissions setup step. Without sharing, API calls can return empty results or 404.
 
 ---
 
@@ -119,3 +130,8 @@ Key Notion API facts for implementation:
 - If the Notion API call fails with 401, the token is wrong or unregistered - re-emit `secret-input`
 - If the Notion API call fails with 404 on a database query, the integration has
   not been shared with that database - remind the user to add the connection in Notion
+
+## Official References
+
+- [Notion: create an integration](https://developers.notion.com/docs/create-a-notion-integration)
+- [Notion quickstart guide](https://developers.notion.com/guides/get-started/create-a-notion-integration)

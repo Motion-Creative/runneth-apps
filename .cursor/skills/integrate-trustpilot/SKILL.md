@@ -17,6 +17,13 @@ Two input paths are supported:
 - **API path** - preferred for automation; uses stored credentials via secure-fetch
 - **CSV path** - immediate fallback; user exports from Trustpilot Business dashboard and uploads the file
 
+## User Setup Steps
+
+1. Confirm the user has Trustpilot Business API access enabled.
+2. Locate API key and API secret in Trustpilot Business dashboard integrations/API area.
+3. Create Base64 string from `api_key:api_secret`.
+4. Register encoded value as integration secret and proceed with token fetch.
+
 ---
 
 ## Pre-Flight: Check for Existing Credentials
@@ -54,11 +61,21 @@ echo -n "your_api_key:your_api_secret" | base64
 
 Do not proceed until `TRUSTPILOT_BASIC_CREDENTIALS` is provided.
 
+## Secret Registration
+
+- Required secret: `TRUSTPILOT_BASIC_CREDENTIALS`
+- allowedHosts: `["api.trustpilot.com"]`
+
 ---
 
 ## Phase 1b: Discover Business Unit ID
 
 Use `secure-fetch` to find the business unit ID for the workspace brand domain.
+
+## Access/Permissions Setup
+
+- Ensure the credentials map to the intended Trustpilot Business account.
+- Resolve and save the correct business unit ID for the workspace brand domain before review pulls.
 
 **Step 1: Get an access token**
 
@@ -209,3 +226,8 @@ If the user wants to reset credentials or change the brand domain, they can say
 - If the API module is not enabled on the user's Trustpilot plan, the token request will fail with 403. Tell the user they need to upgrade or use the CSV path instead.
 - If no reviews are returned for the business unit, confirm the domain is correct before retrying.
 - This skill fetches reviews only. Do not make changes to the Trustpilot account, respond to reviews, or call write endpoints.
+
+## Official References
+
+- [Trustpilot client credentials flow](https://developers.trustpilot.com/grant-type-client-credentials/)
+- [Trustpilot business units overview](https://developers.trustpilot.com/business-units-api-overview/)
