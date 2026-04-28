@@ -1,0 +1,1 @@
+{ "version": 1, "name": "brief-qa", "route": "/brief-qa", "backend": { "entry": "server/dist/index.js", "prefix": "/api" }, "frontend": { "dist": "frontend/dist", "index": "index.html" } }
