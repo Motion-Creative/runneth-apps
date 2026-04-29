@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "name": "conversation-manager",
+  "route": "/conversation-manager",
+  "backend": {
+    "entry": "server/dist/index.js",
+    "prefix": "/api"
+  },
+  "frontend": {
+    "dist": "frontend/dist",
+    "index": "index.html"
+  }
+}
