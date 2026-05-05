@@ -15,7 +15,6 @@ Not yet captured (sessions either un-recorded at extraction time or future-dated
 ```
 bootcamp/
 ├── index.md              ← cheat sheet — load this first
-├── syllabus.md            ← canonical curriculum (from motionapp.com)
 ├── week-01/
 │   ├── tuesday-evan-what-is-creative-strategy.md       ← lesson (~5–7K tokens)
 │   ├── tuesday-evan-what-is-creative-strategy.full.md  ← reference (~25–100K tokens)

@@ -12,8 +12,6 @@ This is the navigation layer for the bootcamp corpus. Each session is two files:
 - `<slug>.md` — **lesson** (frameworks, claims, tactics, anti-patterns, key quotes, named entities, homework, cross-week refs, and for coaching: student questions + worked examples) — the file to open by default
 - `<slug>.full.md` — **reference** (verbatim ads registry + slides registry + full speaker-tagged transcript with `[VISUAL: ...]` annotations) — open when you need exact wording or to cite a specific moment
 
-Canonical curriculum: see `syllabus.md`.
-
 > Note: **Week 5 Thursday's structured slide registry is a placeholder** (extraction exhausted retries). The transcript's inline `[VISUAL: ...]` annotations cover the slide content.
 
 ---
