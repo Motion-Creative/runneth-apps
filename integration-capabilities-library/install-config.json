@@ -1,0 +1,40 @@
+{
+  "schema": "1.0",
+  "id": "integration-capabilities-library",
+  "version": "1.0.0",
+  "description": "The agent always has an accurate, sourced reference for what every connected integration can do and what permissions it needs — updated automatically every night.",
+  "customize": [
+    {
+      "token": "{{INTEGRATIONS_DIR}}",
+      "description": "Directory where integration capabilities-and-scopes files are stored in the brain.",
+      "required": false,
+      "fallback": "/agent/brain/integrations/"
+    }
+  ],
+  "installs": [
+    {
+      "file": "integrations-index.md",
+      "dest": "{{INTEGRATIONS_DIR}}README.md",
+      "if-not-exists": true
+    },
+    {
+      "file": "skill.md",
+      "dest": "/agent/.agents/skills/integration-capabilities-sync/SKILL.md",
+      "if-not-exists": true
+    },
+    {
+      "file": "behavior-snippet.md",
+      "dest": "user-md",
+      "insert-after": "## System routines",
+      "insert-fallback": "append"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-06",
+      "type": "major",
+      "notes": "Initial release. Integration capabilities-and-scopes library with nightly sync skill, brain index, and new-integration detection behavior."
+    }
+  ]
+}
