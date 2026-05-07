@@ -1,0 +1,21 @@
+{
+  "schema": "1.0",
+  "id": "share-use-case",
+  "version": "1.0.0",
+  "description": "Anyone can package a use case from their sandbox and submit it to the shared library for others to discover and install.",
+  "installs": [
+    {
+      "file": "SKILL.md",
+      "dest": "/agent/.agents/skills/share-use-case/SKILL.md",
+      "if-not-exists": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-06",
+      "type": "major",
+      "notes": "Initial release. Validation, zip packaging, guided submission instructions, pre-filled PR description."
+    }
+  ]
+}
