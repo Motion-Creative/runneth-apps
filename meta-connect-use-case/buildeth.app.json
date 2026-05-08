@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "name": "meta-connect",
+  "route": "/meta-connect",
+  "backend": {
+    "prefix": "/api",
+    "entry": "server/dist/index.js"
+  },
+  "frontend": {
+    "dist": "frontend/dist",
+    "index": "index.html"
+  }
+}

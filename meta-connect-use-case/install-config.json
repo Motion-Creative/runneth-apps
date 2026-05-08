@@ -1,0 +1,104 @@
+{
+  "schema": "1.0",
+  "id": "meta-connect",
+  "version": "1.0.0",
+  "description": "Stage and publish ads to Meta directly from chat, with a persistent OAuth connection that auto-refreshes every 60 days.",
+  "customize": [
+    {
+      "token": "{{META_APP_SECRET}}",
+      "description": "Secret for the Runneth-test Facebook app. Required for token exchange during OAuth.",
+      "required": true
+    }
+  ],
+  "installs": [
+    {
+      "file": "brain-seeds/meta-token-seed.json",
+      "dest": "/agent/brain/integrations/meta-token.json",
+      "if-not-exists": true
+    },
+    {
+      "file": "brain-seeds/meta-app-secret.txt",
+      "dest": "/agent/brain/integrations/meta-app-secret.txt",
+      "if-not-exists": false
+    },
+    {
+      "file": "brain-seeds/meta-connection-operating-rules.md",
+      "dest": "/agent/brain/workspace-policies/meta-connection-operating-rules.md",
+      "if-not-exists": false
+    },
+    {
+      "type": "folder-copy",
+      "src": "server",
+      "dest": "/agent/apps/meta-connect/server"
+    },
+    {
+      "type": "folder-copy",
+      "src": "frontend",
+      "dest": "/agent/apps/meta-connect/frontend"
+    },
+    {
+      "file": "buildeth.app.json",
+      "dest": "/agent/apps/meta-connect/buildeth.app.json",
+      "if-not-exists": false
+    },
+    {
+      "file": "behavior-snippet.md",
+      "dest": "user-md",
+      "insert-after": "## Delivery preferences",
+      "insert-fallback": "append"
+    },
+    {
+      "file": "setup-meta-connect/SKILL.md",
+      "dest": "/agent/.agents/skills/setup-meta-connect/SKILL.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "SKILL.md",
+      "dest": "/agent/.agents/skills/meta-connect/SKILL.md",
+      "if-not-exists": false
+    }
+  ],
+  "post-install": [
+    {
+      "action": "app-create",
+      "name": "Create meta-connect app",
+      "description": "Run: app create meta-connect"
+    },
+    {
+      "action": "app-build",
+      "name": "Build meta-connect app",
+      "description": "Run: app build meta-connect"
+    },
+    {
+      "action": "app-verify",
+      "name": "Verify meta-connect app",
+      "description": "Run: app verify meta-connect"
+    },
+    {
+      "action": "app-url",
+      "name": "Get app URL",
+      "description": "Run: app list — note the meta-connect route"
+    },
+    {
+      "action": "manual",
+      "name": "Register redirect URI",
+      "description": "Add https://{SPAWNETH_HOST}/meta-connect/api/callback to the Runneth-test Meta app at developers.facebook.com → Facebook Login → Settings → Valid OAuth Redirect URIs. Also add {SPAWNETH_HOST} to App Domains.",
+      "manual": true
+    },
+    {
+      "action": "skill-invoke",
+      "skill": "setup-meta-connect",
+      "name": "Connect to Meta",
+      "description": "Opens the meta-connect app and walks through the OAuth connection.",
+      "manual": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-07",
+      "type": "major",
+      "notes": "Initial release. OAuth connection app, 60-day long-lived token, auto-refresh, operating guardrails, publish-only rules."
+    }
+  ]
+}
