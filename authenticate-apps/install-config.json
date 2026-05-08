@@ -1,0 +1,49 @@
+{
+  "schema": "1.0",
+  "id": "authenticate-apps",
+  "version": "1.0.0",
+  "description": "Add a self-bootstrapping login layer to any Runneth sandbox app. The first browser visit picks a username + password, scrypt-hashed and stored on disk. From then on, every request outside the allow-list is gated behind /login.",
+  "customize": [
+    {
+      "token": "{{APP_NAME}}",
+      "description": "The sandbox app name (the folder under /agent/apps/). Read it from `app list`.",
+      "required": true
+    },
+    {
+      "token": "{{APP_BASE_PATH}}",
+      "description": "The public route prefix the app is mounted under (e.g. '/my-app'). Read it from the app's buildeth.app.json `route` field.",
+      "required": true
+    },
+    {
+      "token": "{{APP_LABEL}}",
+      "description": "Human-friendly name shown in the setup and login UI (e.g. 'Runneth Dashboard').",
+      "required": false,
+      "fallback": "App"
+    }
+  ],
+  "installs": [
+    {
+      "file": "auth.mjs",
+      "dest": "/agent/apps/{{APP_NAME}}/server/auth.mjs",
+      "if-not-exists": false
+    },
+    {
+      "file": "SKILL.md",
+      "dest": "/agent/.agents/skills/authenticate-apps/SKILL.md",
+      "if-not-exists": false
+    }
+  ],
+  "post-install": [
+    "Open server/src/index.ts in the target app and register the auth plugin before any other route. The exact snippet is in integration-snippet.md and SKILL.md walks through the patch.",
+    "Run `app build <app-name>` and `app verify <app-name>`.",
+    "Open the public app URL. The first visit will route to /setup; pick credentials and save."
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-08",
+      "type": "major",
+      "notes": "Initial release. Fastify plugin, self-rendered setup + login pages, scrypt-hashed credentials, HMAC-signed session cookies, JSON-POST forms compatible with the gateway's content-type parser."
+    }
+  ]
+}
