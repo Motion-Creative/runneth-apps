@@ -1,0 +1,9 @@
+{
+  "_meta": {
+    "product": "",
+    "brand": "",
+    "created_at": "",
+    "note": "Learning entries are appended by the generate-ad skill (source: ad_generation) and by iteration outcome capture (source: iteration_outcome). Do not edit manually unless resolving a data conflict. confidence levels: ANECDOTAL -> VALIDATED -> HIGH."
+  },
+  "learnings": []
+}

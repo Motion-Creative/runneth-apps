@@ -1,0 +1,52 @@
+{
+  "schema": "1.0",
+  "id": "static-ad-generator",
+  "version": "1.0.0",
+  "description": "Generate production-ready static ads from chat — brief, Gemini-refined prompt, NB2 image, and ad name — for any product in your catalog.",
+  "installs": [
+    { "file": "seeds/skills/creative-strategy-engine.md", "dest": "/agent/brain/skills/creative-strategy-engine.md", "if-not-exists": true },
+    { "file": "seeds/skills/hook-tactics.md",             "dest": "/agent/brain/skills/hook-tactics.md",             "if-not-exists": true },
+    { "file": "seeds/skills/hook-writing.md",             "dest": "/agent/brain/skills/hook-writing.md",             "if-not-exists": true },
+    { "file": "seeds/skills/visual-formats.md",           "dest": "/agent/brain/skills/visual-formats.md",           "if-not-exists": true },
+    { "file": "seeds/skills/creative-mechanics.md",       "dest": "/agent/brain/skills/creative-mechanics.md",       "if-not-exists": true },
+    { "file": "seeds/product-template.json",              "dest": "/agent/brain/_seeds/static-ad-generator/product-template.json",              "if-not-exists": true },
+    { "file": "seeds/learning-log-template.json",         "dest": "/agent/brain/_seeds/static-ad-generator/learning-log-template.json",         "if-not-exists": true },
+    { "file": "seeds/concept-registry.json",              "dest": "/agent/brain/_seeds/static-ad-generator/concept-registry.json",              "if-not-exists": true },
+    { "file": "seeds/creator-registry.json",              "dest": "/agent/brain/_seeds/static-ad-generator/creator-registry.json",              "if-not-exists": true },
+    { "file": "generate-ad/SKILL.md",                    "dest": "/agent/.agents/skills/generate-ad/SKILL.md",                      "if-not-exists": false },
+    { "file": "setup-static-ad-generator/SKILL.md",      "dest": "/agent/.agents/skills/setup-static-ad-generator/SKILL.md",        "if-not-exists": false },
+    { "file": "nb-image-gen/buildeth.app.json",           "dest": "/agent/apps/nb-image-gen/buildeth.app.json",                      "if-not-exists": true },
+    { "file": "nb-image-gen/server/package.json",         "dest": "/agent/apps/nb-image-gen/server/package.json",                    "if-not-exists": true },
+    { "file": "nb-image-gen/server/tsconfig.json",        "dest": "/agent/apps/nb-image-gen/server/tsconfig.json",                   "if-not-exists": true },
+    { "file": "nb-image-gen/server/tsconfig.build.json",  "dest": "/agent/apps/nb-image-gen/server/tsconfig.build.json",             "if-not-exists": true },
+    { "file": "nb-image-gen/server/src/index.ts",         "dest": "/agent/apps/nb-image-gen/server/src/index.ts",                    "if-not-exists": true },
+    { "file": "nb-image-gen/frontend/package.json",       "dest": "/agent/apps/nb-image-gen/frontend/package.json",                  "if-not-exists": true },
+    { "file": "nb-image-gen/frontend/vite.config.ts",     "dest": "/agent/apps/nb-image-gen/frontend/vite.config.ts",                "if-not-exists": true },
+    { "file": "nb-image-gen/frontend/index.html",         "dest": "/agent/apps/nb-image-gen/frontend/index.html",                    "if-not-exists": true },
+    { "file": "nb-image-gen/frontend/src/main.tsx",       "dest": "/agent/apps/nb-image-gen/frontend/src/main.tsx",                  "if-not-exists": true }
+  ],
+  "post-install": [
+    { "action": "app-create",  "name": "Create image server app",   "description": "Registers the nb-image-gen app container. Source files are already in place from the install step." },
+    { "action": "app-build",   "name": "Build image server",    "description": "Installs dependencies and compiles server + frontend" },
+    { "action": "app-verify",  "name": "Verify image server",   "description": "Confirms the built bundle is ready" },
+    { "action": "app-url",     "name": "Surface app URL",        "description": "Captures the public host for the image CDN — save this as APP_HOST, you will need it during setup" },
+    { "action": "skill-invoke", "skill": "setup-static-ad-generator", "name": "Personalize for this sandbox", "description": "Walks through API keys, workspace ID, brand config, reference image upload, and product spec generation", "manual": false }
+  ],
+  "customize": [
+    { "token": "{{BRAND_NAME}}",           "description": "Your brand's full display name, e.g. Acme Co",                         "required": true },
+    { "token": "{{BRAND_CODE}}",           "description": "One or two-letter brand code used in ad names, e.g. A",                "required": true },
+    { "token": "{{BRAND_SLUG}}",           "description": "Lowercase kebab-case brand name used in file paths, e.g. acme-co",     "required": true },
+    { "token": "{{WORKSPACE_ID}}",         "description": "Motion workspace ID — detected automatically during setup",             "required": true },
+    { "token": "{{APP_HOST}}",             "description": "Public host for the nb-image-gen app — surfaced after app build",       "required": true },
+    { "token": "{{DEFAULT_ASPECT_RATIO}}", "description": "Default generation aspect ratio",                                       "required": false, "fallback": "1:1" },
+    { "token": "{{DEFAULT_RESOLUTION}}",   "description": "Default generation resolution",                                         "required": false, "fallback": "2K" }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-07",
+      "type": "major",
+      "notes": "Initial release. End-to-end chat-native static ad generation: Gemini brief refinement, NB2 image generation, automated product spec extraction from uploaded images, ad naming, and learning log entries. Includes four-step onboarding: API keys, workspace ID auto-detection, brand config, and guided per-product setup."
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "_meta": {
+    "note": "Maps creator names to identifiers used in ad naming. Append-only — never edit existing entries. next_available_number increments with each new creator.",
+    "created_at": ""
+  },
+  "next_available_number": 1,
+  "creators": []
+}

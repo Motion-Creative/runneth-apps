@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "name": "nb-image-gen",
+  "route": "/nb-image-gen",
+  "backend": {
+    "entry": "server/dist/index.js",
+    "prefix": "/api"
+  },
+  "frontend": {
+    "dist": "frontend/dist",
+    "index": "index.html"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "_note": "Copy this file to /agent/brain/{brand_slug}/products/{product_slug}.json and fill in all fields. Remove this _note key.",
+  "product_name": "",
+  "product_slug": "",
+  "product_code": "",
+  "brand": "",
+  "description": "",
+  "key_ingredients_or_features": [],
+  "claims": [],
+  "how_to_use": [],
+  "ad_name_filter_strings": [],
+  "price_usd": null,
+  "notes": "",
+  "updated_at": ""
+}
