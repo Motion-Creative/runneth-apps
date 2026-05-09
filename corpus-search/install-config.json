@@ -1,0 +1,35 @@
+{
+  "schema": "1.0",
+  "id": "corpus-search",
+  "version": "1.0.0",
+  "description": "Hybrid retrieval CLI for any folder of markdown files. SQLite + sqlite-vec + FTS5 under the hood, OpenAI text-embedding-3 for vectors, role-aware filters, sub-second queries. Index conversation transcripts, video scene summaries, research notes, briefs, anything markdown-shaped, and search by meaning rather than keywords.",
+  "customize": [],
+  "installs": [
+    { "file": "corpus-search.sh", "dest": "/agent/tools/corpus-search/corpus-search.sh", "if-not-exists": false },
+    { "file": "install.sh", "dest": "/agent/tools/corpus-search/install.sh", "if-not-exists": false },
+    { "file": "config.example.json", "dest": "/agent/tools/corpus-search/config.example.json", "if-not-exists": false },
+    { "file": "README.md", "dest": "/agent/tools/corpus-search/README.md", "if-not-exists": false },
+    { "file": "bin/corpus_search_cli.py", "dest": "/agent/tools/corpus-search/bin/corpus_search_cli.py", "if-not-exists": false },
+    { "file": "lib/schema.sql", "dest": "/agent/tools/corpus-search/lib/schema.sql", "if-not-exists": false },
+    { "file": "lib/store.py", "dest": "/agent/tools/corpus-search/lib/store.py", "if-not-exists": false },
+    { "file": "lib/config.py", "dest": "/agent/tools/corpus-search/lib/config.py", "if-not-exists": false },
+    { "file": "lib/markdown_ingest.py", "dest": "/agent/tools/corpus-search/lib/markdown_ingest.py", "if-not-exists": false },
+    { "file": "lib/embed.py", "dest": "/agent/tools/corpus-search/lib/embed.py", "if-not-exists": false },
+    { "file": "lib/embed_chunks.py", "dest": "/agent/tools/corpus-search/lib/embed_chunks.py", "if-not-exists": false },
+    { "file": "lib/search.py", "dest": "/agent/tools/corpus-search/lib/search.py", "if-not-exists": false },
+    { "file": "SKILL.md", "dest": "/agent/.agents/skills/corpus-search/SKILL.md", "if-not-exists": false }
+  ],
+  "post-install": [
+    "Run `bash /agent/tools/corpus-search/install.sh` to vendor sqlite-vec, create config.json, and apply the schema. The script also probes whether OPENAI_API_KEY is already set in the workspace secret store; if not, it prints a note and the tool will request it via the secret-input widget on the first embedding call.",
+    "Add `/agent/tools/corpus-search/corpus-search.sh` and `/agent/tools/corpus-search/README.md` to /agent/INDEX.md so future chats can find the tool.",
+    "First real use: point the markdown ingestor at any folder of .md files, then embed, then query. See README.md for examples."
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-09",
+      "type": "major",
+      "notes": "Initial release. Generic markdown ingestor (frontmatter + header-aware chunking + optional timestamp extraction). SQLite + sqlite-vec + FTS5 store. OpenAI text-embedding-3-small at 256 dims by default (configurable). Hybrid BM25 + vector retrieval with reciprocal rank fusion. Role-aware filters, JSON output for agent use, demo subcommand for smoke-testing, query logging for future eval."
+    }
+  ]
+}

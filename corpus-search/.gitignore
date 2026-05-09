@@ -1,0 +1,8 @@
+# Local state, not committed to the repo.
+config.json
+corpus.db
+corpus.db-wal
+corpus.db-shm
+pkgs/
+__pycache__/
+*.pyc
