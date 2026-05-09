@@ -172,7 +172,7 @@ Exit codes: 0 = success, 1 = fatal error, 2 = sources.json missing, 3 = at least
 | `... status` | Counts and embedding state. Run after every ingest. |
 | `... refresh` | Re-index every source in `sources.json`, then embed. Idempotent. |
 | `... demo` | Run the canned queries from `config.json`. End-to-end smoke test. |
-| `... check-secret` | Probe whether `OPENAI_API_KEY` reaches the embeddings API right now. |
+| `... check-endpoint` | Probe whether `OPENAI_API_KEY` reaches the embeddings API right now. |
 | `... init` | Re-apply schema. Idempotent. |
 
 If a query returns nothing or fails, common causes:

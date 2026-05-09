@@ -52,7 +52,7 @@ python3 bin/corpus_search_cli.py init
 
 # 4) Probe the embedding secret without prompting
 echo "==> probing OPENAI_API_KEY against the embeddings API"
-if python3 bin/corpus_search_cli.py check-secret >/dev/null 2>&1; then
+if python3 bin/corpus_search_cli.py check-endpoint >/dev/null 2>&1; then
   echo "    secret OK"
 else
   echo ""

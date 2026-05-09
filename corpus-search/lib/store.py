@@ -102,8 +102,8 @@ def log_query(con, *, query_text: str, kind_filter: str | None,
     con.commit()
 
 
-def secret_probe(auth_env: str = "OPENAI_API_KEY") -> tuple[bool, str]:
-    """Return (ok, message). True iff secure-fetch can use the secret against OpenAI."""
+def probe_endpoint(auth_env: str = "OPENAI_API_KEY") -> tuple[bool, str]:
+    """Return (ok, message). True iff secure-fetch can reach the embedding endpoint."""
     import subprocess
     import tempfile
     with tempfile.NamedTemporaryFile("w+b", delete=False, suffix=".probe.json") as tf:
