@@ -15,6 +15,7 @@ sys.path.insert(0, str(TOOL_DIR))
 from lib import store as store_mod
 from lib import markdown_ingest
 from lib import embed_chunks
+from lib import refresh as refresh_mod
 from lib import search as search_mod
 from lib import embed as embed_mod
 from lib import config as config_mod
@@ -32,10 +33,15 @@ def cmd_init(args):
 
 
 def cmd_check_secret(args):
-    """Probe whether the configured embedding secret can reach the API."""
+    """Probe whether the configured embedding secret can reach the API.
+
+    The secret value never enters this process; secure-fetch injects it at
+    the network layer. We also intentionally do not echo the secret's env
+    var name in the output so misconfigured logs never carry it.
+    """
     cfg = config_mod.load(TOOL_DIR)["embed"]
     ok, msg = store_mod.secret_probe(cfg["secret_key"])
-    out = {"secret_key": cfg["secret_key"], "endpoint": cfg["endpoint"], "ok": ok, "message": msg}
+    out = {"endpoint": cfg["endpoint"], "ok": ok, "message": msg}
     print(json.dumps(out, indent=2))
     sys.exit(0 if ok else 1)
 
@@ -125,6 +131,25 @@ def cmd_query(args):
     _print_hits(args.query, hits, timings)
 
 
+def cmd_refresh(args):
+    """Re-index every source listed in sources.json, then embed any new chunks."""
+    con = store_mod.connect()
+    try:
+        report = refresh_mod.refresh(con, embed_after=not args.no_embed,
+                                     verbose=not args.quiet)
+    except FileNotFoundError as e:
+        print(json.dumps({"error": str(e)}, indent=2))
+        sys.exit(2)
+    except Exception as e:
+        print(json.dumps({"error": str(e)}, indent=2))
+        sys.exit(1)
+    print(json.dumps(report, indent=2))
+    # Exit 3 (distinct from 0/1/2) when at least one source errored, so a
+    # routine can detect partial failures without parsing JSON.
+    if any(s.get("error") for s in report["per_source"]):
+        sys.exit(3)
+
+
 def cmd_demo(args):
     """Smoke test: run the canned demo queries against whatever's indexed."""
     con = store_mod.connect()
@@ -186,6 +211,11 @@ def main(argv=None):
     pq.add_argument("--no-vector", action="store_true", help="BM25 only")
     pq.add_argument("--format", choices=["human", "json"], default="human")
     pq.set_defaults(func=cmd_query)
+
+    pr = sub.add_parser("refresh", help="index every source in sources.json, then embed (idempotent)")
+    pr.add_argument("--no-embed", action="store_true", help="only re-ingest, skip the embed pass")
+    pr.add_argument("--quiet", action="store_true")
+    pr.set_defaults(func=cmd_refresh)
 
     pd = sub.add_parser("demo", help="run sample queries to smoke-test the install")
     pd.add_argument("--queries", nargs="*", default=None, help="override the canned queries")

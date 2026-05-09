@@ -120,11 +120,57 @@ BM25 only (skip the embedding leg, faster cold starts):
 
 ---
 
+## Keep your corpus current automatically
+
+Most workspaces have content arriving in folders on a schedule (Drive sync, video summary pipelines, daily Gong dumps). Rather than running `index` and `embed` by hand each day, declare the folders you want indexed in `sources.json` and call `refresh` on a schedule.
+
+First-time setup:
+
+```bash
+# 1. Edit sources.json (created by install.sh from sources.example.json)
+#    to point at your folders. Each entry needs source + kind, optional
+#    name + pattern + tenant + enabled.
+#
+#    {
+#      "sources": [
+#        { "name": "creative-library",
+#          "source": "~/drive/creative-library/scene-summaries",
+#          "kind":   "video-summary",
+#          "enabled": true },
+#        { "name": "team-briefs",
+#          "source": "~/drive/briefs",
+#          "kind":   "brief",
+#          "enabled": true }
+#      ]
+#    }
+
+# 2. Run an initial backfill (idempotent; safe to repeat).
+bash /agent/tools/corpus-search/corpus-search.sh refresh
+
+# 3. Set up a daily reminder via the Runneth `reminder` tool.
+```
+
+Recommended reminder text (paste into Runneth):
+
+> Every day at 8:00 America/Toronto, run `bash /agent/tools/corpus-search/corpus-search.sh refresh`. If `chunks_inserted_total > 0`, post a one-line summary in this conversation. Otherwise post nothing.
+
+That's it. One reminder, one config file. New folder to watch? Edit `sources.json`. New cadence? Edit the reminder. No new reminders per source.
+
+What `refresh` does in one call:
+
+1. Walks every enabled source in `sources.json`
+2. Re-runs the markdown ingestor on each (idempotent: unchanged files skipped via content hash)
+3. Embeds the union of all new chunks in one pass at the end
+4. Returns a JSON report with per-source counts and total elapsed time
+
+Exit codes: 0 = success, 1 = fatal error, 2 = sources.json missing, 3 = at least one source had a non-fatal error (e.g., a source folder doesn't exist; other sources still indexed). Useful for the reminder to decide whether to ping you.
+
 ## Status, demo, troubleshooting
 
 | Command | Use when |
 |---|---|
 | `... status` | Counts and embedding state. Run after every ingest. |
+| `... refresh` | Re-index every source in `sources.json`, then embed. Idempotent. |
 | `... demo` | Run the canned queries from `config.json`. End-to-end smoke test. |
 | `... check-secret` | Probe whether `OPENAI_API_KEY` reaches the embeddings API right now. |
 | `... init` | Re-apply schema. Idempotent. |

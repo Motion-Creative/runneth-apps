@@ -109,6 +109,47 @@ bash /agent/tools/corpus-search/corpus-search.sh embed
 
 Files whose content hash hasn't changed are skipped automatically.
 
+### Setting up recurring refresh (do this during install)
+
+Most workspaces have content arriving in folders on a schedule. Rather than running `index` + `embed` by hand each day, declare the folders to watch in `sources.json` and call `refresh` on a schedule via one Runneth reminder. Set this up at install time, not after the first ingest fails to find new content.
+
+**Step 1: ask the user which folders to watch.** For each folder, capture: a short name, the absolute path, and a `kind` tag (e.g. `video-summary`, `brief`, `gong-call`, `note`).
+
+**Step 2: edit `/agent/tools/corpus-search/sources.json`.** The install script created it from `sources.example.json` with everything disabled. Replace the example entries with the user's real sources and set `enabled: true` for each.
+
+```json
+{
+  "sources": [
+    {
+      "name": "creative-library",
+      "source": "~/drive/creative-library/scene-summaries",
+      "kind": "video-summary",
+      "enabled": true
+    },
+    {
+      "name": "team-briefs",
+      "source": "~/drive/briefs",
+      "kind": "brief",
+      "enabled": true
+    }
+  ]
+}
+```
+
+**Step 3: run the initial backfill.**
+
+```bash
+bash /agent/tools/corpus-search/corpus-search.sh refresh
+```
+
+**Step 4: create one daily reminder via the `reminder` tool.** Recommended text (adjust the time and channel to fit the workspace):
+
+> Every day at 8:00 America/Toronto, run `bash /agent/tools/corpus-search/corpus-search.sh refresh`. If `chunks_inserted_total > 0`, post a one-line summary in this conversation. Otherwise post nothing.
+
+One reminder, many sources. New folder later? Edit `sources.json`, no new reminder needed.
+
+**Refresh exit codes** for the reminder to interpret: `0` = success, `2` = sources.json missing, `3` = at least one source had a non-fatal error (other sources still indexed; the JSON report names the failing source). The reminder can ping the user only on exit code `3` or when `chunks_inserted_total > 0`, so it stays quiet on routine no-op days.
+
 ---
 
 ## Limits and known issues

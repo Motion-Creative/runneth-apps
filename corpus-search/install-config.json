@@ -8,6 +8,7 @@
     { "file": "corpus-search.sh", "dest": "/agent/tools/corpus-search/corpus-search.sh", "if-not-exists": false },
     { "file": "install.sh", "dest": "/agent/tools/corpus-search/install.sh", "if-not-exists": false },
     { "file": "config.example.json", "dest": "/agent/tools/corpus-search/config.example.json", "if-not-exists": false },
+    { "file": "sources.example.json", "dest": "/agent/tools/corpus-search/sources.example.json", "if-not-exists": false },
     { "file": "README.md", "dest": "/agent/tools/corpus-search/README.md", "if-not-exists": false },
     { "file": "bin/corpus_search_cli.py", "dest": "/agent/tools/corpus-search/bin/corpus_search_cli.py", "if-not-exists": false },
     { "file": "lib/schema.sql", "dest": "/agent/tools/corpus-search/lib/schema.sql", "if-not-exists": false },
@@ -16,13 +17,15 @@
     { "file": "lib/markdown_ingest.py", "dest": "/agent/tools/corpus-search/lib/markdown_ingest.py", "if-not-exists": false },
     { "file": "lib/embed.py", "dest": "/agent/tools/corpus-search/lib/embed.py", "if-not-exists": false },
     { "file": "lib/embed_chunks.py", "dest": "/agent/tools/corpus-search/lib/embed_chunks.py", "if-not-exists": false },
+    { "file": "lib/refresh.py", "dest": "/agent/tools/corpus-search/lib/refresh.py", "if-not-exists": false },
     { "file": "lib/search.py", "dest": "/agent/tools/corpus-search/lib/search.py", "if-not-exists": false },
     { "file": "SKILL.md", "dest": "/agent/.agents/skills/corpus-search/SKILL.md", "if-not-exists": false }
   ],
   "post-install": [
-    "Run `bash /agent/tools/corpus-search/install.sh` to vendor sqlite-vec, create config.json, and apply the schema. The script also probes whether OPENAI_API_KEY is already set in the workspace secret store; if not, it prints a note and the tool will request it via the secret-input widget on the first embedding call.",
+    "Run `bash /agent/tools/corpus-search/install.sh` to vendor sqlite-vec, create config.json + sources.json from their examples, and apply the schema. The script also probes whether OPENAI_API_KEY is already set in the workspace secret store; if not, it prints a note and the tool will request it via the secret-input widget on the first embedding call.",
     "Add `/agent/tools/corpus-search/corpus-search.sh` and `/agent/tools/corpus-search/README.md` to /agent/INDEX.md so future chats can find the tool.",
-    "First real use: point the markdown ingestor at any folder of .md files, then embed, then query. See README.md for examples."
+    "Ask the user which folders should be indexed and edit /agent/tools/corpus-search/sources.json to list them. Then run `corpus-search refresh` once for the initial backfill, and create one daily Runneth reminder via the `reminder` tool to keep the corpus current automatically. SKILL.md walks through the exact reminder text.",
+    "First real use: point the markdown ingestor at any folder of .md files (or use `refresh` if you set up sources.json), then embed, then query. See README.md for examples."
   ],
   "changelog": [
     {

@@ -36,10 +36,14 @@ else
   echo "==> sqlite-vec already vendored, skipping"
 fi
 
-# 2) Bootstrap config.json from the example
+# 2) Bootstrap config.json + sources.json from the examples
 if [ ! -f "config.json" ]; then
   echo "==> creating config.json from config.example.json"
   cp config.example.json config.json
+fi
+if [ ! -f "sources.json" ]; then
+  echo "==> creating sources.json from sources.example.json (edit it to point at your folders)"
+  cp sources.example.json sources.json
 fi
 
 # 3) Apply schema (creates DB if missing, idempotent on existing DBs)
@@ -66,3 +70,8 @@ echo "      bash $TOOL_DIR/corpus-search.sh index markdown --source /path/to/fol
 echo "      bash $TOOL_DIR/corpus-search.sh embed"
 echo "      bash $TOOL_DIR/corpus-search.sh query \"<your question>\""
 echo "      bash $TOOL_DIR/corpus-search.sh demo"
+echo ""
+echo "    to keep a corpus current automatically:"
+echo "      1. edit $TOOL_DIR/sources.json to list folders + kinds"
+echo "      2. bash $TOOL_DIR/corpus-search.sh refresh   (does index + embed for all)"
+echo "      3. set up one Runneth reminder to call 'refresh' on a schedule"
