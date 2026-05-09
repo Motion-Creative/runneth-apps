@@ -40,7 +40,7 @@ def cmd_check_secret(args):
     var name in the output so misconfigured logs never carry it.
     """
     cfg = config_mod.load(TOOL_DIR)["embed"]
-    ok, msg = store_mod.secret_probe(cfg["secret_key"])
+    ok, msg = store_mod.secret_probe(cfg["auth_env"])
     out = {"endpoint": cfg["endpoint"], "ok": ok, "message": msg}
     print(json.dumps(out, indent=2))
     sys.exit(0 if ok else 1)

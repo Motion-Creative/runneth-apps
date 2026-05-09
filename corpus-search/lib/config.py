@@ -15,7 +15,7 @@ DEFAULTS = {
         "dim": 256,
         "batch_size": 24,
         "endpoint": "https://api.openai.com/v1/embeddings",
-        "secret_key": "OPENAI_API_KEY",
+        "auth_env": "OPENAI_API_KEY",
         "max_response_bytes": 1990000,
     },
     "search": {

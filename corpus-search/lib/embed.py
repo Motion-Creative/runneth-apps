@@ -27,7 +27,7 @@ DEFAULT_MODEL = _CFG["model"]
 DEFAULT_DIM = _CFG["dim"]
 DEFAULT_BATCH = _CFG["batch_size"]
 ENDPOINT = _CFG["endpoint"]
-SECRET_KEY = _CFG["secret_key"]
+AUTH_ENV = _CFG["auth_env"]
 MAX_RESPONSE_BYTES = _CFG["max_response_bytes"]
 
 
@@ -52,7 +52,7 @@ def embed_batch(texts: Sequence[str], *, model: str | None = None,
                         "secure-fetch", "run",
                         "--url", ENDPOINT,
                         "--method", "POST",
-                        "--secret-key", SECRET_KEY,
+                        "--secret-key", AUTH_ENV,
                         "--header", "Content-Type: application/json",
                         "--body", body,
                         "--timeout-ms", "120000",

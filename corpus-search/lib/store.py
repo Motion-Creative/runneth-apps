@@ -102,7 +102,7 @@ def log_query(con, *, query_text: str, kind_filter: str | None,
     con.commit()
 
 
-def secret_probe(secret_key: str = "OPENAI_API_KEY") -> tuple[bool, str]:
+def secret_probe(auth_env: str = "OPENAI_API_KEY") -> tuple[bool, str]:
     """Return (ok, message). True iff secure-fetch can use the secret against OpenAI."""
     import subprocess
     import tempfile
@@ -114,7 +114,7 @@ def secret_probe(secret_key: str = "OPENAI_API_KEY") -> tuple[bool, str]:
                 [
                     "secure-fetch", "run",
                     "--url", "https://api.openai.com/v1/models",
-                    "--secret-key", secret_key,
+                    "--secret-key", auth_env,
                     "--timeout-ms", "10000",
                     "--max-response-bytes", "100000",
                 ],
