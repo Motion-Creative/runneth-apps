@@ -16,7 +16,8 @@
     "top_k_default": 15
   },
   "rerank": {
-    "_comment": "Optional second pass that asks an LLM to rerank the top hybrid candidates by intent match. Off by default; turn on per-query with --rerank. Adds ~1-3s of latency and a few cents per 1000 queries.",
+    "_comment": "Second pass that asks an LLM to rerank the top hybrid candidates by intent match. ON by default because the precision lift on conceptual queries is large and the cost is trivial (~1 cent per query, ~1-3s added latency). Pass --no-rerank per query to skip, or set default_on:false here to disable for the whole workspace.",
+    "default_on": true,
     "model": "gpt-4.1-mini",
     "endpoint": "https://api.openai.com/v1/chat/completions",
     "auth_env": "OPENAI_API_KEY",

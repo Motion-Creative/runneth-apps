@@ -24,6 +24,7 @@ DEFAULTS = {
         "top_k_default": 15,
     },
     "rerank": {
+        "default_on": True,
         "model": "gpt-4.1-mini",
         "endpoint": "https://api.openai.com/v1/chat/completions",
         "auth_env": "OPENAI_API_KEY",

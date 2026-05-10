@@ -63,56 +63,95 @@ def _build_prompt(query: str, hits, top_k: int, char_budget: int) -> tuple[str, 
     system = (
         "You are a retrieval reranker. Read each candidate against the user query "
         "and decide which best match the user's INTENT, not just topic similarity. "
-        "Return strict JSON only."
+        "Return STRICT JSON matching the schema in the user message. No commentary."
     )
     candidates = "\n\n".join(_fmt_candidate(i + 1, h, char_budget) for i, h in enumerate(hits))
     user = (
         f"USER QUERY:\n{query}\n\n"
-        f"You will see {len(hits)} numbered candidates. Pick the up to {top_k} that best "
+        f"You will see {len(hits)} numbered candidates. Pick up to {top_k} that best "
         f"match the user's intent, in order of relevance. If fewer than {top_k} truly fit, "
         f"return only those (do not pad). Skip duplicates and templated near-duplicates.\n\n"
-        f"Output ONLY a JSON array. Each element has:\n"
-        f'  - "i" (the candidate number, integer)\n'
-        f'  - "reason" (one short sentence explaining why this matches the intent)\n\n'
-        f"Example: [{{\"i\": 7, \"reason\": \"User explicitly says the output was wrong.\"}}, ...]\n\n"
-        f"CANDIDATES:\n{candidates}\n\n"
-        f"Return ONLY the JSON array. No prose, no markdown fences, no commentary."
+        f"Return a JSON object with ONE key, `results`, containing an array of objects.\n"
+        f"Schema:\n"
+        f'  {{ "results": [\n'
+        f'      {{ "i": <integer 1..N>, "reason": "<one short sentence>" }},\n'
+        f'      ...\n'
+        f'  ] }}\n\n'
+        f"Every element MUST be an object with both `i` and `reason`. Do not return bare integers. "
+        f"`reason` is one short sentence explaining why this candidate matches the user's intent.\n\n"
+        f"Example response:\n"
+        f'{{"results": [{{"i": 7, "reason": "User explicitly says the output was wrong."}}, '
+        f'{{"i": 2, "reason": "User asks for a fix to the assistant\'s mistake."}}]}}\n\n'
+        f"CANDIDATES:\n{candidates}"
     )
     return system, user
 
 
-_JSON_ARRAY_RE = re.compile(r"\[\s*\{.*?\}\s*\]", re.DOTALL)
+_JSON_ARRAY_RE = re.compile(r"\[\s*[\{\d].*?\]", re.DOTALL)
+_JSON_OBJECT_RE = re.compile(r"\{.*\}", re.DOTALL)
 
 
 def _parse_response(raw: str) -> list[dict] | None:
-    """Try hard to find a JSON array of {i, reason} objects in the response."""
+    """Find a list of {i, reason} entries in the response. Tolerant of:
+       - {"results": [...]}, our preferred schema
+       - bare arrays of objects
+       - bare arrays of integers (model shortcut)
+       - nested under a different key like {"hits": [...]}
+    """
     raw = raw.strip()
-    # Strip markdown code fences if the model added them despite our instructions.
     if raw.startswith("```"):
         raw = raw.split("```", 2)[-1].strip() if raw.count("```") >= 2 else raw
         if raw.endswith("```"):
             raw = raw[:-3].strip()
+    obj = None
     try:
-        out = json.loads(raw)
+        obj = json.loads(raw)
     except json.JSONDecodeError:
-        m = _JSON_ARRAY_RE.search(raw)
-        if not m:
-            return None
-        try:
-            out = json.loads(m.group(0))
-        except json.JSONDecodeError:
-            return None
-    if not isinstance(out, list):
+        for pattern in (_JSON_OBJECT_RE, _JSON_ARRAY_RE):
+            m = pattern.search(raw)
+            if not m: continue
+            try:
+                obj = json.loads(m.group(0)); break
+            except json.JSONDecodeError:
+                continue
+    if obj is None:
         return None
+
+    # Find the list of entries.
+    candidates = None
+    if isinstance(obj, list):
+        candidates = obj
+    elif isinstance(obj, dict):
+        for key in ("results", "hits", "ranked", "top", "matches"):
+            v = obj.get(key)
+            if isinstance(v, list):
+                candidates = v; break
+        if candidates is None:
+            # last-ditch: take the first list value in the dict
+            for v in obj.values():
+                if isinstance(v, list):
+                    candidates = v; break
+    if candidates is None:
+        return None
+
     cleaned = []
-    for entry in out:
-        if not isinstance(entry, dict): continue
-        i = entry.get("i")
-        if isinstance(i, str):
-            try: i = int(i)
-            except ValueError: continue
-        if not isinstance(i, int): continue
-        cleaned.append({"i": i, "reason": str(entry.get("reason", ""))[:300]})
+    for entry in candidates:
+        if isinstance(entry, dict):
+            i = entry.get("i") or entry.get("index") or entry.get("candidate")
+            if isinstance(i, str):
+                try: i = int(i)
+                except ValueError: continue
+            if not isinstance(i, int): continue
+            reason = entry.get("reason") or entry.get("why") or ""
+            cleaned.append({"i": i, "reason": str(reason)[:300]})
+        elif isinstance(entry, int):
+            # model returned bare integers; accept them with empty reason
+            cleaned.append({"i": entry, "reason": ""})
+        elif isinstance(entry, str):
+            try:
+                cleaned.append({"i": int(entry), "reason": ""})
+            except ValueError:
+                continue
     return cleaned or None
 
 
@@ -125,10 +164,10 @@ def _call_chat_completions(system: str, user: str, model: str, timeout_ms: int) 
             {"role": "user", "content": user},
         ],
         "temperature": 0,
-        "response_format": {"type": "json_object"} if False else None,  # kept null; we parse loose JSON
+        # Force a JSON object response. The prompt asks for {"results": [...]}
+        # which keeps the model from shortcutting to bare integer arrays.
+        "response_format": {"type": "json_object"},
     }
-    # response_format with "json_object" needs the prompt to mention JSON; we prefer freeform array.
-    payload = {k: v for k, v in payload.items() if v is not None}
     body = json.dumps(payload)
 
     with tempfile.NamedTemporaryFile("w+b", delete=False, suffix=".rerank.json") as tf:

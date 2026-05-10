@@ -125,27 +125,26 @@ bash /agent/tools/corpus-search/corpus-search.sh query "<text>" \
   [--role user|assistant|speaker:<name>] \
   [--workspace "<name>"] [--user "<email>"] \
   [--since YYYY-MM-DD] [--until YYYY-MM-DD] \
-  [--top 15] [--no-vector] [--rerank] [--format human|json]
+  [--top 15] [--no-vector] [--no-rerank] [--format human|json]
 ```
 
 For agent-side parsing, use `--format json` so the response includes structured `hits` with `chunk_id`, `asset_id`, `score`, `text`, `t_start_s` / `t_end_s` (when present), and asset metadata. For showing the user, use `--format human` (default).
 
-#### When to add `--rerank`
+#### Rerank is on by default
 
-Add `--rerank` when top-k precision matters more than the extra ~1-3s of latency. The reranker reads each of the top 50 hybrid candidates against the query and keeps only the ones that actually match the user's intent, with a one-line `why:` reason for each. This catches false positives that hybrid retrieval surfaces because of topic or keyword similarity but that don't actually answer the query.
+Every query runs through an LLM rerank pass after hybrid retrieval. The reranker reads each of the top 50 candidates against the query and keeps only the ones that actually match the user's intent, with a one-line `why:` reason for each. This catches false positives that hybrid retrieval surfaces because of topic or keyword similarity but that don't actually answer the query. Adds ~1-3s of latency and ~1 cent per query — worth it almost every time.
 
-Reach for `--rerank` when:
+Reranker output: each surviving hit has `extra.rerank_reason` (the one-line judgment) and `extra.rerank_rank` (1-based position in the reranked output). When you report hits to the user, pass `extra.rerank_reason` along. It's a small win in transparency — the user sees not just the result but why the model thinks it matches.
 
-- The user asked for a curated list ("find me 10 examples of X") and you're going to show them the top hits in chat. False positives waste their reading time.
-- The query is conceptual or emotional ("users pushing back," "users excited," "customers frustrated about onboarding") where keyword overlap is a poor signal of actual intent.
-- The hybrid result has obvious noise (templated near-duplicates, off-topic hits) and rerunning with `--rerank` is worth a few cents and a couple of seconds.
+#### When to add `--no-rerank`
 
-Skip it when:
+Pass `--no-rerank` to skip the rerank pass for one query. Faster (~1s instead of ~3-5s end-to-end), free, and gives you raw hybrid recall over the full top-N. Useful when:
 
-- The agent is consuming the candidates programmatically and doesn't need top-k precision (the rerank cost is wasted).
-- Speed matters more than precision (e.g., interactive typeahead, fast lookup inside a routine).
+- You're going to consume the top 50 candidates programmatically anyway and don't need precision in the top 10.
+- You're debugging recall and want to see what hybrid alone surfaces before the reranker filters.
+- The user asked for a fast lookup and quality is good enough without the rerank.
 
-Reranker output: each surviving hit has `extra.rerank_reason` (the one-line judgment) and `extra.rerank_rank` (1-based position in the reranked output). Pass `extra.rerank_reason` along when reporting hits to the user. It's a small win in transparency.
+If the workspace genuinely doesn't want rerank running on any query, set `rerank.default_on: false` in `/agent/tools/corpus-search/config.json`. CLI flags still work to override per-query.
 
 ### Refresh (the routine path)
 

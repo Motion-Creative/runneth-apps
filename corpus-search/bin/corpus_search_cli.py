@@ -111,11 +111,14 @@ def cmd_query(args):
     con = store_mod.connect()
     t0 = time.time()
     cfg_rerank = config_mod.load(TOOL_DIR)["rerank"]
+    # CLI flag wins; otherwise fall back to config.json default.
+    rerank_flag = getattr(args, "rerank", None)
+    use_rerank = cfg_rerank.get("default_on", True) if rerank_flag is None else rerank_flag
     hits, timings = search_mod.search(
         con, args.query, top_k=args.top, kind=args.kind, role=args.role,
         workspace=args.workspace, user=args.user, since=args.since, until=args.until,
         use_vector=not args.no_vector, candidate_pool=args.pool,
-        use_rerank=getattr(args, "rerank", False),
+        use_rerank=use_rerank,
         rerank_pool=getattr(args, "rerank_pool", None) or cfg_rerank["input_pool"],
         rerank_top_k=args.top,
     )
@@ -221,9 +224,12 @@ def main(argv=None):
     pq.add_argument("--until", default=None)
     pq.add_argument("--pool", type=int, default=None, help="candidate pool size per leg")
     pq.add_argument("--no-vector", action="store_true", help="BM25 only")
-    pq.add_argument("--rerank", action="store_true",
-                    help="second-pass LLM rerank over the top hybrid candidates; "
-                         "adds 1-3s latency, materially better top-k precision")
+    # Rerank is on by default (config rerank.default_on). --rerank forces on,
+    # --no-rerank forces off. If neither is set, the config default applies.
+    pq.add_argument("--rerank", dest="rerank", action="store_true", default=None,
+                    help="force the LLM rerank pass on (default already on per config)")
+    pq.add_argument("--no-rerank", dest="rerank", action="store_false",
+                    help="skip the LLM rerank pass for this query (faster, free, less precise)")
     pq.add_argument("--rerank-pool", type=int, default=None,
                     help="how many hybrid candidates to feed the reranker (default: config rerank.input_pool)")
     pq.add_argument("--format", choices=["human", "json"], default="human")
