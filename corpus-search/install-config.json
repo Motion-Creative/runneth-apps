@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "corpus-search",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Hybrid retrieval CLI for any folder of markdown files. SQLite + sqlite-vec + FTS5 under the hood, OpenAI text-embedding-3 for vectors, role-aware filters, sub-second queries. Index conversation transcripts, video scene summaries, research notes, briefs, anything markdown-shaped, and search by meaning rather than keywords.",
   "customize": [],
   "installs": [

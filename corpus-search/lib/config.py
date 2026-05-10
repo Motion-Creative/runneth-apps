@@ -23,6 +23,15 @@ DEFAULTS = {
         "rrf_k": 60,
         "top_k_default": 15,
     },
+    "rerank": {
+        "model": "gpt-4.1-mini",
+        "endpoint": "https://api.openai.com/v1/chat/completions",
+        "auth_env": "OPENAI_API_KEY",
+        "input_pool": 50,
+        "output_top_k": 10,
+        "chunk_char_budget": 700,
+        "timeout_ms": 60000,
+    },
     "demo": {
         "queries": [
             "summary",

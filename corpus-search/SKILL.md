@@ -125,10 +125,27 @@ bash /agent/tools/corpus-search/corpus-search.sh query "<text>" \
   [--role user|assistant|speaker:<name>] \
   [--workspace "<name>"] [--user "<email>"] \
   [--since YYYY-MM-DD] [--until YYYY-MM-DD] \
-  [--top 15] [--no-vector] [--format human|json]
+  [--top 15] [--no-vector] [--rerank] [--format human|json]
 ```
 
 For agent-side parsing, use `--format json` so the response includes structured `hits` with `chunk_id`, `asset_id`, `score`, `text`, `t_start_s` / `t_end_s` (when present), and asset metadata. For showing the user, use `--format human` (default).
+
+#### When to add `--rerank`
+
+Add `--rerank` when top-k precision matters more than the extra ~1-3s of latency. The reranker reads each of the top 50 hybrid candidates against the query and keeps only the ones that actually match the user's intent, with a one-line `why:` reason for each. This catches false positives that hybrid retrieval surfaces because of topic or keyword similarity but that don't actually answer the query.
+
+Reach for `--rerank` when:
+
+- The user asked for a curated list ("find me 10 examples of X") and you're going to show them the top hits in chat. False positives waste their reading time.
+- The query is conceptual or emotional ("users pushing back," "users excited," "customers frustrated about onboarding") where keyword overlap is a poor signal of actual intent.
+- The hybrid result has obvious noise (templated near-duplicates, off-topic hits) and rerunning with `--rerank` is worth a few cents and a couple of seconds.
+
+Skip it when:
+
+- The agent is consuming the candidates programmatically and doesn't need top-k precision (the rerank cost is wasted).
+- Speed matters more than precision (e.g., interactive typeahead, fast lookup inside a routine).
+
+Reranker output: each surviving hit has `extra.rerank_reason` (the one-line judgment) and `extra.rerank_rank` (1-based position in the reranked output). Pass `extra.rerank_reason` along when reporting hits to the user. It's a small win in transparency.
 
 ### Refresh (the routine path)
 
@@ -193,6 +210,7 @@ If the user adds new files to an already-indexed folder, do nothing — `refresh
 | OpenAI embeddings via secure-fetch | `lib/embed.py` |
 | Backfill embeddings for unembedded chunks | `lib/embed_chunks.py` |
 | Hybrid BM25 + vector + RRF fusion | `lib/search.py` |
+| Optional LLM rerank pass over top hybrid candidates | `lib/rerank.py` |
 | Refresh all configured sources | `lib/refresh.py` |
 | Config loading with defaults | `lib/config.py` |
 | Defaults the user can override | `config.example.json` |

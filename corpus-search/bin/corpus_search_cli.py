@@ -96,7 +96,10 @@ def _print_hits(query, hits, timings):
         if h.bm25_rank is not None: rank_bits.append(f"bm25#{h.bm25_rank}")
         if h.vec_rank is not None: rank_bits.append(f"vec#{h.vec_rank}")
         rank_bits.append(f"rrf={h.score:.4f}")
+        rerank_reason = (h.extra or {}).get("rerank_reason") if getattr(h, "extra", None) else None
         print(f"     role={h.role or '-'}  {'  '.join(rank_bits)}")
+        if rerank_reason:
+            print(f"     why: {rerank_reason}")
         snippet = h.text.replace("\n", " ")
         if len(snippet) > 220: snippet = snippet[:220] + "..."
         print(f"     {snippet}")
@@ -107,10 +110,14 @@ def _print_hits(query, hits, timings):
 def cmd_query(args):
     con = store_mod.connect()
     t0 = time.time()
+    cfg_rerank = config_mod.load(TOOL_DIR)["rerank"]
     hits, timings = search_mod.search(
         con, args.query, top_k=args.top, kind=args.kind, role=args.role,
         workspace=args.workspace, user=args.user, since=args.since, until=args.until,
         use_vector=not args.no_vector, candidate_pool=args.pool,
+        use_rerank=getattr(args, "rerank", False),
+        rerank_pool=getattr(args, "rerank_pool", None) or cfg_rerank["input_pool"],
+        rerank_top_k=args.top,
     )
     timings["total_ms"] = round((time.time() - t0) * 1000, 1)
 
@@ -214,6 +221,11 @@ def main(argv=None):
     pq.add_argument("--until", default=None)
     pq.add_argument("--pool", type=int, default=None, help="candidate pool size per leg")
     pq.add_argument("--no-vector", action="store_true", help="BM25 only")
+    pq.add_argument("--rerank", action="store_true",
+                    help="second-pass LLM rerank over the top hybrid candidates; "
+                         "adds 1-3s latency, materially better top-k precision")
+    pq.add_argument("--rerank-pool", type=int, default=None,
+                    help="how many hybrid candidates to feed the reranker (default: config rerank.input_pool)")
     pq.add_argument("--format", choices=["human", "json"], default="human")
     pq.set_defaults(func=cmd_query)
 

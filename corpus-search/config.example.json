@@ -15,6 +15,16 @@
     "rrf_k": 60,
     "top_k_default": 15
   },
+  "rerank": {
+    "_comment": "Optional second pass that asks an LLM to rerank the top hybrid candidates by intent match. Off by default; turn on per-query with --rerank. Adds ~1-3s of latency and a few cents per 1000 queries.",
+    "model": "gpt-4.1-mini",
+    "endpoint": "https://api.openai.com/v1/chat/completions",
+    "auth_env": "OPENAI_API_KEY",
+    "input_pool": 50,
+    "output_top_k": 10,
+    "chunk_char_budget": 700,
+    "timeout_ms": 60000
+  },
   "demo": {
     "_comment": "Queries the `demo` subcommand runs as a smoke test after install.",
     "queries": [
