@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "corpus-search",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Hybrid retrieval CLI for any folder of markdown files. SQLite + sqlite-vec + FTS5 under the hood, OpenAI text-embedding-3 for vectors, role-aware filters, sub-second queries. Index conversation transcripts, video scene summaries, research notes, briefs, anything markdown-shaped, and search by meaning rather than keywords.",
   "customize": [],
   "installs": [
@@ -18,6 +18,7 @@
     { "file": "lib/embed.py", "dest": "/agent/tools/corpus-search/lib/embed.py", "if-not-exists": false },
     { "file": "lib/embed_chunks.py", "dest": "/agent/tools/corpus-search/lib/embed_chunks.py", "if-not-exists": false },
     { "file": "lib/refresh.py", "dest": "/agent/tools/corpus-search/lib/refresh.py", "if-not-exists": false },
+    { "file": "lib/rerank.py", "dest": "/agent/tools/corpus-search/lib/rerank.py", "if-not-exists": false },
     { "file": "lib/search.py", "dest": "/agent/tools/corpus-search/lib/search.py", "if-not-exists": false },
     { "file": "SKILL.md", "dest": "/agent/.agents/skills/corpus-search/SKILL.md", "if-not-exists": false },
     {
@@ -37,6 +38,12 @@
     "6. Re-run install.sh and confirm every TODO has flipped to [done]. Tell the user the install is complete and what they can search now."
   ],
   "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2026-05-09",
+      "type": "minor",
+      "notes": "LLM rerank pass runs after hybrid retrieval on every query by default. Second pass over the top 50 candidates using gpt-4.1-mini reads each candidate against the query and keeps only the ones that match the user's intent, with a one-line why: reason for each. Materially better top-k precision on conceptual/emotional queries; ~1-3s latency added; ~$0.01 per query. ON by default because the precision lift is large and the cost is trivial. Disable per query with --no-rerank, or workspace-wide by setting rerank.default_on:false in config.json."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-09",

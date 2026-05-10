@@ -118,6 +118,13 @@ BM25 only (skip the embedding leg, faster cold starts):
 ... query "..." --no-vector
 ```
 
+Skip the reranker pass for a faster, no-cost query (less precise, useful for programmatic use or fast lookups):
+```bash
+... query "..." --no-rerank
+```
+
+**The reranker is on by default.** It's a second pass that asks `gpt-4.1-mini` to read each of the top 50 hybrid candidates against your query and return only the ones that genuinely match the user's intent. It catches false positives that hybrid retrieval surfaces because of topic or keyword similarity, and writes a one-line `why:` reason for each surviving hit. Adds ~1-3s of latency and ~1 cent per query — trivial cost for materially better top-k precision on conceptual queries. Turn it off per query with `--no-rerank` when you want raw hybrid recall (debugging, eval, or when you'll consume 50 candidates programmatically anyway). Disable it workspace-wide by setting `rerank.default_on: false` in `config.json`.
+
 ---
 
 ## Keep your corpus current automatically
@@ -193,9 +200,14 @@ Open `/agent/tools/corpus-search/config.json` to adjust:
 | `embed.model` | `text-embedding-3-small` | Bump to `text-embedding-3-large` for technical / domain-heavy content. ~3-5pt MTEB lift, ~6x cost. |
 | `embed.dim` | `256` | Raise if your platform's `secure-fetch` cap is higher than this sandbox's. Re-embed required when you change. |
 | `embed.batch_size` | `24` | Lower if you hit "secure-fetch truncated the response." |
-| `embed.endpoint` / `embed.secret_key` | OpenAI | Swap to a Motion AI proxy or another provider when one is available. |
+| `embed.endpoint` / `embed.auth_env` | OpenAI | Swap to a Motion AI proxy or another provider when one is available. |
 | `search.candidate_pool` | `120` | Larger = better recall, slightly slower fuse step. |
 | `search.top_k_default` | `15` | Default `--top` value. |
+| `rerank.default_on` | `true` | Set to `false` to disable rerank workspace-wide; everyday queries then run hybrid-only unless you pass `--rerank`. |
+| `rerank.model` | `gpt-4.1-mini` | Bump to `gpt-4o` or `gpt-4.1` for sharper rerank judgment at higher cost. |
+| `rerank.input_pool` | `50` | How many hybrid candidates to feed the reranker. Larger = more recall in the rerank pass, more tokens to the LLM. |
+| `rerank.output_top_k` | `10` | Default reranked-output size when rerank is active. |
+| `rerank.chunk_char_budget` | `700` | Per-chunk character cap when serializing candidates into the rerank prompt. Lower if you index very long chunks. |
 | `demo.queries` | three generic | Replace with queries that fit your indexed corpus to make `demo` more useful. |
 
 ---

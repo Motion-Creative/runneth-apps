@@ -10,6 +10,7 @@ from typing import Any, Sequence
 
 from lib import embed as embed_mod
 from lib import config as config_mod
+from lib import rerank as rerank_mod
 
 TOOL_DIR = Path(__file__).resolve().parent.parent
 _CFG = config_mod.load(TOOL_DIR)["search"]
@@ -127,10 +128,11 @@ def _hydrate_asset(con, asset_ids):
 
 def search(con, query_text, *, top_k=None, kind=None, role=None, workspace=None,
            user=None, since=None, until=None, use_vector=True,
-           candidate_pool=None) -> tuple[list[SearchHit], dict]:
+           candidate_pool=None, use_rerank=False, rerank_pool=None,
+           rerank_top_k=None) -> tuple[list[SearchHit], dict]:
     top_k = top_k or DEFAULT_TOP_K
     candidate_pool = candidate_pool or DEFAULT_POOL
-    timings: dict[str, Any] = {"bm25_ms": 0.0, "vec_ms": 0.0, "embed_ms": 0.0, "fuse_ms": 0.0}
+    timings: dict[str, Any] = {"bm25_ms": 0.0, "vec_ms": 0.0, "embed_ms": 0.0, "fuse_ms": 0.0, "rerank_ms": 0.0}
     filters_sql, filters_params = _build_filters(kind, role, workspace, user, since, until)
 
     t0 = time.time()
@@ -157,7 +159,10 @@ def search(con, query_text, *, top_k=None, kind=None, role=None, workspace=None,
 
     t0 = time.time()
     fused = _rrf_fuse(bm25_hits, vec_hits)
-    ranked = sorted(fused.values(), key=lambda x: x["fused"], reverse=True)[:top_k]
+    # When rerank is on, fetch a larger ranked window so the reranker has
+    # something to choose from. The final returned slice still respects top_k.
+    pre_rerank_k = max(top_k, rerank_pool or 0) if use_rerank else top_k
+    ranked = sorted(fused.values(), key=lambda x: x["fused"], reverse=True)[:pre_rerank_k]
     timings["fuse_ms"] = round((time.time() - t0) * 1000, 1)
 
     assets = _hydrate_asset(con, [r["asset_id"] for r in ranked])
@@ -183,6 +188,23 @@ def search(con, query_text, *, top_k=None, kind=None, role=None, workspace=None,
     timings["bm25_candidates"] = len(bm25_hits)
     timings["vec_candidates"] = len(vec_hits)
     timings["fused_unique"] = len(fused)
+
+    if use_rerank and hits:
+        reranked, outcome = rerank_mod.rerank_hits(
+            query_text, hits, top_k=rerank_top_k or top_k,
+        )
+        timings["rerank_ms"] = outcome.elapsed_ms
+        timings["rerank_used"] = outcome.used
+        timings["rerank_model"] = outcome.model
+        if outcome.error:
+            timings["rerank_error"] = outcome.error
+        if outcome.used:
+            hits = reranked
+        else:
+            hits = hits[:top_k]
+    else:
+        hits = hits[:top_k]
+
     return hits, timings
 
 

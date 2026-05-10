@@ -125,10 +125,26 @@ bash /agent/tools/corpus-search/corpus-search.sh query "<text>" \
   [--role user|assistant|speaker:<name>] \
   [--workspace "<name>"] [--user "<email>"] \
   [--since YYYY-MM-DD] [--until YYYY-MM-DD] \
-  [--top 15] [--no-vector] [--format human|json]
+  [--top 15] [--no-vector] [--no-rerank] [--format human|json]
 ```
 
 For agent-side parsing, use `--format json` so the response includes structured `hits` with `chunk_id`, `asset_id`, `score`, `text`, `t_start_s` / `t_end_s` (when present), and asset metadata. For showing the user, use `--format human` (default).
+
+#### Rerank is on by default
+
+Every query runs through an LLM rerank pass after hybrid retrieval. The reranker reads each of the top 50 candidates against the query and keeps only the ones that actually match the user's intent, with a one-line `why:` reason for each. This catches false positives that hybrid retrieval surfaces because of topic or keyword similarity but that don't actually answer the query. Adds ~1-3s of latency and ~1 cent per query — worth it almost every time.
+
+Reranker output: each surviving hit has `extra.rerank_reason` (the one-line judgment) and `extra.rerank_rank` (1-based position in the reranked output). When you report hits to the user, pass `extra.rerank_reason` along. It's a small win in transparency — the user sees not just the result but why the model thinks it matches.
+
+#### When to add `--no-rerank`
+
+Pass `--no-rerank` to skip the rerank pass for one query. Faster (~1s instead of ~3-5s end-to-end), free, and gives you raw hybrid recall over the full top-N. Useful when:
+
+- You're going to consume the top 50 candidates programmatically anyway and don't need precision in the top 10.
+- You're debugging recall and want to see what hybrid alone surfaces before the reranker filters.
+- The user asked for a fast lookup and quality is good enough without the rerank.
+
+If the workspace genuinely doesn't want rerank running on any query, set `rerank.default_on: false` in `/agent/tools/corpus-search/config.json`. CLI flags still work to override per-query.
 
 ### Refresh (the routine path)
 
@@ -193,6 +209,7 @@ If the user adds new files to an already-indexed folder, do nothing — `refresh
 | OpenAI embeddings via secure-fetch | `lib/embed.py` |
 | Backfill embeddings for unembedded chunks | `lib/embed_chunks.py` |
 | Hybrid BM25 + vector + RRF fusion | `lib/search.py` |
+| Optional LLM rerank pass over top hybrid candidates | `lib/rerank.py` |
 | Refresh all configured sources | `lib/refresh.py` |
 | Config loading with defaults | `lib/config.py` |
 | Defaults the user can override | `config.example.json` |
