@@ -9,12 +9,16 @@ from lib import embed as embed_mod
 from lib import store as store_mod
 
 
-def _truncate_for_embedding(text: str, max_chars: int = 24000) -> str:
+_MAX_CHARS = embed_mod.config_mod.load(embed_mod.TOOL_DIR)["embed"].get("max_chunk_chars", 6000)
+
+
+def _truncate_for_embedding(text: str, max_chars: int | None = None) -> str:
     """Trim very long chunks; full text remains in the chunk row for retrieval."""
-    if len(text) <= max_chars:
+    cap = max_chars or _MAX_CHARS
+    if len(text) <= cap:
         return text
-    head = text[: int(max_chars * 0.7)]
-    tail = text[-int(max_chars * 0.3):]
+    head = text[: int(cap * 0.7)]
+    tail = text[-int(cap * 0.3):]
     return head + "\n...[truncated for embedding]...\n" + tail
 
 

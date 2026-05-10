@@ -1,26 +1,90 @@
 {
   "schema": "1.0",
   "id": "corpus-search",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Hybrid retrieval CLI for any folder of markdown files. SQLite + sqlite-vec + FTS5 under the hood, OpenAI text-embedding-3 for vectors, role-aware filters, sub-second queries. Index conversation transcripts, video scene summaries, research notes, briefs, anything markdown-shaped, and search by meaning rather than keywords.",
   "customize": [],
   "installs": [
-    { "file": "corpus-search.sh", "dest": "/agent/tools/corpus-search/corpus-search.sh", "if-not-exists": false },
-    { "file": "install.sh", "dest": "/agent/tools/corpus-search/install.sh", "if-not-exists": false },
-    { "file": "config.example.json", "dest": "/agent/tools/corpus-search/config.example.json", "if-not-exists": false },
-    { "file": "sources.example.json", "dest": "/agent/tools/corpus-search/sources.example.json", "if-not-exists": false },
-    { "file": "README.md", "dest": "/agent/tools/corpus-search/README.md", "if-not-exists": false },
-    { "file": "bin/corpus_search_cli.py", "dest": "/agent/tools/corpus-search/bin/corpus_search_cli.py", "if-not-exists": false },
-    { "file": "lib/schema.sql", "dest": "/agent/tools/corpus-search/lib/schema.sql", "if-not-exists": false },
-    { "file": "lib/store.py", "dest": "/agent/tools/corpus-search/lib/store.py", "if-not-exists": false },
-    { "file": "lib/config.py", "dest": "/agent/tools/corpus-search/lib/config.py", "if-not-exists": false },
-    { "file": "lib/markdown_ingest.py", "dest": "/agent/tools/corpus-search/lib/markdown_ingest.py", "if-not-exists": false },
-    { "file": "lib/embed.py", "dest": "/agent/tools/corpus-search/lib/embed.py", "if-not-exists": false },
-    { "file": "lib/embed_chunks.py", "dest": "/agent/tools/corpus-search/lib/embed_chunks.py", "if-not-exists": false },
-    { "file": "lib/refresh.py", "dest": "/agent/tools/corpus-search/lib/refresh.py", "if-not-exists": false },
-    { "file": "lib/rerank.py", "dest": "/agent/tools/corpus-search/lib/rerank.py", "if-not-exists": false },
-    { "file": "lib/search.py", "dest": "/agent/tools/corpus-search/lib/search.py", "if-not-exists": false },
-    { "file": "SKILL.md", "dest": "/agent/.agents/skills/corpus-search/SKILL.md", "if-not-exists": false },
+    {
+      "file": "corpus-search.sh",
+      "dest": "/agent/tools/corpus-search/corpus-search.sh",
+      "if-not-exists": false
+    },
+    {
+      "file": "install.sh",
+      "dest": "/agent/tools/corpus-search/install.sh",
+      "if-not-exists": false
+    },
+    {
+      "file": "config.example.json",
+      "dest": "/agent/tools/corpus-search/config.example.json",
+      "if-not-exists": false
+    },
+    {
+      "file": "sources.example.json",
+      "dest": "/agent/tools/corpus-search/sources.example.json",
+      "if-not-exists": false
+    },
+    {
+      "file": "README.md",
+      "dest": "/agent/tools/corpus-search/README.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "bin/corpus_search_cli.py",
+      "dest": "/agent/tools/corpus-search/bin/corpus_search_cli.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/schema.sql",
+      "dest": "/agent/tools/corpus-search/lib/schema.sql",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/store.py",
+      "dest": "/agent/tools/corpus-search/lib/store.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/config.py",
+      "dest": "/agent/tools/corpus-search/lib/config.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/markdown_ingest.py",
+      "dest": "/agent/tools/corpus-search/lib/markdown_ingest.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/embed.py",
+      "dest": "/agent/tools/corpus-search/lib/embed.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/embed_chunks.py",
+      "dest": "/agent/tools/corpus-search/lib/embed_chunks.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/refresh.py",
+      "dest": "/agent/tools/corpus-search/lib/refresh.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/rerank.py",
+      "dest": "/agent/tools/corpus-search/lib/rerank.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/search.py",
+      "dest": "/agent/tools/corpus-search/lib/search.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "SKILL.md",
+      "dest": "/agent/.agents/skills/corpus-search/SKILL.md",
+      "if-not-exists": false
+    },
     {
       "file": "behavior-snippet.md",
       "dest": "user-md",
@@ -29,7 +93,7 @@
     }
   ],
   "post-install": [
-    "INSTALLER PROTOCOL — follow each step in order. Do not declare the install done until every step is resolved or explicitly waived by the user. SKILL.md has the full walkthrough; the steps below are the contract.",
+    "INSTALLER PROTOCOL \u2014 follow each step in order. Do not declare the install done until every step is resolved or explicitly waived by the user. SKILL.md has the full walkthrough; the steps below are the contract.",
     "1. Run `bash /agent/tools/corpus-search/install.sh`. It vendors sqlite-vec, applies the schema, probes OPENAI_API_KEY, and prints an INSTALL PROTOCOL checklist with [done] and [TODO] lines. Read every TODO; each one tells you exactly what to do next.",
     "2. If the checklist says OPENAI_API_KEY is NOT reachable, request it via the secret-input widget (allowed_hosts: api.openai.com). Do not paste the value into chat. In Motion's primary workspaces this is pre-provisioned and will already show [done].",
     "3. ASK THE USER (in chat): 'Which folders should I keep indexed? Tell me the path of each folder, and what kind of content is in each (e.g. video-summary, brief, gong-call, note, report).' Then edit /agent/tools/corpus-search/sources.json with their real entries (set enabled: true) and run `bash /agent/tools/corpus-search/corpus-search.sh refresh` for the initial backfill. Report the results.",
@@ -38,6 +102,12 @@
     "6. Re-run install.sh and confirm every TODO has flipped to [done]. Tell the user the install is complete and what they can search now."
   ],
   "changelog": [
+    {
+      "version": "1.1.1",
+      "date": "2026-05-09",
+      "type": "patch",
+      "notes": "Tune embed defaults for full-fidelity chunks. Lower batch_size from 24 to 12 and add max_chunk_chars (default 6000) so large chunks no longer overflow the OS argv limit when secure-fetch --body is invoked. Surfaces as 'Argument list too long' when chunks are >~10K chars and batch_size is 24. New config field max_chunk_chars caps per-chunk text sent to the embedding API; full chunk text remains in the chunk row for retrieval."
+    },
     {
       "version": "1.1.0",
       "date": "2026-05-09",

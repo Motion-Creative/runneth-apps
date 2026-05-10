@@ -3,11 +3,12 @@
     "_comment": "Which embedding model to use, the dimension to truncate to, and the batch size per embed call. text-embedding-3-small is fine for most retrieval; switch to text-embedding-3-large for a modest quality bump on technical content. The dimension must match what's already in the store; mixing dims requires a re-embed.",
     "model": "text-embedding-3-small",
     "dim": 256,
-    "batch_size": 24,
+    "batch_size": 12,
     "endpoint": "https://api.openai.com/v1/embeddings",
     "auth_env": "OPENAI_API_KEY",
     "max_response_bytes": 1990000,
-    "_dim_note": "Sandbox secure-fetch caps stdout near 146KB. 256 dim at batch_size 24 is the safe default. If you raise dim or batch_size, validate against your environment first."
+    "_dim_note": "Sandbox secure-fetch caps stdout near 146KB. 256 dim at batch_size 12 with max_chunk_chars 6000 is the safe default. If you raise dim, batch_size, or max_chunk_chars, validate against your environment first.",
+    "max_chunk_chars": 6000
   },
   "search": {
     "_comment": "How candidates are fetched and fused. candidate_pool is the per-leg fetch size; rrf_k is the reciprocal rank fusion smoothing constant.",
