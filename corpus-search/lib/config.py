@@ -13,7 +13,8 @@ DEFAULTS = {
     "embed": {
         "model": "text-embedding-3-small",
         "dim": 256,
-        "batch_size": 24,
+        "batch_size": 12,
+        "max_chunk_chars": 6000,
         "endpoint": "https://api.openai.com/v1/embeddings",
         "auth_env": "OPENAI_API_KEY",
         "max_response_bytes": 1990000,
