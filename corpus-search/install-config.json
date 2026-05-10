@@ -28,10 +28,13 @@
     }
   ],
   "post-install": [
-    "Run `bash /agent/tools/corpus-search/install.sh` to vendor sqlite-vec, create config.json + sources.json from their examples, and apply the schema. The script also probes whether OPENAI_API_KEY is already set in the workspace secret store; if not, it prints a note and the tool will request it via the secret-input widget on the first embedding call.",
-    "Add `/agent/tools/corpus-search/corpus-search.sh` and `/agent/tools/corpus-search/README.md` to /agent/INDEX.md so future chats can find the tool. The behavior-snippet is also injected into /agent/user.md at install time so the agent in every conversation in this workspace knows when to reach for the tool without spelunking.",
-    "Ask the user which folders should be indexed and edit /agent/tools/corpus-search/sources.json to list them. Then run `corpus-search refresh` once for the initial backfill, and create one daily Runneth reminder via the `reminder` tool to keep the corpus current automatically. SKILL.md walks through the exact reminder text.",
-    "First real use: point the markdown ingestor at any folder of .md files (or use `refresh` if you set up sources.json), then embed, then query. See README.md for examples."
+    "INSTALLER PROTOCOL — follow each step in order. Do not declare the install done until every step is resolved or explicitly waived by the user. SKILL.md has the full walkthrough; the steps below are the contract.",
+    "1. Run `bash /agent/tools/corpus-search/install.sh`. It vendors sqlite-vec, applies the schema, probes OPENAI_API_KEY, and prints an INSTALL PROTOCOL checklist with [done] and [TODO] lines. Read every TODO; each one tells you exactly what to do next.",
+    "2. If the checklist says OPENAI_API_KEY is NOT reachable, request it via the secret-input widget (allowed_hosts: api.openai.com). Do not paste the value into chat. In Motion's primary workspaces this is pre-provisioned and will already show [done].",
+    "3. ASK THE USER (in chat): 'Which folders should I keep indexed? Tell me the path of each folder, and what kind of content is in each (e.g. video-summary, brief, gong-call, note, report).' Then edit /agent/tools/corpus-search/sources.json with their real entries (set enabled: true) and run `bash /agent/tools/corpus-search/corpus-search.sh refresh` for the initial backfill. Report the results.",
+    "4. ASK THE USER (in chat): 'How often should I refresh the index? Default is daily at 8:00 in your timezone, but I can do hourly, weekdays-only, weekly, or anything else.' Run `reminder list` first to avoid duplicates, then `reminder add` once with text along the lines of: 'Every day at 8:00 <user-tz>, run \"bash /agent/tools/corpus-search/corpus-search.sh refresh\". If chunks_inserted_total > 0 in the JSON output, post a one-line summary in this conversation. Otherwise post nothing.'",
+    "5. Add a corpus-search row to /agent/INDEX.md so future chats can find the tool. The behavior-snippet is auto-injected into /agent/user.md so the agent in every conversation in this workspace knows when to reach for it.",
+    "6. Re-run install.sh and confirm every TODO has flipped to [done]. Tell the user the install is complete and what they can search now."
   ],
   "changelog": [
     {

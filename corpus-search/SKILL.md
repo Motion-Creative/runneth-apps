@@ -4,13 +4,75 @@
 
 ---
 
-## When to reach for it
+## INSTALL PROTOCOL — read this first if you are installing this tool
+
+When you are asked to install corpus-search in a workspace (the user pointed you at `Motion-Creative/runneth-apps/corpus-search` or said "install corpus-search"), follow this protocol exactly. Do not declare the install done until every step is resolved.
+
+### Step 1 — Drop files and run install.sh
+
+The runneth-apps installer copies the package into `/agent/tools/corpus-search/`. After files are in place, run:
+
+```bash
+bash /agent/tools/corpus-search/install.sh
+```
+
+This vendors `sqlite-vec`, applies the SQLite schema, probes whether `OPENAI_API_KEY` is already provisioned in this workspace, and prints an **INSTALL PROTOCOL checklist** at the end with `[done]` and `[TODO]` lines. Read every TODO. Each one tells you exactly what to ask the user.
+
+### Step 2 — If `OPENAI_API_KEY` is not reachable, request it
+
+If install.sh's checklist says:
+
+```
+[TODO] OPENAI_API_KEY is NOT reachable from this workspace.
+```
+
+…request it via the secret-input widget. Tell the user not to paste it into chat. Allowed host: `api.openai.com`. After they fill the widget, re-run `bash /agent/tools/corpus-search/corpus-search.sh check-endpoint` to confirm.
+
+In Motion's primary workspaces the platform team typically pre-provisions this key, so the checklist will show `[done]` and you skip this step entirely.
+
+### Step 3 — Ask the user about folders + kinds (mandatory)
+
+If the checklist says `[TODO] sources.json has no enabled real sources yet.`, **ask the user in chat**:
+
+> "Which folders should I keep indexed? Tell me the path of each folder, and what kind of content is in each (e.g. `video-summary`, `brief`, `gong-call`, `note`, `report`, `transcript`). I'll index them all into the same store and you can search by kind later."
+
+Once they answer:
+
+1. Edit `/agent/tools/corpus-search/sources.json`. Replace the disabled example entries with the real ones the user gave you. Each entry needs `name`, `source` (full path), `kind`, and `enabled: true`.
+2. Run `bash /agent/tools/corpus-search/corpus-search.sh refresh` once to do the initial backfill. It will index every source, then embed.
+3. Report the result — number of files indexed per source, any errors.
+
+### Step 4 — Ask the user about refresh schedule (mandatory)
+
+The checklist's last `[TODO]` is the daily refresh reminder. **Ask the user in chat**:
+
+> "How often should I refresh the index? Default is daily at 8:00 in your timezone, but I can do hourly, weekdays-only, weekly, or anything else."
+
+Once they answer, check existing reminders first to avoid duplicates:
+
+```bash
+reminder list
+```
+
+Then create one reminder with text like:
+
+> Every day at 8:00 America/Toronto, run `bash /agent/tools/corpus-search/corpus-search.sh refresh`. If `chunks_inserted_total > 0` in the JSON output, post a one-line summary in this conversation. Otherwise post nothing.
+
+(Adjust time and timezone per the user's answer.)
+
+### Step 5 — Confirm the install is done
+
+Re-run install.sh. The checklist should now show `[done]` for sources and reminder rows. Tell the user the install is complete and what they can now do (search any of the indexed kinds; new files in those folders are picked up automatically every refresh).
+
+---
+
+## When to reach for it (everyday operation)
 
 Reach for `corpus-search` when:
 
 - The user asks a conceptual question over a body of markdown that's bigger than fits comfortably in context.
 - The user wants to find specific scenes, moments, exchanges, or sections by meaning rather than literal keyword.
-- The user wants to filter retrieved content by role, workspace, brand, time range, or any structured field captured at ingest.
+- The user wants to filter retrieved content by role, kind, brand, time range, or any structured field captured at ingest.
 
 Don't reach for it for:
 
@@ -20,19 +82,17 @@ Don't reach for it for:
 
 ---
 
-## Prerequisites
+## Common operations
 
-Tool is installed at `/agent/tools/corpus-search/`. If it isn't, install via the runneth-apps `corpus-search` package and run:
+### Check what's indexed right now
+
+Always run this first when you're not sure whether the workspace has any of the relevant content yet:
 
 ```bash
-bash /agent/tools/corpus-search/install.sh
+bash /agent/tools/corpus-search/corpus-search.sh status
 ```
 
-The install script vendors sqlite-vec, applies the schema, and probes whether `OPENAI_API_KEY` is already present in the workspace secret store. If the probe fails, the first embedding call will surface a clear error; the agent should then emit the `secret-input` widget for `OPENAI_API_KEY` (allowed host: `api.openai.com`).
-
----
-
-## Common operations
+Returns asset counts per kind, embedding state, and DB size. An empty result for a kind means no indexing of that kind has happened yet, NOT that no such content exists in the world.
 
 ### Index a folder of markdown
 
@@ -70,22 +130,25 @@ bash /agent/tools/corpus-search/corpus-search.sh query "<text>" \
 
 For agent-side parsing, use `--format json` so the response includes structured `hits` with `chunk_id`, `asset_id`, `score`, `text`, `t_start_s` / `t_end_s` (when present), and asset metadata. For showing the user, use `--format human` (default).
 
-### Status / smoke test
+### Refresh (the routine path)
 
 ```bash
-bash /agent/tools/corpus-search/corpus-search.sh status
+bash /agent/tools/corpus-search/corpus-search.sh refresh
+```
+
+Walks every enabled source in `sources.json`, re-runs the markdown ingestor (idempotent), embeds the union of new chunks. Returns a per-source JSON report. Exit codes: `0` = success, `2` = sources.json missing, `3` = at least one source had a non-fatal error (other sources still indexed).
+
+### Demo
+
+```bash
 bash /agent/tools/corpus-search/corpus-search.sh demo
 ```
 
-`status` prints asset counts, embedding state, and DB size. `demo` runs the canned demo queries against whatever's indexed and prints results — useful for verifying an install end-to-end.
+Runs the canned demo queries from `config.json` against whatever's indexed. End-to-end smoke test. Useful right after install once sources are populated.
 
 ---
 
-## Patterns the agent should follow
-
-### Picking `--kind` at ingest time
-
-Pick a short, descriptive tag based on what the user told you about the folder. If they say "this is my video summaries folder," use `video-summary`. If they say "this is our Q1 reports," use `q1-report` or `report`. If unclear, ask once.
+## Patterns the agent should follow during everyday queries
 
 ### Constructing queries
 
@@ -98,57 +161,15 @@ Write the query as a natural-language description of intent, not a keyword list.
 
 When reporting results in chat, surface the asset title, the workspace/user/date metadata, and a short excerpt — not the raw chunk text dump. If the asset kind is something with timestamps (video summaries, Gong calls), include the time range so the user can deeplink in.
 
+### Picking `--kind` at ingest time
+
+Pick a short, descriptive tag based on what the user told you about the folder. If they say "this is my video summaries folder," use `video-summary`. If they say "this is our Q1 reports," use `q1-report` or `report`. If unclear, ask once.
+
 ### Adding new corpora over time
 
-Whenever the user adds new markdown files to a previously-indexed folder, rerun:
+Whenever the user adds a new folder to keep indexed, edit `sources.json` to add another entry rather than running `index markdown` ad-hoc. The daily refresh reminder will pick it up.
 
-```bash
-bash /agent/tools/corpus-search/corpus-search.sh index markdown --source <same path> --kind <same tag>
-bash /agent/tools/corpus-search/corpus-search.sh embed
-```
-
-Files whose content hash hasn't changed are skipped automatically.
-
-### Setting up recurring refresh (do this during install)
-
-Most workspaces have content arriving in folders on a schedule. Rather than running `index` + `embed` by hand each day, declare the folders to watch in `sources.json` and call `refresh` on a schedule via one Runneth reminder. Set this up at install time, not after the first ingest fails to find new content.
-
-**Step 1: ask the user which folders to watch.** For each folder, capture: a short name, the absolute path, and a `kind` tag (e.g. `video-summary`, `brief`, `gong-call`, `note`).
-
-**Step 2: edit `/agent/tools/corpus-search/sources.json`.** The install script created it from `sources.example.json` with everything disabled. Replace the example entries with the user's real sources and set `enabled: true` for each.
-
-```json
-{
-  "sources": [
-    {
-      "name": "creative-library",
-      "source": "~/drive/creative-library/scene-summaries",
-      "kind": "video-summary",
-      "enabled": true
-    },
-    {
-      "name": "team-briefs",
-      "source": "~/drive/briefs",
-      "kind": "brief",
-      "enabled": true
-    }
-  ]
-}
-```
-
-**Step 3: run the initial backfill.**
-
-```bash
-bash /agent/tools/corpus-search/corpus-search.sh refresh
-```
-
-**Step 4: create one daily reminder via the `reminder` tool.** Recommended text (adjust the time and channel to fit the workspace):
-
-> Every day at 8:00 America/Toronto, run `bash /agent/tools/corpus-search/corpus-search.sh refresh`. If `chunks_inserted_total > 0`, post a one-line summary in this conversation. Otherwise post nothing.
-
-One reminder, many sources. New folder later? Edit `sources.json`, no new reminder needed.
-
-**Refresh exit codes** for the reminder to interpret: `0` = success, `2` = sources.json missing, `3` = at least one source had a non-fatal error (other sources still indexed; the JSON report names the failing source). The reminder can ping the user only on exit code `3` or when `chunks_inserted_total > 0`, so it stays quiet on routine no-op days.
+If the user adds new files to an already-indexed folder, do nothing — `refresh` runs daily and will pick them up. If they want immediate indexing, run `corpus-search refresh` once on demand.
 
 ---
 
@@ -167,10 +188,11 @@ One reminder, many sources. New folder later? Edit `sources.json`, no new remind
 |---|---|
 | CLI argparse + dispatch | `bin/corpus_search_cli.py` |
 | Schema (asset, chunk, FTS5, embed_config, query_log) | `lib/schema.sql` |
-| Open DB + load sqlite-vec + secret probe | `lib/store.py` |
+| Open DB + load sqlite-vec + endpoint probe | `lib/store.py` |
 | Markdown chunking + frontmatter parsing | `lib/markdown_ingest.py` |
 | OpenAI embeddings via secure-fetch | `lib/embed.py` |
 | Backfill embeddings for unembedded chunks | `lib/embed_chunks.py` |
 | Hybrid BM25 + vector + RRF fusion | `lib/search.py` |
+| Refresh all configured sources | `lib/refresh.py` |
 | Config loading with defaults | `lib/config.py` |
 | Defaults the user can override | `config.example.json` |
