@@ -1,0 +1,52 @@
+{
+  "schema": "1.0",
+  "id": "building-integrations",
+  "version": "1.1.0",
+  "description": "When an integration connects, your agent builds a complete intelligence picture of how the platform actually behaves \u2014 community research, live verification, behavioral analysis \u2014 then creates a practical guide, pre-populates known quirks, and wires everything into the brain so it surfaces at the right moment in every future conversation.",
+  "installs": [
+    {
+      "file": "brain-quirks-protocol.md",
+      "dest": "/agent/brain/integrations/QUIRKS-PROTOCOL.md"
+    },
+    {
+      "file": "brain-usage-feedback-protocol.md",
+      "dest": "/agent/brain/integrations/USAGE-FEEDBACK-PROTOCOL.md"
+    },
+    {
+      "file": "skill-integration-onboarding.md",
+      "dest": "/agent/.agents/skills/integration-onboarding/SKILL.md"
+    },
+    {
+      "file": "skill-integration-activation.md",
+      "dest": "/agent/.agents/skills/integration-activation/SKILL.md"
+    },
+    {
+      "file": "skill-integration-context-sweep.md",
+      "dest": "/agent/.agents/skills/integration-context-sweep/SKILL.md"
+    },
+    {
+      "file": "skill-cli-factory.md",
+      "dest": "/agent/.agents/skills/cli-factory/SKILL.md"
+    },
+    {
+      "file": "behavior-snippet.md",
+      "dest": "/agent/brain/use-cases/building-integrations/behavior-snippet.md",
+      "manual-merge": "/agent/user.md",
+      "manual-merge-note": "Merge the contents of behavior-snippet.md into the session routines section of /agent/user.md, after the existing session-open routine. The sentinel comments mark the block boundaries."
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2026-05-11",
+      "type": "minor",
+      "notes": "Community intelligence sweep and live spot-check added to onboarding. Behavioral detective work and practical-guide.md added to activation. Quirks pre-populated from community research before first use."
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-05-11",
+      "type": "major",
+      "notes": "Initial release. Three-stage connection flow (onboarding + activation + context sweep), CLI factory with quirks and usage feedback, three-layer retrieval model, never-twice quirks guarantee."
+    }
+  ]
+}
