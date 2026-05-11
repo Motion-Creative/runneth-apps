@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "authenticate-apps",
-  "version": "1.0.0",
-  "description": "Add a self-bootstrapping login layer to any Runneth sandbox app. The first browser visit picks a username + password, scrypt-hashed and stored on disk. From then on, every request outside the allow-list is gated behind /login.",
+  "version": "1.1.0",
+  "description": "Add a self-bootstrapping login layer to any Runneth sandbox app. The first browser visit picks a username + password, scrypt-hashed and stored on disk. From then on, every request outside the allow-list is gated behind /login. Includes JSON API endpoints (/api/auth/status, /api/auth/login, /api/auth/logout) for React frontends, and SameSite=None cookies so sessions work inside the Motion app previewer iframe.",
   "customize": [
     {
       "token": "{{APP_NAME}}",
@@ -28,6 +28,11 @@
       "if-not-exists": false
     },
     {
+      "file": "frontend-snippet.tsx",
+      "dest": "/agent/apps/{{APP_NAME}}/frontend/src/login-screen.tsx",
+      "if-not-exists": true
+    },
+    {
       "file": "SKILL.md",
       "dest": "/agent/.agents/skills/authenticate-apps/SKILL.md",
       "if-not-exists": false
@@ -35,10 +40,17 @@
   ],
   "post-install": [
     "Open server/src/index.ts in the target app and register the auth plugin before any other route. The exact snippet is in integration-snippet.md and SKILL.md walks through the patch.",
+    "For React frontend apps: follow the auth state block in frontend-snippet.tsx / integration-snippet.md to add the LoginScreen gate to your App component.",
     "Run `app build <app-name>` and `app verify <app-name>`.",
-    "Open the public app URL. The first visit will route to /setup; pick credentials and save."
+    "If using per-app credentials: open the public app URL. The first visit will route to /setup; pick credentials and save. If using shared credentials: point credentialsPath at the shared file — setup runs once for the whole group."
   ],
   "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2026-05-11",
+      "type": "minor",
+      "notes": "Cookie fix: SameSite=None; Secure (was SameSite=Lax) so sessions work inside cross-origin iframes like the Motion app previewer. Added JSON API endpoints (/api/auth/status, /api/auth/login, /api/auth/logout) for React frontends. Added credentials: 'include' to inline form fetch scripts. Added frontend-snippet.tsx with a ready-to-use React LoginScreen component and auth state gate. Added shared credentials documentation in integration-snippet.md."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-08",
