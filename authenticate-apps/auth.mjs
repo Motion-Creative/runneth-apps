@@ -11,6 +11,12 @@
 //   • Both /setup and /login forms POST as JSON via inline fetch, because the
 //     gateway's Fastify only parses application/json by default and rejects
 //     application/x-www-form-urlencoded with FST_ERR_CTP_INVALID_MEDIA_TYPE.
+//   • React frontends can use the JSON API instead of the server-rendered
+//     login pages: GET /api/auth/status, POST /api/auth/login,
+//     POST /api/auth/logout. These paths are always exempt from the gate hook
+//     so the client can reach them before a session exists.
+//   • Cookies use SameSite=None; Secure so sessions work when the app is
+//     embedded in an iframe (e.g. the Motion app previewer).
 //
 // Zero external dependencies beyond Node built-ins and Fastify.
 //
@@ -24,6 +30,12 @@
 //     cookieName: 'your_app_session',              // optional; defaults to auth_session
 //     allowPaths: ['/api/health'],                 // optional; uptime probes etc.
 //   })
+//
+// Shared credentials (same user/pass across multiple apps):
+//   Point every app's credentialsPath at the same file, e.g.:
+//     credentialsPath: '/agent/workspaces/<workspaceId>/config/shared/credentials.json'
+//   The plugin reads the file at request time (mtime-cached), so all apps
+//   pick up credential changes immediately.
 
 import { timingSafeEqual, createHmac, randomBytes, scryptSync } from "node:crypto";
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync } from "node:fs";
@@ -160,21 +172,24 @@ function verifyToken(token, secret) {
   return !Number.isNaN(age) && age >= 0 && age <= MAX_AGE_MS;
 }
 
-function buildSetCookie(name, value, { secure, maxAgeSec }) {
+// SameSite=None; Secure is required for cookies to work when the app is
+// embedded in a cross-origin iframe (e.g. the Motion app previewer).
+// SameSite=None always requires Secure per the spec.
+function buildSetCookie(name, value, { maxAgeSec }) {
   const parts = [
     `${name}=${encodeURIComponent(value)}`,
     "Path=/",
     "HttpOnly",
-    "SameSite=Lax",
+    "SameSite=None",
+    "Secure",
     `Max-Age=${maxAgeSec}`,
   ];
-  if (secure) parts.push("Secure");
   return parts.join("; ");
 }
 
 // ----- helpers ------------------------------------------------------------
 
-function basePath(config) {
+function bp(config) {
   return config.basePath || "";
 }
 
@@ -187,12 +202,6 @@ function pathOnly(url) {
   return String(url || "/").split("?")[0];
 }
 
-function isSecureRequest(req) {
-  if (req.protocol === "https") return true;
-  const h = req.headers || {};
-  return h["x-forwarded-proto"] === "https";
-}
-
 function escapeHtml(s) {
   return String(s).replace(/[<>"'&]/g, (c) => ({
     "<": "&lt;",
@@ -201,6 +210,13 @@ function escapeHtml(s) {
     "'": "&#39;",
     "&": "&amp;",
   }[c]));
+}
+
+function isAuthenticated(req, config) {
+  const creds = loadCredentials(config);
+  if (!creds) return false;
+  const cookies = parseCookies(req.headers.cookie);
+  return verifyToken(cookies[config.cookieName], creds.cookieSecret);
 }
 
 // ----- HTML pages (rendered inline so the package has zero external assets)
@@ -223,6 +239,8 @@ function renderShellStyles() {
   </style>`;
 }
 
+// credentials: 'include' ensures cookies are sent/received even when the
+// page is loaded inside a cross-origin iframe.
 function renderJsonSubmitScript() {
   return `<script>
     (function(){
@@ -240,6 +258,7 @@ function renderJsonSubmitScript() {
           var res = await fetch(form.action, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify(data),
           });
           if (res.redirected) { window.location.href = res.url; return; }
@@ -260,7 +279,7 @@ function renderSetupPage(config, { error } = {}) {
 <html lang="en"><head><meta charset="utf-8"><title>Set up · ${escapeHtml(config.appLabel)}</title>
 ${renderShellStyles()}
 </head><body>
-  <form class="card" method="post" action="${escapeHtml(basePath(config))}/setup" autocomplete="off">
+  <form class="card" method="post" action="${escapeHtml(bp(config))}/setup" autocomplete="off">
     <div class="title">Set up access</div>
     <div class="sub">First-time setup for <strong>${escapeHtml(config.appLabel)}</strong>. Pick credentials to sign in with. The password is stored hashed on disk and never echoed back.</div>
     ${errBlock}
@@ -289,7 +308,7 @@ function renderLoginPage(config, { error, nextPath } = {}) {
 <html lang="en"><head><meta charset="utf-8"><title>Sign in · ${escapeHtml(config.appLabel)}</title>
 ${renderShellStyles()}
 </head><body>
-  <form class="card" method="post" action="${escapeHtml(basePath(config))}/login" autocomplete="on">
+  <form class="card" method="post" action="${escapeHtml(bp(config))}/login" autocomplete="on">
     <div class="title">${escapeHtml(config.appLabel)}</div>
     <div class="sub" style="margin-bottom:18px;">&nbsp;</div>
     ${errBlock}
@@ -303,7 +322,7 @@ ${renderShellStyles()}
       <input class="input" id="password" name="password" type="password"
              autocomplete="current-password" required />
     </div>
-    <input type="hidden" name="next" value="${escapeHtml(nextPath || basePath(config) + "/")}" />
+    <input type="hidden" name="next" value="${escapeHtml(nextPath || bp(config) + "/")}" />
     <button class="submit" type="submit">Sign in</button>
     <div class="footer">${escapeHtml(config.appLabel)}</div>
   </form>
@@ -315,12 +334,14 @@ ${renderJsonSubmitScript()}
 
 export default async function authPlugin(fastify, options = {}) {
   const config = resolveConfig(options);
-  const bp = basePath(config);
+  const base = bp(config);
+  const maxAgeSec = Math.floor(MAX_AGE_MS / 1000);
 
-  // Setup routes
+  // ---- Setup routes (server-rendered; for non-React apps or first-time bootstrap) ----
+
   fastify.get("/setup", async (req, reply) => {
     if (loadCredentials(config)) {
-      reply.redirect(`${bp}/`, 303);
+      reply.redirect(`${base}/`, 303);
       return;
     }
     reply.header("content-type", "text/html; charset=utf-8");
@@ -329,7 +350,7 @@ export default async function authPlugin(fastify, options = {}) {
 
   fastify.post("/setup", async (req, reply) => {
     if (loadCredentials(config)) {
-      reply.redirect(`${bp}/`, 303);
+      reply.redirect(`${base}/`, 303);
       return;
     }
     const body = req.body || {};
@@ -346,20 +367,15 @@ export default async function authPlugin(fastify, options = {}) {
       return;
     }
     const fresh = writeCredentials(config, { user, password: pwd });
-    reply.header(
-      "Set-Cookie",
-      buildSetCookie(config.cookieName, makeToken(fresh.cookieSecret), {
-        secure: isSecureRequest(req),
-        maxAgeSec: Math.floor(MAX_AGE_MS / 1000),
-      }),
-    );
-    reply.redirect(`${bp}/`, 303);
+    reply.header("Set-Cookie", buildSetCookie(config.cookieName, makeToken(fresh.cookieSecret), { maxAgeSec }));
+    reply.redirect(`${base}/`, 303);
   });
 
-  // Login routes
+  // ---- Login / logout (server-rendered redirect flow) ----
+
   fastify.get("/login", async (req, reply) => {
     if (!loadCredentials(config)) {
-      reply.redirect(`${bp}/setup`, 303);
+      reply.redirect(`${base}/setup`, 303);
       return;
     }
     const url = new URL(req.url, "http://placeholder");
@@ -369,7 +385,7 @@ export default async function authPlugin(fastify, options = {}) {
     reply.send(
       renderLoginPage(config, {
         error: errParam ? "Invalid credentials." : null,
-        nextPath: safeNext(next, bp + "/"),
+        nextPath: safeNext(next, base + "/"),
       }),
     );
   });
@@ -377,49 +393,78 @@ export default async function authPlugin(fastify, options = {}) {
   fastify.post("/login", async (req, reply) => {
     const creds = loadCredentials(config);
     if (!creds) {
-      reply.redirect(`${bp}/setup`, 303);
+      reply.redirect(`${base}/setup`, 303);
       return;
     }
     const body = req.body || {};
     const submittedUser = String(body.username || "");
     const submittedPwd = String(body.password || "");
     if (safeStringEqual(submittedUser, creds.user) && verifyPassword(creds, submittedPwd)) {
-      reply.header(
-        "Set-Cookie",
-        buildSetCookie(config.cookieName, makeToken(creds.cookieSecret), {
-          secure: isSecureRequest(req),
-          maxAgeSec: Math.floor(MAX_AGE_MS / 1000),
-        }),
-      );
-      reply.redirect(safeNext(body.next, bp + "/"), 303);
+      reply.header("Set-Cookie", buildSetCookie(config.cookieName, makeToken(creds.cookieSecret), { maxAgeSec }));
+      reply.redirect(safeNext(body.next, base + "/"), 303);
       return;
     }
-    reply.redirect(`${bp}/login?err=1`, 303);
+    reply.redirect(`${base}/login?err=1`, 303);
   });
 
-  // Logout
   fastify.get("/logout", async (req, reply) => {
-    reply.header(
-      "Set-Cookie",
-      buildSetCookie(config.cookieName, "", {
-        secure: isSecureRequest(req),
-        maxAgeSec: 0,
-      }),
-    );
-    reply.redirect(`${bp}/login`, 303);
+    reply.header("Set-Cookie", buildSetCookie(config.cookieName, "", { maxAgeSec: 0 }));
+    reply.redirect(`${base}/login`, 303);
   });
 
-  // Gate everything else
+  // ---- JSON API (for React frontends and programmatic access) ----
+  //
+  // These paths are always exempt from the gate hook below so they are
+  // reachable before a session exists. The client calls /api/auth/status on
+  // mount; if the response is 401 it renders its own login form and POSTs
+  // credentials to /api/auth/login. See frontend-snippet.tsx for a ready-to-use
+  // React LoginScreen component.
+
+  fastify.get("/api/auth/status", async (req, reply) => {
+    if (isAuthenticated(req, config)) {
+      return { authenticated: true };
+    }
+    reply.code(401);
+    return { authenticated: false };
+  });
+
+  fastify.post("/api/auth/login", async (req, reply) => {
+    const creds = loadCredentials(config);
+    if (!creds) {
+      // No credentials set up yet — signal the client so it can redirect to /setup.
+      reply.code(503);
+      return { error: "No credentials configured. Complete /setup first." };
+    }
+    const body = req.body || {};
+    const submittedUser = String(body.username || "");
+    const submittedPwd = String(body.password || "");
+    if (safeStringEqual(submittedUser, creds.user) && verifyPassword(creds, submittedPwd)) {
+      reply.header("Set-Cookie", buildSetCookie(config.cookieName, makeToken(creds.cookieSecret), { maxAgeSec }));
+      return { success: true };
+    }
+    reply.code(401);
+    return { success: false, error: "Invalid credentials" };
+  });
+
+  fastify.post("/api/auth/logout", async (req, reply) => {
+    reply.header("Set-Cookie", buildSetCookie(config.cookieName, "", { maxAgeSec: 0 }));
+    return { success: true };
+  });
+
+  // ---- Gate hook ----
+
   fastify.addHook("onRequest", async (req, reply) => {
     const path = pathOnly(req.url);
 
-    // Allow health/probe paths and the auth routes themselves.
+    // Always-open paths: health probes, custom allow-list, auth routes.
     if (config.allowPaths.includes(path)) return;
     if (path === "/setup" || path === "/login" || path === "/logout") return;
+    // JSON API auth endpoints are always open (they handle their own auth logic).
+    if (path.startsWith("/api/auth/")) return;
 
     const creds = loadCredentials(config);
     if (!creds) {
-      reply.redirect(`${bp}/setup`, 303);
+      reply.redirect(`${base}/setup`, 303);
       return reply;
     }
 
@@ -431,8 +476,8 @@ export default async function authPlugin(fastify, options = {}) {
       return reply;
     }
 
-    const target = encodeURIComponent(bp + req.url);
-    reply.redirect(`${bp}/login?next=${target}`, 303);
+    const target = encodeURIComponent(base + req.url);
+    reply.redirect(`${base}/login?next=${target}`, 303);
     return reply;
   });
 }

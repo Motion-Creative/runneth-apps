@@ -21,7 +21,51 @@ await server.register(authPlugin, {
 })
 ```
 
-If the backend runs the standard `app create` scaffold, this is the only change needed. The plugin owns `/setup`, `/login`, `/logout`, and gates everything else.
+If the backend runs the standard `app create` scaffold, this is the only backend change needed. The plugin owns `/setup`, `/login`, `/logout`, `/api/auth/status`, `/api/auth/login`, and `/api/auth/logout`, and gates everything else.
+
+## Shared credentials (same user/pass across multiple apps)
+
+To gate several apps with one set of credentials, point every app's `credentialsPath` at the same file:
+
+```ts
+credentialsPath: '/agent/workspaces/<workspaceId>/config/shared/credentials.json',
+```
+
+The plugin reads the credentials file at request time (mtime-cached), so all apps pick up credential changes without rebuilding. The first app to start will show the `/setup` page to pick credentials; subsequent apps that share the file skip setup because the file already exists.
+
+## React frontend (iframe-safe)
+
+Apps with a React frontend should add a `LoginScreen` component and auth state gate instead of relying on the server-rendered redirect flow. This is more reliable in cross-origin iframe contexts (like the Motion app previewer) where redirect-based cookie flows can stall.
+
+Copy `frontend-snippet.tsx` from this package into your app's `frontend/src/` and follow the inline instructions. The component calls the JSON API endpoints added by the plugin:
+
+- `GET /api/auth/status` — `200 {authenticated: true}` if session valid, `401 {authenticated: false}` otherwise
+- `POST /api/auth/login` — JSON body `{username, password}`, returns `200 {success: true}` + sets cookie, or `401`
+- `POST /api/auth/logout` — clears cookie, returns `200 {success: true}`
+
+Every fetch in the component uses `credentials: 'include'` so cookies work across origins.
+
+```tsx
+// In your App component, add before any data fetches:
+const [authStatus, setAuthStatus] = useState<'checking' | 'authed' | 'unauthed'>('checking')
+
+useEffect(() => {
+  fetch(`${apiBasePath}/auth/status`, { credentials: 'include' })
+    .then((r) => r.ok ? setAuthStatus('authed') : setAuthStatus('unauthed'))
+    .catch(() => setAuthStatus('unauthed'))
+}, [apiBasePath])
+
+// Guard data fetches — add authStatus to deps and bail early:
+useEffect(() => {
+  if (authStatus !== 'authed') return
+  fetch(`${apiBasePath}/your-data-endpoint`)
+  // ...
+}, [apiBasePath, authStatus])
+
+// Render gates — add before your existing if (error) / if (!data) checks:
+if (authStatus === 'checking') return <div>Loading...</div>
+if (authStatus === 'unauthed') return <LoginScreen apiBasePath={apiBasePath} onLogin={() => setAuthStatus('authed')} />
+```
 
 ## ESM cache busting
 
@@ -36,7 +80,7 @@ You only need this if you plan to edit `auth.mjs` in place. If you copy it once 
 
 ## Express bridge case
 
-If the app runs Express inside Fastify (e.g. via `light-my-request` dispatch to an Express app), the Fastify plugin still works as long as the auth routes are registered on the outer Fastify instance, before requests are dispatched into Express. The `onRequest` hook gates incoming requests before Express sees them, and the auth-owned paths (`/setup`, `/login`, `/logout`) reply directly without ever entering Express.
+If the app runs Express inside Fastify (e.g. via `light-my-request` dispatch to an Express app), the Fastify plugin still works as long as the auth routes are registered on the outer Fastify instance, before requests are dispatched into Express. The `onRequest` hook gates incoming requests before Express sees them, and the auth-owned paths (`/setup`, `/login`, `/logout`, `/api/auth/*`) reply directly without ever entering Express.
 
 ## Required Fastify behavior
 
