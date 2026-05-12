@@ -1,0 +1,22 @@
+{
+  "schema": "1.0",
+  "id": "plan-mode",
+  "version": "1.0.0",
+  "description": "Hard rule that fires before any skill, routine, app, or standing instruction is built. Runneth writes a plan file, delivers it as a link widget, asks the clarifying questions, and waits for approval before touching anything.",
+  "installs": [
+    {
+      "file": "behavior-snippet.md",
+      "dest": "user-md",
+      "insert-after": "## System routines",
+      "insert-fallback": "append"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-12",
+      "type": "major",
+      "notes": "Initial release. Plan file + questions before any skill/routine/app/instruction build. Split from self-iteration-loop use case."
+    }
+  ]
+}
