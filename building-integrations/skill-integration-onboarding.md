@@ -1,385 +1,309 @@
 ---
 name: integration-onboarding
 description: |
-  Runs when a new integration is connected in chat. Triggered by the platform's
-  oauth_connection automation turn. Goes beyond official API documentation to build
-  a full intelligence picture: official docs, community-discovered behavior, and
-  live verification against the connected account.
+  Runs when a new integration is connected. Four-phase flow: quick capability
+  capture, context reading to choose depth and type, then either a lightweight
+  path (validate specific use case, offer to go deeper) or a full deep dive
+  (community intelligence, live verification, type-specific protocol).
 
-  Three outputs per run:
-  1. A durable capabilities-and-scopes.md written to /agent/brain/integrations/<name>/
-     — enriched with Verified vs. Theoretical section and community intelligence
-  2. A pre-populated quirks.md seeded with known issues from community research
-  3. A visible customer-facing summary returned in the conversation
+  Quirks are the system's problem, not the user's. Find them proactively, solve
+  them with creative workarounds, and surface to the user only as a true last
+  resort after every other option is exhausted.
+
+  Outputs per run:
+  1. capabilities-and-scopes.md — official docs + community intel + verified vs. theoretical
+  2. quirks.md — pre-populated and solved before first use
+  3. Visible summary + path decision with offer to go deeper (lightweight)
+     or full activation handoff (deep dive)
 
 user-invocable: true
 ---
 
-## Purpose
-
-Every time a customer connects an integration, they should immediately understand what it does, what they can do with it, and what risks or permissions they've accepted — all sourced from the official API documentation, not from memory or inference.
-
-This skill owns that moment. It runs once per connection event and produces both a durable knowledge artifact and a human-readable response in the same turn.
-
----
-
 ## Trigger
 
-**Primary:** `automationKind: "oauth_connection"` automation turn fired by the Motion platform when an OAuth flow completes in chat.
-
-**Manual:** Can also be invoked directly — "run integration-onboarding for [integration name]" — for testing or to re-generate a capabilities file for an existing integration.
-
----
-
-## Inputs
-
-| Input | Source | Required |
-|---|---|---|
-| Integration name | Extracted from automation turn text (e.g. "Notion is now connected" → `Notion`) | Yes |
-| Docs URL | Resolved in Step 2 | No — skill finds it |
-
-When invoked manually, the integration name comes from the user's message.
+**Primary:** `automationKind: "oauth_connection"` — fires when OAuth completes.
+**Manual:** "run integration-onboarding for [name]", or to re-run on any connected integration.
 
 ---
 
-## Step 1 — Extract the Integration Name
+## The quirk philosophy
 
-From the automation turn text, extract the integration name. The platform text follows the pattern:
+This is the most important rule in this skill.
 
-> "[Integration Name] is now connected for this sandbox..."
+**Quirks are the system's problem, not the user's.** Every platform has them.
+Your job is to find them before the user does, solve them with whatever tools
+are available, and build integrations that work despite them.
 
-Take the first word or phrase before "is now connected" as the integration name. Normalize to title case (e.g. `notion` → `Notion`, `google-drive` → `Google Drive`).
+**The workaround hierarchy — exhaust in order:**
+1. Handle it in the sync script client code (best — user never knows it existed)
+2. Calculate or reconstruct from other available fields
+3. Use a different endpoint or approach that avoids the limitation
+4. Cache or pre-compute to avoid hitting the limitation in the first place
+5. Implement retry logic, chunking, or batching to work around rate/size limits
+6. Warn the user proactively and specifically before they hit it (acceptable)
+7. Ask the user only if they are demonstrably data-savvy and may have account-level info you genuinely need
+8. Say it can't be done — **only after exhausting 1-7, and you should be genuinely disappointed you got here**
 
-If invoked manually, use the name provided by the user.
-
----
-
-## Step 2 — Resolve the API Documentation URLs
-
-Use the URL resolution logic from `/agent/.agents/skills/integration-capabilities-sync/SKILL.md` — specifically Step 2a (known integrations table) and Step 2b (WebSearch for unknowns).
-
-Two URLs are needed:
-- **Capabilities URL:** Overview of endpoints, methods, and what the API can do
-- **Scopes URL:** OAuth scopes or permission model — what was granted when the customer connected
-
-If the integration is not in the known-URL table, run two WebSearch queries:
-1. `<integration name> official API documentation reference`
-2. `<integration name> OAuth scopes permissions reference`
-
-Evaluate results for official developer docs only. No third-party summaries, blog posts, or aggregators.
-
-**If no credible source is found for either URL:** Proceed with what you have. If neither URL resolves, write a stub capabilities-and-scopes.md and note that docs could not be located. Return the customer summary based on the integration name alone, making clear that documentation was not available.
+"Can't do this" is a last resort, not a first response. Most things can be done
+with creative enough application of available tools. The instinct should always
+be to find a path, not to surface a blocker.
 
 ---
 
-## Step 2b — Community Intelligence Sweep
+## Phase 0 — Quick capability capture (always, runs first, fast)
 
-Official API documentation describes intended behavior. Community tools,
-GitHub issues, and forum threads describe actual behavior. Run this sweep
-in parallel with or immediately after Step 2.
+Goal: give the system enough to answer questions about this integration immediately.
+This phase completes in one fetch. Do not wait for deeper research.
 
-**Cardinal rule:** Label everything by source. Never mix community-discovered
-behavior with official docs without flagging which is which.
+1. Extract the integration name from the automation turn or user message
+2. Fetch official API docs (use known-URL table from integration-capabilities-sync skill, or WebSearch)
+3. Write `/agent/brain/integrations/<name>/capabilities-and-scopes.md` with:
+   - What the integration is (2 sentences)
+   - Core capability areas from the docs
+   - Auth model and scopes granted
+   - Data risks (what can be read, what can be written, what's sensitive)
+   - `## Verified vs. Theoretical` section — mark everything as `theoretical` for now
+4. Update `/agent/INDEX.md` and `/agent/brain/integrations/README.md`
 
-### 2b-i: Search for community tools
+This file will be enriched in later phases. Its job right now is to exist.
 
-Run these searches. Use WebSearch for each:
+Return to the user:
+```
+**[Integration] is connected.**
 
-1. `"<integration name>" API CLI github` — find community CLIs and wrappers
-2. `"<integration name>" MCP server github` — find MCP implementations
-3. `"<integration name>" SDK github stars:>50` — find popular SDKs
-4. `site:github.com "<integration name>" API "gotcha" OR "quirk" OR "undocumented"` — find known pain points
-5. `"<integration name>" API "rate limit" actual OR real OR undocumented` — find real rate limit behavior
+**What it does**
+[2-3 sentences from docs]
 
-For each tool or repo found, read the README and skim open issues. Extract:
-- Features it implements that the official docs don't mention
-- Issues reporting unexpected API behavior
+**What you can do with it now**
+[4-6 verb-led bullets from docs, in plain language]
+
+**What to be aware of**
+[3-5 bullets on limits, constraints, notable quirks from docs]
+
+**Data access**
+[Specific: what this integration can read, write, and what's sensitive]
+```
+
+---
+
+## Phase 1 — Context reading (always, runs after Phase 0)
+
+Read the conversation, team file, and any stated reason for connecting
+to answer three questions. Be explicit about your conclusion.
+
+### 1a — Who is setting this up?
+
+**Full deep dive signals:**
+- They manage the integration for others ("setting this up for the team")
+- Data, engineering, or technical role
+- No specific immediate use case — establishing the integration generically
+- First time this integration has been connected in this sandbox
+
+**Lightweight signals:**
+- Specific immediate question ("I need to pull X data")
+- End user, not a setup person
+- Quick extension of an already-established integration
+- Casual mention alongside another task
+
+**Default when ambiguous:** Lightweight + offer to go deeper.
+
+### 1b — What's the immediate job?
+
+Look for signal words:
+- "set up", "onboard", "connect", "establish" → full deep dive
+- "pull", "check", "get", "show me", "I need" → lightweight
+- No stated job → lightweight + offer
+
+### 1c — What type of integration?
+
+Classify using `/agent/brain/integrations/INTEGRATION-TYPE-PROTOCOLS.md`.
+The five types and their signals:
+
+| Type | What to look for |
+|---|---|
+| 1 — Performance data platform | Ad metrics, spend, impressions, creative performance, ROAS, CPA |
+| 2 — Attribution / cross-platform | Multi-touch, attribution, unified ROAS, joining ad data |
+| 3 — Capability tool | Research, enrichment, AI, point-in-time answers |
+| 4 — Workspace / organizational | Docs, projects, tasks, team communication, knowledge base |
+| 5 — Customer / business intelligence | CRM, orders, pipeline, revenue, customer data |
+
+If it doesn't fit cleanly, name the primary job and propose a hybrid.
+
+### 1d — State your decision explicitly
+
+Before moving to Phase 2, say in plain language:
+- Who you think is setting this up and why
+- What the immediate job appears to be
+- What type the integration is
+- Which path you're taking and why
+
+Example: *"This looks like a team setup of a performance data platform — you're
+connecting TikTok Ads and haven't named a specific immediate question, so I'm
+running the full flow. I'll come back with a complete picture of how this platform
+actually behaves and what to build around it."*
+
+Example: *"You need to pull a specific piece of attribution data to answer
+a question you're working on right now, so I'll validate those specific endpoints
+and get you what you need. I can do a full setup whenever you're ready."*
+
+---
+
+## Phase 2A — Lightweight path
+
+**When:** Specific immediate use case, or ambiguous context.
+
+### Step A1 — Identify the specific need
+
+From the conversation: what exactly does the user need from this integration?
+Be precise: which endpoint, which data object, which fields.
+
+### Step A2 — Validate those specific endpoints
+
+Make real API calls for the specific use case only:
+1. Test the auth — confirm it works exactly as documented (most common failure point)
+2. Call the specific endpoint(s) needed
+3. Verify the fields the user needs are actually present and in the expected format
+4. Check for any immediate quirks that would affect this specific use case
+
+**Apply the quirk hierarchy** — if something is wrong, fix it silently or note
+the fix before surfacing anything to the user.
+
+### Step A3 — Deliver what was needed
+
+Return the answer to the user's immediate question if possible, or clear
+confirmation that the endpoint is working with the right data.
+
+Update capabilities-and-scopes.md with what was verified.
+Write any quirks found to quirks.md with fixes applied.
+
+### Step A4 — Offer to go deeper
+
+End with a single offer, not a pitch:
+
+> "That specific endpoint is working. If you want, I can do a full setup —
+> community research, live testing across all endpoints, a practical guide
+> to how this platform actually behaves, and a data layer — sync script, schema, and query library. Worth doing
+> when you have a moment."
+
+---
+
+## Phase 2B — Full deep dive path
+
+**When:** Team setup, technical person, no specific immediate use case.
+
+### Step B1 — Community intelligence sweep
+
+Run in parallel with or immediately after Phase 0.
+
+Search for:
+1. `"<integration>" API python client github OR "<integration>" API SDK github` — community CLIs and wrappers
+2. `"<integration>" MCP server github` — MCP implementations
+3. `"<integration>" API issues quirks undocumented site:github.com`
+4. `"<integration>" API "rate limit" actual real undocumented`
+5. `"<integration>" API gotcha OR workaround OR "doesn't work"`
+
+For each finding, extract:
+- Undocumented endpoints community tools use
+- Known behavioral quirks
 - Workarounds people have documented
 - Auth patterns that differ from official docs
 
-Build an **absorb manifest**: a running list of every feature or behavior
-found across all community tools. This is what "absorb and transcend" means
-in practice — know everything the community knows before building anything.
+Classify each finding:
+- `undocumented-endpoint` → add to capabilities file
+- `behavior-discrepancy` → add to practical guide + pre-emptive quirk
+- `business-logic-required` → add to practical guide
+- `auth-quirk` → solve in client code immediately
+- `rate-limit-reality` → implement backoff + caching strategy
+- `null-field-condition` → build field-reconstruction fallback
 
-### 2b-ii: Search for practical guides and known issues
+**The instinct is to solve, not to document.** For every quirk found:
+- Can you handle it in code? → do it
+- Can you reconstruct from other fields? → do it
+- Does the user ever need to know? → only if you genuinely can't solve it
 
-Run these additional searches:
+### Step B2 — Live verification
 
-1. `"<integration name>" API "doesn't work" OR "broken" OR "bug" site:stackoverflow.com OR site:reddit.com`
-2. `"<integration name>" API undocumented endpoints OR hidden API`
-3. `"<integration name>" API "pagination" issues OR limits` — pagination edge cases are almost always underdocumented
-4. `"<integration name>" webhook OR "null" OR "empty" unexpected` — find silent failure modes
+Make targeted API calls against the connected account:
 
-### 2b-iii: Classify community findings
+1. **Auth format** — test before anything else, most common failure
+2. **Core list endpoint** — check all documented fields are present, none null unexpectedly
+3. **Single resource endpoint** — compare field names and types to schema exactly
+4. **Any field community research flagged** — validate specifically
+5. **Rate limit headers** — compare to documented limits, note actual values
 
-For each finding, classify it:
+For each discrepancy found, apply the quirk hierarchy immediately.
+Solved quirks go to quirks.md as `handled-in-code`.
+Unsolved quirks go as `unhandled` and appear in doctor output.
 
-| Class | What it means | Where it goes |
+Update capabilities-and-scopes.md Verified vs. Theoretical section.
+
+### Step B3 — Integration type protocol
+
+Read the type identified in Phase 1c.
+Apply the corresponding protocol from `/agent/brain/integrations/INTEGRATION-TYPE-PROTOCOLS.md`:
+
+- **Type 1:** Design SQL schema first. All query templates derive from schema.
+- **Type 2:** Find the join key. Build joining protocol. Design unified view schema.
+- **Type 3:** Document call pattern. Identify invocation moment. Cache strategy.
+- **Type 4:** Context sweep is primary value. Identify write-back targets.
+- **Type 5:** Design entity schema. Note privacy requirements.
+
+The type protocol shapes everything downstream: what the data layer looks like,
+what the practical guide covers, what the activation proposes.
+
+### Step B4 — Pre-populate quirks file
+
+Write `/agent/brain/integrations/<name>/quirks.md`.
+
+For every quirk found — community research or live verification:
+- If solved in code: `handled-in-code`, document the fix
+- If handled by warning: `handled-by-warning`, document when warning fires
+- If genuinely unsolvable: `unhandled`, document why every workaround failed
+  (this should be rare and you should feel bad about it)
+
+The goal is to arrive at integration-activation with zero unhandled quirks,
+or at most one or two with clear notes on why they couldn't be solved.
+
+### Step B5 — Update capabilities file
+
+Update capabilities-and-scopes.md with:
+- `## Community Intelligence` — undocumented endpoints + community patterns found
+- `## Verified vs. Theoretical` — what was confirmed live vs. theoretical
+- `## Known Constraints` — all quirks, with status
+
+Then hand off to integration-activation.
+
+---
+
+## Returning the summary
+
+**Lightweight path:** Return the Phase 0 summary + answer to immediate question
++ offer to go deeper. Keep it short. Don't describe the setup process.
+
+**Full deep dive path:** Return the Phase 0 summary briefly, then note the
+path decision, then hand off to integration-activation which produces the
+full proposal. The user sees one coherent response.
+
+---
+
+## Error handling
+
+| Situation | Resolution path |
+|---|---|
+| Auth fails immediately | Debug before surfacing. Check: Bearer vs. raw token, header name casing, token expiry, account permissions. Try all variations. Surface only if all fail with a specific diagnosis. |
+| Docs URL not found | Search harder. Try: `<name> API reference`, `<name> developer docs`, `<name> REST API`, `<name> GraphQL API`. If still not found, proceed with community intelligence only. |
+| Rate limit hit during verification | Back off and retry with exponential delay. Reduce scope of verification. Never tell the user the API is rate-limited — just make fewer calls. |
+| Live verification returns unexpected data | This is valuable information. Document it, build a workaround, update the capabilities file. Don't surface as an error. |
+| Integration type unclear | Name the primary job, propose the closest type, note the hybrid nature in the practical guide. |
+
+---
+
+## Skill changelog
+
+| Date | Version | Change |
 |---|---|---|
-| `undocumented-endpoint` | Real endpoint not in official docs | capabilities-and-scopes.md Community section |
-| `behavior-discrepancy` | API behaves differently than docs say | Verified vs. Theoretical section + pre-emptive quirk |
-| `business-logic-required` | Raw API usable only with additional logic on top | practical-guide.md in activation |
-| `rate-limit-reality` | Real rate limits differ from documented | quirks.md pre-emptive entry |
-| `auth-quirk` | Auth format or flow differs from docs | quirks.md pre-emptive entry, high priority |
-| `null-field-condition` | Field returns null under undocumented conditions | quirks.md pre-emptive entry |
-| `community-pattern` | Approach commonly used by community tools | practical-guide.md in activation |
-
----
-
-## Step 3 — Fetch the Documentation
-
-Fetch both URLs using WebFetch. These are two separate calls.
-
-From the capabilities fetch, extract:
-- What the integration is and its core job
-- Major capability areas (endpoint groups, method categories)
-- Authentication model
-- Key limitations
-
-From the scopes fetch, extract:
-- All scopes or permission tiers granted at connection time
-- What each scope allows the integration to access
-- Any sensitive permissions (e.g. read message history, access private repos, read email addresses)
-- Data access implications for the customer's workspace
-
-Do not infer or assume capabilities not stated in the fetched source. If a page is truncated or returns limited content, note it in the capabilities file.
-
----
-
-## Step 3b — Live Spot-Check
-
-Make 3-5 real API calls against the connected account and compare the actual
-responses to what the official docs promised. This is not a full test suite —
-it's a targeted probe of the highest-risk discrepancies.
-
-**What to probe:**
-
-1. **Auth format** — Does the auth mechanism work exactly as documented?
-   The most common source of day-one failures. Test it first.
-
-2. **A core list endpoint** — Fetch the most commonly used collection
-   (issues, pages, ads, items). Check: are all documented fields present?
-   Are any null that the docs don't flag as optional? What's the real
-   pagination behavior?
-
-3. **A single-resource endpoint** — Fetch one item by ID. Compare field
-   names and types to the schema exactly. Note any discrepancies.
-
-4. **An edge case field** — Pick one field the community sweep flagged as
-   commonly null or behaving unexpectedly. Test it.
-
-5. **Rate limit signal** — Check response headers for rate limit information.
-   Compare to documented limits. Note if real limits appear lower.
-
-**For each call, record:**
-- What the docs promised
-- What actually came back
-- Verdict: `confirmed` | `discrepancy` | `undocumented-field-present` | `documented-field-missing`
-
-**Discrepancies become pre-emptive quirks** — write them to
-`/agent/brain/integrations/<name>/quirks.md` immediately with status
-`handled-by-warning` or `unhandled` depending on severity.
-
-**If live calls are not possible** (no auth, rate limit concern, read-only
-scope limitation): skip this step, note it in the capabilities file, and
-flag that live verification has not been run.
-
----
-
-## Step 4 — Write the Capabilities-and-Scopes File
-
-Create `/agent/brain/integrations/<name>/capabilities-and-scopes.md` using the template from Step 4a of `/agent/.agents/skills/integration-capabilities-sync/SKILL.md`.
-
-Required fields:
-- `**Last reviewed:**` — today's date
-- `**Sources:**` — official docs URL + community tools found (names and URLs)
-- `**Live verified:**` — yes / partial / no, with date
-- All capability sections sourced from the fetched docs
-- A `## Scopes` section sourced from the scopes fetch
-- A `## Community Intelligence` section (new — see below)
-- A `## Verified vs. Theoretical` section (new — see below)
-- A `## Known Constraints` section updated with any pre-emptive quirks
-
-**## Community Intelligence section** — required when community sweep found anything:
-```
-## Community Intelligence
-
-Sources reviewed: [list community tools and repos consulted]
-
-Undocumented endpoints found:
-- [endpoint, source, confidence level]
-
-Behavior patterns from community tools:
-- [pattern, what tools use it, why]
-
-Known issues from community:
-- [issue, source, how common]
-```
-
-**## Verified vs. Theoretical section** — required when live spot-check ran:
-```
-## Verified vs. Theoretical
-
-Live verified: [date]
-
-| Claim | Source | Verified? | Notes |
-|---|---|---|---|
-| [what docs say] | Official docs | ✓ confirmed / ✗ discrepancy / ⚠ partial | [what actually happened] |
-```
-
-If no live verification was run, this section must still appear:
-```
-## Verified vs. Theoretical
-
-Live verified: not yet run
-
-Official docs have not been independently verified against this account.
-Treat all capabilities as theoretical until verified. Run integration-onboarding
-manually with a live account to complete verification.
-```
-
-If a file already exists at that path, overwrite it — this is a fresh connection and the file should reflect current docs and latest community intelligence.
-
----
-
-## Step 4b — Pre-Populate Quirks File
-
-Create or update `/agent/brain/integrations/<name>/quirks.md`.
-
-Write entries for every finding from Steps 2b and 3b that represents a
-real platform behavior that could surprise or block a user:
-
-- All `auth-quirk` findings → status `handled-by-warning` or `unhandled`
-- All `behavior-discrepancy` findings → status `unhandled` until CLI is updated
-- All `rate-limit-reality` findings → status `handled-by-warning`
-- All `null-field-condition` findings → status `handled-by-warning`
-
-For each entry, fill in every field from the quirks protocol:
-- Symptom (what a user would see)
-- Platform behavior (what's actually happening)
-- Detection signal (how to catch it programmatically)
-- Fix/workaround (what to do about it)
-- Wired into: checked off as fixes are implemented
-
-**This pre-empts the most common integration failures before anyone hits them.**
-A quirk found through community research and written before first use
-is infinitely better than a quirk discovered by a frustrated user.
-
-If no quirks were found through community research or live verification:
-create the file with the standard empty header, noted as verified-clean.
-
----
-
-## Step 5 — Update the Index Files
-
-**Update `/agent/brain/integrations/README.md`:**
-- Add a new row to the Connected Integrations table if this integration is not already listed
-- If already listed, update the Last Reviewed date
-
-**Update `/agent/INDEX.md`:**
-- Add an index entry for the new capabilities-and-scopes.md if it does not already exist
-- If an entry exists, update the `updated` date
-
----
-
-## Step 6 — Generate the Customer-Facing Summary
-
-Using only the content fetched in Step 3 — not memory, not inference — write the three-part customer summary.
-
-### What it does
-2-3 sentences in plain language. No jargon. Answer: what is this tool and what is its core job? Write for someone who may not be technical.
-
-### What you can do with it now
-4-6 bullet points. Each starts with a verb. Focus on the highest-value actions the customer can take immediately — the things most likely to be useful to them. Derive these from the capability areas in the docs, translated into plain language.
-
-Good: "Search and read your Notion pages and databases directly from chat."
-Bad: "Access the GET /pages endpoint to retrieve page objects."
-
-### What to be aware of
-3-5 bullet points covering rate limits, notable limitations, and anything explicitly flagged as a constraint in the docs.
-
-### Data risks (required — never skip)
-This section must always be present. It exists specifically so that collaborators and above have a full picture of what they are granting access to before they proceed.
-
-Answer all of the following that apply, sourced from the scopes fetch:
-- **What data can this integration read?** Be specific — e.g. "can read all messages in channels it belongs to," "can read private repository code and commit history."
-- **What data can it write or modify?** E.g. "can post messages, create issues, delete files."
-- **What external systems can now see your data?** If the integration connects to a third-party platform, name it explicitly.
-- **Who in the org is affected?** If the scopes grant access to workspace-wide data (not just the connecting user's data), say so.
-- **Any sensitive permission worth flagging?** Email addresses, private content, financial data, org membership lists — name them directly.
-
-Do not fabricate risks. Do not omit real ones. If the scopes are limited and the data risk is genuinely low, say that explicitly — "this integration has read-only access to public data only" is a valid and useful answer.
-
----
-
-## Step 7 — Return the Visible Response
-
-Return the customer-facing summary using this exact format:
-
-```
-**[Integration Name] is connected.**
-
-**What it does**
-[2-3 plain language sentences from Step 6]
-
-**What you can do with it now**
-[4-6 verb-led bullets from Step 6]
-
-**What to be aware of**
-[3-5 bullets covering rate limits, limitations, and constraints from Step 6]
-
-**Data risks**
-[Required. Specific bullets sourced from the scopes fetch covering: what data this integration can read, what it can write, what external systems can see your data, whether workspace-wide data is affected, and any sensitive permissions granted. If risk is genuinely low, state that explicitly.]
-```
-
-Do not mention:
-- The capabilities-and-scopes.md file or any internal file creation
-- The brain, skills, automation turns, or OAuth mechanics
-- That any documentation was fetched
-- Any internal system language
-
-This is a customer-facing moment. Keep it clear, useful, and human.
-
----
-
-## Step 8 — Hand off to integration-activation
-
-After returning the customer-facing summary, immediately run the
-`integration-activation` skill in the same turn.
-
-The two outputs should feel like one coherent response:
-- The onboarding summary establishes the foundation (what it is, what you can
-  do, what to be aware of)
-- The activation section makes it personal and actionable (what we're going
-  to do with it for you, specifically)
-
-Separate them visually with a horizontal rule or clear heading break.
-Do not repeat information from the onboarding summary in the activation section.
-
-If the activation skill cannot run (integration has no live API to query,
-no person context available), return the onboarding summary alone and note
-that a deeper activation pass can be run manually later.
-
----
-
-## Error Handling
-
-| Situation | Action |
-|---|---|
-| Integration name cannot be extracted from automation text | Ask the user: "Which integration did you just connect?" Then proceed. |
-| Docs URL not found after WebSearch | Write a stub capabilities-and-scopes.md noting docs were not located. Return a summary based on the integration name with a note that the full documentation couldn't be retrieved. |
-| WebFetch returns empty or irrelevant content | Retry once with the secondary URL from the known-URL table. If still empty, treat as docs-not-found. |
-| Capabilities file path already exists | Overwrite. A new connection should always produce a fresh file from current docs. |
-| INDEX.md or README.md update fails | Log the failure in the one-pager. Return the customer summary regardless — the visible response is not contingent on the index update succeeding. |
-
----
-
-## Skill Changelog
-
-| Date | Change |
-|---|---|
-| 2026-05-08 | v1.1 — Added required Data risks section to Step 6 and Step 7 format. Data risks must always be present and sourced from scopes fetch. Covers read/write access, external data exposure, workspace-wide scope, and sensitive permissions. |
-| 2026-05-11 | v1.3 — Added Step 2b (community intelligence sweep), Step 3b (live spot-check), Step 4b (pre-populate quirks). capabilities-and-scopes.md now includes Community Intelligence and Verified vs. Theoretical sections. Quirks file seeded from community research before first use. |
-| 2026-05-09 | v1.2 — Added Step 8: hand off to integration-activation after returning customer summary. |
-| 2026-05-08 | v1.1 — Added required Data risks section. |
-| 2026-05-08 | Initial version. |
+| 2026-05-11 | v2.0.0 | Complete rewrite. Four-phase model (quick capture, context reading, lightweight/deep dive paths). Lightweight default with offer to go deeper. Quirk-solving philosophy: solve first, surface as last resort. Integration type classification in Phase 1. Type-specific protocols from brain-integration-type-protocols.md. Community intelligence sweep and live verification moved to deep dive path only. |
+| 2026-05-11 | v1.3 | Community intelligence sweep, live spot-check, pre-populate quirks. |
+| 2026-05-09 | v1.2 | Added activation handoff. |
+| 2026-05-08 | v1.1 | Added data risks section. |
+| 2026-05-08 | v1.0 | Initial version. |

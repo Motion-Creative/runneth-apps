@@ -15,16 +15,16 @@ information across stages.
 
 ---
 
-## After integration CLI sessions — usage and quirks capture
+## After integration data layer sessions — usage and quirks capture
 
-After any session where an integration CLI was used, or where a user reports
+After any session where an integration's sync script or query library was used, or where a user reports
 unexpected behavior from a connected platform:
 
 **Usage patterns:**
-If a CLI command was run or referenced, append an observation to
+If a sync script or query was run, append an observation to
 `/agent/brain/integrations/<name>/usage-patterns.md`:
 - Which command, which flags, what the user did with the output
-- Any friction — places they rephrased, filtered, or routed around the CLI
+- Any friction — places they rephrased, filtered, or routed around the data layer
 - Person-specific patterns → also add to their team file under
   "Working patterns with [integration]"
 - If a user asks for something in natural language that would be a compound

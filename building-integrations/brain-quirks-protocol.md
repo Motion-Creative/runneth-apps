@@ -43,15 +43,15 @@ What the platform actually does — the undocumented or unexpected thing.
 
 **Detection signal:**
 How to recognize this quirk programmatically or in context. Be specific enough
-that it could be added to a CLI doctor check or an error handler.
+that it could be added to a health.py check or an error handler.
 
 **Fix / workaround:**
 What resolves it. If handled in code, describe the defensive pattern used.
 If handled by warning, what the warning says and when it fires.
 
 **Wired into:**
-- [ ] CLI code (which file, what change)
-- [ ] CLI doctor command
+- [ ] sync.py (which function, what fix)
+- [ ] health.py
 - [ ] capabilities-and-scopes.md Known Constraints section
 - [ ] capabilities-and-scopes.md Updated: YYYY-MM-DD
 
@@ -76,7 +76,7 @@ Anything a user says that signals the platform didn't behave as expected:
 Write the entry during the same turn. Do not defer. The corrections.jsonl captures
 the correction — the quirks.md captures the platform-specific root cause and the fix.
 
-**2. CLI encounters an unexpected error or edge case**
+**2. Sync script or live API call returns unexpected data or edge case**
 When a command returns unexpected data, a null where a value should be, a rate
 limit not documented in the API, an auth error with a non-standard message.
 
@@ -91,26 +91,49 @@ any known pattern.
 
 ---
 
+## The workaround hierarchy — exhaust before marking unhandled
+
+Before any quirk can be marked `unhandled`, the following must have been tried
+and failed. Document why each failed in the quirk entry.
+
+1. **Handle in client code** — intercept the raw behavior, return something useful
+2. **Reconstruct from other fields** — calculate the value from what is available
+3. **Use a different approach** — different endpoint, different query, different data source
+4. **Chunk, batch, or paginate** — work around size and rate limits in the client layer
+5. **Cache or pre-compute** — avoid hitting the limitation repeatedly
+6. **Warn proactively** — fire a specific warning before the user hits the problem, with a concrete workaround they can act on
+7. **Ask a data-savvy user** — only if they have account-level information you genuinely need
+
+If you mark something `unhandled` without going through this list, the entry
+is incomplete. `Unhandled` is not a neutral state — it means the user will
+hit this problem and we haven't protected them yet. That should feel bad.
+
+---
+
 ## Quirk status definitions
 
 **`unhandled`**
-Documented but not yet fixed in code or by warning. The user could still hit this.
-These are the highest priority — every unhandled quirk is a pending trust failure.
+Every workaround in the hierarchy above has been tried and failed, OR the
+quirk was just discovered and the fix hasn't been implemented yet. This is
+a pending trust failure. Every `unhandled` entry is an open debt.
 Unhandled quirks surface in the doctor command output with a clear label.
+The goal is zero unhandled quirks before the data layer ships.
 
 **`handled-in-code`**
-The CLI handles this defensively. The user will never see the raw platform behavior.
-Zero user-visible impact.
+The sync script handles this defensively. The user will never see the raw platform behavior.
+Zero user-visible impact. The best outcome.
 
 **`handled-by-warning`**
-The CLI cannot fully handle it in code, but warns the user proactively before
-they hit the problem. Acceptable only when the workaround requires user action.
-The warning must be specific: "TikTok returns null for thumbstop_ratio on ads
-with fewer than 1,000 impressions. Your results include X such ads."
+The sync script cannot handle it fully in code, but fires a specific warning before
+the user hits the problem. Acceptable only when the fix requires user-side
+action (e.g., a custom field ID that only exists in their account config).
+The warning must be specific, not generic: name the exact condition and the
+exact workaround. "TikTok returns null for thumbstop_ratio on ads with fewer
+than 1,000 impressions — your results include X such ads, shown with a dash."
 
 **`monitoring`**
-A known quirk that's been stable, fully handled, or resolved by the platform.
-Kept in the file for institutional memory. Not surfaced in doctor output.
+Fully handled or resolved by the platform. Kept for institutional memory.
+Not surfaced in doctor output.
 
 ---
 
@@ -121,7 +144,7 @@ of the following are done:
 
 - [ ] The quirk entry is written in `quirks.md` with full detail
 - [ ] The `capabilities-and-scopes.md` Known Constraints section is updated
-- [ ] The CLI code has been updated OR a proactive warning has been added
+- [ ] sync.py has been updated OR a proactive warning has been added
 - [ ] The doctor command checks for this condition and reports it
 - [ ] The quirk has been tested — the fix actually works
 - [ ] The person who originally reported it (if a user) would not hit this again
@@ -134,7 +157,7 @@ incomplete.
 
 ## Quirks and the doctor command
 
-Every CLI built by cli-factory must include a doctor command. The doctor command
+Every data layer built by integration-builder must include health.py. The doctor command
 must:
 
 1. Check for all `unhandled` quirks and surface them clearly:
@@ -181,7 +204,7 @@ or account configuration. When a quirk is person-specific:
 The integration-context-sweep skill reviews the quirks file on every run.
 Specifically it checks:
 - Are there `unhandled` entries? → flag for immediate attention
-- Are `handled-in-code` entries still accurate? → verify against current CLI
+- Are `handled-in-code` entries still accurate? → verify against current sync.py
 - Are there new platform behaviors from the sweep that should be pre-emptive
   monitoring entries?
 

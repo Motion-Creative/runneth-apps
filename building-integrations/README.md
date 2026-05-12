@@ -1,8 +1,8 @@
 # building-integrations
 
-**When an integration connects, your agent builds a complete intelligence picture of how the platform actually behaves — not just what the docs say — then maps how the team uses it, creates a practical guide that makes it useable, and wires everything into the brain so it surfaces at the right moment in every future conversation.**
+**When an integration connects, your agent reads the context, chooses the right depth, applies the right protocol for the type of integration, and solves every quirk it finds before the user ever sees one.**
 
-Official API documentation describes intended behavior. This use case goes further: community intelligence, live verification, and behavioral analysis combine to produce something more valuable than any official docs — a practical guide that reflects how the platform actually works, pre-populated with known quirks before anyone hits them.
+Not every integration connection needs the same treatment. Someone making a quick data pull gets a fast answer and an offer to go deeper. Someone setting up an integration for the whole team gets a full deep dive: community research, live verification, type-specific setup, a practical guide that goes beyond what the official docs say, and a custom CLI designed around how the team actually uses the platform. Quirks are found and solved proactively — surfaced to the user only as a genuine last resort.
 
 ---
 
@@ -10,15 +10,33 @@ Official API documentation describes intended behavior. This use case goes furth
 
 **At connection time — one response, three layers:**
 
-**1. Onboarding — three intelligence sources, not one.** Official API docs are the starting point, not the source of truth. Onboarding now runs a community intelligence sweep (GitHub SDKs, CLIs, MCP servers, forum threads, issue discussions) and a live spot-check against the connected account to compare actual behavior to documented behavior. The capabilities file includes a Verified vs. Theoretical section. The quirks file is pre-populated with known issues from community research before anyone hits them.
+**1. Onboarding — context-aware, four phases.**
 
-**2. Activation — behavioral detective work + practical guide.** Beyond mapping the team's platform structure, activation now maps how the platform actually behaves: what business logic is required on top of raw API calls, what the best community implementations do that the docs don't suggest, and the highest-risk undocumented behaviors for this team specifically. This produces a practical guide — the "how to actually use this" document that's more valuable than the official docs. Proposals are grounded in real behavior, not theoretical capabilities.
+Phase 0 always runs: quick docs fetch, capability overview written immediately so questions can be answered right away. Phase 1 reads the context — who is setting this up, what's the immediate job, what type of integration is this — and chooses the path.
 
-**3. Context sweep.** A deep pull on everything valuable in the integration. SOPs, process docs, research, team context — all classified by type, dispersed to the right locations in the brain, and assigned a retrieval layer so they surface at the right moment in future conversations. Every gap found gets a resolution. Nothing is filed without a defined path back to the surface.
+**Lightweight path** (default when context is ambiguous): validate the specific endpoints needed, solve any quirks found, deliver the answer, offer to go deeper. No friction for quick pulls.
+
+**Full deep dive** (team setup, technical person, no specific immediate use case): community intelligence sweep (GitHub CLIs, MCP servers, issue discussions, forum threads), live verification against the connected account, behavioral analysis, type-specific protocol. Quirks are found and solved before the proposal is delivered, never blocked on them.
+
+**2. Integration type taxonomy — five types, each with its own protocol.**
+
+| Type | Examples | Primary job | What's different |
+|---|---|---|---|
+| Performance data | Meta, TikTok, Google Ads | Ad performance analysis | SQL schema design first; compound analysis commands |
+| Attribution / cross-platform | Northbeam, Triple Whale | Unified ROAS, join ad + attribution data | Join key discovery; reconcile + orphaned commands |
+| Capability tool | Research APIs, AI tools | Add a specific capability | Lightweight; no sync needed; invocation pattern focus |
+| Workspace / org | Notion, Linear, GitHub | Org context in + outputs out | Context sweep heavy; write-back targets identified |
+| Customer / BI | Salesforce, Shopify | Queryable business data | Entity schema design; privacy handling |
+
+**3. Activation — type-specific proposals and practical guide.** Workflows are designed around the integration type. A performance data activation proposes top-performers and shift commands. An attribution activation proposes a unified view and reconcile workflow. Each activation produces a practical guide — the "how to actually use this" document that captures business logic, undocumented behavior, and verified working patterns.
+
+**4. Context sweep.** Deep content pull with three-layer retrieval wiring. Every gap resolved. Nothing filed without a retrieval path.
+
+**Quirk philosophy throughout:** Quirks are found proactively, solved silently, and surfaced to the user only if every workaround has genuinely been exhausted. The user should rarely know a quirk existed.
 
 **Over time — the system compounds:**
 
-**CLI factory.** Builds a custom CLI for any connected integration, designed around how the team actually uses the platform. Every CLI includes a doctor command, quirk-aware error handling, a local SQLite store, and a command log that feeds usage patterns back in.
+**Sync script + query library.** For data-heavy integrations (Types 1, 2, and 5), builds a Python sync script that pulls data into a local SQLite store with quirk handling baked in, and a library of named SQL query templates. The agent runs queries directly — more flexible than a CLI, no compilation needed, and the named library grows over time as new patterns emerge.
 
 **Quirks protocol.** When a platform behaves unexpectedly, the quirk is documented immediately and wired so it cannot surface as a user problem twice. Unhandled quirks always appear in the CLI doctor output.
 
@@ -33,7 +51,7 @@ Official API documentation describes intended behavior. This use case goes furth
 | `skill-integration-onboarding.md` | `/agent/.agents/skills/integration-onboarding/SKILL.md` | Fires on OAuth connection. Fetches API docs, writes capabilities file, returns basic summary, hands off to activation. |
 | `skill-integration-activation.md` | `/agent/.agents/skills/integration-activation/SKILL.md` | Person context + live platform detective work + cross-integration mapping. Produces personal proposal and first action. Hands off to context sweep. |
 | `skill-integration-context-sweep.md` | `/agent/.agents/skills/integration-context-sweep/SKILL.md` | Deep content sweep. Three-layer retrieval wiring. All gaps resolved. Sweep report shows what was added and when each piece will be referenced. |
-| `skill-cli-factory.md` | `/agent/.agents/skills/cli-factory/SKILL.md` | Builds a custom CLI for any platform based on how the team actually uses it. Generates quirk-aware and usage-tracking code by default. |
+| `skill-integration-builder.md` | `/agent/.agents/skills/integration-builder/SKILL.md` | Builds a Python sync script, SQLite schema, named SQL query library, and health check for data-heavy integrations (Types 1, 2, 5). Agent runs everything directly — no compilation. |
 | `brain-quirks-protocol.md` | `/agent/brain/integrations/QUIRKS-PROTOCOL.md` | Per-integration quirks.md format, never-twice wiring checklist, doctor command requirements. |
 | `brain-usage-feedback-protocol.md` | `/agent/brain/integrations/USAGE-FEEDBACK-PROTOCOL.md` | What gets tracked from CLI usage, how it feeds back into CLI design and personalization. |
 | `behavior-snippet.md` | Merge into `/agent/user.md` | Session routines for post-session quirks capture and usage observation. |
@@ -74,7 +92,7 @@ After install, the following structure exists or will be populated as integratio
   integration-onboarding/SKILL.md       ← updated (community intel + live verify)
   integration-activation/SKILL.md       ← new (behavioral detective + practical guide)
   integration-context-sweep/SKILL.md    ← new
-  cli-factory/SKILL.md                  ← new
+  integration-builder/SKILL.md          ← new (sync script + query library)
 
 /agent/brain/integrations/
   QUIRKS-PROTOCOL.md                    ← new
@@ -134,5 +152,7 @@ Every gap found during the sweep gets a layer assignment or an explicit resoluti
 
 | Version | Date | Notes |
 |---|---|---|
-| 1.1.0 | 2026-05-11 | Added community intelligence sweep and live spot-check to onboarding. Added behavioral detective work and practical-guide.md output to activation. Quirks file now pre-populated from community research before first use. |
-| 1.0.0 | 2026-05-11 | Initial release. Three-stage connection flow, CLI factory, quirks protocol, usage feedback, three-layer retrieval model. |
+| 3.0.0 | 2026-05-11 | Replaced Go CLI factory with Python sync script + named SQL query library. No compilation. Agent runs everything directly. |
+| 2.0.0 | 2026-05-11 | Four-phase onboarding, lightweight/deep-dive paths, integration type taxonomy, proactive quirk-solving philosophy. |
+| 1.1.0 | 2026-05-11 | Community intelligence, live verification, behavioral detective work, practical guide. |
+| 1.0.0 | 2026-05-11 | Initial release. |

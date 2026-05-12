@@ -2,13 +2,13 @@
 
 ## What this is
 
-When someone uses a CLI or integration, that usage is a signal. Which commands
+When someone uses the data layer or integration, that usage is a signal. Which commands
 get run, what the output gets used for, what they ask about next, what they
-ignore — all of it shapes what the CLI should prioritize, what the defaults
+ignore — all of it shapes what the query library should prioritize, what the defaults
 should be, and how the experience should evolve for this person over time.
 
 This protocol defines what gets tracked, where it lives, and how it feeds back
-into the CLI, the SKILL.md, and the activation proposal the next time someone
+into the data layer, the SKILL.md, and the activation proposal the next time someone
 sets up this integration.
 
 ---
@@ -21,20 +21,20 @@ Each integration gets a `usage-patterns.md` file at:
 ```
 
 This is **Layer 2** in the retrieval model — loaded when a conversation involves
-this integration's CLI or when someone asks how to use the integration.
+this integration's data layer or when someone asks how to use the integration.
 
 ---
 
 ## What gets tracked
 
 Usage patterns are observed from conversation context, not from telemetry.
-Every time a CLI command is run or an integration is used in a session:
+Every time a sync or query runs or an integration is used in a session:
 
 ### Command-level signals
 - Which commands are run and in what sequence
 - Which flags get used vs. which get ignored
-- What `--sort`, `--metric`, `--preset` values get chosen most often
-- Whether `--compact` gets used (signals agent-driven vs. human-driven use)
+- What `query patterns and parameters used most often
+- Whether results are piped to jq or read directly (agent-driven vs. human-driven)
 - Whether output is piped (| jq, > file) vs. read directly
 
 ### Output signals  
@@ -48,12 +48,12 @@ Every time a CLI command is run or an integration is used in a session:
 - Commands that error and get retried with different flags
 - Queries where the user says "hmm", "that's not quite right", "can you filter"
 - Outputs that prompt "what does X mean" or clarifying questions
-- Places where the user routes around the CLI and asks in natural language instead
+- Places where the user routes around the data layer and asks in natural language instead
 
 ### Non-use signals
 - Commands that exist but never get run
 - Proposed workflows from activation that don't get followed up on
-- CLI features that users consistently ask about in natural language rather
+- Query patterns users consistently ask for in natural language rather
   than using the command directly
 
 ---
@@ -69,7 +69,7 @@ Every time a CLI command is run or an integration is used in a session:
 
 **How it's actually used:**
 [What the person does with this command in practice — be specific.
- "Runs ads --preset last_30d --compact every Monday morning before
+ "Runs the top-performers query every Monday morning before
  the weekly brief" is specific. "Uses ads command for analysis" is not.]
 
 **What they do with the output:**
@@ -89,7 +89,7 @@ Every time a CLI command is run or an integration is used in a session:
 
 ---
 
-## How usage feeds back into the CLI
+## How usage feeds back into the data layer
 
 Usage patterns drive three types of improvements:
 
@@ -101,7 +101,7 @@ that's a signal the default is wrong for them.
 Action: Update the SKILL.md agent workflow section with person-specific defaults.
 Note them as personalization hints: "For [person]: default sort is [metric]."
 
-If a pattern appears across multiple users, it's a signal the CLI default
+If a pattern appears across multiple users, it's a signal the query default
 itself is wrong. Flag it in the usage-patterns.md as a candidate for a code
 change. If the pattern is strong enough (3+ users, consistent across sessions),
 write it as a skill candidate (SC-NNN) and route through the learning loop.
@@ -123,15 +123,15 @@ a compound command — "which of my active ads haven't had a comment in a week",
 "show me which TikTok concepts had their best week in Q1" — that's a compound
 command waiting to be written.
 
-Write it as a skill candidate with `type: cli-command` and the integration name.
+Write it as a skill candidate with `type: query-pattern` and the integration name.
 Route through the standard SC-NNN learning loop. When evidence_count ≥ 3,
-propose building it and adding it to the CLI.
+propose adding it to the query library.
 
 ---
 
 ## How usage feeds back into the SKILL.md
 
-The SKILL.md for each integration CLI has an "Agent workflows" section.
+The SKILL.md for each integration data layer has an "Agent workflows" section.
 After meaningful usage data accumulates, update this section to reflect
 how the integration is actually being used:
 
@@ -169,7 +169,7 @@ preferences are already loaded.
 ## The feedback loop in practice
 
 ```
-User runs CLI command
+User runs sync script or query
         ↓
 Runneth observes: command, flags, output, what user does next
         ↓
@@ -188,7 +188,7 @@ On integration re-sweep or re-activation:
         ↓
 On learning loop review (evidence_count ≥ 3):
   Promote compound command candidates to build queue
-  Promote default changes to CLI code change queue
+  Promote default changes to sync script and query library update queue
 ```
 
 ---
@@ -198,9 +198,9 @@ On learning loop review (evidence_count ≥ 3):
 Usage feedback is also how we catch and prevent the pattern the user named:
 a user having to tell us the same thing twice.
 
-When a user corrects a CLI behavior or asks for something the command doesn't do:
+When a user corrects a query or sync behavior or asks for something the command doesn't do:
 1. The correction goes into `corrections.jsonl` (existing mechanism)
-2. The underlying CLI gap goes into `usage-patterns.md` as a friction signal
+2. The underlying data layer gap goes into `usage-patterns.md` as a friction signal
 3. If it's a platform quirk, it also goes into `quirks.md`
 4. The skill candidate gets written if it's a missing compound command
 5. The SKILL.md gets updated immediately with the correct behavior pattern
