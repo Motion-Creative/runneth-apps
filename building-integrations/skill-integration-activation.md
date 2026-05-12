@@ -43,6 +43,36 @@ them and is ready to do the work.
 Be the colleague who did the homework before the meeting, not the one presenting
 the agenda at it.
 
+## Quirk philosophy (same as onboarding — enforced here too)
+
+Quirks found during activation are solved here, not handed to the user.
+The workaround hierarchy: fix in code → reconstruct from other fields →
+use a different approach → cache/precompute → warn specifically →
+ask only if the user is demonstrably data-savvy with account-level info you need →
+say it can't be done only after exhausting everything else.
+
+If activation discovers a new quirk that onboarding didn't catch, solve it
+and add it to quirks.md as `handled-in-code` before the proposal is delivered.
+The proposal should never be blocked by a quirk.
+
+---
+
+## Step 0 — Read the integration type
+
+Before anything else, check what type the integration was classified as
+in onboarding. Read `/agent/brain/integrations/<name>/capabilities-and-scopes.md`
+for the type classification and any notes from Phase 1 context reading.
+
+The integration type shapes everything that follows:
+- **Type 1 (Performance data):** Detective work focuses on metric surface and schema design. Practical guide covers business logic required on top of raw data. data layer is analysis-first.
+- **Type 2 (Attribution):** Detective work focuses on finding the join key and building the joining protocol. Practical guide covers where the two platforms' data diverges and why.
+- **Type 3 (Capability tool):** Lighter activation. Focus on the specific capability being added and when to invoke it. Skip structural detective work unless the tool has significant configuration.
+- **Type 4 (Workspace/org):** Structural detective work is the primary value. Context sweep is heavier than any other type. Identify write-back targets.
+- **Type 5 (Customer/BI):** Schema design first. Privacy handling note required.
+
+If the type was not classified in onboarding (e.g., lightweight path was taken),
+classify it now using `/agent/brain/integrations/INTEGRATION-TYPE-PROTOCOLS.md`.
+
 ---
 
 ## Step 1 — Read the person
@@ -97,7 +127,7 @@ with what's already there. A few patterns worth checking explicitly:
 | Any new + Motion | The Motion workspace is always the anchor. How does this new integration feed into or enrich what's already in Motion? |
 
 Document any compound opportunities found — they may surface as proposed
-workflows or CLI commands.
+workflows or query patterns.
 
 ---
 
@@ -137,7 +167,7 @@ the proposals and any built tooling dramatically more useful.
 ### The vocabulary
 What does this team call things in this platform? Their words, not the
 platform's defaults. If they call sprints "cycles" and teams "pods" and
-issues "tickets," the CLI commands and proposals should use those words.
+issues "tickets," the query templates and proposals should use those words.
 
 ### The seams
 Where do different groups' work meet or depend on each other?
@@ -162,11 +192,36 @@ OPEN QUESTION: [the one thing the data genuinely can't answer — if any]
 
 ---
 
-## Step 3b — Behavioral detective work
+## Step 3b — Behavioral detective work (type-specific)
 
 The structural detective work in Step 3 maps how the team uses the platform.
-This step maps how the platform actually behaves — which is often different
-from how the docs say it should behave.
+This step maps how the platform actually behaves — and what the type-specific
+protocol requires on top of the raw API.
+
+**Run the type-specific behavioral investigation:**
+
+**Type 1 — Performance data:** What business logic is required to get
+meaningful metrics? (e.g., minimum impression threshold before ratios are
+valid, spend normalization, date window handling). What does the data model
+look like — what entities, what metrics, what relationships? Design the SQL
+schema now before the data layer proposal.
+
+**Type 2 — Attribution:** What is the join key between this tool and the
+already-connected ad platform? Test it against a sample of 20-50 ads. What
+% match? What breaks the match? Design the joining protocol and unified schema.
+
+**Type 3 — Capability:** What is the exact call pattern? Input shape, output
+shape, latency, rate limits. When in a workflow should this be invoked?
+Does Runneth call it proactively or on request?
+
+**Type 4 — Workspace/org:** Where should outputs go? Identify write-back
+targets (which workspace, which folder, which team). Map who creates vs.
+who consumes content in this tool.
+
+**Type 5 — Customer/BI:** What entities matter most for this team? What
+relationships exist between them? What privacy constraints apply?
+
+**Then for all types — answer these:**
 
 Read the capabilities-and-scopes.md written by onboarding. Specifically:
 - The `## Community Intelligence` section — what did community research surface?
@@ -268,35 +323,51 @@ the integration is lower-risk than average. A clean guide is still useful.
 
 ---
 
-## Step 4 — Design the workflows
+## Step 4 — Design the workflows (type-specific)
 
-Based on the person's context, the platform structure, and the compound
-opportunities — design 2-4 specific workflows.
+Based on the person's context, the platform structure, behavioral findings,
+and the type-specific protocol — design 2-4 specific workflows.
 
-Each workflow is:
-- A question this person needs answered, or a task they currently do manually
-- Expressed in plain language using their vocabulary
-- Specific enough that it couldn't be suggested to someone in a different role
+Each workflow answers a specific question this person needs answered or
+replaces a specific manual task. Use their vocabulary. Make it specific
+enough that it couldn't be suggested to someone in a different role.
 
-**Good workflow framing:**
-"See which RX issues have been in 'In Progress' for more than 5 days without
-a comment — those are the ones that need a nudge before the cycle ends."
+**Type-specific workflow anchors:**
 
-**Bad workflow framing:**
-"Query issues by state and updated date to identify stale work items."
+**Type 1 — Performance data:** Lead with analysis workflows — top performers,
+fatigue detection, period-over-period shifts, creative concept breakdown.
+At least one workflow should join with another connected platform (e.g.,
+Meta + Northbeam for unified ROAS view).
 
-One workflow should always be a compound workflow that uses this integration
-plus at least one other that's already connected — this is the unlock moment
-that couldn't have happened before today.
+**Type 2 — Attribution:** Lead with the unified view — one row per ad with
+both platform and attribution metrics. Include a reconcile workflow (where
+do the platforms disagree?) and an orphaned-attribution workflow (spend
+that can't be attributed).
 
-Separately, ask: would a CLI meaningfully improve this? A CLI is worth offering
-when:
-- The person will query this platform more than once a week
-- The questions they need to ask are complex enough that natural language
-  is slower than a command
-- The local store + compound commands would unlock queries the live API can't
+**Type 3 — Capability:** Lead with the specific capability being added and
+the exact moment in a workflow it gets invoked. Keep it concrete:
+"When you're writing a brief and need competitive context, I'll call this
+automatically before the draft starts."
 
-If yes, note it — you'll offer it in Step 6.
+**Type 4 — Workspace/org:** Lead with the bidirectional workflows — what
+you pull in (context sweep, project status, team knowledge) and what you
+push back (briefs, reports, outputs to the right place). Name the specific
+location where outputs go.
+
+**Type 5 — Customer/BI:** Lead with the queryable business picture —
+pipeline health, revenue trends, customer segments. Name the specific
+decisions this data should be informing.
+
+**For all types:** One workflow should always be compound — using this
+integration plus at least one other already connected.
+
+**Data layer decision:** A sync script + query library is worth building when:
+- The integration is Type 1 or Type 2 (almost always yes — local store unlocks compound analysis the live API can't do)
+- Type 5 (customer/BI) — usually yes when revenue or pipeline analysis is the job
+- Type 3 — no, stateless by nature
+- Type 4 — no, context sweep is the value
+
+Note this for Step 7.
 
 ---
 
@@ -364,19 +435,22 @@ Do NOT include:
 
 ---
 
-## Step 7 — Offer the CLI (if warranted)
+## Step 7 — Offer the data layer (if warranted)
 
-If Step 4 flagged that a CLI would meaningfully improve how they use this
-integration, add a brief offer after the proposal:
+A sync script + query library is worth building when:
+- The integration is Type 1 (performance data), Type 2 (attribution), or Type 5 (customer/BI)
+- The team will query this data more than once a week
+- Compound analysis — joining, period comparison, pattern detection — is needed
 
-> "I can also build a CLI for [integration] — it would give you [specific
-> compound command] as a single command plus a local store you can query
-> without hitting the API each time. Worth doing?"
+If warranted, offer it in one sentence:
 
-Keep it one sentence. Don't over-explain. Let them say yes.
+> "I can set up a sync script and query library for [integration] — pulls data into a local store so you can run analysis without hitting the API each time. Worth doing?"
 
-If a CLI was already built for this integration (check INDEX.md), skip
-the offer and reference the existing one instead.
+If a data layer already exists (check INDEX.md for sync.py), skip the offer
+and reference the existing one instead. Never rebuild what already works.
+
+Type 3 (capability tools) and Type 4 (workspace/org): skip this offer.
+Type 4 gets its value from the context sweep, not a local data store.
 
 ---
 
@@ -431,7 +505,7 @@ the offer and reference the existing one instead.
 ## Open questions
 [What still needs clarification]
 
-## CLI status
+## Data layer status
 [Built / offered / not applicable — with path if built]
 
 ## Practical guide status
@@ -441,7 +515,7 @@ the offer and reference the existing one instead.
 **Practical guide** — write to `/agent/brain/integrations/<name>/practical-guide.md`
 using the template from Step 3c. This file is **Layer 1** — index it in
 `/agent/INDEX.md` with trigger: "use this when any task involves [integration],
-building a CLI for [integration], or querying [integration] data."
+building a data layer for [integration], or querying [integration] data."
 
 Update `/agent/INDEX.md` with entries for both the activation plan and
 the practical guide. Update the person's team file if any durable new
@@ -489,6 +563,8 @@ Do not repeat information from the onboarding summary. Build on it.
 | Platform won't surface live data (auth scope too narrow) | Work with what's available. Note the constraint in the proposal — "I can see X but not Y; connecting with broader scope would unlock..." |
 | No other integrations connected yet | Skip the compound workflow section. Focus on standalone value. Note it: "When you connect [next logical integration], this opens up..." |
 | Platform structure is sparse / genuinely hard to read | Be honest about it. "Your [platform] is pretty early-stage — not a lot to map yet. Here's what I'd build for when it fills up." |
-| CLI already exists for this integration | Reference it. Don't re-offer it. |
+| Data layer already exists for this integration | Reference it. Don't re-offer it. |
 | Community research found no undocumented behavior | Write a short practical guide noting the docs appear accurate and the integration is lower-risk than average. A clean guide is still useful. |
-| Behavioral detective work surfaces a critical undocumented behavior | Surface it prominently in the proposal — "One thing I found that isn't in the docs and matters for how you'll use this: [X]." This is the most valuable single output of the activation phase. |
+| Behavioral detective work surfaces a critical undocumented behavior | Solve it first. If solved: note the fix in the practical guide, don't surface as a problem. If genuinely unsolvable: surface prominently in the proposal with the specific constraint and what can be done despite it. |
+| Type 2 join key not found | This is the most common Type 2 failure. Try all join key options (ID → UTM → exact name → fuzzy name) before concluding. If none work cleanly, propose a manual mapping step — a small CSV the user fills in once that creates the join. Only escalate to "can't join" after this. |
+| Integration type doesn't fit any of the five | Name the primary job, propose how to think about the type, add it to INTEGRATION-TYPE-PROTOCOLS.md, then continue with the most similar existing type as a starting point. |

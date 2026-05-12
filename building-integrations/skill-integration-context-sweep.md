@@ -406,9 +406,9 @@ Do NOT include:
 
 ---
 
-## Step 6b — Initialize quirks and usage files (if CLI exists)
+## Step 6b — Initialize quirks and usage files (if data layer exists)
 
-If a CLI has been built for this integration, confirm that both of these
+If a data layer has been built for this integration, confirm that both of these
 files exist. If they don't, create them now with the standard header.
 
 **`/agent/brain/integrations/<name>/quirks.md`**
@@ -426,8 +426,8 @@ files exist. If they don't, create them now with the standard header.
 ```markdown
 # [Integration] Usage Patterns
 
-> Updated after sessions involving this integration's CLI.
-> Layer 2 — loaded when integration CLI is in use.
+> Updated after sessions involving this integration's data layer.
+> Layer 2 — loaded when integration data layer is in use.
 > Protocol: /agent/brain/integrations/USAGE-FEEDBACK-PROTOCOL.md
 
 *No patterns documented yet. Patterns accumulate from usage.*
