@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>{{ORGANIZATION_NAME}} Asset Search</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Roboto Condensed"', 'system-ui', 'sans-serif'],
+            body:    ['Roboto', 'Arial', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            app: {
+              bg:      '{{BG_COLOR}}',
+              surface: '#141414',
+              border:  '#252525',
+              text:    '{{FG_COLOR}}',
+              muted:   '#a0a0a0',
+              hover:   '#1f1f1f',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./src/app.ts"></script>
+</body>
+</html>
