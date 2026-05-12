@@ -1,0 +1,27 @@
+{
+  "schema": "1.0",
+  "id": "self-iteration-loop",
+  "version": "1.0.0",
+  "description": "Automatically surfaces a self-improving feedback loop after any recurring process or app build. Identifies the assertion being made, finds the intercept moment, routes corrections to the right brain layer, and wires in the capture mechanism.",
+  "installs": [
+    {
+      "file": "SKILL.md",
+      "dest": "/agent/.agents/skills/self-iteration-loop/SKILL.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "behavior-snippet.md",
+      "dest": "user-md",
+      "insert-after": "## System routines",
+      "insert-fallback": "append"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-12",
+      "type": "major",
+      "notes": "Initial release. Four-phase loop design: goal extraction, intercept moment, storage routing, build. Plan mode hard rule included. Grounded examples from Motion Creative sandbox."
+    }
+  ]
+}
