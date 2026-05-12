@@ -1,9 +1,14 @@
 {
   "schema": "1.0",
   "id": "building-integrations",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Context-aware integration intelligence: lightweight or full deep dive based on who is setting it up, type-specific protocols for five integration categories, proactive quirk solving, and a Python sync script + named SQL query library instead of a compiled CLI.",
   "installs": [
+    {
+      "file": "brain-integrations-registry-stub.md",
+      "dest": "/agent/brain/integrations/README.md",
+      "if-not-exists": true
+    },
     {
       "file": "brain-quirks-protocol.md",
       "dest": "/agent/brain/integrations/QUIRKS-PROTOCOL.md"
@@ -40,6 +45,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "3.1.0",
+      "date": "2026-05-12",
+      "type": "minor",
+      "notes": "Fix 6 gaps found in first client test (AppLovin): ambiguous-type classification rule, secret run permission check after builder, brain/integrations/README.md stub at install, usage-patterns.md stub at onboarding, behavior snippet merge guidance, fetch-size note for large skill files."
+    },
     {
       "version": "3.0.0",
       "date": "2026-05-11",

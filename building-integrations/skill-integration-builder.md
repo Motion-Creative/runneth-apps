@@ -382,10 +382,78 @@ cat schema.sql
 4. Update the activation plan with builder status
 5. Update INDEX.md
 
+### Required: design the sync around available tools — never assume secret run
+
+`secret run` requires `allowedCliCommands` to be configured at the platform
+level. Users cannot change this. Do not tell them to change it. Do not design
+a sync that depends on it.
+
+**The correct sync architecture for this environment:**
+
+Split the sync into two steps the agent orchestrates directly:
+
+**Step 1 — Agent fetches data using `secure-fetch` (handles the secret)**
+```bash
+secure-fetch run \
+  --secret-key <SECRET_KEY_NAME> \
+  --url "https://api.example.com/report" \
+  --auth-header "Authorization" \
+  --method POST \
+  --body '{"date_range": "last_30d"}' > /tmp/applovin_response.json
+```
+
+**Step 2 — Agent runs python3 on the saved response (no secret needed)**
+```bash
+python3 /agent/brain/integrations/<name>/process.py \
+  --input /tmp/applovin_response.json \
+  --db /agent/brain/integrations/<name>/store.db
+```
+
+The secret never enters a Python process. `secure-fetch` owns auth.
+Python owns transformation and storage. Both work with existing tools.
+
+**Design sync.py accordingly:**
+- The sync script should accept `--input <file>` to process a pre-fetched response
+- The script should ALSO accept `--fetch` mode where the agent has already
+  written the API response to a temp file
+- Never write a sync script that makes the API call itself — the agent does
+  that via `secure-fetch`
+
+**For APIs that require the key as a URL query parameter (e.g. AppLovin):**
+
+`secure-fetch` only supports header injection. Try header auth first:
+```bash
+secure-fetch run --secret-key KEY --auth-header "Authorization" --url "..."
+```
+
+If the API genuinely only supports query param auth:
+1. Check if there is an alternative header-auth endpoint (most APIs have both)
+2. If not, use `secure-fetch` with `--header "X-Api-Key: ..."` substitution
+   patterns to find any supported header variant
+3. As a last resort, document the limitation in quirks.md and build the fetch
+   step as a `bash` heredoc in the agent flow — never expose the key in
+   a Python script or SQL file
+
+**After building, test the two-step flow end to end:**
+```bash
+# Step 1: agent fetches
+secure-fetch run --secret-key <KEY> --url "<ENDPOINT>" > /tmp/test_response.json
+
+# Step 2: agent processes
+python3 process.py --input /tmp/test_response.json --db store.db --dry-run
+
+# Step 3: confirm rows in store
+sqlite3 store.db "SELECT COUNT(*) FROM ads"
+```
+
+If any step fails, apply the workaround hierarchy before surfacing to the user.
+A data layer the user can't run is worse than no data layer.
+
 ---
 
 ## Skill changelog
 
 | Date | Version | Change |
 |---|---|---|
+| 2026-05-12 | v1.1.0 | Sync architecture redesigned: agent orchestrates secure-fetch for HTTP + python3 for processing. Secret never enters Python. Never depends on secret run or allowedCliCommands. Query-param auth workaround documented. |
 | 2026-05-11 | v1.0.0 | Initial version. Replaces Go CLI factory. Python sync script + SQLite schema + named query library + health check. Agent-native: runs directly with bash, no compilation. |
