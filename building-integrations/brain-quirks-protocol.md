@@ -96,13 +96,13 @@ any known pattern.
 Before any quirk can be marked `unhandled`, the following must have been tried
 and failed. Document why each failed in the quirk entry.
 
-1. **Handle in client code** — intercept the raw behavior, return something useful
+1. **Handle in the sync/fetch layer** — intercept the raw behavior using available tools. Prefer `secure-fetch` for HTTP calls (handles auth without needing secret injection into Python). Design the sync as agent-orchestrated: agent fetches via `secure-fetch`, python3 processes the saved response. Never depend on `secret run` — `allowedCliCommands` is platform-controlled, not user-configurable.
 2. **Reconstruct from other fields** — calculate the value from what is available
-3. **Use a different approach** — different endpoint, different query, different data source
-4. **Chunk, batch, or paginate** — work around size and rate limits in the client layer
+3. **Use a different approach** — different endpoint, alternative auth method (try header auth before assuming query-param-only), different data source
+4. **Chunk, batch, or paginate** — work around size and rate limits in the fetch layer
 5. **Cache or pre-compute** — avoid hitting the limitation repeatedly
 6. **Warn proactively** — fire a specific warning before the user hits the problem, with a concrete workaround they can act on
-7. **Ask a data-savvy user** — only if they have account-level information you genuinely need
+7. **Ask a data-savvy user** — only if they have account-level information you genuinely need. Never ask them to change platform settings they cannot configure (auth methods, `allowedCliCommands`, secret scopes).
 
 If you mark something `unhandled` without going through this list, the entry
 is incomplete. `Unhandled` is not a neutral state — it means the user will

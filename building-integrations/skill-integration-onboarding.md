@@ -129,6 +129,38 @@ The five types and their signals:
 
 If it doesn't fit cleanly, name the primary job and propose a hybrid.
 
+**Ambiguity rule — always applies before building anything:**
+
+Some platforms serve meaningfully different audiences from the same API surface.
+This is not a minor variation — it produces completely different schemas, queries,
+and data layers. Getting it wrong means a full rebuild.
+
+Before classifying, ask: **could this platform be used as two different types
+by two different customers?**
+
+Platforms that commonly hit this:
+- AppLovin — advertiser UA platform (Type 1: spend, installs, ROAS) OR publisher
+  monetization (Type 1: revenue, eCPM, fill rates). Same API key, different
+  `report_type`, completely different data.
+- Google — Ads (Type 1 advertiser) vs. AdSense (Type 1 publisher) vs. Analytics
+  (Type 4 org context) vs. Sheets (Type 4 workspace).
+- Amazon — Advertising (Type 1) vs. Marketplace (Type 5 revenue).
+- Twitter/X — Ads (Type 1) vs. organic analytics (Type 3 capability).
+
+**If two types are both plausible given only the platform name and key:**
+Do not guess. Do not build. Ask one specific question before Phase 2:
+
+> "AppLovin can be used as an advertiser UA platform (spend, installs, ROAS)
+> or as a publisher monetization tool (ad revenue, eCPM, fill rates). Which
+> is this?"
+
+This single question prevents a full data layer rebuild. It is never too early
+to ask it and never acceptable to skip it when the ambiguity is real.
+
+**Rule: if the type classification would produce different schemas or query
+templates depending on which interpretation is correct, treat it as ambiguous
+and ask before Phase 2B.**
+
 ### 1d — State your decision explicitly
 
 Before moving to Phase 2, say in plain language:
@@ -251,7 +283,27 @@ Apply the corresponding protocol from `/agent/brain/integrations/INTEGRATION-TYP
 The type protocol shapes everything downstream: what the data layer looks like,
 what the practical guide covers, what the activation proposes.
 
-### Step B4 — Pre-populate quirks file
+### Step B4 — Initialize integration files and pre-populate quirks
+
+**Always create these stub files first, even if empty, so downstream routines
+never fail on a missing file:**
+
+```
+/agent/brain/integrations/<name>/quirks.md      ← stub if no quirks yet
+/agent/brain/integrations/<name>/usage-patterns.md  ← always stub
+/agent/brain/integrations/<name>/practical-guide.md ← written in activation
+```
+
+Stub format for usage-patterns.md:
+```markdown
+# <Integration> Usage Patterns
+
+> Updated after sessions involving this integration's data layer.
+> Layer 2 — loaded when this integration is in use.
+> Protocol: /agent/brain/integrations/USAGE-FEEDBACK-PROTOCOL.md
+
+*No patterns documented yet. Patterns accumulate from usage.*
+```
 
 Write `/agent/brain/integrations/<name>/quirks.md`.
 
@@ -295,6 +347,9 @@ full proposal. The user sees one coherent response.
 | Rate limit hit during verification | Back off and retry with exponential delay. Reduce scope of verification. Never tell the user the API is rate-limited — just make fewer calls. |
 | Live verification returns unexpected data | This is valuable information. Document it, build a workaround, update the capabilities file. Don't surface as an error. |
 | Integration type unclear | Name the primary job, propose the closest type, note the hybrid nature in the practical guide. |
+| Platform serves two meaningfully different audiences | Do not classify. Ask one specific question: "This platform can be used as X or Y — which is this?" Never build a data layer on an ambiguous type. |
+| API key requires URL query parameter injection | `secure-fetch` only supports header injection. Try header auth first — most APIs support both. If truly query-param only, the agent uses `secure-fetch` to fetch and save the response, then passes the saved file to python3 for processing. The secret never enters a Python process. Document as Q-001 in quirks.md. Never tell the user to change `allowedCliCommands` — users cannot configure this. |
+| Skill file fetch returns truncated content | Retry at higher `max_chars`. Large skill files (activation, context-sweep) commonly exceed 20KB. Always verify the file ends correctly before writing — a truncated SKILL.md is worse than no file. |
 
 ---
 
@@ -302,6 +357,7 @@ full proposal. The user sees one coherent response.
 
 | Date | Version | Change |
 |---|---|---|
+| 2026-05-12 | v2.1.0 | Ambiguous-type rule: if platform serves two meaningfully different audiences, ask before building. usage-patterns.md stub created during onboarding. URL query-param auth documented as error case. Truncated fetch retry guidance added. |
 | 2026-05-11 | v2.0.0 | Complete rewrite. Four-phase model (quick capture, context reading, lightweight/deep dive paths). Lightweight default with offer to go deeper. Quirk-solving philosophy: solve first, surface as last resort. Integration type classification in Phase 1. Type-specific protocols from brain-integration-type-protocols.md. Community intelligence sweep and live verification moved to deep dive path only. |
 | 2026-05-11 | v1.3 | Community intelligence sweep, live spot-check, pre-populate quirks. |
 | 2026-05-09 | v1.2 | Added activation handoff. |

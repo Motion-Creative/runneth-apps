@@ -1,5 +1,7 @@
 # building-integrations
 
+> For an interactive walkthrough of every file in this use case, open `overview.html`.
+
 **When an integration connects, your agent reads the context, chooses the right depth, applies the right protocol for the type of integration, and solves every quirk it finds before the user ever sees one.**
 
 Not every integration connection needs the same treatment. Someone making a quick data pull gets a fast answer and an offer to go deeper. Someone setting up an integration for the whole team gets a full deep dive: community research, live verification, type-specific setup, a practical guide that goes beyond what the official docs say, and a custom CLI designed around how the team actually uses the platform. Quirks are found and solved proactively — surfaced to the user only as a genuine last resort.

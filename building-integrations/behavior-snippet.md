@@ -1,4 +1,12 @@
-<!-- use-case: building-integrations v1.0.0 -->
+<!-- use-case: building-integrations v1.1.0 -->
+<!-- MERGE INSTRUCTIONS:
+  Add this block to /agent/user.md.
+  If user.md has existing content: paste this block AFTER the last existing
+  section (or after the session-open routine if one exists).
+  If user.md is empty: paste this as the full file contents.
+  The sentinel comments above and below mark this block for future updates —
+  do not remove them.
+-->
 
 ## On new integration connected — oauth_connection automation turn
 
