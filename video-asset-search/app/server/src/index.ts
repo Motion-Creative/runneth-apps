@@ -8,15 +8,10 @@ import {
 import { runWithBuildethRuntime, type BuildethRuntimeContext } from './runtime.js'
 import {
   getStatus, getShots, getShotById, getTotalShotCount,
-  getAllShotsForVectorSearch, CLIPS_DIR, SOURCES_DIR,
+  CLIPS_DIR, SOURCES_DIR,
 } from './asset-db.js'
 import { serveClip, serveSource, serveSourceByAbsPath } from './media.js'
 import { hybridSearch } from './search-hybrid.js'
-
-// ── Single-flag dispatch: flip to false to revert to cosine-only instantly ────
-// Revert path: set USE_HYBRID_SEARCH = false + redeploy. FTS5 table has no
-// effect when the flag is off.
-const USE_HYBRID_SEARCH = true
 
 const server = Fastify({ logger: false })
 
@@ -48,29 +43,17 @@ server.get('/api/shots/:id', async (request, reply) => {
 
 server.post('/api/search-vector', async (request, reply) => {
   reply.header('content-type', 'application/json; charset=utf-8')
-  const body      = request.body as { vector?: number[]; limit?: number; threshold?: number; query?: string }
+  const body      = request.body as { vector?: number[]; limit?: number; query?: string }
   const vector    = body?.vector
-  const limit     = body?.limit     ?? 200
-  const threshold = body?.threshold ?? 0.65
-  const queryText = body?.query     ?? ''
+  const limit     = body?.limit ?? 200
+  const queryText = body?.query ?? ''
 
   if (!Array.isArray(vector) || vector.length !== 384) {
     reply.status(400); return { error: 'vector must be a 384-element number array' }
   }
 
   try {
-    if (USE_HYBRID_SEARCH) {
-      return hybridSearch(queryText, vector, limit)
-    } else {
-      // Original cosine-only path — unchanged
-      const allShots = getAllShotsForVectorSearch()
-      return allShots
-        .map(shot => { let d=0; for(let i=0;i<384;i++) d+=vector[i]*shot.vec[i]; return {...shot,score:d,vec:undefined} })
-        .filter(s => s.score >= threshold)
-        .sort((a,b) => (b.score as number)-(a.score as number))
-        .slice(0,limit)
-        .map(({vec:_v,...rest})=>rest)
-    }
+    return hybridSearch(queryText, vector, limit)
   } catch (e) { reply.status(500); return { error: String(e) } }
 })
 

@@ -1,9 +1,6 @@
 /**
  * search-hybrid.ts — Hybrid BM25 + cosine-similarity search via RRF.
  *
- * This module is purely additive. The original cosine-only path in index.ts
- * is untouched and reachable by flipping USE_HYBRID_SEARCH = false.
- *
  * Algorithm:
  *   1. BM25 leg  — FTS5 query on chunks_fts, top 50 by bm25() rank.
  *   2. Vector leg — cosine similarity on stored embeddings, top 50 by score.
