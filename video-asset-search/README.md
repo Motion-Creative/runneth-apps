@@ -195,4 +195,5 @@ print(f'Re-embedded {len(rows)} shots')
 
 | Version | Date | Notes |
 |---|---|---|
+| 1.1.0 | 2026-05-12 | Drop Tailwind CDN runtime dependency in favor of inline CSS; make token substitution explicit in install step. |
 | 1.0.0 | 2026-05-11 | Initial release. Hybrid BM25+cosine search, ONNX embeddings, browser app, agent-path search. |
