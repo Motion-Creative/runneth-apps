@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "video-asset-search",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Natural language search over a video asset library, with shareable deep-linked clips. Editors describe what they need; the system finds and delivers the right footage.",
   "installs": [
     {
@@ -144,6 +144,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.1.1",
+      "date": "2026-05-13",
+      "type": "patch",
+      "notes": "Cut clips at ingest in run_pipeline.py so the browser download button works without a separate clipping pass."
+    },
     {
       "version": "1.1.0",
       "date": "2026-05-12",

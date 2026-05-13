@@ -195,5 +195,6 @@ print(f'Re-embedded {len(rows)} shots')
 
 | Version | Date | Notes |
 |---|---|---|
+| 1.1.1 | 2026-05-13 | Cut clips at ingest in `run_pipeline.py` so the browser download button works without a separate clipping pass. |
 | 1.1.0 | 2026-05-12 | Drop Tailwind CDN runtime dependency in favor of inline CSS; make token substitution explicit in install step. |
 | 1.0.0 | 2026-05-11 | Initial release. Hybrid BM25+cosine search, ONNX embeddings, browser app, agent-path search. |
