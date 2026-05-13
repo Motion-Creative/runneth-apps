@@ -14,9 +14,54 @@ import argparse
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from asset_db import init_db, get_stats
+import sqlite3
+import subprocess
+from asset_db import init_db, get_stats, update_clip_path
 from fetch_drive import fetch
 from process_video import process_video
+
+CLIPS_DIR = Path("{{BRAIN_PATH}}/clips")
+
+
+def cut_clips_for_video(source_filename: str) -> tuple[int, int]:
+    """Cut ffmpeg clips for all shots of a given video that don't have one yet.
+    Returns (cut, skipped).
+    """
+    CLIPS_DIR.mkdir(parents=True, exist_ok=True)
+    db = sqlite3.connect("{{BRAIN_PATH}}/{{DB_FILENAME}}")
+    db.row_factory = sqlite3.Row
+    shots = db.execute(
+        "SELECT id, source_video, timecode_start, timecode_end FROM shots "
+        "WHERE source_filename=? AND clip_path IS NULL",
+        (source_filename,)
+    ).fetchall()
+    db.close()
+
+    cut = skipped = 0
+    for s in shots:
+        src = Path(s["source_video"])
+        if not src.exists():
+            skipped += 1
+            continue
+        start, end = s["timecode_start"], s["timecode_end"]
+        clip_name = f"{src.stem}_{start:.1f}-{end:.1f}{src.suffix}"
+        clip_path = CLIPS_DIR / clip_name
+        if clip_path.exists():
+            update_clip_path(s["id"], str(clip_path))
+            skipped += 1
+            continue
+        result = subprocess.run(
+            ["ffmpeg", "-y", "-ss", str(start), "-i", str(src),
+             "-t", str(end - start), "-c", "copy",
+             "-avoid_negative_ts", "1", str(clip_path)],
+            capture_output=True, timeout=60
+        )
+        if result.returncode == 0 and clip_path.exists():
+            update_clip_path(s["id"], str(clip_path))
+            cut += 1
+        else:
+            skipped += 1
+    return cut, skipped
 
 
 def run(drive_url: str, folder_name: str = None, uploads_dir: str = None):
@@ -42,6 +87,9 @@ def run(drive_url: str, folder_name: str = None, uploads_dir: str = None):
             n = process_video(video_path=video_path, folder_name=folder_name,
                               uploads_dir=uploads_path)
             total_shots += n
+            if n > 0:
+                cut, skipped = cut_clips_for_video(video_path.name)
+                print(f"  Clips: {cut} cut, {skipped} skipped")
         except Exception as e:
             print(f"  ERROR: {e}", file=sys.stderr)
             errors.append(video_path.name)
