@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "plan-mode",
-  "version": "1.0.0",
-  "description": "Hard rule that fires before any skill, routine, app, or standing instruction is built. Runneth writes a plan file, delivers it as a link widget, asks the clarifying questions, and waits for approval before touching anything.",
+  "version": "1.2.0",
+  "description": "Hard rule that fires before any skill, routine, app, or standing instruction is built. Runneth asks 2-4 clarifying questions in chat, writes a plan file, delivers it as a link widget, and waits for approval before touching anything.",
   "installs": [
     {
       "file": "behavior-snippet.md",
@@ -12,6 +12,18 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.2.0",
+      "date": "2026-05-13",
+      "type": "minor",
+      "notes": "Clarify the read-vs-write boundary. Replace 'Do not read files to begin execution' (was being misread as 'do not read context') with explicit language allowing reads for context and prohibiting writes/edits/build until plan is approved. Update README to match v1.1.0 questions-in-chat flow and align install-config version with snippet header."
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-05-13",
+      "type": "minor",
+      "notes": "Questions move to chat before the plan file is written. Plan file is the confirmed spec, not the place where open questions live."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-12",
