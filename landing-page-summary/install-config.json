@@ -1,0 +1,69 @@
+{
+  "name": "landing-page-summary",
+  "version": "1.0.0",
+  "kind": "skill",
+  "description": "Recreation-quality landing page summarizer. Headless Playwright browser, 17-section markdown spec, in-system changelog, always re-fetches by default.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "bootstrap": ["playwright", "chromium"]
+  },
+  "installs": [
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/landing-page-summary/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Skill definition that Runneth auto-discovers"
+    },
+    {
+      "from": "seed/_index.md",
+      "to": "/agent/brain/landing-pages/_index.md",
+      "on_exists": "skip",
+      "purpose": "Local routing index for saved landing page summaries"
+    },
+    {
+      "appends_to": "/agent/INDEX.md",
+      "guard": "path '/agent/brain/landing-pages/' already present",
+      "purpose": "Global INDEX.md routing entry for the saved-summaries library. The skill itself is auto-discovered via Runneth's available-skills mechanism and is intentionally not indexed (per Runneth's rule: do not index /agent/.agents/skills/)."
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/brain/landing-pages/<slug>--<domain>.md",
+    "/agent/brain/landing-pages/_history/<slug>--<domain>/<fetched-ts>.md"
+  ],
+  "routines": [
+    {
+      "title": "LP library weekly refresh",
+      "default_schedule": "weekly Monday 09:00",
+      "trigger": "Offered after the first successful landing-page-summary run in a conversation. Sentinel-guarded by reminder title so it is offered at most once per conversation. User can decline or change cadence.",
+      "purpose": "Self-closing maintenance loop for the LP library and its indexes. Adds new pages, refreshes known pages, diffs against prior archive, prunes redundant history, retires dead URLs, syncs _index.md and /agent/INDEX.md with actual files, flags drift on dependent brand kits and CRO audits.",
+      "phases": [
+        "A. Discover and fetch (new + existing URLs)",
+        "B. Material-change diff (hero headline, primary CTA, pricing, forms, intent)",
+        "C. History pruning (keep material + origin + 4 most recent, drop noise)",
+        "D. Retire dead URLs (move to _retired/, stop fetching)",
+        "E. Index hygiene (sync _index.md and /agent/INDEX.md with actual files)",
+        "F. Cross-skill drift flags (brand kits, CRO audits, and experiment backlogs flagged when sources change)",
+        "G. Report (compact block with footprint visible)"
+      ]
+    }
+  ],
+  "data_contract": "DATA-CONTRACT.md",
+  "downstream_consumers": ["brand-kit", "optimize-landing-page"],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-13",
+      "changes": [
+        "Initial PR-ready release",
+        "Dynamic Playwright NODE_PATH discovery, no hardcoded cache hash",
+        "Always re-fetch by default; --use-cached opt-in only",
+        "Archive-before-overwrite into per-page _history/ folder as in-system changelog",
+        "Filename never carries timestamp; timestamp lives inside the file on _Fetched: line",
+        "Section 12 colors flagged as unreliable; computed-DOM override documented",
+        "Updates both local _index.md and global /agent/INDEX.md on every durable save",
+        "Phase 6: offers a weekly LP library refresh routine after the first successful summary. The routine is a self-closing loop with seven phases: discover, diff, prune history, retire dead URLs, index hygiene, cross-skill drift flags, compact report. Sentinel-guarded by reminder title. Material-change criteria are sharply defined (hero headline, primary CTA, pricing, form fields, page intent); noise is not flagged. History pruning is bounded by meaningful events, not elapsed time."
+      ]
+    }
+  ]
+}

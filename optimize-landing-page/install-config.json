@@ -1,0 +1,45 @@
+{
+  "name": "optimize-landing-page",
+  "version": "1.0.0",
+  "kind": "skill",
+  "description": "8-layer CRO audit of a landing page. Always re-fetches a fresh landing-page-summary. Returns top 3 prioritized fixes with verbatim current->replace prescriptions plus an A/B test queue.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": ["landing-page-summary"],
+    "bootstrap": []
+  },
+  "installs": [
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/optimize-landing-page/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Skill definition that Runneth auto-discovers"
+    },
+    {
+      "appends_to": "/agent/INDEX.md",
+      "guard": "path '/agent/brain/cro-audits/' already present",
+      "purpose": "Global INDEX.md routing entry for the saved-audits library. The skill itself is auto-discovered via Runneth's available-skills mechanism and is intentionally not indexed (per Runneth's rule: do not index /agent/.agents/skills/)."
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/brain/cro-audits/_index.md",
+    "/agent/brain/cro-audits/<slug>--<domain>/<YYYY-MM-DD>.md",
+    "./artifacts/cro-audit.<host>.<date>.md"
+  ],
+  "upstream_dependencies": ["landing-page-summary"],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-13",
+      "changes": [
+        "Initial PR-ready release",
+        "Always invokes landing-page-summary fresh; never reads a saved summary directly",
+        "Workflow framing made explicit: creatives -> destination URL -> audit-against-ads",
+        "Durable audit history at /agent/brain/cro-audits/<slug>--<domain>/<YYYY-MM-DD>.md preserves per-page audit changelog",
+        "Updates both local _index.md and global /agent/INDEX.md",
+        "Fallback to WebFetch when landing-page-summary is not installed"
+      ]
+    }
+  ]
+}

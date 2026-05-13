@@ -1,0 +1,55 @@
+{
+  "name": "landing-page-experiments",
+  "version": "1.0.0",
+  "kind": "skill",
+  "description": "A/B test backlog generator for landing pages. Scored 10-20 test prioritization grouped by element and hypothesis type. Always fetches fresh LP summary. Reads prior CRO audits to avoid suggesting fixes already shipped. Reads brand kit so variant copy stays on-brand.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": ["landing-page-summary", "brand-kit", "optimize-landing-page"],
+    "bootstrap": []
+  },
+  "installs": [
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/landing-page-experiments/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Skill definition that Runneth auto-discovers"
+    },
+    {
+      "from": "seed/_index.md",
+      "to": "/agent/brain/experiments/_index.md",
+      "on_exists": "skip",
+      "purpose": "Local routing index for saved experiment backlogs"
+    },
+    {
+      "appends_to": "/agent/INDEX.md",
+      "guard": "path '/agent/brain/experiments/' already present",
+      "purpose": "Global INDEX.md routing entry for the experiment-backlog library. The skill itself is auto-discovered via Runneth's available-skills mechanism and is intentionally not indexed (per Runneth's rule: do not index /agent/.agents/skills/)."
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/brain/experiments/<slug>--<domain>/<YYYY-MM-DD>.md",
+    "./artifacts/experiments.<host>.<date>.md"
+  ],
+  "upstream_dependencies": ["landing-page-summary", "brand-kit", "optimize-landing-page"],
+  "routines": [],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-13",
+      "changes": [
+        "Initial PR-ready release",
+        "Six-phase method: fresh LP summary, read prior audit + brand kit context, generate scored backlog, compose artifact, index hygiene, surface readout",
+        "Scoring formula: (median expected lift band) x (win-rate prior) / (effort hours). Win-rate priors table by hypothesis type. Win-bias flags adjust priors x1.3 with 80% cap",
+        "Coverage requirements: 2+ tests per element, 1+ per hypothesis type with prior > 25%, max 4 per element, total 10-20",
+        "Reads prior CRO audits and prior backlogs (default 90 days back) to filter duplicates. Carried-forward tests retain prior test IDs for traceability",
+        "Reads brand kit if present; variant copy obeys voice, vocabulary, and anti-patterns",
+        "Every test record includes 'why this might lose' failure mode as required field",
+        "Saves to both ./artifacts/ (user-facing) and /agent/brain/experiments/<slug>--<domain>/<YYYY-MM-DD>.md (durable history)",
+        "Single-line /agent/INDEX.md format per Runneth index rules",
+        "No recurring routine; LP weekly refresh routine flags backlogs whose pages changed materially"
+      ]
+    }
+  ]
+}

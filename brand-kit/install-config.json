@@ -1,0 +1,68 @@
+{
+  "name": "brand-kit",
+  "version": "1.0.0",
+  "kind": "skill",
+  "description": "Complete brand kit builder. Computed DOM extraction, brand-styled HTML deliverable. After first build, installs a user.md usage instruction so future branded outputs auto-consult the brand-kit library.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": ["landing-page-summary"],
+    "bootstrap": ["playwright", "chromium"]
+  },
+  "installs": [
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/brand-kit/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Skill definition that Runneth auto-discovers"
+    },
+    {
+      "from": "reference-example.md",
+      "to": "/agent/.agents/skills/brand-kit/reference-example.md",
+      "on_exists": "overwrite",
+      "purpose": "Generic structural reference the skill points to for section-by-section depth"
+    },
+    {
+      "from": "seed/_index.md",
+      "to": "/agent/brain/brand-kit/_index.md",
+      "on_exists": "skip",
+      "purpose": "Local routing index for saved brand kits"
+    },
+    {
+      "appends_to": "/agent/INDEX.md",
+      "guard": "path '/agent/brain/brand-kit/' already present",
+      "purpose": "Global INDEX.md routing entry for the saved-kits library. The skill itself is auto-discovered via Runneth's available-skills mechanism and is intentionally not indexed (per Runneth's rule: do not index /agent/.agents/skills/)."
+    }
+  ],
+  "runtime_installs": [
+    {
+      "appends_to": "/agent/user.md",
+      "guard": "sentinel 'runneth-apps:brand-kit:usage v1' already present",
+      "trigger": "After the first successful brand-kit build, idempotent across subsequent builds",
+      "purpose": "Standing instruction so future branded outputs (HTML, landing pages, decks, ads, emails, briefs) auto-consult the brand-kit library and feel native to the target brand"
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/brain/brand-kit/<slug>--brand-kit.md",
+    "/agent/brain/brand-kit/_history/<slug>/<archived-iso>.md",
+    "./artifacts/<slug>--brand-kit.html"
+  ],
+  "upstream_dependencies": ["landing-page-summary"],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-13",
+      "changes": [
+        "Initial PR-ready release",
+        "Hardcoded motionapp.com north-star references removed; generic reference-example.md ships instead",
+        "Dynamic Playwright NODE_PATH discovery, no hardcoded cache hash",
+        "All /tmp writes replaced with ./workdir/",
+        "YAML frontmatter stripped of model: opus and skill-local allowed-tools for plug-and-play default capabilities",
+        "Step 4.5: idempotent user.md usage-snippet append so brand kits become an active primitive, not an inert file",
+        "Archive-before-overwrite into per-brand _history/ folder as in-system changelog",
+        "Updates both local _index.md and global /agent/INDEX.md on every durable save",
+        "Cross-skill dependency: always invokes landing-page-summary fresh, never reads a saved summary directly"
+      ]
+    }
+  ]
+}
