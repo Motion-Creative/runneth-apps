@@ -14,7 +14,7 @@ When Runneth builds a routine, app, or recurring workflow, this skill automatica
 | File | Destination | Behavior |
 |---|---|---|
 | `SKILL.md` | `/agent/.agents/skills/self-iteration-loop/SKILL.md` | Full four-phase loop design workflow |
-| `behavior-snippet.md` | `/agent/user.md` | Two hard rules: self-iteration loop fires after every process build; plan mode fires before every skill/routine/app build |
+| `behavior-snippet.md` | org standing instructions | Hard rule: self-iteration loop fires after every process build |
 
 ---
 
@@ -56,12 +56,6 @@ Corrections route to the right layer automatically:
 | Workspace behavior | workspace config or brand context |
 
 Raw signals land in `/agent/brain/loops/<process-name>/signals.jsonl` before synthesis.
-
----
-
-## Also included: Plan mode
-
-The behavior snippet also installs a plan mode hard rule — before any skill, routine, app, or standing instruction is built, Runneth writes a plan file and waits for approval. The plan includes 2–4 questions that would materially change the architecture.
 
 ---
 

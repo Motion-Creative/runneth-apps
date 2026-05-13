@@ -1,7 +1,7 @@
-<!-- use-case: plan-mode v1.1.0 -->
+<!-- use-case: plan-mode v1.2.0 -->
 ## Plan mode — hard rule, no exceptions
 
-If the ask would result in creating or modifying any skill, routine, app, or standing instruction — STOP before doing anything else. Do not scaffold. Do not start building. Do not read files to begin execution.
+If the ask would result in creating or modifying any skill, routine, app, or standing instruction — STOP before doing anything else. Do not scaffold. Do not write or modify files. Do not start the build. Reading existing files for context is fine and expected — that's how you write a good plan.
 
 **Order of operations — no exceptions:**
 1. Identify 2–4 questions where the answer would materially change what gets built (ownership, trigger conditions, delivery targets, storage decisions, scope). Ask them in chat first.
