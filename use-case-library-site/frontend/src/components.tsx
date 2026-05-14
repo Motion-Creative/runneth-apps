@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import { CTA } from './CTA'
 import { Illustration } from './Illustration'
-import type { UseCaseMeta } from './types'
+import { StarRating } from './Reviews'
+import type { RatingSummary, UseCaseMeta } from './types'
 import { accent, cardTileGradient, colors, easeArr, radius } from './theme'
 
 export const ExperimentalPill = ({ pulse }: { pulse?: boolean }): JSX.Element => (
@@ -111,7 +112,15 @@ export const FilterChip = ({
   )
 }
 
-export const UseCaseCard = ({ useCase, index }: { useCase: UseCaseMeta; index: number }): JSX.Element => {
+export const UseCaseCard = ({
+  useCase,
+  index,
+  rating,
+}: {
+  useCase: UseCaseMeta
+  index: number
+  rating?: RatingSummary
+}): JSX.Element => {
   const navigate = useNavigate()
   const location = useLocation()
   const accentHex = accent(useCase.category)
@@ -166,6 +175,14 @@ export const UseCaseCard = ({ useCase, index }: { useCase: UseCaseMeta; index: n
           {useCase.display_title}
         </div>
         <div style={{ fontSize: 14.5, lineHeight: 1.5, color: colors.textMuted }}>{useCase.pitch}</div>
+        {rating && rating.count > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>
+            <StarRating value={rating.average} size={12} />
+            <span style={{ fontSize: 12, color: colors.textMuted, fontWeight: 600 }}>
+              {rating.average.toFixed(1)} · {rating.count}
+            </span>
+          </div>
+        )}
         <div style={{ flex: 1 }} />
       </div>
 

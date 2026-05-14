@@ -15,6 +15,8 @@ export type UseCaseMeta = Readonly<{
   github_path: string
 }>
 
+export type RatingSummary = Readonly<{ count: number; average: number }>
+
 export type Catalog = Readonly<{
   categories: readonly Category[]
   use_cases: readonly UseCaseMeta[]
@@ -23,6 +25,27 @@ export type Catalog = Readonly<{
   experimental_count: number
   ref: string
   cached_at: string
+  ratings: Readonly<Record<string, RatingSummary>>
+}>
+
+export type Review = Readonly<{
+  id: number
+  name: string
+  stars: number
+  text: string
+  created_at: string
+}>
+
+export type ReviewAggregate = Readonly<{
+  count: number
+  average: number | null
+  distribution: Readonly<{ 1: number; 2: number; 3: number; 4: number; 5: number }>
+}>
+
+export type ReviewsResponse = Readonly<{
+  slug: string
+  aggregate: ReviewAggregate
+  reviews: readonly Review[]
 }>
 
 export type MarketingDoc = Readonly<{ frontmatter: Record<string, string>; body: string }>

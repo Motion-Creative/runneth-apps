@@ -9,6 +9,7 @@ Lives at the root of [`Motion-Creative/runneth-apps`](https://github.com/Motion-
 - **Home** — hero with brand-styled tabs, filtered card grid for each category
 - **All** — every use case in one grid with category and status filters
 - **Detail modal** — pitch, super powers, how it works, a real example, plus a one-click "Give this to my Runneth" prompt copier
+- **Reviews** — anonymous-name, 1–5 stars + text. Visible aggregate on each card. Report button sends a flag email to support@motionapp.com.
 - **Source link** for every use case back to its folder in this repo
 
 ## Architecture
@@ -74,7 +75,7 @@ Open `http://localhost:5173`.
 
 ## Configuration
 
-All optional. Defaults in parentheses.
+Defaults in parentheses.
 
 | Variable | Default | Purpose |
 |---|---|---|
@@ -82,6 +83,20 @@ All optional. Defaults in parentheses.
 | `HOST` | `0.0.0.0` | Bind address. |
 | `RUNNETH_APPS_REF` | `main` | Git ref this site reads metadata from. Useful for staging. |
 | `LOG_LEVEL` | `info` | Fastify log level. |
+| `REVIEWS_DB_PATH` | `/data/reviews.db` (Docker) / `./reviews.db` (bare) | SQLite file path. **Must point at a persistent volume in production** — Railway: mount a volume at `/data`. |
+| `RESEND_API_KEY` | _(unset)_ | Resend API key for flag-email delivery. If unset, flag events log to the server log instead of emailing. |
+| `FLAG_TO_EMAIL` | `support@motionapp.com` | Recipient of flag-email notifications. |
+| `FLAG_FROM_EMAIL` | `onboarding@resend.dev` | Sender. In prod, set to a Resend-verified domain. |
+| `IP_HASH_SECRET` | _(random per boot)_ | Salt for hashing reviewer IPs (used only for per-IP rate-limit cohort). Set in prod to keep cohorts stable across restarts. |
+
+### Reviews persistence
+
+Reviews live in SQLite. The DB file path is `REVIEWS_DB_PATH`. On Railway:
+
+1. Add a volume to the service, mount path `/data`.
+2. Leave `REVIEWS_DB_PATH` at its default (`/data/reviews.db`) — the container creates the file on first boot.
+
+Without a mounted volume, reviews disappear on every container restart.
 
 ## Deploying
 

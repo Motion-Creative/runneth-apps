@@ -8,6 +8,10 @@ WORKDIR /app
 # pnpm via corepack (pinned to packageManager in package.json).
 RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
 
+# Build tools for native modules (better-sqlite3 falls back to source build
+# if no prebuilt for our libc/arch is shipped).
+RUN apk add --no-cache python3 make g++
+
 # Install with a frozen lockfile for reproducible builds.
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY frontend/package.json frontend/
@@ -29,9 +33,13 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
+# Default to /data so a mounted Railway volume at /data persists reviews.
+# Override with REVIEWS_DB_PATH env var if you mount the volume elsewhere.
+ENV REVIEWS_DB_PATH=/data/reviews.db
 
 # Self-contained bundle: package.json + node_modules + dist + public.
 COPY --from=builder /app/bundle ./
+RUN mkdir -p /data
 
 # Smoke check that the runtime layout is correct before container starts taking traffic.
 RUN node -e "require('node:fs').accessSync('./dist/index.js'); require('node:fs').accessSync('./public/index.html')"
