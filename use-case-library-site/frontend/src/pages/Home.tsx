@@ -47,7 +47,7 @@ export const Home = ({ catalog }: { catalog: Catalog }): JSX.Element => {
               color: colors.textDark,
             }}
           >
-            The Runneth use case library
+            Runneth use case library
           </h1>
         </div>
       </section>
