@@ -1,0 +1,8 @@
+{
+  "slug": "authenticate-apps",
+  "display_title": "App Authentication",
+  "pitch": "Lock down any app",
+  "status": "proven",
+  "category": "agent-foundations",
+  "github_path": "authenticate-apps"
+}

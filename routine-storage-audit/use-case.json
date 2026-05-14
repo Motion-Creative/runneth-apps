@@ -1,0 +1,8 @@
+{
+  "slug": "routine-storage-audit",
+  "display_title": "Routine Health Check",
+  "pitch": "Find every misplaced file",
+  "status": "experimental",
+  "category": "agent-foundations",
+  "github_path": "routine-storage-audit"
+}

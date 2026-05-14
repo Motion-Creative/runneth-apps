@@ -1,0 +1,8 @@
+{
+  "slug": "static-ad-gen",
+  "display_title": "Static Ad Generator",
+  "pitch": "Generate static ads from one sentence",
+  "status": "experimental",
+  "category": "creative-production",
+  "github_path": "static-ad-gen"
+}

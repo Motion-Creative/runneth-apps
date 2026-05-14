@@ -1,0 +1,8 @@
+{
+  "slug": "video-qa",
+  "display_title": "Video Qa",
+  "pitch": "Timestamped feedback on every video",
+  "status": "experimental",
+  "category": "creative-operations",
+  "github_path": "video-qa"
+}

@@ -1,0 +1,8 @@
+{
+  "slug": "video-asset-search",
+  "display_title": "Video Asset Search",
+  "pitch": "Find clips by describing them",
+  "status": "experimental",
+  "category": "creative-operations",
+  "github_path": "video-asset-search"
+}
