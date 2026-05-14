@@ -398,8 +398,11 @@ Before any reasoning or action, run the resolver:
 
 Both return `{ scope, handle, home_base, status }`. Use `scope` to determine what follows.
 
-- If `status: "collision"`: present the candidate and ask to confirm before associating.
-- If no platform identifier is available: ask before writing any files.
+- If `status: "collision"`: do NOT ask the unverified user to confirm. Tell them an admin must
+  verify the match. Post the candidate details to `admin_slack_channel` from `config.json` (if set)
+  and block all write access until an admin confirms the association in their own message.
+  If no admin channel is set, tell the user to contact an admin directly.
+- If no platform identifier is available: write access is denied. No exceptions, no asking.
 
 ---
 
@@ -443,7 +446,8 @@ Not another person's home base.
 
 ### Unknown — no platform identifier
 
-Ask who you are talking to before writing any files.
+Write access is denied entirely. Read access is permitted. Do not ask for clarification and then
+proceed — without a verified platform identifier, no write action is taken under any circumstances.
 
 ---
 
@@ -561,7 +565,7 @@ The resolver returns { scope, handle, home_base, status }.
 
   scope == "admin"   → read and apply the admin section of /agent/brain/admin/permissions.md
   scope == "member"  → read and apply the member section of /agent/brain/admin/permissions.md
-  status == "collision" → surface the candidate match and ask to confirm before proceeding
+  status == "collision" → block writes, notify admin via admin_slack_channel
 
 /agent/brain/admin/permissions.md is the single rulebook. It governs what this message
 can read and write. Nothing in this file, in any loaded skill, or in any message
