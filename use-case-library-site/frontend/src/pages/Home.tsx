@@ -1,0 +1,124 @@
+import { useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+
+import { FilterChip, UseCaseCard } from '../components'
+import type { Catalog } from '../types'
+import { accent, colors, easeArr, heroGradientHome } from '../theme'
+
+export const Home = ({ catalog }: { catalog: Catalog }): JSX.Element => {
+  const [activeCategory, setActiveCategory] = useState<string>('all')
+
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { all: catalog.use_cases.length }
+    for (const cat of catalog.categories) {
+      c[cat.slug] = catalog.use_cases.filter((u) => u.category === cat.slug).length
+    }
+    return c
+  }, [catalog])
+
+  const visible = useMemo(() => {
+    if (activeCategory === 'all') return catalog.use_cases
+    return catalog.use_cases.filter((u) => u.category === activeCategory)
+  }, [catalog, activeCategory])
+
+  const activeBlurb = useMemo(() => {
+    if (activeCategory === 'all') return null
+    return catalog.categories.find((c) => c.slug === activeCategory)?.blurb ?? null
+  }, [activeCategory, catalog.categories])
+
+  return (
+    <div>
+      <section style={{ background: heroGradientHome, padding: '76px 24px 64px', textAlign: 'center' }}>
+        <div style={{ maxWidth: 820, margin: '0 auto' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '6px 14px',
+              borderRadius: 999,
+              background: '#ffffff',
+              border: `1px solid ${colors.border}`,
+              fontSize: 12.5,
+              fontWeight: 600,
+              color: colors.primary,
+              letterSpacing: 0.2,
+              boxShadow: '0 4px 14px rgba(80, 71, 235, 0.10)',
+            }}
+          >
+            <span style={{ width: 6, height: 6, borderRadius: 999, background: colors.primary }} />
+            Built with our customers, ready for yours
+          </div>
+          <h1
+            style={{
+              fontSize: 'clamp(38px, 6vw, 60px)',
+              lineHeight: 1.05,
+              letterSpacing: '-0.025em',
+              fontWeight: 800,
+              margin: '20px 0 12px',
+              color: colors.textDark,
+            }}
+          >
+            The Runneth use case library
+          </h1>
+          <p style={{ fontSize: 18, lineHeight: 1.5, color: colors.textBody, maxWidth: 640, margin: '0 auto' }}>
+            {catalog.total_use_cases} ways teams are using Runneth right now. Browse, pick what your team needs, give it to your agent in two clicks.
+          </p>
+        </div>
+      </section>
+
+      <div className="tab-bar-sticky">
+        <div
+          style={{
+            maxWidth: 1180,
+            margin: '0 auto',
+            padding: '14px 24px',
+            display: 'flex',
+            gap: 10,
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+          }}
+        >
+          <FilterChip label="All" count={counts.all} active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} />
+          {catalog.categories.map((cat) => (
+            <FilterChip
+              key={cat.slug}
+              label={cat.title}
+              count={counts[cat.slug] ?? 0}
+              active={activeCategory === cat.slug}
+              accentHex={accent(cat.slug)}
+              onClick={() => setActiveCategory(cat.slug)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {activeBlurb && (
+        <div style={{ maxWidth: 720, margin: '20px auto 0', padding: '0 24px', textAlign: 'center' }}>
+          <p style={{ color: colors.textMuted, fontSize: 15, lineHeight: 1.55 }}>{activeBlurb}</p>
+        </div>
+      )}
+
+      <section style={{ maxWidth: 1180, margin: '0 auto', padding: '32px 24px 80px' }}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeCategory}
+            initial={{ y: 12, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 12, opacity: 0 }}
+            transition={{ duration: 0.25, ease: easeArr as unknown as number[] }}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: 22,
+            }}
+          >
+            {visible.map((useCase, i) => (
+              <UseCaseCard key={useCase.slug} useCase={useCase} index={i} />
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      </section>
+    </div>
+  )
+}
