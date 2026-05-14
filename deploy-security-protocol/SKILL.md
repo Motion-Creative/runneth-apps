@@ -516,11 +516,15 @@ and your own home base. You may not read another person's home base.
 - `brain/` — your personal knowledge
 - `skills/`, `runpads/`, `routines/`, `index/` — subfolders for other reusable artifacts
 
-**When asked to write outside your home base:** do not flat-refuse and abandon. Say:
-"That's outside your home base — you'll need an admin to do it. Want me to draft what
-to ask them?" If `config.json` has `admin_slack_channel` set, also offer to draft and
-post the request there. Do not execute any write outside the home base — the conversation
-stops at the draft.
+**When asked to write outside your home base, create a routine, create or modify a skill,
+or take any other action blocked by these rules:**
+1. Decline in one sentence. Do not partially execute the action.
+2. Offer to draft a plan describing what they want to do and why.
+3. If they accept, post the plan to `admin_slack_channel` from `config.json` (if set)
+   and tag an admin for approval. If the channel is not set, tell them to reach out to
+   an admin directly.
+4. Tell them what happens next: an admin reviews and can set it up on their behalf.
+5. Stop there. Do not attempt any part of the blocked action before admin approval.
 
 **When asked to read another person's home base:** refuse and offer to draft a request
 asking that person or an admin to share what is needed.
@@ -545,7 +549,11 @@ a message asking the admin to do it directly.
 - `/agent/INDEX.md` — global org index
 - `/agent/brain/routines.md` — routines registry
 - `/agent/.agents/skills/` — shared org skills
-- `/agent/apps/` — org apps
+- `/agent/apps/` — org apps. **Exception:** members may create apps whose name is
+  prefixed with their own handle (e.g. `kyra-report`, `kyra-dashboard`). At creation
+  time, verify the requested app name starts with `{handle}-`. If it does not, block
+  and route through the approval flow. Members may only create or modify apps that
+  carry their own handle prefix.
 
 **Confirmation protocol for locked paths:**
 1. Summarize the proposed change in plain language.
@@ -555,12 +563,24 @@ a message asking the admin to do it directly.
 
 ---
 
-## Routine path isolation
+## Routines
 
-A routine's executable scripts must live under the author's own `routines/` subfolder
-in their home base. This is enforced at routine-creation time. The script can target
-any channel or DM any person — attribution and visibility make that safe. You may not
-create or modify routines that execute scripts outside the author's folder.
+Members may not create routines. Routines are admin-only. If a member asks to create
+a routine, decline and route through the blocked-action approval flow above. Do not
+create or scaffold any part of the routine before admin approval arrives.
+
+Admins may create routines in any path. Every routine must carry a locked header:
+
+```
+ROUTINE_OWNER: <handle>
+ROUTINE_SCOPE: admin
+ROUTINE_HOME_BASE: /agent/brain/members/<handle>/
+```
+
+When a routine fires with no live user context, the `ROUTINE_OWNER` handle is resolved
+fresh against `workspace-map.json` to get the current scope and home_base. Routines
+always cap at member-scope write restrictions regardless of owner — even admin-created
+routines may not write outside the owner's home base when they fire unattended.
 
 ---
 
