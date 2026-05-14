@@ -32,11 +32,11 @@ export const Home = ({ catalog }: { catalog: Catalog }): JSX.Element => {
         <div style={{ maxWidth: 820, margin: '0 auto' }}>
           <h1
             style={{
-              fontSize: 'clamp(38px, 6vw, 60px)',
-              lineHeight: 1.05,
-              letterSpacing: '-0.025em',
+              fontSize: 'clamp(42px, 6.5vw, 72px)',
+              lineHeight: 1.02,
+              letterSpacing: '-0.035em',
               fontWeight: 800,
-              margin: '0 0 12px',
+              margin: '0 0 16px',
               color: colors.textDark,
             }}
           >
