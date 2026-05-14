@@ -1,39 +1,44 @@
 # Multi-stage build for the Use Case Library site.
-# Final image: a single Node process serving the API and the static SPA on $PORT.
+# Final image: one Node process serving the API and the static SPA on $PORT.
 
+# ─── Builder ─────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Install pnpm
+# pnpm via corepack (pinned to packageManager in package.json).
 RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
 
-# Install workspace deps using the lockfile.
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml* ./
+# Install with a frozen lockfile for reproducible builds.
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY frontend/package.json frontend/
 COPY server/package.json server/
-RUN pnpm install --frozen-lockfile || pnpm install
+RUN pnpm install --frozen-lockfile
 
-# Build frontend, then server. Frontend dist lands in server/public per vite.config.ts.
+# Build: frontend dist → server/public, server tsc → server/dist
 COPY . .
 RUN pnpm --filter use-case-library-frontend build
 RUN pnpm --filter use-case-library-server build
 
-# Runtime image: only what's needed to run the server.
+# pnpm deploy bundles the server with only its production node_modules,
+# its built dist/, and its built public/ at the bundle root.
+RUN pnpm --filter use-case-library-server deploy --prod /app/bundle
+
+# ─── Runtime ─────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
-
-RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
-
-# Production deps only for the server.
-COPY --from=builder /app/server/package.json /app/server/
-COPY --from=builder /app/server/dist /app/server/dist
-COPY --from=builder /app/server/public /app/server/public
-WORKDIR /app/server
-RUN pnpm install --prod --ignore-workspace
-
 ENV PORT=3000
 ENV HOST=0.0.0.0
+
+# Self-contained bundle: package.json + node_modules + dist + public.
+COPY --from=builder /app/bundle ./
+
+# Smoke check that the runtime layout is correct before container starts taking traffic.
+RUN node -e "require('node:fs').accessSync('./dist/index.js'); require('node:fs').accessSync('./public/index.html')"
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD wget -qO- "http://127.0.0.1:${PORT}/api/health" >/dev/null || exit 1
+
 EXPOSE 3000
 
 CMD ["node", "dist/index.js"]
