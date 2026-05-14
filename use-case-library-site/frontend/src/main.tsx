@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Link, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 
 import { fetchCatalog } from './api'
 import { Modal } from './Modal'
@@ -39,7 +39,6 @@ const AppShell = (): JSX.Element => {
 
   return (
     <>
-      <TopBar />
       <Routes>
         <Route path="/" element={<Home catalog={catalog} />} />
         <Route path="/all" element={<All catalog={catalog} />} />
@@ -51,84 +50,6 @@ const AppShell = (): JSX.Element => {
     </>
   )
 }
-
-const TopBar = (): JSX.Element => {
-  const location = useLocation()
-  const onHome = location.pathname === '/' || location.pathname === ''
-  return (
-    <header
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 30,
-        padding: '20px 24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'transparent',
-      }}
-    >
-      <Link
-        to="/"
-        style={{
-          textDecoration: 'none',
-          color: colors.textDark,
-          fontWeight: 800,
-          fontSize: 16,
-          letterSpacing: '-0.01em',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 10,
-        }}
-      >
-        <MotionMark />
-        <span>Motion · Use Case Library</span>
-      </Link>
-      <nav style={{ display: 'flex', gap: 6 }}>
-        <NavLink to="/" label="Home" active={onHome} />
-        <NavLink to="/all" label="All" active={location.pathname.startsWith('/all')} />
-      </nav>
-    </header>
-  )
-}
-
-const NavLink = ({ to, label, active }: { to: string; label: string; active: boolean }): JSX.Element => (
-  <Link
-    to={to}
-    style={{
-      padding: '8px 14px',
-      borderRadius: 999,
-      fontSize: 13.5,
-      fontWeight: active ? 700 : 500,
-      color: active ? colors.primary : colors.textBody,
-      background: active ? `${colors.primary}14` : 'transparent',
-      textDecoration: 'none',
-    }}
-  >
-    {label}
-  </Link>
-)
-
-const MotionMark = (): JSX.Element => (
-  <span
-    style={{
-      width: 24,
-      height: 24,
-      borderRadius: 8,
-      background: colors.primary,
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: '#ffffff',
-      fontWeight: 800,
-      fontSize: 13,
-    }}
-  >
-    M
-  </span>
-)
 
 const Footer = (): JSX.Element => (
   <footer

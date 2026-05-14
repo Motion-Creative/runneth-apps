@@ -119,11 +119,17 @@ const GLYPHS: Record<string, GlyphFn> = {
   ),
   'corpus-search': (a) => wrap(
     <>
-      <path d="M80 30c-14 8-18 30-4 44s38 8 44-6" />
-      <path d="M120 30c14 8 18 30 4 44s-38 8-44-6" />
-      <line x1="100" y1="20" x2="100" y2="78" />
-      <circle cx="118" cy="74" r="10" stroke={SPARK} />
-      <line x1="126" y1="82" x2="138" y2="94" stroke={SPARK} strokeWidth={2.6} />
+      {/* Brain — two hemispheres */}
+      <path d="M92 22 C72 22 60 36 60 52 C60 64 66 74 76 78 C78 84 84 88 92 86 L92 22 Z" />
+      <path d="M108 22 C128 22 140 36 140 52 C140 64 134 74 124 78 C122 84 116 88 108 86 L108 22 Z" />
+      {/* Sulci (folds) */}
+      <path d="M74 38 Q82 44 74 50" />
+      <path d="M74 56 Q82 62 74 68" />
+      <path d="M126 38 Q118 44 126 50" />
+      <path d="M126 56 Q118 62 126 68" />
+      {/* Magnifying glass — overlaid lower right */}
+      <circle cx="132" cy="82" r="13" fill="#ffffff" stroke={SPARK} strokeWidth={2.4} />
+      <line x1="142" y1="92" x2="156" y2="106" stroke={SPARK} strokeWidth={3} />
     </>,
     a
   ),
