@@ -95,7 +95,7 @@ export const CTA = ({
             style={{ display: 'inline-flex', alignItems: 'center', gap: preset.gap }}
           >
             Give this to my Runneth
-            <SparkleGlyph size={preset.iconSize} />
+            <CopyGlyph size={preset.iconSize} />
           </motion.span>
         )}
       </AnimatePresence>
@@ -103,10 +103,10 @@ export const CTA = ({
   )
 }
 
-const SparkleGlyph = ({ size }: { size: number }): JSX.Element => (
+const CopyGlyph = ({ size }: { size: number }): JSX.Element => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-    <path d="M12 3l1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6L12 3z" fill="#ffffff" />
-    <circle cx="18.5" cy="5.5" r="1.25" fill="#ffffff" />
+    <rect x="9" y="9" width="11" height="12" rx="2" stroke="#ffffff" strokeWidth={2} strokeLinejoin="round" />
+    <path d="M5 15V5a2 2 0 0 1 2-2h9" stroke="#ffffff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
 
