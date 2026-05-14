@@ -21,11 +21,6 @@ export const Home = ({ catalog }: { catalog: Catalog }): JSX.Element => {
     return catalog.use_cases.filter((u) => u.category === activeCategory)
   }, [catalog, activeCategory])
 
-  const activeBlurb = useMemo(() => {
-    if (activeCategory === 'all') return null
-    return catalog.categories.find((c) => c.slug === activeCategory)?.blurb ?? null
-  }, [activeCategory, catalog.categories])
-
   return (
     <div>
       <section style={{ background: heroGradientHome, padding: '96px 24px 64px', textAlign: 'center' }}>
@@ -36,15 +31,12 @@ export const Home = ({ catalog }: { catalog: Catalog }): JSX.Element => {
               lineHeight: 1.02,
               letterSpacing: '-0.035em',
               fontWeight: 800,
-              margin: '0 0 16px',
+              margin: 0,
               color: colors.textDark,
             }}
           >
             The Runneth use case library
           </h1>
-          <p style={{ fontSize: 18, lineHeight: 1.5, color: colors.textBody, maxWidth: 640, margin: '0 auto' }}>
-            {catalog.total_use_cases} ways teams are using Runneth right now. Browse, pick what your team needs, give it to your agent in two clicks.
-          </p>
         </div>
       </section>
 
@@ -73,12 +65,6 @@ export const Home = ({ catalog }: { catalog: Catalog }): JSX.Element => {
           ))}
         </div>
       </div>
-
-      {activeBlurb && (
-        <div style={{ maxWidth: 720, margin: '20px auto 0', padding: '0 24px', textAlign: 'center' }}>
-          <p style={{ color: colors.textMuted, fontSize: 15, lineHeight: 1.55 }}>{activeBlurb}</p>
-        </div>
-      )}
 
       <section style={{ maxWidth: 1180, margin: '0 auto', padding: '32px 24px 80px' }}>
         <AnimatePresence mode="wait">

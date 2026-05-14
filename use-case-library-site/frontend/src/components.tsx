@@ -138,7 +138,7 @@ export const UseCaseCard = ({ useCase, index }: { useCase: UseCaseMeta; index: n
         border: `1px solid ${colors.borderSubtle}`,
         borderRadius: radius.xl,
         padding: 14,
-        minHeight: 340,
+        minHeight: 380,
         display: 'flex',
         flexDirection: 'column',
         gap: 0,
@@ -161,7 +161,7 @@ export const UseCaseCard = ({ useCase, index }: { useCase: UseCaseMeta; index: n
         <Illustration slug={useCase.slug} category={useCase.category} />
       </div>
 
-      <div style={{ padding: '22px 10px 8px', display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
+      <div style={{ padding: '22px 10px 64px', display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
         <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.014em', color: colors.textDark }}>
           {useCase.display_title}
         </div>
