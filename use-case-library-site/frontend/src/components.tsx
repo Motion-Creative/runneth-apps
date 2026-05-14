@@ -35,8 +35,8 @@ export const CategoryPill = ({ title, accentHex }: { title: string; accentHex: s
       alignItems: 'center',
       padding: '4px 10px',
       borderRadius: 999,
-      background: `${accentHex}1a`,
-      color: accentHex,
+      background: accentHex,
+      color: colors.textDark,
       fontSize: 11.5,
       fontWeight: 600,
       letterSpacing: 0.2,
@@ -59,7 +59,9 @@ export const FilterChip = ({
   accentHex?: string
   onClick: () => void
 }): JSX.Element => {
-  const a = accentHex ?? colors.primary
+  const swatch = accentHex ?? colors.textDark
+  const isDarkSwatch = swatch === colors.textDark
+  const activeText = isDarkSwatch ? '#ffffff' : colors.textDark
   return (
     <motion.button
       type="button"
@@ -68,7 +70,7 @@ export const FilterChip = ({
       whileTap={{ scale: 0.97 }}
       animate={{
         y: active ? -2 : 0,
-        boxShadow: active ? `0 8px 20px ${a}33` : '0 0 0 rgba(0,0,0,0)',
+        boxShadow: active ? '0 6px 18px rgba(28, 24, 14, 0.14)' : '0 0 0 rgba(0,0,0,0)',
       }}
       transition={{ duration: 0.22, ease: easeArr as unknown as number[] }}
       style={{
@@ -77,9 +79,9 @@ export const FilterChip = ({
         gap: 8,
         padding: '8px 14px',
         borderRadius: 999,
-        border: `1px solid ${active ? a : colors.border}`,
-        background: active ? `${a}15` : '#ffffff',
-        color: active ? a : colors.textBody,
+        border: `1px solid ${active ? colors.textDark : colors.border}`,
+        background: active ? swatch : '#ffffff',
+        color: active ? activeText : colors.textBody,
         fontSize: 13.5,
         fontWeight: active ? 600 : 500,
         cursor: 'pointer',
@@ -96,8 +98,8 @@ export const FilterChip = ({
             height: 18,
             padding: '0 6px',
             borderRadius: 999,
-            background: active ? a : colors.borderSubtle,
-            color: active ? '#ffffff' : colors.textMuted,
+            background: active ? (isDarkSwatch ? '#ffffff' : colors.textDark) : colors.borderSubtle,
+            color: active ? (isDarkSwatch ? colors.textDark : '#ffffff') : colors.textMuted,
             fontSize: 11,
             fontWeight: 700,
           }}

@@ -240,7 +240,15 @@ const HowItsBuilt = ({ detail, accentHex }: { detail: UseCaseDetail; accentHex: 
           href={detail.manifest.github_url}
           target="_blank"
           rel="noreferrer"
-          style={{ color: accentHex, fontWeight: 600, fontSize: 14 }}
+          style={{
+            color: colors.textDark,
+            fontWeight: 600,
+            fontSize: 14,
+            textDecoration: 'underline',
+            textDecorationColor: accentHex,
+            textDecorationThickness: 2,
+            textUnderlineOffset: 3,
+          }}
         >
           {detail.manifest.github_url}
         </a>
@@ -302,8 +310,8 @@ const HowItsBuilt = ({ detail, accentHex }: { detail: UseCaseDetail; accentHex: 
             onClick={() => setReadmeOpen((v) => !v)}
             style={{
               background: 'transparent',
-              color: accentHex,
-              border: `1px solid ${accentHex}55`,
+              color: colors.textDark,
+              border: `1px solid ${colors.textDark}`,
               padding: '6px 12px',
               borderRadius: 999,
               cursor: 'pointer',

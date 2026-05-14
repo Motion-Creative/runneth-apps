@@ -1,19 +1,22 @@
 /**
  * 24 themed SVG glyphs, one per slug.
- * Same family: viewBox 200x110, 2-2.5px stroke, round caps, body in category accent, spark in Motion purple.
+ * Same family: viewBox 200x110, 2-2.5px stroke, round caps. Body strokes in
+ * Off Black, accent sparks in brand Lime. The category color rides on the
+ * tile background, not inside the glyph — keeps line work consistent.
  */
-import { accent } from './theme'
+import { accent, brand } from './theme'
 
-const SPARK = '#5047eb'
+const BODY = brand.offBlack
+const SPARK = brand.lime
 
-const wrap = (children: React.ReactNode, accentHex: string): JSX.Element => (
+const wrap = (children: React.ReactNode, _accentHex: string): JSX.Element => (
   <svg
     viewBox="0 0 200 110"
     preserveAspectRatio="xMidYMid meet"
     width="100%"
     height="100%"
     fill="none"
-    stroke={accentHex}
+    stroke={BODY}
     strokeWidth={2.2}
     strokeLinecap="round"
     strokeLinejoin="round"

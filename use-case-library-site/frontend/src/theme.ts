@@ -1,30 +1,51 @@
+/**
+ * Runneth brand palette.
+ *
+ * Primary: Off Black (text + button fill). Neutrals: White / Silver / Keyline Silver.
+ * Brand pops: Sky, Lime, Yellow. Used as category swatches and accent stripes.
+ * Body color is always Off Black; brand pops live in pill swatches, tile washes,
+ * and the hero gradient — never in body text.
+ */
+
+const offBlack = '#1C180E'
+
+export const brand = {
+  white: '#FFFFFF',
+  silver: '#F6F6F6',
+  keylineSilver: '#E6E5D9',
+  grey: '#B2B2AB',
+  offBlack,
+  sky: '#AEE1ED',
+  lime: '#CEFF5B',
+  yellow: '#FFF95C',
+} as const
+
 export const colors = {
-  primary: '#5047eb',
-  primaryLight: '#ede9ff',
-  background: '#ffffff',
-  backgroundSection: '#f7f7fa',
-  textDark: '#111111',
-  textBody: '#1a1a1a',
-  textMuted: '#6b7280',
-  textSubtle: '#9ca3af',
-  border: '#e5e7eb',
-  borderSubtle: '#f0f0f0',
-  positive: '#16a34a',
-  experimentalBg: '#fff7ed',
-  experimentalText: '#9a3412',
-  experimentalBorder: '#fed7aa',
+  primary: offBlack,
+  primaryLight: brand.keylineSilver,
+  background: brand.white,
+  backgroundSection: brand.silver,
+  textDark: offBlack,
+  textBody: offBlack,
+  textMuted: 'rgba(28, 24, 14, 0.62)',
+  textSubtle: 'rgba(28, 24, 14, 0.38)',
+  border: brand.keylineSilver,
+  borderSubtle: '#EFEDE2',
+  positive: '#3FB55C',
+  experimentalBg: '#FFF7D6',
+  experimentalText: '#6E5500',
+  experimentalBorder: '#FFE99A',
 } as const
 
 export const categoryAccents: Record<string, string> = {
-  'agent-foundations': '#5047eb',
-  'creative-operations': '#0ea5e9',
-  'creative-production': '#f59e0b',
-  'growth-cro': '#16a34a',
-  'integrations-ads': '#a855f7',
+  'agent-foundations': brand.keylineSilver,
+  'creative-operations': brand.sky,
+  'creative-production': brand.lime,
+  'growth-cro': brand.yellow,
 }
 
 export const accent = (slug: string | undefined): string =>
-  (slug && categoryAccents[slug]) || colors.primary
+  (slug && categoryAccents[slug]) || brand.lime
 
 export const fonts = {
   sans: '"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
@@ -36,6 +57,9 @@ export const ease = 'cubic-bezier(0.22, 1, 0.36, 1)'
 export const easeArr = [0.22, 1, 0.36, 1] as const
 export const durationMs = 300
 
-export const heroGradientHome = 'linear-gradient(180deg, #ede9ff 0%, #f5f3ff 30%, #ffffff 100%)'
-export const heroGradientDetail = (a: string): string => `linear-gradient(180deg, ${a}1a 0%, #ffffff 90%)`
-export const cardTileGradient = (a: string): string => `linear-gradient(135deg, ${a}1f 0%, ${a}08 100%)`
+export const heroGradientHome =
+  'linear-gradient(180deg, #E8F6F9 0%, #F4FCDF 50%, #FFFDEE 80%, #FFFFFF 100%)'
+export const heroGradientDetail = (a: string): string =>
+  `linear-gradient(180deg, ${a}80 0%, #ffffff 90%)`
+export const cardTileGradient = (a: string): string =>
+  `linear-gradient(135deg, ${a}66 0%, ${a}1a 100%)`

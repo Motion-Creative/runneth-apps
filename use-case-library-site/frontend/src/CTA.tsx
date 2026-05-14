@@ -43,13 +43,13 @@ export const CTA = ({
     }
   }
 
-  const baseShadow = copied ? '0 10px 24px rgba(22, 163, 74, 0.28)' : '0 10px 24px rgba(80, 71, 235, 0.28)'
+  const baseShadow = copied ? '0 10px 24px rgba(63, 181, 92, 0.32)' : '0 10px 24px rgba(28, 24, 14, 0.22)'
 
   return (
     <motion.button
       type="button"
       onClick={onClick}
-      whileHover={{ y: -1.5, boxShadow: copied ? '0 14px 30px rgba(22,163,74,0.36)' : '0 14px 30px rgba(80,71,235,0.36)' }}
+      whileHover={{ y: -1.5, boxShadow: copied ? '0 14px 30px rgba(63,181,92,0.40)' : '0 14px 30px rgba(28,24,14,0.32)' }}
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.22, ease: easeArr as unknown as number[] }}
       style={{
