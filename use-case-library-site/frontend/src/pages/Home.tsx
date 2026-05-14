@@ -16,10 +16,22 @@ export const Home = ({ catalog }: { catalog: Catalog }): JSX.Element => {
     return c
   }, [catalog])
 
+  const categoryOrder = useMemo(() => {
+    const m = new Map<string, number>()
+    for (const c of catalog.categories) m.set(c.slug, c.order)
+    return m
+  }, [catalog.categories])
+
   const visible = useMemo(() => {
-    if (activeCategory === 'all') return catalog.use_cases
+    if (activeCategory === 'all') {
+      return [...catalog.use_cases].sort((a, b) => {
+        const oa = categoryOrder.get(a.category) ?? 999
+        const ob = categoryOrder.get(b.category) ?? 999
+        return oa - ob
+      })
+    }
     return catalog.use_cases.filter((u) => u.category === activeCategory)
-  }, [catalog, activeCategory])
+  }, [catalog, activeCategory, categoryOrder])
 
   return (
     <div>

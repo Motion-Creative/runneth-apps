@@ -11,13 +11,25 @@ export const All = ({ catalog }: { catalog: Catalog }): JSX.Element => {
   const [category, setCategory] = useState<string>('all')
   const [status, setStatus] = useState<StatusFilter>('all')
 
+  const categoryOrder = useMemo(() => {
+    const m = new Map<string, number>()
+    for (const c of catalog.categories) m.set(c.slug, c.order)
+    return m
+  }, [catalog.categories])
+
   const visible = useMemo(() => {
-    return catalog.use_cases.filter((u) => {
+    const filtered = catalog.use_cases.filter((u) => {
       if (category !== 'all' && u.category !== category) return false
       if (status !== 'all' && u.status !== status) return false
       return true
     })
-  }, [catalog, category, status])
+    if (category !== 'all') return filtered
+    return filtered.sort((a, b) => {
+      const oa = categoryOrder.get(a.category) ?? 999
+      const ob = categoryOrder.get(b.category) ?? 999
+      return oa - ob
+    })
+  }, [catalog, category, status, categoryOrder])
 
   return (
     <div>
