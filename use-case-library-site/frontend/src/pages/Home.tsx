@@ -28,34 +28,15 @@ export const Home = ({ catalog }: { catalog: Catalog }): JSX.Element => {
 
   return (
     <div>
-      <section style={{ background: heroGradientHome, padding: '76px 24px 64px', textAlign: 'center' }}>
+      <section style={{ background: heroGradientHome, padding: '96px 24px 64px', textAlign: 'center' }}>
         <div style={{ maxWidth: 820, margin: '0 auto' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '6px 14px',
-              borderRadius: 999,
-              background: '#ffffff',
-              border: `1px solid ${colors.border}`,
-              fontSize: 12.5,
-              fontWeight: 600,
-              color: colors.primary,
-              letterSpacing: 0.2,
-              boxShadow: '0 4px 14px rgba(80, 71, 235, 0.10)',
-            }}
-          >
-            <span style={{ width: 6, height: 6, borderRadius: 999, background: colors.primary }} />
-            Built with our customers, ready for yours
-          </div>
           <h1
             style={{
               fontSize: 'clamp(38px, 6vw, 60px)',
               lineHeight: 1.05,
               letterSpacing: '-0.025em',
               fontWeight: 800,
-              margin: '20px 0 12px',
+              margin: '0 0 12px',
               color: colors.textDark,
             }}
           >

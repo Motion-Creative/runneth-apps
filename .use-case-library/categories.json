@@ -1,32 +1,26 @@
 [
   {
-    "slug": "agent-foundations",
-    "title": "Agent Foundations",
-    "order": 1,
-    "blurb": "Base behaviors every Runneth should have. Memory, planning, and the routines that make your agent feel like one of the team."
-  },
-  {
     "slug": "creative-operations",
     "title": "Creative Operations",
-    "order": 2,
+    "order": 1,
     "blurb": "Review, QA, and search across the creative work you ship every day."
   },
   {
     "slug": "creative-production",
     "title": "Creative Production",
-    "order": 3,
+    "order": 2,
     "blurb": "Generate new creative. Static ads, UGC programs, and the assets that fill your roadmap."
   },
   {
     "slug": "growth-cro",
     "title": "Growth & CRO",
-    "order": 4,
+    "order": 3,
     "blurb": "Landing pages, brand systems, conversion audits, and the experiments that follow."
   },
   {
-    "slug": "integrations-ads",
-    "title": "Integrations & Ads",
-    "order": 5,
-    "blurb": "Connect Runneth to the platforms where your work actually happens."
+    "slug": "agent-foundations",
+    "title": "Agent Foundations",
+    "order": 4,
+    "blurb": "Base behaviors every Runneth should have. Memory, planning, integrations, and the routines that make your agent feel like one of the team."
   }
 ]
