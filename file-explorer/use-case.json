@@ -1,0 +1,8 @@
+{
+  "slug": "file-explorer",
+  "display_title": "File Explorer",
+  "pitch": "Browse your brain in a browser",
+  "status": "proven",
+  "category": "agent-foundations",
+  "github_path": "file-explorer"
+}

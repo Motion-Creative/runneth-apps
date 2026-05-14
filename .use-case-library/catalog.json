@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "slugs": [
+    "authenticate-apps",
+    "bootcamp",
+    "corpus-search",
+    "file-explorer",
+    "plan-mode",
+    "share-use-case",
+    "conversation-manager",
+    "routine-storage-audit",
+    "self-iteration-loop",
+    "team-member-memory",
+    "review-library",
+    "brief-qa",
+    "creative-qa",
+    "video-asset-search",
+    "video-qa",
+    "static-ad-gen",
+    "brand-kit",
+    "csm-alerts",
+    "landing-page-experiments",
+    "landing-page-summary",
+    "optimize-landing-page",
+    "building-integrations",
+    "integration-capabilities-library",
+    "meta-connect-use-case"
+  ],
+  "excluded": [
+    {
+      "slug": "ugc-creator-programme",
+      "reason": "Source is a zip in the repo; not directly browseable. Restore in v2."
+    }
+  ]
+}

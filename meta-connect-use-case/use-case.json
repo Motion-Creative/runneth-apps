@@ -1,0 +1,8 @@
+{
+  "slug": "meta-connect-use-case",
+  "display_title": "Meta Connect",
+  "pitch": "Push ads to Meta from chat",
+  "status": "experimental",
+  "category": "integrations-ads",
+  "github_path": "meta-connect-use-case"
+}

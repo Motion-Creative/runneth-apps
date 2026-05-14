@@ -1,0 +1,8 @@
+{
+  "slug": "conversation-manager",
+  "display_title": "Conversation Manager",
+  "pitch": "Every Runneth chat, one board",
+  "status": "experimental",
+  "category": "agent-foundations",
+  "github_path": "conversation-manager"
+}

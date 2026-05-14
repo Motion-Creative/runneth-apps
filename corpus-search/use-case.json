@@ -1,0 +1,8 @@
+{
+  "slug": "corpus-search",
+  "display_title": "Brain Search",
+  "pitch": "Find anything you've written, instantly",
+  "status": "proven",
+  "category": "agent-foundations",
+  "github_path": "corpus-search"
+}

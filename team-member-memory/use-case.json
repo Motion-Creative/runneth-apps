@@ -1,0 +1,8 @@
+{
+  "slug": "team-member-memory",
+  "display_title": "Team Member Memory",
+  "pitch": "Knows every teammate by name",
+  "status": "experimental",
+  "category": "agent-foundations",
+  "github_path": "team-member-memory"
+}

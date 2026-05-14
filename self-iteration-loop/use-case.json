@@ -1,0 +1,8 @@
+{
+  "slug": "self-iteration-loop",
+  "display_title": "Self-Improving Agent",
+  "pitch": "Predictions get graded over time",
+  "status": "experimental",
+  "category": "agent-foundations",
+  "github_path": "self-iteration-loop"
+}
