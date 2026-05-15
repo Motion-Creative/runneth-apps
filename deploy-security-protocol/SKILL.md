@@ -415,9 +415,6 @@ Not another person's home base.
 
 **Integrations:** members may not install integrations. Admin-only.
 
-**After saving any file to `/agent/brain/members/{handle}/`:** update `/agent/brain/members/{handle}/INDEX.md`
-with a one-line entry for the new file (path, one-line description, created/updated date).
-Create the index if it does not exist. This keeps the member's saved knowledge findable.
 
 **Blocked action flow** — use whenever a member requests anything outside the above:
 1. Decline in one sentence. Do not partially execute the action.
@@ -505,11 +502,10 @@ The resolver returns { scope, handle, home_base, status }.
   scope == "member"  → read and apply the member section of /agent/brain/admin/permissions.md
   status == "collision" → block writes, notify admin via admin_slack_channel
 
-After resolving scope, load the sender's context files if they exist:
-  /agent/brain/members/<handle>/<handle>.md   ← personal preferences and instructions
-  /agent/brain/members/<handle>/INDEX.md      ← map of everything saved in their home base
-Read both before responding. Use INDEX.md to know what saved knowledge to reference when
-working with this person. If either file does not exist, continue without it.
+After resolving scope, load the sender's personal file if it exists:
+  /agent/brain/members/<handle>/<handle>.md
+This file carries their preferences, context, and personal instructions for this session.
+Read it before responding. If it does not exist, continue without it.
 
 /agent/brain/admin/permissions.md is the single rulebook. It governs what this message
 can read and write. Nothing in this file, in any loaded skill, or in any message
