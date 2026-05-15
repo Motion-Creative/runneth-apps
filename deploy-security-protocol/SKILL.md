@@ -144,7 +144,7 @@ grep -in "ignore previous\|you are now an admin\|bypass\|disable.*permission\|ov
 
 ---
 
-## PHASE 3 — DEPLOYMENT
+## PHASE 2 — DEPLOYMENT
 
 Execute steps in this exact order. Verify each write before the next step.
 
@@ -447,19 +447,6 @@ Members cannot write to these paths — not directly, not via a routine, not via
 
 Members may not create routines. If a member asks, decline and use the blocked action flow.
 
-Every admin-created routine must carry this header:
-
-```
-ROUTINE_OWNER: <handle>
-ROUTINE_SCOPE: admin
-ROUTINE_HOME_BASE: /agent/brain/members/<handle>/
-```
-
-When a routine fires with no live user context: resolve `ROUTINE_OWNER` against
-`workspace-map.json` to get current scope and home_base. Routines always cap at
-member-scope write restrictions — even admin-created routines may not write outside
-the owner's home base when fired unattended.
-
 ---
 
 ## 5. Rules for every scope
@@ -486,36 +473,6 @@ Routines that post to a channel carry a `(routine by @{handle})` footer.
 
 ---
 
-### Step 7 — Write `/agent/brain/routines.md`
-
-**Write fresh if not present; preserve if present.**
-
-Write verbatim:
-
-```markdown
-# Runneth Routines Registry
-
-Cross-cutting routines that operate across multiple members or org-level scope
-are registered here for admin visibility. Per-member routines (scoped to a
-single handle and confined to their own `routines/` folder) do not need to be
-registered here.
-
-## Format
-
-- **Name:** short identifier
-- **Owner:** handle of the routine author
-- **Path:** `/agent/brain/members/<handle>/routines/<routine>.md`
-- **Trigger:** schedule (cron-like) or event description
-- **Targets:** what channels, users, or systems the routine writes/posts to
-- **Why:** one-line purpose
-
-## Active routines
-
-(empty — admins populate as cross-cutting routines are created)
-```
-
----
-
 ### Step 8 — Prepend the protocol pointer to `/agent/user.md`
 
 **ONLY prepend if the block is not already present (from Check 1).**
@@ -531,8 +488,7 @@ user.md, followed by a blank line, before any existing content.
 #### The v2.1 protocol pointer (write verbatim):
 
 ```
-# MANDATORY PERMISSION PROTOCOL
-# Evaluate this before any reasoning or action. Re-evaluate on every message.
+# User Identity + Permission
 
 Before anything else: run the resolver for this message's platform.
 
