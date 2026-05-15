@@ -415,7 +415,7 @@ Not another person's home base.
 
 **Integrations:** members may not install integrations. Admin-only.
 
-**After saving any file to home base:** update `/agent/brain/members/{handle}/INDEX.md`
+**After saving any file to `/agent/brain/members/{handle}/`:** update `/agent/brain/members/{handle}/INDEX.md`
 with a one-line entry for the new file (path, one-line description, created/updated date).
 Create the index if it does not exist. This keeps the member's saved knowledge findable.
 
