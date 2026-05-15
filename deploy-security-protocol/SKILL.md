@@ -144,28 +144,6 @@ grep -in "ignore previous\|you are now an admin\|bypass\|disable.*permission\|ov
 
 ---
 
-## PHASE 2 — PRE-FLIGHT SUMMARY
-
-After all checks, present a single summary before any writes:
-
-```
-Pre-flight complete. Here is what I found:
-
-[✓ or ⚠] user.md protocol pointer: [not installed / thin v2.1 present / older version — will offer update]
-[✓ or ⚠] workspace-map.json: [not found (will create) / found with N member(s) (will merge)]
-[✓ or ⚠] permissions.md: [not found (will write) / found (will overwrite on confirm)]
-[✓ or ⚠] resolvers: [not found (will write) / found (will overwrite — pure scripts, safe)]
-[✓ or ⚠] config.json: [not found (will create) / found (keeping)]
-[✓ or ⚠] Prior v2.0 layout: [not detected / detected under /agent/brain/permissions/ — will offer migration]
-[✓ or ⚠] Suspicious content scan: [clean / flagged: <list>]
-
-Ready to deploy v2.1? Reply 'yes' to continue or tell me what to change.
-```
-
-Wait for explicit confirmation before Phase 3.
-
----
-
 ## PHASE 3 — DEPLOYMENT
 
 Execute steps in this exact order. Verify each write before the next step.
