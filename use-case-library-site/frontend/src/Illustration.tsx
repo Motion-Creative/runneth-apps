@@ -199,11 +199,11 @@ const GLYPHS: Record<string, GlyphFn> = {
   'review-library': (a) => wrap(
     <>
       <path d="M60 28h66c4 0 8 4 8 8v36c0 4-4 8-8 8H80l-14 12V36c0-4 4-8 8-8z" />
-      <Star cx={76} cy={50} filled />
-      <Star cx={92} cy={50} filled />
-      <Star cx={108} cy={50} filled />
-      <Star cx={124} cy={50} filled />
-      <Star cx={140} cy={50} filled={false} />
+      <Star cx={76} cy={52} filled />
+      <Star cx={87} cy={52} filled />
+      <Star cx={98} cy={52} filled />
+      <Star cx={109} cy={52} filled />
+      <Star cx={120} cy={52} filled={false} />
     </>,
     a
   ),
@@ -258,13 +258,18 @@ const GLYPHS: Record<string, GlyphFn> = {
   ),
   'brand-kit': (a) => wrap(
     <>
-      <path d="M100 30c-22 0-40 16-40 30 0 10 8 14 16 14 6 0 8-4 8-8 0-6 6-6 12-6 14 0 24-10 24-18 0-8-10-12-20-12z" />
-      <circle cx="78" cy="50" r="3.5" fill={SPARK} stroke="none" />
-      <circle cx="92" cy="42" r="3.5" fill={a} />
-      <circle cx="108" cy="42" r="3.5" fill={a} />
-      <circle cx="120" cy="52" r="3.5" fill={SPARK} stroke="none" />
-      <circle cx="94" cy="58" r="3.5" fill={a} />
-      <path d="M118 78l16 14" strokeWidth={3} stroke={SPARK} />
+      {/* Palette body — oval shape, clearly bounded */}
+      <ellipse cx="95" cy="60" rx="36" ry="28" />
+      {/* Thumbhole — fits inside the palette (verified: all extremes inside ellipse) */}
+      <ellipse cx="78" cy="44" rx="6" ry="8" />
+      {/* Paint swatches — all inside the palette ellipse */}
+      <circle cx="84" cy="62" r="5" fill={SPARK} stroke="none" />
+      <circle cx="98" cy="52" r="5" fill={a} stroke="none" />
+      <circle cx="112" cy="60" r="5" fill={a} stroke="none" />
+      <circle cx="104" cy="72" r="5" fill={SPARK} stroke="none" />
+      <circle cx="86" cy="70" r="5" fill={a} stroke="none" />
+      {/* Paintbrush — intentionally extends beyond the palette edge */}
+      <line x1="124" y1="38" x2="146" y2="84" strokeWidth={2.8} stroke={SPARK} />
     </>,
     a
   ),
