@@ -8,15 +8,14 @@ status: "experimental"
 
 ## Super powers this unlocks
 
-- Knows who's talking before they say a word.
-- Members can only change their own space. Admins can change anything.
+- Only admins can make org-wide changes. 
+- Members can only change their own space.
 - New teammates get a home base on first message, no setup required.
-- System files stay locked until an admin confirms each change.
 
 ## How it works
 
-One skill, five phases. It writes a permission file, two identity resolvers, and a registry mapping every Slack ID and Motion email to a scope. Admins get full write access. Members stay inside their own folder unless an admin approves something wider.
+Runneth looks at who it is talking to and only allows them to make changes in the areas they have access to. When setting up, you'll select and admin + and admin slack channel where Runneth can keep you in the loop on important notifications. 
 
 ## A real example
 
-Kyra rolls out Runneth to her team. She runs the skill and, when asked, names her CSM lead as the admin instead of herself. Ten minutes later the CSM opens Runneth and gets full admin access. The rest of the team each get their own personal space on their first message. Nobody had to ask.
+Kyra rolls out Runneth to her team and sets herself as the admin with a #runneth-admin slack channel. A teammate tells Runneth to always use emojis. This only changes for conversations Runneth has with that person instead of every conversation with anyone in the organization.
