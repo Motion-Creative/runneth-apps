@@ -74,9 +74,32 @@ Good: "Stop re-introducing yourself to your agent." Bad: "AI-powered teammate co
 
 ---
 
+## The example must be from a customer perspective
+
+The person in the example is always a **customer** — a creative strategist, performance marketer, creative director, media buyer, or someone on a brand's marketing team. They are using Runneth to do their job better.
+
+The example is **never** from a CSM, an internal Motion employee, or anyone managing customer accounts. Those perspectives are internal. The use case library is outward-facing.
+
+**Good example subjects:**
+- A creative strategist at a DTC brand reviewing ad hooks
+- A performance marketing lead at an e-commerce company briefing new creative
+- A creative director rolling out Runneth to their media buying team
+- A social media manager analyzing what's working across campaigns
+
+**Bad example subjects:**
+- A CSM checking in on accounts
+- A Motion employee testing a new skill
+- An internal team member managing their own Runneth instance
+- Anyone whose job is selling or supporting Runneth rather than using it to do marketing work
+
+If you find yourself writing about accounts going quiet, customer health, or anything that sounds like customer success work — stop. Rewrite from the perspective of someone running campaigns, briefing creative, reviewing ads, or building out a creative strategy.
+
+---
+
 ## Editing rules
 
 - If you find yourself writing "leverage" or "workflow," stop and name the actual thing.
 - If a bullet describes a file path, rewrite it as the outcome the file produces.
+- If the example is about a CSM, internal employee, or anyone managing Runneth rather than using it for creative strategy work, rewrite it from a customer perspective.
 - If the example uses placeholder names like "John from Acme," it isn't done. Use real Motion customers or named hypotheticals the team would recognize.
 - Length cap: ~160 words across all sections combined. Premium copy is short copy. If a draft runs past 170, cut a bullet or shorten the example.
