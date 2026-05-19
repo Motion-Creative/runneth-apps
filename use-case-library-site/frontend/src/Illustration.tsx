@@ -54,6 +54,20 @@ const Gear = ({ cx, cy, r, stroke }: { cx: number; cy: number; r: number; stroke
   )
 }
 
+  'add-roles-permissions': (a) => wrap(
+    <>
+      {/* Shield body */}
+      <path d="M100 20l30 10v22c0 18-12 28-30 38-18-10-30-20-30-38V30z" />
+      {/* Admin star inside shield */}
+      <path d="M100 38l2.5 5 5.5 1-4 4 1 5.5-5-2.5-5 2.5 1-5.5-4-4 5.5-1z" fill={SPARK} stroke={SPARK} strokeWidth={1.5} />
+      {/* Two member silhouettes flanking the shield */}
+      <circle cx="56" cy="65" r="7" />
+      <path d="M46 86c1-7 5-10 10-10s9 3 10 10" />
+      <circle cx="144" cy="65" r="7" />
+      <path d="M134 86c1-7 5-10 10-10s9 3 10 10" />
+    </>,
+    a
+  ),
 const fallback: GlyphFn = (a) =>
   wrap(
     <>
@@ -66,13 +80,15 @@ const fallback: GlyphFn = (a) =>
 const GLYPHS: Record<string, GlyphFn> = {
   'team-member-memory': (a) => wrap(
     <>
-      <circle cx="70" cy="50" r="9" />
-      <path d="M58 76c1-7 7-12 12-12s11 5 12 12" />
-      <circle cx="100" cy="46" r="11" fill={SPARK} stroke="none" />
-      <path d="M86 78c2-9 7-14 14-14s12 5 14 14" stroke={SPARK} />
-      <circle cx="132" cy="50" r="9" />
-      <path d="M120 76c1-7 7-12 12-12s11 5 12 12" />
-      <path d="M100 22l4 6 7-1-5 5 2 7-6-4-6 4 2-7-5-5 7 1z" fill={SPARK} stroke={SPARK} />
+      {/* Three people — left, centre (highlighted), right */}
+      <circle cx="66" cy="50" r="8" />
+      <path d="M54 74c1-8 6-12 12-12s11 4 12 12" />
+      <circle cx="100" cy="46" r="10" fill={SPARK} />
+      <path d="M87 71c1-9 7-13 13-13s12 4 13 13" stroke={SPARK} />
+      <circle cx="134" cy="50" r="8" />
+      <path d="M122 74c1-8 6-12 12-12s11 4 12 12" />
+      {/* Memory spark — clear of all head circles */}
+      <path d="M100 18l2.5 5 5.5.8-4 3.8 1 5.4-5-2.6-5 2.6 1-5.4-4-3.8 5.5-.8z" fill={SPARK} stroke={SPARK} strokeWidth={1.5} />
     </>,
     a
   ),
