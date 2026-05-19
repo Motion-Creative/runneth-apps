@@ -1,0 +1,43 @@
+{
+  "schema": "1.0",
+  "id": "update-and-merge",
+  "version": "1.0.0",
+  "description": "Smart merge layer for upstream use-case updates. When use-case-sync finds an installed use-case with a new repo version, this skill enumerates every file the use-case installs (user.md snippets, skill files, scripts, configs, brain templates) and does a three-way merge per file (local vs ancestor vs upstream). Clean changes auto-apply silently. Real conflicts with local customization trigger plan mode and a consolidated admin notification. Org-agnostic — reads notification config from /agent/brain/permissions/config.json, degrades to file-only mode when Slack is not connected.",
+  "depends": ["use-case-sync"],
+  "customize": [],
+  "installs": [
+    {
+      "file": "SKILL.md",
+      "dest": "/agent/.agents/skills/update-and-merge/SKILL.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "conflict-prompt.txt",
+      "dest": "/agent/.agents/skills/update-and-merge/conflict-prompt.txt",
+      "if-not-exists": false
+    },
+    {
+      "file": "behavior-snippet.md",
+      "dest": "user-md",
+      "insert-after": "## System routines",
+      "insert-fallback": "append"
+    }
+  ],
+  "post-install": [
+    "INSTALLER PROTOCOL — follow each step in order. Do not declare the install done until every step is resolved or explicitly waived by the admin.",
+    "1. ADMIN GUARD — verify the installing user is a confirmed admin per /agent/brain/permissions/admins.md. If not, route through the org-change request flow in /agent/brain/permissions/user_mode.md and stop.",
+    "2. Patch use-case-sync Step 6 — read /agent/.agents/skills/use-case-sync/SKILL.md. Find the section that currently sends the legacy 'Want me to upgrade it?' Slack ping for update_available items. Replace it with a handoff to update-and-merge in scan mode (see SKILL.md → 'Modifications to existing use-case-sync'). Show the admin the diff and confirm before applying. Skip if already patched (look for 'update-and-merge' in Step 6).",
+    "3. Run the skill's setup mode to configure conflict notifications. Walk the admin through: (a) is Slack connected? If yes, ask them to pick a channel from `slack memberships list` and write it to /agent/brain/permissions/config.json under admin_slack_channel. (b) If Slack is not connected, proactively suggest connecting so they actually see conflicts in real time. (c) If they decline Slack entirely, confirm file-only mode in plain language.",
+    "4. Verify OPENAI_API_KEY is reachable for the user.md snippet semantic conflict-check step. If not, request via secret-input widget scoped to api.openai.com. In most Motion workspaces this is pre-provisioned.",
+    "5. Add a update-and-merge row to /agent/INDEX.md if maintained in this sandbox. The behavior-snippet has been auto-injected so the conversation-level agent already knows about the routine.",
+    "6. Confirm to the admin: 'On a conflict in any installed file (user.md snippet, skill file, script, config) I'll write a consolidated plan file and ping <channel | session-open notice>. On a clean change, silent file log. Reply naturally to plan files to resolve them.'"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-19",
+      "type": "major",
+      "notes": "Initial release. Scan mode (called by use-case-sync per installed use-case with update_available): enumerates every file the use-case installs, runs a three-way merge per file (local vs ancestor vs upstream), and either auto-applies clean changes or writes a consolidated plan file when conflicts exist. user.md snippet blocks use LLM semantic conflict check against adjacent user-written rules. Regular files use three-way textual diff against ancestor. Ancestor resolved from installed.json's installed_commit_sha (preferred), commit history walk against installed version (fallback), or conservative-flag mode (when ancestor is unknown). Resolve mode interprets natural-language admin replies and applies per-file choices. Setup mode handles Slack channel config or file-only fallback. Org-agnostic: no hardcoded channel IDs, workspace IDs, or admin names."
+    }
+  ]
+}
