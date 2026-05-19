@@ -1,32 +1,15 @@
 {
   "schema": "1.0",
   "id": "team-member-memory",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Runneth gets to know each person it works with — their goals, preferences, and working style — and adapts to them over time.",
+  "requires": ["add-permissions"],
   "customize": [
-    {
-      "token": "{{TEAM_MAP_PATH}}",
-      "description": "Path to the JSON file that maps user emails to team member files.",
-      "required": false,
-      "fallback": "/agent/brain/team/user-map.json"
-    },
-    {
-      "token": "{{TEAM_DIR}}",
-      "description": "Directory where individual team member markdown files are stored.",
-      "required": false,
-      "fallback": "/agent/brain/team/"
-    },
     {
       "token": "{{TEAM_MEMBER_TEMPLATE_PATH}}",
       "description": "Path to the blank template used when creating a new team member file.",
       "required": false,
-      "fallback": "/agent/brain/team/TEMPLATE.md"
-    },
-    {
-      "token": "{{CONVERSATIONS_PATH}}",
-      "description": "Directory where per-conversation one-pager files are stored.",
-      "required": false,
-      "fallback": "/agent/brain/conversations/"
+      "fallback": "/agent/brain/members/TEMPLATE.md"
     },
     {
       "token": "{{ONEPAGER_TEMPLATE_PATH}}",
@@ -36,12 +19,6 @@
     }
   ],
   "installs": [
-    {
-      "file": "user-map.json",
-      "dest": "{{TEAM_MAP_PATH}}",
-      "if-not-exists": true,
-      "merge-strategy": "preserve-keys"
-    },
     {
       "file": "team-member-template.md",
       "dest": "{{TEAM_MEMBER_TEMPLATE_PATH}}",
@@ -60,6 +37,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2026-05-19",
+      "type": "major",
+      "notes": "Now requires add-permissions. Identity resolution delegates to permissions resolvers (slack-whoami.sh / motion-whoami.sh) instead of maintaining its own user-map. Team files now live inside each member's home base. Slack surface now supported. user-map.json removed."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-06",
