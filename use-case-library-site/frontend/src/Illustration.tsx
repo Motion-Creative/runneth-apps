@@ -54,20 +54,6 @@ const Gear = ({ cx, cy, r, stroke }: { cx: number; cy: number; r: number; stroke
   )
 }
 
-  'add-roles-permissions': (a) => wrap(
-    <>
-      {/* Shield body */}
-      <path d="M100 20l30 10v22c0 18-12 28-30 38-18-10-30-20-30-38V30z" />
-      {/* Admin star inside shield */}
-      <path d="M100 38l2.5 5 5.5 1-4 4 1 5.5-5-2.5-5 2.5 1-5.5-4-4 5.5-1z" fill={SPARK} stroke={SPARK} strokeWidth={1.5} />
-      {/* Two member silhouettes flanking the shield */}
-      <circle cx="56" cy="65" r="7" />
-      <path d="M46 86c1-7 5-10 10-10s9 3 10 10" />
-      <circle cx="144" cy="65" r="7" />
-      <path d="M134 86c1-7 5-10 10-10s9 3 10 10" />
-    </>,
-    a
-  ),
 const fallback: GlyphFn = (a) =>
   wrap(
     <>
@@ -347,6 +333,20 @@ const GLYPHS: Record<string, GlyphFn> = {
       <rect x="124" y="62" width="14" height="20" rx="2" fill={SPARK} stroke="none" />
       <line x1="128" y1="62" x2="128" y2="56" stroke={SPARK} strokeWidth={2.6} />
       <line x1="134" y1="62" x2="134" y2="56" stroke={SPARK} strokeWidth={2.6} />
+    </>,
+    a
+  ),
+  'add-roles-permissions': (a) => wrap(
+    <>
+      {/* Shield body */}
+      <path d="M100 20l30 10v22c0 18-12 28-30 38-18-10-30-20-30-38V30z" />
+      {/* Admin star inside shield */}
+      <path d="M100 38l2.5 5 5.5 1-4 4 1 5.5-5-2.5-5 2.5 1-5.5-4-4 5.5-1z" fill={SPARK} stroke={SPARK} strokeWidth={1.5} />
+      {/* Two member silhouettes flanking the shield */}
+      <circle cx="56" cy="65" r="7" />
+      <path d="M46 86c1-7 5-10 10-10s9 3 10 10" />
+      <circle cx="144" cy="65" r="7" />
+      <path d="M134 86c1-7 5-10 10-10s9 3 10 10" />
     </>,
     a
   ),
