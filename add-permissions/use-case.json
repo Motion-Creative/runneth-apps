@@ -1,8 +1,0 @@
-{
-  "slug": "add-permissions",
-  "display_title": "Add Permissions",
-  "pitch": "Knows who can do what",
-  "status": "experimental",
-  "category": "agent-foundations",
-  "github_path": "add-permissions"
-}
