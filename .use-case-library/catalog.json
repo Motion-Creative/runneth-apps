@@ -15,7 +15,8 @@
     "landing-page-summary",
     "optimize-landing-page",
     "building-integrations",
-    "integration-capabilities-library"
+    "integration-capabilities-library",
+    "add-permissions"
   ],
   "excluded": [
     {
@@ -57,6 +58,10 @@
     {
       "slug": "csm-alerts",
       "reason": "No folder exists in the repo for this slug; site silently drops it. Hide until restored."
+    },
+    {
+      "slug": "deploy-security-protocol",
+      "reason": "Renamed to add-permissions."
     }
   ]
 }
