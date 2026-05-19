@@ -589,12 +589,21 @@ a Phase 3 step failed — re-run the relevant step.
 
 Present this to the deploying admin after successful verification:
 
+First, ask:
+
+> "Do you want to be an admin on this org, or should someone else be the admin?
+> If someone else, share their Slack ID and/or @motionapp.com email and I'll add them."
+
+If they want to be admin: proceed with their own identifiers in step 1.
+If they name someone else: gather that person's identifiers and use those in step 1. The deployer does not need to be mapped as an admin.
+
 ```
 v2.1 installed. Here is what to configure before going live:
 
 1. Add your admin ID(s).
    Say: "Add me as admin. My Slack ID is U03XXXXXXXX and my email is name@motionapp.com."
    Both identifiers will be mapped in workspace-map.json with scope: "admin".
+   (If you are setting this up on behalf of someone else, provide their identifiers here instead of your own.)
 
 2. (Optional) Set the admin Slack channel.
    Edit /agent/brain/admin/config.json and set admin_slack_channel to a Slack channel ID
