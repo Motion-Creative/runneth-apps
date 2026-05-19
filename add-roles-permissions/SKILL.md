@@ -12,7 +12,7 @@ trigger_domains:
   - security-deploy
   - cross-org-deployment
   - bootstrap
-version: "2.1.0"
+version: "2.1.1"
 source_org: "Motion (Creative Analytics)"
 predecessor: "deploy-security-protocol@2.0.0"
 ---
@@ -734,7 +734,7 @@ Each step requires explicit user confirmation.
 ## Source reference
 
 - Source org: Motion (Creative Analytics)
-- Skill version: 2.1.0
+- Skill version: 2.1.1
 - Predecessor: `deploy-security-protocol@2.0.0`
 - Proposal doc: `runneth-permissions-v2.1-proposal.md` (2026-05-14)
 - Files captured: 2026-05-14
