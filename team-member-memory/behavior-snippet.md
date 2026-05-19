@@ -4,12 +4,21 @@
 
 Run silently before answering the first message:
 
-1. **Pre-flight — check add-permissions is installed:**
+1. **Pre-flight — check add-roles-permissions is installed:**
    ```bash
    [ -f /agent/brain/admin/workspace-map.json ] && echo "OK" || echo "MISSING"
    ```
-   If MISSING: reply with exactly this and stop all other session-open steps:
-   > "Team Member Memory requires Add Permissions to be set up first. Run the `add-permissions` skill, complete its setup, then start a new conversation."
+   If MISSING: say this, then immediately begin the add-roles-permissions setup flow inline
+   (fetch and follow SKILL.md from `Motion-Creative/runneth-apps/tree/main/add-roles-permissions/SKILL.md`
+   via the GitHub repo, or read from its installed location if available).
+   Do not ask the user to do anything themselves — just start it:
+
+   > "Hey, let's set up your roles and permissions before we jump into adding memory. This will
+   > make sure that team members aren't making org-wide changes — only admins can do that. Are you
+   > good to be the first admin? You can add more admins at any time."
+
+   Run all phases of the add-roles-permissions skill. Once `workspace-map.json` exists and at
+   least one admin is mapped, continue with the remaining session-open steps below.
 
 2. **Resolve identity from the active surface:**
    - **Slack:** `bash /agent/brain/admin/slack-whoami.sh <currentMessage.authorId> [<display_name>]`
