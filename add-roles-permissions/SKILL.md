@@ -164,14 +164,14 @@ mkdir -p /agent/brain
 
 ```json
 {
-  "_note": "Identity registry — sole source of truth for permissions. Resolution via Slack ID (slack-whoami.sh) or Motion workspaceId (motion-whoami.sh). Both paths return the same {scope, handle, home_base}. Admin check: scope == 'admin'. Editable by admins only.",
+  "_note": "Identity registry — sole source of truth for permissions. Resolution via Slack ID (slack-whoami.sh) or Motion account email (motion-whoami.sh). Both paths return the same {scope, handle, home_base}. Admin check: scope == 'admin'. Editable by admins only.",
   "_entry_shape": {
     "slackUserIds": "Slack user ID -> 'member:<handle>'",
-    "motionWorkspaceIds": "Motion workspaceId -> 'member:<handle>'",
-    "members": "<handle> -> { name, scope: 'admin'|'member', handle, slack_id?, workspace_id? }"
+    "motionUserEmails": "Motion account email -> 'member:<handle>'",
+    "members": "<handle> -> { name, scope: 'admin'|'member', handle, slack_id?, email? }"
   },
   "slackUserIds": {},
-  "motionWorkspaceIds": {},
+  "motionUserEmails": {},
   "members": {}
 }
 ```
@@ -273,13 +273,13 @@ Write verbatim, then `chmod +x`:
 #!/usr/bin/env bash
 # motion-whoami.sh — Motion-side identity resolver for Runneth v2.1.
 #
-# Resolves the current Motion web conversation's workspaceId against
+# Resolves the current Motion web user's email against
 # /agent/brain/admin/workspace-map.json.
 # Returns JSON: { "scope", "handle", "home_base", "status" }.
 #
 # Status values mirror slack-whoami.sh: resolved | provisioned | collision.
 #
-# Reads the workspaceId from the current conversation directory (same approach
+# Reads userEmail from conversation_json in the local SQLite DB (same approach
 # as whoami.sh). Must be run from within a conversation directory.
 #
 # Usage:
@@ -306,12 +306,12 @@ if ! cp "$LIVE_DB" "$SNAPSHOT_DB" 2>/dev/null; then
   exit 1
 fi
 
-WS_ID="$(sqlite3 "$SNAPSHOT_DB" \
-  "SELECT json_extract(conversation_json,'\$.workspaceId') FROM conversations WHERE conversation_id='$CONV_ID'" \
+USER_EMAIL="$(sqlite3 "$SNAPSHOT_DB" \
+  "SELECT json_extract(conversation_json,'\$.userEmail') FROM conversations WHERE conversation_id='$CONV_ID'" \
   2>/dev/null)"
 
-if [[ -z "$WS_ID" ]]; then
-  echo '{"error":"workspaceId not found for conversation","conversation_id":"'"$CONV_ID"'"}' >&2
+if [[ -z "$USER_EMAIL" ]]; then
+  echo '{"error":"userEmail not found for conversation","conversation_id":"'"$CONV_ID"'"}' >&2
   exit 1
 fi
 
@@ -320,7 +320,7 @@ if [ ! -f "$MAP_FILE" ]; then
   exit 1
 fi
 
-REF=$(jq -r --arg id "$WS_ID" '.motionWorkspaceIds[$id] // empty' "$MAP_FILE")
+REF=$(jq -r --arg email "$USER_EMAIL" '.motionUserEmails[$email] // empty' "$MAP_FILE")
 
 if [ -n "$REF" ]; then
   HANDLE="${REF#member:}"
@@ -333,32 +333,29 @@ if [ -n "$REF" ]; then
   exit 0
 fi
 
-# Unknown workspaceId — auto-provision as member.
-if [ -z "$DISPLAY_NAME" ]; then
-  echo '{"error": "unknown workspaceId and no display_name provided for auto-provision", "workspace_id": "'"$WS_ID"'"}' >&2
-  exit 2
-fi
-
-HANDLE=$(echo "$DISPLAY_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
+# Unknown email — auto-provision as member.
+EMAIL_LOCAL="${USER_EMAIL%@*}"
+NAME_FOR_HANDLE="${DISPLAY_NAME:-$EMAIL_LOCAL}"
+HANDLE=$(echo "$NAME_FOR_HANDLE" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
 
 # Collision check
-COLLISION=$(jq -c --arg name "$DISPLAY_NAME" --arg id "$WS_ID" '
-  [ (.members | to_entries[] | select(.value.name == $name or .value.workspace_id == $id)
+COLLISION=$(jq -c --arg name "$DISPLAY_NAME" --arg email "$USER_EMAIL" '
+  [ (.members | to_entries[] | select((.value.name != null and $name != "" and .value.name == $name) or .value.email == $email)
      | { source: "members", handle: .key, entry: .value }) ]
   | .[0] // empty
 ' "$MAP_FILE")
 
 if [ -n "$COLLISION" ] && [ "$COLLISION" != "null" ]; then
-  echo "{\"status\": \"collision\", \"candidate\": $COLLISION, \"proposed_handle\": \"$HANDLE\", \"display_name\": \"$DISPLAY_NAME\", \"workspace_id\": \"$WS_ID\"}"
+  echo "{\"status\": \"collision\", \"candidate\": $COLLISION, \"proposed_handle\": \"$HANDLE\", \"display_name\": \"$DISPLAY_NAME\", \"email\": \"$USER_EMAIL\"}"
   exit 0
 fi
 
 # No collision. Provision new member entry.
 mkdir -p "/agent/brain/members/$HANDLE"
 tmp=$(mktemp)
-jq --arg id "$WS_ID" --arg h "$HANDLE" --arg name "$DISPLAY_NAME" '
-  .motionWorkspaceIds[$id] = ("member:" + $h)
-  | .members[$h] = { "name": $name, "scope": "member", "handle": $h, "workspace_id": $id }
+jq --arg email "$USER_EMAIL" --arg h "$HANDLE" --arg name "${DISPLAY_NAME:-$EMAIL_LOCAL}" '
+  .motionUserEmails[$email] = ("member:" + $h)
+  | .members[$h] = { "name": $name, "scope": "member", "handle": $h, "email": $email }
 ' "$MAP_FILE" > "$tmp" && mv "$tmp" "$MAP_FILE"
 
 echo "{\"scope\": \"member\", \"handle\": \"$HANDLE\", \"home_base\": \"/agent/brain/members/$HANDLE/\", \"status\": \"provisioned\"}"
@@ -398,7 +395,7 @@ Write verbatim (unless user declined overwrite in Check 3):
 
 Before any reasoning or action, run the resolver:
 - Slack: `bash /agent/brain/admin/slack-whoami.sh <slack_id>`
-- Motion web: `bash /agent/brain/admin/motion-whoami.sh [<display_name>]`
+- Motion web: `bash /agent/brain/admin/motion-whoami.sh [<display_name>]`  _(resolves userEmail from conversation_json)_
 
 Both return `{ scope, handle, home_base, status }`. Use `scope` to determine what follows.
 
@@ -520,7 +517,7 @@ user.md, followed by a blank line, before any existing content.
 Before anything else: run the resolver for this message's platform.
 
   Slack message:       /agent/brain/admin/slack-whoami.sh <slack_id> [<display_name>]
-  Motion web message:  /agent/brain/admin/motion-whoami.sh [<display_name>]
+  Motion web message:  /agent/brain/admin/motion-whoami.sh [<display_name>]  # resolves userEmail from conversation_json
 
 The resolver returns { scope, handle, home_base, status }.
 
@@ -574,7 +571,7 @@ python3 -c "import json; json.load(open('/agent/brain/admin/config.json')); prin
 python3 -c "
 import json, sys
 m = json.load(open('/agent/brain/admin/workspace-map.json'))
-expected = {'slackUserIds', 'motionWorkspaceIds', 'members'}
+expected = {'slackUserIds', 'motionUserEmails', 'members'}
 missing = expected - set(m.keys())
 if missing: print('✗ workspace-map.json missing keys:', missing); sys.exit(1)
 print('✓ workspace-map.json valid JSON with expected keys')
