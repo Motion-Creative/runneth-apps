@@ -17,7 +17,7 @@
     "building-integrations",
     "integration-capabilities-library",
     "add-roles-permissions",
-    "context-import"
+    "import-from-ai"
   ],
   "excluded": [
     {

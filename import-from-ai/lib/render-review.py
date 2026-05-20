@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-render-review.py — Render the read-only review HTML for a context-import manifest.
+render-review.py — Render the read-only review HTML for a import-from-ai manifest.
 
 The HTML is structured viewing. Approval happens in chat, not in this file.
 Items are numbered globally (1..N), grouped by category, and visually flagged
@@ -34,9 +34,15 @@ DEFAULT_TOKENS = {
     "conflict_bg": "#FEE2E2",
     "conflict_border": "#F87171",
     "conflict_text": "#991B1B",
-    "promote_bg": "#DBEAFE",
-    "promote_border": "#60A5FA",
-    "promote_text": "#1E40AF",
+    "behavioral_bg": "#DCFCE7",
+    "behavioral_border": "#4ADE80",
+    "behavioral_text": "#166534",
+    "contextual_bg": "#E0E7FF",
+    "contextual_border": "#818CF8",
+    "contextual_text": "#3730A3",
+    "raise_bg": "#DBEAFE",
+    "raise_border": "#60A5FA",
+    "raise_text": "#1E40AF",
     "skip_bg": "#F1F5F9",
     "skip_text": "#64748B",
     "font_family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
@@ -96,24 +102,36 @@ def load_tokens(design_system_path: str | None) -> dict:
     return tokens
 
 
+BUCKET_DESCRIPTIONS = {
+    "behavioral": "Appends to your profile. Loads every session.",
+    "contextual": "Lives in imports. Surfaces via INDEX when relevant.",
+}
+
+
 def render_item(item: dict, tokens: dict) -> str:
     number = item.get("number")
     title = html.escape(item.get("title", ""))
     content = html.escape(item.get("content", ""))
     snippet = content if len(content) <= 600 else content[:600] + "&hellip;"
     triage = item.get("triage") or {}
-    scope = triage.get("suggested_scope", "user")
+    bucket = triage.get("bucket", "contextual")
+    raise_flags = triage.get("raise_flags") or []
     action = triage.get("suggested_action", "import")
     reason = html.escape(triage.get("reason", ""))
     conflict = triage.get("conflict") or {}
 
     badges = []
-    if scope == "org":
-        badges.append(("Promotion candidate: org", "promote"))
-    elif scope == "user_md":
-        badges.append(("Promotion candidate: user.md (admin only)", "promote"))
-    elif scope == "skip":
+    if bucket == "behavioral":
+        badges.append(("Behavioral: appends to your profile", "behavioral"))
+    elif bucket == "contextual":
+        badges.append(("Contextual: imports only", "contextual"))
+    if action == "skip":
         badges.append(("Suggested: skip", "skip"))
+
+    if "raise_to_org" in raise_flags:
+        badges.append(("Raise candidate: team brain", "raise"))
+    if "raise_to_user_md" in raise_flags:
+        badges.append(("Raise candidate: standing instructions (admin only)", "raise"))
 
     if conflict:
         conflict_with = ", ".join(html.escape(p) for p in (conflict.get("conflict_with") or []))
@@ -135,13 +153,13 @@ def render_item(item: dict, tokens: dict) -> str:
         <span class="item-action">{html.escape(action)}</span>
       </header>
       <div class="item-meta">
-        <span class="meta-pill">scope: {html.escape(scope)}</span>
+        <span class="meta-pill">bucket: {html.escape(bucket)}</span>
         <span class="meta-pill">durability: {confidence or 'n/a'}</span>
         <span class="meta-pill">source: {source}</span>
       </div>
       {f'<div class="item-badges">{badge_html}</div>' if badges else ''}
       <pre class="item-content">{snippet}</pre>
-      {f'<p class="item-reason"><strong>Why this suggestion:</strong> {reason}</p>' if reason else ''}
+      {f'<p class="item-reason"><strong>Why this call:</strong> {reason}</p>' if reason else ''}
     </article>
     """
 
@@ -172,9 +190,14 @@ def render_html(manifest: dict, tokens: dict) -> str:
     conflicts_count = sum(
         1 for it in items if (it.get("triage") or {}).get("conflict")
     )
-    promotion_count = sum(
-        1 for it in items
-        if (it.get("triage") or {}).get("suggested_scope") in ("org", "user_md")
+    behavioral_count = sum(
+        1 for it in items if (it.get("triage") or {}).get("bucket") == "behavioral"
+    )
+    contextual_count = sum(
+        1 for it in items if (it.get("triage") or {}).get("bucket") == "contextual"
+    )
+    raise_count = sum(
+        1 for it in items if (it.get("triage") or {}).get("raise_flags")
     )
 
     summary_pills = []
@@ -204,9 +227,15 @@ def render_html(manifest: dict, tokens: dict) -> str:
     --conflict-bg: {tokens['conflict_bg']};
     --conflict-border: {tokens['conflict_border']};
     --conflict-text: {tokens['conflict_text']};
-    --promote-bg: {tokens['promote_bg']};
-    --promote-border: {tokens['promote_border']};
-    --promote-text: {tokens['promote_text']};
+    --behavioral-bg: {tokens['behavioral_bg']};
+    --behavioral-border: {tokens['behavioral_border']};
+    --behavioral-text: {tokens['behavioral_text']};
+    --contextual-bg: {tokens['contextual_bg']};
+    --contextual-border: {tokens['contextual_border']};
+    --contextual-text: {tokens['contextual_text']};
+    --raise-bg: {tokens['raise_bg']};
+    --raise-border: {tokens['raise_border']};
+    --raise-text: {tokens['raise_text']};
     --skip-bg: {tokens['skip_bg']};
     --skip-text: {tokens['skip_text']};
   }}
@@ -293,7 +322,9 @@ def render_html(manifest: dict, tokens: dict) -> str:
     font-weight: 500;
   }}
   .badge-conflict {{ background: var(--conflict-bg); border-color: var(--conflict-border); color: var(--conflict-text); }}
-  .badge-promote {{ background: var(--promote-bg); border-color: var(--promote-border); color: var(--promote-text); }}
+  .badge-behavioral {{ background: var(--behavioral-bg); border-color: var(--behavioral-border); color: var(--behavioral-text); }}
+  .badge-contextual {{ background: var(--contextual-bg); border-color: var(--contextual-border); color: var(--contextual-text); }}
+  .badge-raise {{ background: var(--raise-bg); border-color: var(--raise-border); color: var(--raise-text); }}
   .badge-skip {{ background: var(--skip-bg); color: var(--skip-text); }}
   .item-content {{
     background: var(--muted-bg);
@@ -334,11 +365,15 @@ def render_html(manifest: dict, tokens: dict) -> str:
       </div>
       <div class="summary-pills">{''.join(summary_pills)}</div>
       <div class="callout">
+        <strong>{behavioral_count} behavioral</strong> items will append to your profile and load every session.
+        <strong>{contextual_count} contextual</strong> items will go to imports and surface via INDEX when relevant.
+        <br><br>
         Review is read-only. Approve in chat by number, range, or category.
         Examples: <code>approve 1-15, 22</code> &middot; <code>approve all preferences, skip working sessions</code> &middot;
-        <code>approve all but 7</code> &middot; <code>approve all, promote 3 to org</code>.
+        <code>approve all but 7</code> &middot; <code>approve all, raise 3 to org</code> &middot;
+        <code>approve all, move 12 to behavioral</code>.
         {f'<br><br><strong>{conflicts_count} conflict(s)</strong> flagged below — resolve those explicitly before approving.' if conflicts_count else ''}
-        {f'<br><strong>{promotion_count} promotion candidate(s)</strong> — items that may belong at org or user.md scope.' if promotion_count else ''}
+        {f'<br><strong>{raise_count} raise candidate(s)</strong> — items that may belong at the team or standing-instruction level. Call them out explicitly in chat.' if raise_count else ''}
       </div>
     </header>
     {''.join(sections_html)}
@@ -353,7 +388,7 @@ def render_html(manifest: dict, tokens: dict) -> str:
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="Render context-import review HTML.")
+    p = argparse.ArgumentParser(description="Render import-from-ai review HTML.")
     p.add_argument("--manifest", required=True)
     p.add_argument("--output", required=True)
     p.add_argument("--design-system", default=None)

@@ -90,14 +90,24 @@
           "triage": {
             "type": "object",
             "description": "Filled in by the agent (not the parser) before rendering.",
+            "required": ["bucket", "suggested_action"],
             "properties": {
+              "bucket": {
+                "type": "string",
+                "enum": ["behavioral", "contextual"],
+                "description": "Behavioral items auto-append to <handle>.md so they load every session. Contextual items go to imports/ only and surface via INDEX."
+              },
               "suggested_category": {
                 "type": "string",
                 "description": "Agent's category recommendation (may differ from source AI's)."
               },
-              "suggested_scope": {
-                "type": "string",
-                "enum": ["user", "org", "user_md", "skip"]
+              "raise_flags": {
+                "type": "array",
+                "description": "Informational flags suggesting this item could also belong somewhere bigger. Never auto-applied; user calls raises explicitly during chat approval.",
+                "items": {
+                  "type": "string",
+                  "enum": ["raise_to_org", "raise_to_user_md"]
+                }
               },
               "durability_confidence": {
                 "type": "string",
@@ -105,11 +115,12 @@
               },
               "suggested_action": {
                 "type": "string",
-                "enum": ["import", "import-with-edits", "promote-org", "promote-user-md", "skip"]
+                "enum": ["import", "import-with-edits", "skip"],
+                "description": "Default action. 'import' uses the bucket to decide handle.md vs imports-only. Raises are user-driven and not encoded here."
               },
               "conflict": {
                 "type": "object",
-                "description": "Set when the item disagrees with something already in the brain.",
+                "description": "Set when the item disagrees with something already in the brain. Behavioral conflicts matter most (they go to <handle>.md).",
                 "properties": {
                   "conflict_with": {
                     "type": "array",
@@ -119,7 +130,7 @@
                   "note": { "type": "string", "description": "Short explanation of the conflict." }
                 }
               },
-              "reason": { "type": "string", "description": "One-line agent justification for the suggested action." }
+              "reason": { "type": "string", "description": "One-line agent justification for the bucket and any raise flags." }
             }
           }
         }
