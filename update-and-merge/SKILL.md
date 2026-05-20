@@ -162,62 +162,72 @@ Do NOT modify any local files for this use-case.
 
 Write `./artifacts/plan-merge-<use-case>-<YYYY-MM-DD>.md` with this structure:
 
+Tone is plain creative-strategist language, not engineer-speak. Lead with what the update means for the team, then the per-file picture, then the choices.
+
 ```
-# Merge plan: <use-case> v<old> → v<new>
+# What's changing in <use-case>
 
-**Status:** awaiting admin resolution
-**Detected:** <date>
-**Files changed:** <n> (<c> conflicts, <k> clean)
+<use-case> has a new version available (v<old> → v<new>). Most of it is safe to take, but a few pieces would step on changes you've already made. Here's the picture and three ways to handle each one.
 
-## What this update brings
+**Detected:** <date>  
+**Waiting on:** your call on <c> piece(s) below
 
-<one-paragraph summary from upstream CHANGELOG.md notes for this version>
+## What's new in this update
 
-## File-level changes
+<two or three sentences from upstream CHANGELOG.md notes for this version, paraphrased in plain language — what the team gets, not the version bump>
 
-### ✓ Clean (would auto-apply on resolution)
+## Safe to take from upstream
 
-- `path/to/file/1` — <one-line summary of change>
-- `path/to/file/2` — <one-line summary of change>
+These files match what was originally installed, so the new version goes in cleanly with no risk to anything you've changed.
 
-### ⚠ Conflicts
+- `path/to/file/1` — <one plain-language line on what's new>
+- `path/to/file/2` — <one plain-language line on what's new>
 
-#### `path/to/file/3`
+## Where your changes and the new version collide
 
-- **Change type:** modified upstream
-- **Your local version:** customized (diverges from the version installed at v<old>)
-- **Diff summary:** <textual diff between local and upstream, trimmed if long>
-- **Ancestor reference:** <commit SHA or "unknown — conservative flag">
-- **Resolution options:**
-  1. Apply upstream — overwrite your local customizations to this file
-  2. Keep yours — skip this file in the update, leave your local copy untouched
-  3. Custom merge — tell me how to blend (specific lines / sections / behaviors)
+### `path/to/file/3`
+
+**What's new upstream:** <one or two sentences in plain language on what the new version does>
+
+**What you've changed:** Your local copy of this file has been edited since it was first installed. It looks like you customized it on purpose.
+
+**Side by side:**
+```
+<readable diff: your local version vs the new version. Trim aggressively, show the meaningful parts only.>
+```
+
+**Three ways to handle it:**
+
+1. **Take the new version** — your local changes here get overwritten
+2. **Keep yours** — the new version is skipped for this file, your customization stays
+3. **Blend** — tell me what to keep and what to take (e.g., "keep my lines about X, take the new behavior for Y")
 
 (Repeat per conflicting file)
 
-#### `path/to/snippet/in/user.md` — user.md snippet
+### The <use-case> standing instructions in your user.md
 
-- **Change type:** snippet block in /agent/user.md
-- **Conflict:** <rule_topic from LLM check>
-- **Prior version of rule:** <prior_rule>
-- **New version of rule:** <new_rule>
-- **Your custom rule elsewhere in user.md:** <user_added_rule>
-- **Where your rule lives:** <user_added_rule_location>
-- **LLM rationale:** <rationale>
-- **Resolution options:**
-  1. Apply upstream — take the new rule, override your customization
-  2. Keep yours — skip this rule in the update
-  3. Custom merge — describe the blend you want
+**What this update would change:** <plain language description of the new rule's intent>
 
-## How to resolve
+**Your team's existing rule on this topic** (currently in your user.md, near <user_added_rule_location>): "<user_added_rule>"
 
-Reply in chat with your choice. Natural language is fine. Examples:
-- "apply upstream for everything"
-- "keep mine on search.py, apply upstream on the rest"
-- "go with option 2 on the user.md conflict"
-- "for SKILL.md: keep my lines 40-60, take the rest from upstream"
+**Why these collide:** <rationale from the conflict check, plain language>
 
-I'll apply your choices, update installed.json, and mark this plan resolved.
+**Three ways to handle it:**
+
+1. **Take the new rule** — your team's existing rule on this topic gets overridden
+2. **Keep yours** — your team's rule stays as written, the new rule is skipped
+3. **Blend** — tell me how you want it (e.g., "keep the privacy rule but allow opt-in to logging")
+
+## How to respond
+
+Reply to me in chat in plain language. Some examples that work:
+
+- "Take the new version for everything."
+- "Keep mine on search.py, take the new version on the rest."
+- "For the user.md piece, keep my rule. Everything else: take the new."
+- "For SKILL.md, keep my lines about X but take the new behavior around Y."
+
+Once you reply, I'll handle the rest — apply your choices, update the install record, and archive this writeup.
 ```
 
 Add the use-case to today's in-memory conflicts list for the end-of-run consolidated admin ping.
@@ -229,14 +239,17 @@ After all use-cases in the daily sync have been processed:
 If any plans were written this run:
 
 1. Read `/agent/brain/permissions/config.json` → `admin_slack_channel`
-2. **If set:** one consolidated Slack message:
+2. **If set:** one consolidated Slack message. Tone is conversational, not alarm-bell. Frame as a heads-up, not an incident:
    ```
-   ⚠️ update-and-merge found N conflict(s) across M use-case(s) in today's sync:
-   • <use-case>: <conflict_count> conflict(s) across <file_count> file(s), plan at <path>
-   • <use-case>: <conflict_count> conflict(s) across <file_count> file(s), plan at <path>
+   Hey — a few of your use-cases have updates ready, but some pieces overlap with changes your team has already made. Quick review when you have a minute:
 
-   Reply in chat with your resolution choices.
+   • <use-case> — <conflict_count> piece(s) need your call, plan at <path>
+   • <use-case> — <conflict_count> piece(s) need your call, plan at <path>
+
+   Just reply here in plain language and I'll take care of the rest.
    ```
+
+   If only one use-case has conflicts, swap the bullet list for a single short sentence ("the brand-kit update has 2 pieces that need your call — plan at <path>").
 3. **If null:** file-only mode. Write each plan into `/agent/brain/org/use-cases/pending-merge-plans.json` for session-open surfacing.
 
 ---
@@ -301,16 +314,20 @@ Remove this use-case's entry from `/agent/brain/org/use-cases/pending-merge-plan
 
 ### Step 5 — Confirm to the admin
 
-Plain-language summary of what got applied:
+Plain-language summary of what landed. Lead with the outcome for the team, not the file mutation log. The admin should feel the change is done, not have to parse a transaction record.
 
-> "Applied your resolution for `<use-case>`:
-> - search.py: kept your version
-> - SKILL.md: applied upstream
-> - user.md snippet: applied upstream
+Template:
+
+> "Done. Here's what landed for <use-case>:
+> • <file>: kept your version (your changes around <plain summary> stay as-is)
+> • <file>: took the new version (which adds <plain summary of what's new>)
+> • The <use-case> standing instructions in user.md: kept your rule about <topic>
 >
-> installed.json updated to v<new>. Plan file archived."
+> <use-case> is now on v<new>. Writeup's archived."
 
-If multiple plans were resolved in one reply, list each one's outcome.
+If multiple plans were resolved in one reply, group by use-case and use the same template per use-case.
+
+Keep the summary plain-language. Don't say "resolved," "applied resolution," "snippet block," "user.md sentinel," or anything that sounds like a commit message. Describe what the team will now experience, not what the file mutation was.
 
 ---
 
@@ -340,8 +357,10 @@ slack memberships list 2>&1 | head -5
 
 ### Step 3 — Confirm the final config in plain language
 
-- Slack mode: "On a conflict I'll ping #<channel> and write a plan file. On a clean change, silent file log only."
-- File-only mode: "On a conflict I'll write a plan file and remind you on your next session-open. On a clean change, silent file log only."
+Warm and conversational, not a config dump. The admin should know exactly what to expect without having to imagine the routine running.
+
+- **Slack mode:** "You're set up. From now on: if an update from upstream is safe to take, I'll quietly bring it in. If there's an actual conflict with something you've changed locally, you'll get a ping in #<channel> with a short writeup and three options. Just reply in plain language and I'll handle the rest."
+- **File-only mode:** "You're set. From now on: if an update is safe to take, I'll quietly bring it in. If there's a real conflict, I'll leave a writeup for you and surface it the next time you open a conversation. You can enable Slack pings any time by asking me to set up update-and-merge notifications."
 
 ---
 
@@ -367,7 +386,7 @@ Shape:
 }
 ```
 
-The session-open routine should check this file. If `pending` is non-empty, surface a one-line notice: "N update-and-merge plan(s) pending review."
+The session-open routine should check this file. If `pending` is non-empty, surface a one-line notice in plain language: "N update(s) from your use-cases are waiting on your call when you have a minute."
 
 ---
 

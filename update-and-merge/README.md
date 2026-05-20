@@ -59,6 +59,18 @@ Org-agnostic. No hardcoded channel IDs. All variable config reads at runtime fro
 
 On install, setup mode walks the admin through configuring the channel. If Slack isn't connected, setup proactively suggests connecting it. If the admin declines Slack entirely, the skill falls to **file-only mode** — plan files live on disk and a one-line notice surfaces on the next admin session-open.
 
+## Routine
+
+update-and-merge does **not** create its own reminder. It piggybacks on `use-case-sync`'s daily routine (the 9am ET sync run that already exists in any sandbox with use-case-sync installed). When that routine runs, it now hands off to update-and-merge in scan mode for each installed use-case with an available update.
+
+Why this shape:
+
+- One routine instead of two avoids the trap of one running before the other and missing state
+- update-and-merge has no work to do unless use-case-sync already detected a version delta upstream
+- Cleaner uninstall: removing use-case-sync removes the trigger for both
+
+The install step verifies the use-case-sync reminder exists and is active before declaring the install complete. If you delete the use-case-sync reminder, update-and-merge stops running until you recreate it.
+
 ## Dependencies
 
 - `use-case-sync` — must be installed and configured. `update-and-merge` is invoked from Step 6 of that skill.
