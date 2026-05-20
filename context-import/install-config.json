@@ -1,0 +1,66 @@
+{
+  "schema": "1.0",
+  "id": "context-import",
+  "version": "1.0.0",
+  "description": "Pull saved memories, custom instructions, projects, and key context out of ChatGPT, Claude, or Gemini in one paste. Runneth reviews everything, flags conflicts, and writes only what the user approves.",
+  "requires": ["add-roles-permissions"],
+  "customize": [
+    {
+      "token": "{{IMPORTS_ROOT}}",
+      "description": "Where imported context lands by default. Resolved per-user under the permissions home base unless overridden.",
+      "required": false,
+      "fallback": "/agent/brain/users/<handle>/imports"
+    }
+  ],
+  "installs": [
+    {
+      "file": "SKILL.md",
+      "dest": "/agent/.agents/skills/context-import/SKILL.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "prompts/chatgpt.md",
+      "dest": "/agent/.agents/skills/context-import/prompts/chatgpt.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "prompts/claude.md",
+      "dest": "/agent/.agents/skills/context-import/prompts/claude.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "prompts/gemini.md",
+      "dest": "/agent/.agents/skills/context-import/prompts/gemini.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "schemas/manifest.json",
+      "dest": "/agent/.agents/skills/context-import/schemas/manifest.json",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/parse.py",
+      "dest": "/agent/.agents/skills/context-import/lib/parse.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/render-review.py",
+      "dest": "/agent/.agents/skills/context-import/lib/render-review.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "behavior-snippet.md",
+      "dest": "user-md",
+      "insert-after": "## System routines",
+      "insert-fallback": "append"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-20",
+      "type": "major",
+      "notes": "Initial release. Single-shot extraction prompts for ChatGPT, Claude, and Gemini. Inline triage with conflict detection against the existing brain. Read-only HTML review with chat-based approval grammar. Default per-user scope with promote-to-org and promote-to-user.md options during review."
+    }
+  ]
+}
