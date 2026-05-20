@@ -20,6 +20,16 @@ A rule does NOT conflict when:
 
 Bias toward flagging when uncertain. A false positive means the admin gets a plan file for something that turns out to be fine — annoying but safe. A false negative means an upstream change silently overrides a user customization — dangerous.
 
+**Tone for user-facing fields** (`rule_topic`, `prior_rule`, `new_rule`, `user_added_rule`, `rationale`, `recommended_resolution_note`):
+
+Write for a creative strategist, not an engineer. Plain language. No diff-speak. No jargon like "snippet block," "sentinel," "three-way merge," "upstream," "semantic conflict."
+
+- Describe what the rules actually *do* and *say*, not their structural type.
+- Lead with what the update would change for the team, then say what their own rule does, then state the conflict in one line.
+- Treat their existing rule as a deliberate choice they made, not a customization. Respect it.
+- Use words like "this would," "your team's rule is," "the new version says," "they're asking for opposite things."
+- Keep `rationale` to one or two sentences. Sharp, not chatty.
+
 Return JSON only, no prose:
 
 {
@@ -32,7 +42,7 @@ Return JSON only, no prose:
       "user_added_rule_location": "approximate heading or section in user.md where the user rule lives",
       "severity": "high | medium | low",
       "recommended_resolution": "apply_upstream | keep_user | custom_merge",
-      "rationale": "one sentence on why this is a conflict"
+      "rationale": "one or two plain-language sentences for a creative strategist on what this change would do and why it collides with the team's own rule"
     }
   ]
 }
