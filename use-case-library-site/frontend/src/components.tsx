@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { CTA } from './CTA'
 import { Illustration } from './Illustration'
 import type { UseCaseMeta } from './types'
-import { accent, cardTileGradient, colors, easeArr, radius } from './theme'
+import { accent, cardAccent, cardTileGradient, colors, easeArr, radius } from './theme'
 
 export const ExperimentalPill = ({ pulse }: { pulse?: boolean }): JSX.Element => (
   <span
@@ -114,7 +114,7 @@ export const FilterChip = ({
 export const UseCaseCard = ({ useCase, index }: { useCase: UseCaseMeta; index: number }): JSX.Element => {
   const navigate = useNavigate()
   const location = useLocation()
-  const accentHex = accent(useCase.category)
+  const accentHex = cardAccent(useCase.category, useCase.slug)
 
   const openCard = (): void => {
     navigate({ pathname: location.pathname, search: `?card=${encodeURIComponent(useCase.slug)}` })

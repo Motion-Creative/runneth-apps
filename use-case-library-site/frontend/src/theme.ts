@@ -47,6 +47,15 @@ export const categoryAccents: Record<string, string> = {
 export const accent = (slug: string | undefined): string =>
   (slug && categoryAccents[slug]) || brand.lime
 
+const agentFoundationCardAccents = [brand.sky, brand.lime, brand.yellow] as const
+
+export const cardAccent = (category: string | undefined, slug: string): string => {
+  if (category !== 'agent-foundations') return accent(category)
+
+  const hash = [...slug].reduce((sum, char) => sum + char.charCodeAt(0), 0)
+  return agentFoundationCardAccents[hash % agentFoundationCardAccents.length]
+}
+
 export const fonts = {
   sans: '"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
 } as const
