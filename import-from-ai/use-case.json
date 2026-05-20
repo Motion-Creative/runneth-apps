@@ -1,0 +1,8 @@
+{
+  "slug": "import-from-ai",
+  "display_title": "Import from ChatGPT, Claude, or Gemini",
+  "pitch": "Carries years of AI memory into Runneth in one paste",
+  "status": "experimental",
+  "category": "agent-foundations",
+  "github_path": "import-from-ai"
+}

@@ -1,8 +1,0 @@
-{
-  "slug": "context-import",
-  "display_title": "Context Import",
-  "pitch": "Carries years of AI memory into Runneth in one upload",
-  "status": "experimental",
-  "category": "agent-foundations",
-  "github_path": "context-import"
-}

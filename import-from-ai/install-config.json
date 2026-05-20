@@ -1,0 +1,66 @@
+{
+  "schema": "1.0",
+  "id": "import-from-ai",
+  "version": "1.0.0",
+  "description": "Pull saved memories, custom instructions, projects, and recurring preferences out of ChatGPT, Claude, or Gemini in one paste. Behavioral preferences (tone, voice, format) append to the user's profile so they load every session. Contextual content (projects, memories, decisions) lands in imports and surfaces via INDEX when relevant. Raises to org or user.md are explicit, never automatic.",
+  "requires": ["add-roles-permissions"],
+  "customize": [
+    {
+      "token": "{{IMPORTS_ROOT}}",
+      "description": "Where imported context lands by default. Resolved per-user under the permissions home base unless overridden.",
+      "required": false,
+      "fallback": "/agent/brain/users/<handle>/imports"
+    }
+  ],
+  "installs": [
+    {
+      "file": "SKILL.md",
+      "dest": "/agent/.agents/skills/import-from-ai/SKILL.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "prompts/chatgpt.md",
+      "dest": "/agent/.agents/skills/import-from-ai/prompts/chatgpt.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "prompts/claude.md",
+      "dest": "/agent/.agents/skills/import-from-ai/prompts/claude.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "prompts/gemini.md",
+      "dest": "/agent/.agents/skills/import-from-ai/prompts/gemini.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "schemas/manifest.json",
+      "dest": "/agent/.agents/skills/import-from-ai/schemas/manifest.json",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/parse.py",
+      "dest": "/agent/.agents/skills/import-from-ai/lib/parse.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "lib/render-review.py",
+      "dest": "/agent/.agents/skills/import-from-ai/lib/render-review.py",
+      "if-not-exists": false
+    },
+    {
+      "file": "behavior-snippet.md",
+      "dest": "user-md",
+      "insert-after": "## System routines",
+      "insert-fallback": "append"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-20",
+      "type": "major",
+      "notes": "Initial release. Single-shot extraction prompts for ChatGPT, Claude, and Gemini. Inline triage assigns each item a bucket (behavioral or contextual): behavioral items auto-append to the user's profile so they load every session; contextual items live in imports and surface via INDEX. Raises to org or user.md are explicit. Read-only HTML review with chat-based approval grammar."
+    }
+  ]
+}
