@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Context Import Manifest",
+  "description": "Canonical schema all providers normalize to before review. The parser writes this. The agent reads it, adds triage decisions, and the renderer reads the final form.",
+  "type": "object",
+  "required": ["schema_version", "import_id", "source_provider", "imported_at", "user_handle", "items"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "import_id": {
+      "type": "string",
+      "description": "Format: <provider>-<UTC timestamp>, e.g. chatgpt-20260520T143052Z"
+    },
+    "source_provider": {
+      "type": "string",
+      "enum": ["chatgpt", "claude", "gemini"]
+    },
+    "imported_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "user_handle": {
+      "type": "string",
+      "description": "Permissions-resolved handle for this user."
+    },
+    "home_base": {
+      "type": "string",
+      "description": "Absolute path to the user's home base, e.g. /agent/brain/users/kyra/"
+    },
+    "truncated": {
+      "type": "boolean",
+      "default": false,
+      "description": "Set by parser when the source AI flagged the export as truncated. When true, the skill surfaces the continuation prompt and stops."
+    },
+    "stats": {
+      "type": "object",
+      "description": "Pre-triage counts produced by the parser.",
+      "properties": {
+        "total_items": { "type": "integer" },
+        "deduped_items": { "type": "integer", "description": "Items that already existed in the user's brain and were skipped." },
+        "by_category": { "type": "object", "additionalProperties": { "type": "integer" } }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["number", "source_id", "category", "title", "content", "content_hash"],
+        "properties": {
+          "number": {
+            "type": "integer",
+            "description": "Sequential 1-based number used in the review HTML and in the user's approval grammar."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The id assigned by the source AI in its export."
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "saved_memory",
+              "custom_instruction",
+              "project",
+              "project_knowledge",
+              "saved_info",
+              "gem",
+              "recurring_preference",
+              "voice_pattern",
+              "key_decision",
+              "working_session"
+            ]
+          },
+          "title": { "type": "string" },
+          "content": { "type": "string" },
+          "source_confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Confidence assigned by the source AI."
+          },
+          "source": { "type": "string", "description": "Where in the source AI this came from." },
+          "last_referenced": { "type": ["string", "null"] },
+          "attachments": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Filenames bundled into the upload ZIP, if any."
+          },
+          "content_hash": {
+            "type": "string",
+            "description": "SHA-256 of the normalized content. Used for dedupe across imports."
+          },
+          "triage": {
+            "type": "object",
+            "description": "Filled in by the agent (not the parser) before rendering.",
+            "properties": {
+              "suggested_category": {
+                "type": "string",
+                "description": "Agent's category recommendation (may differ from source AI's)."
+              },
+              "suggested_scope": {
+                "type": "string",
+                "enum": ["user", "org", "user_md", "skip"]
+              },
+              "durability_confidence": {
+                "type": "string",
+                "enum": ["high", "medium", "low"]
+              },
+              "suggested_action": {
+                "type": "string",
+                "enum": ["import", "import-with-edits", "promote-org", "promote-user-md", "skip"]
+              },
+              "conflict": {
+                "type": "object",
+                "description": "Set when the item disagrees with something already in the brain.",
+                "properties": {
+                  "conflict_with": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Absolute paths of existing files this item conflicts with."
+                  },
+                  "note": { "type": "string", "description": "Short explanation of the conflict." }
+                }
+              },
+              "reason": { "type": "string", "description": "One-line agent justification for the suggested action." }
+            }
+          }
+        }
+      }
+    }
+  }
+}
