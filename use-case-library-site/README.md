@@ -123,7 +123,7 @@ Cache state is exposed at `/api/health` so you can sanity-check the deployed ref
 ## Adding a new use case
 
 1. Create `<slug>/use-case.json` and `<slug>/marketing.md` per the schema in `.use-case-library/voice-guide.md`.
-2. Add an SVG glyph for the slug in `frontend/src/Illustration.tsx`. Skip this and the site falls back to a generic circle-and-spark glyph.
+2. Copy a `*-filled.svg` from buildeth-app-ui into `frontend/src/icons/` and map the slug in `frontend/src/Illustration.tsx`. Unmapped slugs use `layout-dashboard-filled`.
 3. Append the slug to `.use-case-library/catalog.json` in the order it should appear.
 4. Commit. The site refreshes within ~1 minute. Re-deploy the container only if you added a new illustration.
 
