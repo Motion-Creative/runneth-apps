@@ -12,6 +12,8 @@ triggers:
     - "remove a competitor"
     - "change my competitors"
     - "update my watchlist"
+    - "followed brands"
+    - "brands I track"
     - "reconfigure competitor watch"
     - "personalize competitor watch"
   intent: "User wants to configure or update the competitor inspo brands file for this workspace"
