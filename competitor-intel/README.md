@@ -18,7 +18,7 @@ Install time: ~2 minutes. No upstream use cases required.
 |------|-------------|-----------|
 | `SKILL.md` | `/agent/.agents/skills/competitor-intel/SKILL.md` | Overwrite |
 | `setup-competitor-intel/SKILL.md` | `/agent/.agents/skills/setup-competitor-intel/SKILL.md` | Overwrite |
-| `seed/watchlist.json` | `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/watchlist.json` | Skip |
+| `seed/inspoBrands.json` | `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json` | Skip |
 | `seed/baselines/.gitkeep` | `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/.gitkeep` | Skip |
 
 Post-install: the `setup-competitor-intel` skill runs automatically to configure the watchlist,
@@ -39,8 +39,8 @@ cp setup-competitor-intel/SKILL.md /agent/.agents/skills/setup-competitor-intel/
 # 2. Seed the brain directory (replace {{WORKSPACE_SLUG}} with the actual slug)
 WORKSPACE_SLUG="your-workspace-slug"
 mkdir -p /agent/brain/competitor-intel/${WORKSPACE_SLUG}/baselines
-[ -f /agent/brain/competitor-intel/${WORKSPACE_SLUG}/watchlist.json ] || \
-  cp seed/watchlist.json /agent/brain/competitor-intel/${WORKSPACE_SLUG}/watchlist.json
+[ -f /agent/brain/competitor-intel/${WORKSPACE_SLUG}/inspoBrands.json ] || \
+  cp seed/inspoBrands.json /agent/brain/competitor-intel/${WORKSPACE_SLUG}/inspoBrands.json
 
 # 3. Post-install: invoke setup
 # Say "set up competitor watch" in chat, or Runneth will prompt you automatically.
@@ -57,7 +57,7 @@ mkdir -p /agent/brain/competitor-intel/${WORKSPACE_SLUG}/baselines
 4. Setting the weekly schedule (default: Monday 9am workspace timezone)
 
 **Every run:**
-1. Reads the workspace watchlist for brand IDs
+1. Reads the workspace inspo brands file for brand IDs
 2. Pulls each competitor's full active portfolio (two-pass: newest + oldest sort, merged and deduplicated)
 3. Pulls recently killed ads (inactive, paused within last 7 days)
 4. Pulls brand context for each competitor
@@ -77,7 +77,7 @@ Second run onward produces the weekly delta intelligence.
 
 ```
 /agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/
-  watchlist.json                    — saved brands, Slack config, schedule
+  inspoBrands.json                    — saved brands, Slack config, schedule
   baselines/
     {brand-slug}.json               — weekly snapshot per competitor (overwritten each run)
 ```
@@ -119,7 +119,7 @@ The skill runs automatically on the scheduled reminder. It also fires on explici
 
 On every scheduled or triggered run, Runneth:
 
-1. Reads `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/watchlist.json` for brand IDs and config
+1. Reads `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json` for brand IDs and config
 2. Runs `motion workspace-goal` to resolve workspace context
 3. Runs `motion inspo-creatives --brand-id {id} --status active --sort newestLaunchDate --limit 150` for each brand
 4. Runs the same call with `--sort oldestLaunchDate` and merges by creative ID
