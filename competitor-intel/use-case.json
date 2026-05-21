@@ -1,0 +1,8 @@
+{
+  "slug": "competitor-intel",
+  "display_title": "Competitor Intel Alerts",
+  "pitch": "Weekly competitive intelligence, delivered to Slack automatically",
+  "status": "experimental",
+  "category": "creative-operations",
+  "github_path": "competitor-intel"
+}
