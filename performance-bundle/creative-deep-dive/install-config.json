@@ -6,74 +6,77 @@
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
-    "recommended": ["brand-audit", "paid-strategy-audit"]
+    "recommended": [
+      "brand-audit",
+      "paid-strategy-audit"
+    ]
   },
   "installs": [
     {
       "from": "SKILL.md",
       "to": "/agent/.agents/skills/creative-deep-dive/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Orchestrator — single-creative + test-set modes, reads brand-audit for Strategic Layer"
+      "purpose": "Orchestrator \u2014 single-creative + test-set modes, reads brand-audit for Strategic Layer"
     },
     {
       "from": "skills/_stack-guide.md",
       "to": "/agent/.agents/skills/creative-deep-dive/_stack-guide.md",
       "on_exists": "overwrite",
-      "purpose": "Map of how the 15 skills (across brand-audit + creative-deep-dive) chain together — kept next to the orchestrator for quick reference"
+      "purpose": "Map of how the 15 skills (across brand-audit + creative-deep-dive) chain together \u2014 kept next to the orchestrator for quick reference"
     },
     {
       "from": "skills/creative-analysis.md",
       "to": "/agent/.agents/skills/creative-analysis/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable — 8-section ad teardown diagnostic"
+      "purpose": "Standalone callable \u2014 8-section ad teardown diagnostic"
     },
     {
       "from": "skills/hook-analysis.md",
       "to": "/agent/.agents/skills/hook-analysis/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable — three-channel hook diagnostic (spoken / visual / text overlay)"
+      "purpose": "Standalone callable \u2014 three-channel hook diagnostic (spoken / visual / text overlay)"
     },
     {
       "from": "skills/hook-evaluator.md",
       "to": "/agent/.agents/skills/hook-evaluator/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable — structured 10-point hook scoring from text inputs"
+      "purpose": "Standalone callable \u2014 structured 10-point hook scoring from text inputs"
     },
     {
       "from": "skills/creative-mechanics.md",
       "to": "/agent/.agents/skills/creative-mechanics/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable — library of cognitive mechanisms"
+      "purpose": "Standalone callable \u2014 library of cognitive mechanisms"
     },
     {
       "from": "skills/hook-writing.md",
       "to": "/agent/.agents/skills/hook-writing/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable — full hook writing skill with 8 psychological triggers"
+      "purpose": "Standalone callable \u2014 full hook writing skill with 8 psychological triggers"
     },
     {
       "from": "skills/hook-tactics.md",
       "to": "/agent/.agents/skills/hook-tactics/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable — 35+ hook tactic definitions and deployment guidance"
+      "purpose": "Standalone callable \u2014 35+ hook tactic definitions and deployment guidance"
     },
     {
       "from": "skills/hook-voice-patterns.md",
       "to": "/agent/.agents/skills/hook-voice-patterns/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable — native-feeling template swipe file"
+      "purpose": "Standalone callable \u2014 native-feeling template swipe file"
     },
     {
       "from": "skills/visual-formats.md",
       "to": "/agent/.agents/skills/visual-formats/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable — format selection with funnel fit + mechanic pairing"
+      "purpose": "Standalone callable \u2014 format selection with funnel fit + mechanic pairing"
     },
     {
       "from": "skills/voice-copy-standards.md",
       "to": "/agent/.agents/skills/voice-copy-standards/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable — always-on copy rules (Out-Loud Test, reading level, AI-tell words, contractions, etc.)"
+      "purpose": "Standalone callable \u2014 always-on copy rules (Out-Loud Test, reading level, AI-tell words, contractions, etc.)"
     },
     {
       "from": "seed/_index.md",
@@ -91,30 +94,21 @@
     "/agent/brain/creative-deep-dive/<workspace-slug>/<creative-id>/<YYYY-MM-DD>--deep-dive.md",
     "/agent/brain/creative-deep-dive/<workspace-slug>/<test-id>/<YYYY-MM-DD>--comparison.md"
   ],
-  "upstream_dependencies": ["brand-audit"],
+  "upstream_dependencies": [
+    "brand-audit"
+  ],
   "changelog": [
     {
       "version": "1.1.0",
       "date": "2026-05-20",
       "type": "minor",
-      "changes": [
-        "Foundation + Strategy layers extracted to brand-audit use case",
-        "9 underlying skills now install as independent top-level skills, each independently callable",
-        "Orchestrator reads brand-audit/strategy.md for Strategic Layer rather than re-deriving",
-        "Strategy-cell match (validated / new test / drift) added to per-creative output frontmatter"
-      ]
+      "notes": "Foundation and Strategy layers extracted to brand-audit use case. Nine underlying skills now install as independent top-level skills, each independently callable. Orchestrator reads brand-audit/strategy.md for Strategic Layer rather than re-deriving. Strategy-cell match (validated / new test / drift) added to per-creative output frontmatter. Initial release of the 15-skill stack packaged from Alysha's uploaded creative-strategy framework, with orchestrator SKILL.md supporting both single-creative and test-set run modes."
     },
     {
       "version": "1.0.0",
       "date": "2026-05-20",
       "type": "major",
-      "changes": [
-        "Initial release",
-        "15-skill stack packaged from Alysha's uploaded creative-strategy framework",
-        "Orchestrator SKILL.md with single-creative and test-set run modes",
-        "Signal-reading bridge baked in",
-        "Test-set mode runs the diagnostic on every creative in the set plus a cross-creative comparison"
-      ]
+      "notes": "Foundation and Strategy layers extracted to brand-audit use case. Nine underlying skills now install as independent top-level skills, each independently callable. Orchestrator reads brand-audit/strategy.md for Strategic Layer rather than re-deriving. Strategy-cell match (validated / new test / drift) added to per-creative output frontmatter. Initial release of the 15-skill stack packaged from Alysha's uploaded creative-strategy framework, with orchestrator SKILL.md supporting both single-creative and test-set run modes."
     }
   ]
 }
