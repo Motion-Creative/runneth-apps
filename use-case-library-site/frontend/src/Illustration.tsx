@@ -40,7 +40,7 @@ const ICON_BY_SLUG: Record<string, string> = {
   "integration-capabilities-library": foldersFilled,
   "add-roles-permissions": shieldCheckFilled,
   "context-import": importFilled,
-  "competitor-watch": binocularsFilled,
+  "competitor-intel": binocularsFilled,
 };
 
 const iconWrapStyle = (tint: string): CSSProperties => ({
