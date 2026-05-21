@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { CTA } from "./CTA";
 import { Illustration } from "./Illustration";
-import type { UseCaseMeta } from "./types";
+import { StarRating } from "./Reviews";
+import type { RatingSummary, UseCaseMeta } from "./types";
 import {
-  accent,
   cardAccent,
   cardTileGradient,
   colors,
@@ -148,9 +148,11 @@ export const FilterChip = ({
 export const UseCaseCard = ({
   useCase,
   index,
+  rating,
 }: {
   useCase: UseCaseMeta;
   index: number;
+  rating?: RatingSummary;
 }): JSX.Element => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -231,6 +233,14 @@ export const UseCaseCard = ({
         >
           {useCase.pitch}
         </div>
+        {rating && rating.count > 0 && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
+            <StarRating value={rating.average} size={12} />
+            <span style={{ fontSize: 12, color: colors.textMuted, fontWeight: 600 }}>
+              {rating.average.toFixed(1)} · {rating.count}
+            </span>
+          </div>
+        )}
         <div style={{ flex: 1 }} />
       </div>
 

@@ -90,7 +90,12 @@ export const All = ({ catalog }: { catalog: Catalog }): JSX.Element => {
             }}
           >
             {visible.map((useCase, i) => (
-              <UseCaseCard key={useCase.slug} useCase={useCase} index={i} />
+              <UseCaseCard
+                key={useCase.slug}
+                useCase={useCase}
+                index={i}
+                rating={catalog.ratings?.[useCase.slug]}
+              />
             ))}
           </motion.div>
         </AnimatePresence>

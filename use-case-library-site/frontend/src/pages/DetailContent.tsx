@@ -4,14 +4,17 @@ import { marked } from 'marked'
 
 import { CTA } from '../CTA'
 import { CategoryPill, ExperimentalPill } from '../components'
+import { ReviewsSection } from '../Reviews'
 import { fetchUseCase } from '../api'
 import type { UseCaseDetail } from '../types'
 import { accent, colors, easeArr, heroGradientDetail, radius } from '../theme'
 
+type DetailTab = 'overview' | 'how' | 'reviews'
+
 export const DetailContent = ({ slug }: { slug: string }): JSX.Element => {
   const [detail, setDetail] = useState<UseCaseDetail | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [tab, setTab] = useState<'overview' | 'how'>('overview')
+  const [tab, setTab] = useState<DetailTab>('overview')
 
   useEffect(() => {
     setDetail(null)
@@ -108,10 +111,11 @@ export const DetailContent = ({ slug }: { slug: string }): JSX.Element => {
       >
         <TabButton label="Overview" active={tab === 'overview'} onClick={() => setTab('overview')} accentHex={accentHex} />
         <TabButton label="How it's built" active={tab === 'how'} onClick={() => setTab('how')} accentHex={accentHex} />
+        <TabButton label="Reviews" active={tab === 'reviews'} onClick={() => setTab('reviews')} accentHex={accentHex} />
       </div>
 
       <AnimatePresence mode="wait" initial={false}>
-        {tab === 'overview' ? (
+        {tab === 'overview' && (
           <motion.div
             key="ov"
             initial={{ x: -10, opacity: 0 }}
@@ -126,7 +130,8 @@ export const DetailContent = ({ slug }: { slug: string }): JSX.Element => {
               accentHex={accentHex}
             />
           </motion.div>
-        ) : (
+        )}
+        {tab === 'how' && (
           <motion.div
             key="how"
             initial={{ x: 10, opacity: 0 }}
@@ -136,6 +141,18 @@ export const DetailContent = ({ slug }: { slug: string }): JSX.Element => {
             style={{ padding: '24px 32px 36px' }}
           >
             <HowItsBuilt detail={detail} accentHex={accentHex} />
+          </motion.div>
+        )}
+        {tab === 'reviews' && (
+          <motion.div
+            key="rv"
+            initial={{ x: 10, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -10, opacity: 0 }}
+            transition={{ duration: 0.26, ease: easeArr as unknown as number[] }}
+            style={{ padding: '24px 32px 36px' }}
+          >
+            <ReviewsSection slug={slug} />
           </motion.div>
         )}
       </AnimatePresence>
