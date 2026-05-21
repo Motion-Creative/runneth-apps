@@ -1,8 +1,8 @@
 {
-  "slug": "review-library",
-  "display_title": "Review Library",
+  "slug": "review-mining",
+  "display_title": "Review Mining",
   "pitch": "Hooks from real customer reviews",
   "status": "proven",
   "category": "creative-operations",
-  "github_path": "review-library"
+  "github_path": "review-mining"
 }
