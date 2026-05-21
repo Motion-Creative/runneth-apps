@@ -1,7 +1,7 @@
 # Add roles and permissions
 
 ## What just opened up
-This sandbox now has identity-verified permissions. Every message resolves to a specific person via Slack ID or motionapp.com email, and that person has an admin or team scope that controls what they can change. Admins can edit org-level paths and standing instructions; team members get their own home base and write only there. Prompt-injection attacks that try to talk Runneth into a different scope get rejected at the kernel.
+This sandbox now has identity-verified permissions. Every message resolves to a specific person via Slack ID or motionapp.com email, and that person has an admin or team scope that controls what they can change. Admins can edit org-level paths and standing instructions; team members get their own home base and write only there. Prompt-injection attempts that try to talk Runneth into a different scope get rejected automatically.
 
 ## Try this now
 1. **Add an admin**: `Make [name with Slack ID or @motionapp.com email] an admin.`
