@@ -17,15 +17,14 @@ triggers:
 
 Walks a new org through configuring integration health alerts. One question at a time. Ends with a confirmed working setup and the health check routine running.
 
-This skill also runs automatically as the final step of installing the integration-health-alerts use case.
-
-It can be re-invoked any time to update settings.
+This skill also runs automatically as the final step of installing the integration-health-alerts use case. It can be re-invoked any time to update settings.
 
 ---
 
 ## Before starting
 
 Read the current state:
+
 ```bash
 cat /agent/brain/integration-health/health-config.json
 cat /agent/brain/admin/config.json 2>/dev/null || cat /agent/brain/permissions/config.json 2>/dev/null
@@ -48,13 +47,17 @@ cat /agent/brain/org/integrations/connected-integrations.json 2>/dev/null
 
 If the file does not exist:
 1. Create it with a minimal starter structure:
-   ```json
-   {
-     "_meta": { "note": "Canonical registry of connected integrations. Updated by integration-onboarding skill on each new connection.", "last_updated": "<today>" },
-     "integrations": {}
-   }
-   ```
-   Write to `/agent/brain/org/integrations/connected-integrations.json`.
+```json
+{
+  "_meta": {
+    "note": "Canonical registry of connected integrations. Updated by integration-onboarding skill on each new connection.",
+    "last_updated": "<today>"
+  },
+  "integrations": {}
+}
+```
+Write to `/agent/brain/org/integrations/connected-integrations.json`.
+
 2. Tell the user: "I created the integration registry. To populate it, connect your integrations via the integration-onboarding flow — they'll be registered automatically. For now, health monitoring will start as soon as integrations are added."
 
 If the file exists but has no entries with `health_monitored: true`: note this in the closing summary — health checks will run but find nothing to check until integrations are registered.
@@ -76,14 +79,13 @@ Show which channels Runneth is already in (from `slack memberships list`). Prese
 - Resolve channel ID (from memberships list if they named an existing channel; ask for ID if it's a new one)
 - Edit the resolved admin config path (v2.1: `/agent/brain/admin/config.json`, v2.0: `/agent/brain/permissions/config.json`): set `admin_slack_channel` to the confirmed channel ID
 - Post a hello message to the channel:
-  ```
-  slack send --channel <channelId> --text "👋 This is now your Runneth admin channel. Here's what will come through here:
-  • Integration alerts when something is degraded, broken, or blocking a routine
-  • Routine failure notifications
-  • Org-change requests from your team that need admin approval
-
-  Reply to any alert with \"fix <integration>\" and I'll walk you through it."
-  ```
+```
+slack send --channel <channelId> --text "👋 This is now your Runneth admin channel. Here's what will come through here:
+• Integration alerts when a credential, token, or connection breaks
+• Routine alerts when something goes overdue or fails silently
+• One follow-up after 24h if anything stays unresolved
+• A \"restored\" note when things recover"
+```
 - Confirm in chat: "Done — **#<channel-name>** is your admin channel."
 
 **Skip if:** `admin_slack_channel` is already set and user is not explicitly reconfiguring.
@@ -147,8 +149,8 @@ For each skill directory found:
 Present the audit result:
 ```
 Skill audit complete.
-  ✓ Execution tracking: [skill-a], [skill-b], [skill-c]
-  ✗ Missing tracking: [skill-d], [skill-e]
+✓ Execution tracking: [skill-a], [skill-b], [skill-c]
+✗ Missing tracking: [skill-d], [skill-e]
 
 Want me to add execution tracking to the [N] skills missing it? This makes routine health monitoring accurate for those routines. (yes / skip)
 ```
@@ -166,16 +168,18 @@ If admin skips:
 ## After all questions — Start the routine
 
 Check if the health check routine is already running:
+
 ```bash
 reminder list
 ```
 
 If no "Integration health check" reminder found, create it:
+
 ```bash
 reminder add \
   --name "Integration health check" \
   --cron "*/30 * * * *" \
-  --timezone "{{TIMEZONE}}" \
+  --timezone "America/Toronto" \
   --content "Run the integration-health-check skill at /agent/.agents/skills/integration-health-check/SKILL.md. Read every integration in /agent/brain/org/integrations/connected-integrations.json where health_monitored=true. Run all health checks. Write results to /agent/brain/integration-health/health-state.json. Send Slack alerts per the alert logic in the skill. Silent run — no user-visible output unless alerting."
 ```
 
