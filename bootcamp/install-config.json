@@ -1,0 +1,82 @@
+{
+  "schema": "1.0",
+  "id": "bootcamp",
+  "version": "1.0.1",
+  "description": "Motion 2026 Creative Strategy Bootcamp corpus. 13 sessions across weeks 1-7, summaries plus full transcripts, dropped into the agent brain so Runneth can answer questions grounded in actual session content.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "installs": [
+    {
+      "file": "index.md",
+      "destination": "/agent/brain/bootcamp/index.md",
+      "on-exists": "overwrite"
+    },
+    {
+      "file": "week-01",
+      "destination": "/agent/brain/bootcamp/week-01",
+      "type": "folder-copy",
+      "on-exists": "overwrite"
+    },
+    {
+      "file": "week-02",
+      "destination": "/agent/brain/bootcamp/week-02",
+      "type": "folder-copy",
+      "on-exists": "overwrite"
+    },
+    {
+      "file": "week-03",
+      "destination": "/agent/brain/bootcamp/week-03",
+      "type": "folder-copy",
+      "on-exists": "overwrite"
+    },
+    {
+      "file": "week-04",
+      "destination": "/agent/brain/bootcamp/week-04",
+      "type": "folder-copy",
+      "on-exists": "overwrite"
+    },
+    {
+      "file": "week-05",
+      "destination": "/agent/brain/bootcamp/week-05",
+      "type": "folder-copy",
+      "on-exists": "overwrite"
+    },
+    {
+      "file": "week-06",
+      "destination": "/agent/brain/bootcamp/week-06",
+      "type": "folder-copy",
+      "on-exists": "overwrite"
+    },
+    {
+      "file": "week-07",
+      "destination": "/agent/brain/bootcamp/week-07",
+      "type": "folder-copy",
+      "on-exists": "overwrite"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-05-21",
+      "type": "major",
+      "notes": "Initial install-config. Bootcamp library now installable as a structured use case."
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
+    }
+  ]
+}

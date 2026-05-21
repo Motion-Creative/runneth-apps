@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "integration-capabilities-library",
-  "version": "1.0.0",
-  "description": "The agent always has an accurate, sourced reference for what every connected integration can do and what permissions it needs — updated automatically every night.",
+  "version": "1.0.1",
+  "description": "The agent always has an accurate, sourced reference for what every connected integration can do and what permissions it needs \u2014 updated automatically every night.",
   "customize": [
     {
       "token": "{{INTEGRATIONS_DIR}}",
@@ -31,10 +31,24 @@
   ],
   "changelog": [
     {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
+    {
       "version": "1.0.0",
       "date": "2026-05-06",
       "type": "major",
       "notes": "Initial release. Integration capabilities-and-scopes library with nightly sync skill, brain index, and new-integration detection behavior."
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ]
 }

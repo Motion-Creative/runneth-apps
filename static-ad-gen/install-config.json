@@ -1,47 +1,191 @@
 {
   "schema": "1.0",
   "id": "static-ad-generator",
-  "version": "1.0.0",
-  "description": "Generate production-ready static ads from chat — brief, Gemini-refined prompt, NB2 image, and ad name — for any product in your catalog.",
+  "version": "1.0.1",
+  "description": "Generate production-ready static ads from chat \u2014 brief, Gemini-refined prompt, NB2 image, and ad name \u2014 for any product in your catalog.",
   "installs": [
-    { "file": "seeds/skills/creative-strategy-engine.md", "dest": "/agent/brain/skills/creative-strategy-engine.md", "if-not-exists": true },
-    { "file": "seeds/skills/hook-tactics.md",             "dest": "/agent/brain/skills/hook-tactics.md",             "if-not-exists": true },
-    { "file": "seeds/skills/hook-writing.md",             "dest": "/agent/brain/skills/hook-writing.md",             "if-not-exists": true },
-    { "file": "seeds/skills/visual-formats.md",           "dest": "/agent/brain/skills/visual-formats.md",           "if-not-exists": true },
-    { "file": "seeds/skills/creative-mechanics.md",       "dest": "/agent/brain/skills/creative-mechanics.md",       "if-not-exists": true },
-    { "file": "seeds/product-template.json",              "dest": "/agent/brain/_seeds/static-ad-generator/product-template.json",              "if-not-exists": true },
-    { "file": "seeds/learning-log-template.json",         "dest": "/agent/brain/_seeds/static-ad-generator/learning-log-template.json",         "if-not-exists": true },
-    { "file": "seeds/concept-registry.json",              "dest": "/agent/brain/_seeds/static-ad-generator/concept-registry.json",              "if-not-exists": true },
-    { "file": "seeds/creator-registry.json",              "dest": "/agent/brain/_seeds/static-ad-generator/creator-registry.json",              "if-not-exists": true },
-    { "file": "generate-ad/SKILL.md",                    "dest": "/agent/.agents/skills/generate-ad/SKILL.md",                      "if-not-exists": false },
-    { "file": "setup-static-ad-generator/SKILL.md",      "dest": "/agent/.agents/skills/setup-static-ad-generator/SKILL.md",        "if-not-exists": false },
-    { "file": "nb-image-gen/buildeth.app.json",           "dest": "/agent/apps/nb-image-gen/buildeth.app.json",                      "if-not-exists": true },
-    { "file": "nb-image-gen/server/package.json",         "dest": "/agent/apps/nb-image-gen/server/package.json",                    "if-not-exists": true },
-    { "file": "nb-image-gen/server/tsconfig.json",        "dest": "/agent/apps/nb-image-gen/server/tsconfig.json",                   "if-not-exists": true },
-    { "file": "nb-image-gen/server/tsconfig.build.json",  "dest": "/agent/apps/nb-image-gen/server/tsconfig.build.json",             "if-not-exists": true },
-    { "file": "nb-image-gen/server/src/index.ts",         "dest": "/agent/apps/nb-image-gen/server/src/index.ts",                    "if-not-exists": true },
-    { "file": "nb-image-gen/frontend/package.json",       "dest": "/agent/apps/nb-image-gen/frontend/package.json",                  "if-not-exists": true },
-    { "file": "nb-image-gen/frontend/vite.config.ts",     "dest": "/agent/apps/nb-image-gen/frontend/vite.config.ts",                "if-not-exists": true },
-    { "file": "nb-image-gen/frontend/index.html",         "dest": "/agent/apps/nb-image-gen/frontend/index.html",                    "if-not-exists": true },
-    { "file": "nb-image-gen/frontend/src/main.tsx",       "dest": "/agent/apps/nb-image-gen/frontend/src/main.tsx",                  "if-not-exists": true }
+    {
+      "file": "seeds/skills/creative-strategy-engine.md",
+      "dest": "/agent/brain/skills/creative-strategy-engine.md",
+      "if-not-exists": true
+    },
+    {
+      "file": "seeds/skills/hook-tactics.md",
+      "dest": "/agent/brain/skills/hook-tactics.md",
+      "if-not-exists": true
+    },
+    {
+      "file": "seeds/skills/hook-writing.md",
+      "dest": "/agent/brain/skills/hook-writing.md",
+      "if-not-exists": true
+    },
+    {
+      "file": "seeds/skills/visual-formats.md",
+      "dest": "/agent/brain/skills/visual-formats.md",
+      "if-not-exists": true
+    },
+    {
+      "file": "seeds/skills/creative-mechanics.md",
+      "dest": "/agent/brain/skills/creative-mechanics.md",
+      "if-not-exists": true
+    },
+    {
+      "file": "seeds/product-template.json",
+      "dest": "/agent/brain/_seeds/static-ad-generator/product-template.json",
+      "if-not-exists": true
+    },
+    {
+      "file": "seeds/learning-log-template.json",
+      "dest": "/agent/brain/_seeds/static-ad-generator/learning-log-template.json",
+      "if-not-exists": true
+    },
+    {
+      "file": "seeds/concept-registry.json",
+      "dest": "/agent/brain/_seeds/static-ad-generator/concept-registry.json",
+      "if-not-exists": true
+    },
+    {
+      "file": "seeds/creator-registry.json",
+      "dest": "/agent/brain/_seeds/static-ad-generator/creator-registry.json",
+      "if-not-exists": true
+    },
+    {
+      "file": "generate-ad/SKILL.md",
+      "dest": "/agent/.agents/skills/generate-ad/SKILL.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "setup-static-ad-generator/SKILL.md",
+      "dest": "/agent/.agents/skills/setup-static-ad-generator/SKILL.md",
+      "if-not-exists": false
+    },
+    {
+      "file": "nb-image-gen/buildeth.app.json",
+      "dest": "/agent/apps/nb-image-gen/buildeth.app.json",
+      "if-not-exists": true
+    },
+    {
+      "file": "nb-image-gen/server/package.json",
+      "dest": "/agent/apps/nb-image-gen/server/package.json",
+      "if-not-exists": true
+    },
+    {
+      "file": "nb-image-gen/server/tsconfig.json",
+      "dest": "/agent/apps/nb-image-gen/server/tsconfig.json",
+      "if-not-exists": true
+    },
+    {
+      "file": "nb-image-gen/server/tsconfig.build.json",
+      "dest": "/agent/apps/nb-image-gen/server/tsconfig.build.json",
+      "if-not-exists": true
+    },
+    {
+      "file": "nb-image-gen/server/src/index.ts",
+      "dest": "/agent/apps/nb-image-gen/server/src/index.ts",
+      "if-not-exists": true
+    },
+    {
+      "file": "nb-image-gen/frontend/package.json",
+      "dest": "/agent/apps/nb-image-gen/frontend/package.json",
+      "if-not-exists": true
+    },
+    {
+      "file": "nb-image-gen/frontend/vite.config.ts",
+      "dest": "/agent/apps/nb-image-gen/frontend/vite.config.ts",
+      "if-not-exists": true
+    },
+    {
+      "file": "nb-image-gen/frontend/index.html",
+      "dest": "/agent/apps/nb-image-gen/frontend/index.html",
+      "if-not-exists": true
+    },
+    {
+      "file": "nb-image-gen/frontend/src/main.tsx",
+      "dest": "/agent/apps/nb-image-gen/frontend/src/main.tsx",
+      "if-not-exists": true
+    }
   ],
   "post-install": [
-    { "action": "app-create",  "name": "Create image server app",   "description": "Registers the nb-image-gen app container. Source files are already in place from the install step." },
-    { "action": "app-build",   "name": "Build image server",    "description": "Installs dependencies and compiles server + frontend" },
-    { "action": "app-verify",  "name": "Verify image server",   "description": "Confirms the built bundle is ready" },
-    { "action": "app-url",     "name": "Surface app URL",        "description": "Captures the public host for the image CDN — save this as APP_HOST, you will need it during setup" },
-    { "action": "skill-invoke", "skill": "setup-static-ad-generator", "name": "Personalize for this sandbox", "description": "Walks through API keys, workspace ID, brand config, reference image upload, and product spec generation", "manual": false }
+    {
+      "action": "app-create",
+      "name": "Create image server app",
+      "description": "Registers the nb-image-gen app container. Source files are already in place from the install step."
+    },
+    {
+      "action": "app-build",
+      "name": "Build image server",
+      "description": "Installs dependencies and compiles server + frontend"
+    },
+    {
+      "action": "app-verify",
+      "name": "Verify image server",
+      "description": "Confirms the built bundle is ready"
+    },
+    {
+      "action": "app-url",
+      "name": "Surface app URL",
+      "description": "Captures the public host for the image CDN \u2014 save this as APP_HOST, you will need it during setup"
+    },
+    {
+      "action": "skill-invoke",
+      "skill": "setup-static-ad-generator",
+      "name": "Personalize for this sandbox",
+      "description": "Walks through API keys, workspace ID, brand config, reference image upload, and product spec generation",
+      "manual": false
+    },
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
+    }
   ],
   "customize": [
-    { "token": "{{BRAND_NAME}}",           "description": "Your brand's full display name, e.g. Acme Co",                         "required": true },
-    { "token": "{{BRAND_CODE}}",           "description": "One or two-letter brand code used in ad names, e.g. A",                "required": true },
-    { "token": "{{BRAND_SLUG}}",           "description": "Lowercase kebab-case brand name used in file paths, e.g. acme-co",     "required": true },
-    { "token": "{{WORKSPACE_ID}}",         "description": "Motion workspace ID — detected automatically during setup",             "required": true },
-    { "token": "{{APP_HOST}}",             "description": "Public host for the nb-image-gen app — surfaced after app build",       "required": true },
-    { "token": "{{DEFAULT_ASPECT_RATIO}}", "description": "Default generation aspect ratio",                                       "required": false, "fallback": "1:1" },
-    { "token": "{{DEFAULT_RESOLUTION}}",   "description": "Default generation resolution",                                         "required": false, "fallback": "2K" }
+    {
+      "token": "{{BRAND_NAME}}",
+      "description": "Your brand's full display name, e.g. Acme Co",
+      "required": true
+    },
+    {
+      "token": "{{BRAND_CODE}}",
+      "description": "One or two-letter brand code used in ad names, e.g. A",
+      "required": true
+    },
+    {
+      "token": "{{BRAND_SLUG}}",
+      "description": "Lowercase kebab-case brand name used in file paths, e.g. acme-co",
+      "required": true
+    },
+    {
+      "token": "{{WORKSPACE_ID}}",
+      "description": "Motion workspace ID \u2014 detected automatically during setup",
+      "required": true
+    },
+    {
+      "token": "{{APP_HOST}}",
+      "description": "Public host for the nb-image-gen app \u2014 surfaced after app build",
+      "required": true
+    },
+    {
+      "token": "{{DEFAULT_ASPECT_RATIO}}",
+      "description": "Default generation aspect ratio",
+      "required": false,
+      "fallback": "1:1"
+    },
+    {
+      "token": "{{DEFAULT_RESOLUTION}}",
+      "description": "Default generation resolution",
+      "required": false,
+      "fallback": "2K"
+    }
   ],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-07",

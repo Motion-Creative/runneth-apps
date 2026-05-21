@@ -1,9 +1,11 @@
 {
   "schema": "1.0",
   "id": "team-member-memory",
-  "version": "2.0.0",
-  "description": "Runneth gets to know each person it works with — their goals, preferences, and working style — and adapts to them over time.",
-  "requires": ["add-permissions"],
+  "version": "2.0.1",
+  "description": "Runneth gets to know each person it works with \u2014 their goals, preferences, and working style \u2014 and adapts to them over time.",
+  "requires": [
+    "add-permissions"
+  ],
   "customize": [
     {
       "token": "{{TEAM_MEMBER_TEMPLATE_PATH}}",
@@ -38,6 +40,12 @@
   ],
   "changelog": [
     {
+      "version": "2.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
+    {
       "version": "2.0.0",
       "date": "2026-05-19",
       "type": "major",
@@ -48,6 +56,14 @@
       "date": "2026-05-06",
       "type": "major",
       "notes": "Initial release. Email-based user identification, team file per person with template, conversation one-pager system."
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ]
 }

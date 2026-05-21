@@ -1,9 +1,11 @@
 {
   "schema": "1.0",
   "id": "update-and-merge",
-  "version": "1.0.0",
-  "description": "Smart merge layer for upstream use-case updates. When use-case-sync finds an installed use-case with a new repo version, this skill enumerates every file the use-case installs (user.md snippets, skill files, scripts, configs, brain templates) and does a three-way merge per file (local vs ancestor vs upstream). Clean changes auto-apply silently. Real conflicts with local customization trigger plan mode and a consolidated admin notification. Org-agnostic — reads notification config from /agent/brain/permissions/config.json, degrades to file-only mode when Slack is not connected.",
-  "depends": ["use-case-sync"],
+  "version": "1.0.1",
+  "description": "Smart merge layer for upstream use-case updates. When use-case-sync finds an installed use-case with a new repo version, this skill enumerates every file the use-case installs (user.md snippets, skill files, scripts, configs, brain templates) and does a three-way merge per file (local vs ancestor vs upstream). Clean changes auto-apply silently. Real conflicts with local customization trigger plan mode and a consolidated admin notification. Org-agnostic \u2014 reads notification config from /agent/brain/permissions/config.json, degrades to file-only mode when Slack is not connected.",
+  "depends": [
+    "use-case-sync"
+  ],
   "customize": [],
   "installs": [
     {
@@ -24,16 +26,28 @@
     }
   ],
   "post-install": [
-    "INSTALLER PROTOCOL — follow each step in order. Do not declare the install done until every step is resolved or explicitly waived by the admin.",
-    "1. ADMIN GUARD — verify the installing user is a confirmed admin per /agent/brain/permissions/admins.md. If not, route through the org-change request flow in /agent/brain/permissions/user_mode.md and stop.",
-    "2. Verify the use-case-sync routine is in place — update-and-merge runs as part of the daily use-case-sync routine, it doesn't have its own reminder. Run `reminder list` and confirm there is an active reminder named 'use-case-sync' (typically cron 0 9 * * *). If missing or inactive, the use-case-sync install should have created it; surface this to the admin and offer to add it with `reminder add --name use-case-sync --cron '0 9 * * *' --timezone <admin-tz> --content 'Run the daily use-case-sync routine. See /agent/.agents/skills/use-case-sync/SKILL.md.'` before continuing. If there are duplicate use-case-sync reminders, surface that too — admin should delete the extras.",
-    "3. Patch use-case-sync Step 6 — read /agent/.agents/skills/use-case-sync/SKILL.md. Find the section that currently sends the legacy 'Want me to upgrade it?' Slack ping for update_available items. Replace it with a handoff to update-and-merge in scan mode (see SKILL.md → 'Modifications to existing use-case-sync'). Show the admin the diff and confirm before applying. Skip if already patched (look for 'update-and-merge' in Step 6).",
+    "INSTALLER PROTOCOL \u2014 follow each step in order. Do not declare the install done until every step is resolved or explicitly waived by the admin.",
+    "1. ADMIN GUARD \u2014 verify the installing user is a confirmed admin per /agent/brain/permissions/admins.md. If not, route through the org-change request flow in /agent/brain/permissions/user_mode.md and stop.",
+    "2. Verify the use-case-sync routine is in place \u2014 update-and-merge runs as part of the daily use-case-sync routine, it doesn't have its own reminder. Run `reminder list` and confirm there is an active reminder named 'use-case-sync' (typically cron 0 9 * * *). If missing or inactive, the use-case-sync install should have created it; surface this to the admin and offer to add it with `reminder add --name use-case-sync --cron '0 9 * * *' --timezone <admin-tz> --content 'Run the daily use-case-sync routine. See /agent/.agents/skills/use-case-sync/SKILL.md.'` before continuing. If there are duplicate use-case-sync reminders, surface that too \u2014 admin should delete the extras.",
+    "3. Patch use-case-sync Step 6 \u2014 read /agent/.agents/skills/use-case-sync/SKILL.md. Find the section that currently sends the legacy 'Want me to upgrade it?' Slack ping for update_available items. Replace it with a handoff to update-and-merge in scan mode (see SKILL.md \u2192 'Modifications to existing use-case-sync'). Show the admin the diff and confirm before applying. Skip if already patched (look for 'update-and-merge' in Step 6).",
     "4. Run the skill's setup mode to configure conflict notifications. Walk the admin through: (a) is Slack connected? If yes, ask them to pick a channel from `slack memberships list` and write it to /agent/brain/permissions/config.json under admin_slack_channel. (b) If Slack is not connected, proactively suggest connecting so they actually see conflicts in real time. (c) If they decline Slack entirely, confirm file-only mode in plain language.",
     "5. Verify OPENAI_API_KEY is reachable for the user.md snippet semantic conflict-check step. If not, request via secret-input widget scoped to api.openai.com. In most Motion workspaces this is pre-provisioned.",
     "6. Add an update-and-merge row to /agent/INDEX.md if maintained in this sandbox. The behavior-snippet has been auto-injected so the conversation-level agent already knows about the routine.",
-    "7. Confirm to the admin in plain language: 'You're set up. From now on: each morning at 9am, I'll check Motion-Creative/runneth-apps for updates to your installed use-cases. If something is safe to take, I'll quietly bring it in. If there's an actual conflict with changes your team has made, you'll get a writeup and three options to choose from — just reply in plain language.'"
+    "7. Confirm to the admin in plain language: 'You're set up. From now on: each morning at 9am, I'll check Motion-Creative/runneth-apps for updates to your installed use-cases. If something is safe to take, I'll quietly bring it in. If there's an actual conflict with changes your team has made, you'll get a writeup and three options to choose from \u2014 just reply in plain language.'",
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
+    }
   ],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-19",

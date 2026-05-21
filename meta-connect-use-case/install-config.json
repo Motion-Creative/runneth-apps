@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "meta-connect",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Stage and publish ads to Meta directly from chat, with a persistent OAuth connection that auto-refreshes every 60 days.",
   "customize": [
     {
@@ -77,12 +77,12 @@
     {
       "action": "app-url",
       "name": "Get app URL",
-      "description": "Run: app list — note the meta-connect route"
+      "description": "Run: app list \u2014 note the meta-connect route"
     },
     {
       "action": "manual",
       "name": "Register redirect URI",
-      "description": "Add https://{SPAWNETH_HOST}/meta-connect/api/callback to the Runneth-test Meta app at developers.facebook.com → Facebook Login → Settings → Valid OAuth Redirect URIs. Also add {SPAWNETH_HOST} to App Domains.",
+      "description": "Add https://{SPAWNETH_HOST}/meta-connect/api/callback to the Runneth-test Meta app at developers.facebook.com \u2192 Facebook Login \u2192 Settings \u2192 Valid OAuth Redirect URIs. Also add {SPAWNETH_HOST} to App Domains.",
       "manual": true
     },
     {
@@ -91,9 +91,21 @@
       "name": "Connect to Meta",
       "description": "Opens the meta-connect app and walks through the OAuth connection.",
       "manual": false
+    },
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-07",

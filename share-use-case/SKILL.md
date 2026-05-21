@@ -215,6 +215,34 @@ For each post-install step:
 
 Post-install steps go in `post-install` in the install-config. Steps that require human action are flagged as `manual: true`.
 
+**2g. Post-install intro** — required for every use case.
+
+The last thing every install does is surface a short intro that tells the user what just opened up and gives them 3-5 paste-ready prompts to try right now. Without this, installs end in silence and the user has to figure out what changed.
+
+For every use case, capture:
+- **What just opened up** — 2-3 sentences in present tense naming the human outcome, not the mechanism. The "moment it clicks" reframe.
+- **Try this now** — 3-5 concrete prompts the user can paste into chat immediately, each with a one-line "you'll get back" description. Every prompt must actually work in a fresh sandbox with this use case installed.
+- **Compounds with** (optional) — 0-2 entries naming other use cases or integrations this stacks with, one sentence each on the stack.
+
+Draft `post-install-intro.md` with the three sections using the exact headings: `## What just opened up`, `## Try this now`, `## Compounds with`. Voice is "smart colleague handing off a tool," not marketing. Total prose under 250 words. No em or en dashes.
+
+The matching install-config step is the **final** entry in `post-install[]`:
+
+```json
+{
+  "action": "show-intro",
+  "name": "Introduce the new capability",
+  "file": "post-install-intro.md",
+  "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
+}
+```
+
+The `description` field is the instruction the agent follows; the action label is a tag, not a code path.
+
+See `.use-case-library/post-install-intro-spec.md` in the repo for the full convention, voice guidance, and worked examples.
+
+A use case may legitimately skip the intro only when it is pure plumbing (e.g. `authenticate-apps` is consumed by other apps, never installed directly by humans). Document the skip in the README under "Why no post-install intro." Skipping is rare; default is to ship one.
+
 ---
 
 ### Phase 3 — Surface the tokens
@@ -297,8 +325,17 @@ Run programmatically. Surface all failures before 5b.
 - `setup-<id>/SKILL.md` exists in the folder
 - YAML trigger block is the first section
 - Every personalization question names the file or path it writes to
-- Setup skill is the final step in `post-install`
+- Setup skill runs before the intro in `post-install`
 - Setup skill can be re-invoked after install (trigger covers `set up`, `personalize`, `reconfigure`)
+
+**Post-install intro checks:**
+- `post-install-intro.md` exists at the use case root (or README documents "Why no post-install intro")
+- Three sections present with exact headings: `## What just opened up`, `## Try this now`, `## Compounds with` (last optional)
+- "What just opened up" is 2-3 sentences, present tense, names the human outcome
+- "Try this now" has 3-5 numbered entries, each with paste-ready prompt + "you'll get back" line
+- Every `{{TOKEN}}` in the intro is declared in `install-config.json` `customize`
+- `install-config.json` has the `show-intro` step as the **final** entry in `post-install[]`
+- Total prose under 250 words; no marketing voice; no em or en dashes
 
 #### 5b — Staff designer review
 
