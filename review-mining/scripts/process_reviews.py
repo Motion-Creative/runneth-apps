@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-process_reviews.py — review-library-init
+process_reviews.py — review-mining-init
 =========================================
 Reads paginated JSON pages from /tmp/rl_page_N.json, scores and tags every
 review, writes markdown files to BRAIN_PATH/product-slug/review_id.md,
@@ -373,7 +373,7 @@ def main():
         'date_cutoff':      date_cutoff,
         'source':           source_label,
         'api_base_url':     api_base_url,
-        'note':             f'Initialised by review-library-init on {today}.',
+        'note':             f'Initialised by review-mining-init on {today}.',
     }
     os.makedirs(brain_path, exist_ok=True)
     with open(os.path.join(brain_path, '_meta.json'), 'w') as fh:
@@ -399,7 +399,7 @@ def main():
     for tag, count in sorted(tag_dist.items(), key=lambda x: -x[1]):
         tag_rows += f'| {tag} | {count} |\n'
 
-    index_md = f"""# Review Library Index
+    index_md = f"""# Review Mining Index
 
 **Source:** {source_label}
 **API Base URL:** {api_base_url}

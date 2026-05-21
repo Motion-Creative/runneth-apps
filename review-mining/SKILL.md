@@ -1,6 +1,6 @@
-# review-library-init
+# review-mining-init
 
-Build a tagged, scored review library from any review API into a flat folder of
+Build a tagged, scored review mining from any review API into a flat folder of
 markdown files, with optional app cache rebuild and weekly sync reminder.
 
 ---
@@ -8,7 +8,7 @@ markdown files, with optional app cache rebuild and weekly sync reminder.
 ## When to Trigger
 
 Trigger this skill when the user:
-- Says "run review library init", "build my review library", "ingest reviews", or any variation
+- Says "run review mining init", "build my review mining", "ingest reviews", or any variation
 - Asks to pull and organize customer reviews from an external API
 - Wants to set up a review knowledge base for creative strategy work
 
@@ -244,12 +244,12 @@ Replace every `{PLACEHOLDER}` with the confirmed resolved value before writing.
 ### 2b — Run the Processing Script
 
 The script lives at:
-`/agent/.agents/skills/review-library-init/scripts/process_reviews.py`
+`/agent/.agents/skills/review-mining-init/scripts/process_reviews.py`
 
 Run it and capture its JSON summary output:
 
 ```bash
-python3 /agent/.agents/skills/review-library-init/scripts/process_reviews.py \
+python3 /agent/.agents/skills/review-mining-init/scripts/process_reviews.py \
   --config /tmp/rl_config.json \
   > /tmp/rl_summary.json 2>&1
 ```
@@ -276,7 +276,7 @@ Do not attempt `app build` or `app verify`.
 write the cache JSON:
 
 ```bash
-python3 /agent/.agents/skills/review-library-init/scripts/process_reviews.py \
+python3 /agent/.agents/skills/review-mining-init/scripts/process_reviews.py \
   --config /tmp/rl_config.json \
   --cache-output /agent/apps/{APP_NAME}/server/src/reviews-cache.json \
   > /dev/null 2>&1

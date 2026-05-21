@@ -1,4 +1,4 @@
-# review-library-init
+# review-mining-init
 
 A Runneth skill that pulls customer reviews from any REST API, scores and tags
 every review for creative strategy value, and writes them as structured markdown
@@ -37,7 +37,7 @@ current without a full re-run.
 Copy the skill folder into the org's skills directory:
 
 ```bash
-cp -r review-library-init /agent/.agents/skills/review-library-init
+cp -r review-mining-init /agent/.agents/skills/review-mining-init
 ```
 
 That's it. Runneth will detect and load the skill on the next conversation turn.
@@ -57,7 +57,7 @@ That's it. Runneth will detect and load the skill on the next conversation turn.
 
 Start a Runneth chat and say:
 
-> "Run review library init"
+> "Run review mining init"
 
 Runneth will ask you to confirm the connection and field mapping parameters
 before pulling any data. You can accept defaults for most fields.
