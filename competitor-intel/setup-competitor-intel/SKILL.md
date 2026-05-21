@@ -96,6 +96,7 @@ Once brands are confirmed, write to `/agent/brain/competitor-intel/{{WORKSPACE_S
   "slackChannelId": null,
   "scheduleDay": "monday",
   "scheduleTime": "09:00",
+  "ownBrandId": null,
   "brands": [
     {
       "name": "Brand Name",
@@ -109,6 +110,30 @@ Once brands are confirmed, write to `/agent/brain/competitor-intel/{{WORKSPACE_S
 
 `slug` is the brand name lowercased, hyphens for spaces, stripped of special chars.
 `slackChannelId` stays null until Step 4.
+
+---
+
+## Step 3b — Resolve own brand (optional)
+
+Run `motion search-brands` using the workspace name as a search term to find the workspace's own brand in Motion's ad library:
+
+```bash
+motion search-brands --search-term "{workspaceName}" --limit 5
+```
+
+Read the results.
+
+- **If one clear match:** Confirm: "I found [Brand Name] in the ad library — is that your brand?"
+  If yes, store the `brandId` as `ownBrandId` in the watchlist.
+- **If multiple matches:** List them and ask which is theirs.
+- **If no match:** Ask: "What's the name your brand uses in advertising? I'll search for it."
+  Try one more search with the provided name.
+  If still not found, set `ownBrandId` to null and note:
+  > "No problem — your brand comparison table will be skipped until we can locate you in the ad library."
+
+**If the user wants to skip own-brand comparison:** Set `ownBrandId` to null.
+
+Update `ownBrandId` in the watchlist JSON.
 
 ---
 
@@ -145,10 +170,15 @@ If they specify a day and/or time, parse and confirm: "Got it — every [day] at
 
 Update `scheduleDay` and `scheduleTime` in the watchlist JSON.
 
+Derive the workspace timezone from the sandbox runtime:
+```bash
+WORKSPACE_TIMEZONE=$(cat /agent/.runtime/timezone 2>/dev/null || echo "America/New_York")
+```
+
 Then create the reminder:
 
 ```bash
-reminder add --recurrence "every {scheduleDay} at {scheduleTime} {timezone}" \
+reminder add --recurrence "every {scheduleDay} at {scheduleTime} {WORKSPACE_TIMEZONE}" \
   --message "Run competitor watch for {{WORKSPACE_SLUG}}" \
   --conversation-id {currentConversationId}
 ```
@@ -184,3 +214,5 @@ update `updatedDate`.
 
 **Changing schedule:** Skip to Step 5 only. Delete the old reminder (by stored `reminderId`) before
 creating the new one.
+
+
