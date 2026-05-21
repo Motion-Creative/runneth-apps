@@ -20,6 +20,11 @@ import splitFilled from "./icons/split-filled.svg?raw";
 import starFilled from "./icons/star-filled.svg?raw";
 import storageFilled from "./icons/storage-filled.svg?raw";
 import targetFilled from "./icons/target-filled.svg?raw";
+import brandAuditFilled from "./icons/brand-audit-filled.svg?raw";
+import creativeDeepDiveFilled from "./icons/creative-deep-dive-filled.svg?raw";
+import paidStrategyAuditFilled from "./icons/paid-strategy-audit-filled.svg?raw";
+import performanceBundleFilled from "./icons/performance-bundle-filled.svg?raw";
+import weeklyPerformanceDeckFilled from "./icons/weekly-performance-deck-filled.svg?raw";
 
 const ICON_BY_SLUG: Record<string, string> = {
   "team-member-memory": brainFilled,
@@ -39,6 +44,11 @@ const ICON_BY_SLUG: Record<string, string> = {
   "integration-capabilities-library": foldersFilled,
   "add-roles-permissions": shieldCheckFilled,
   "context-import": importFilled,
+  "brand-audit": brandAuditFilled,
+  "creative-deep-dive": creativeDeepDiveFilled,
+  "paid-strategy-audit": paidStrategyAuditFilled,
+  "performance-bundle": performanceBundleFilled,
+  "weekly-performance-deck": weeklyPerformanceDeckFilled,
 };
 
 const iconWrapStyle = (tint: string): CSSProperties => ({
