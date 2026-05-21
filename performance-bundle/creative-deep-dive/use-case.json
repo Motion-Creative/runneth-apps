@@ -3,6 +3,6 @@
   "display_title": "Creative Deep Dive",
   "pitch": "Mechanism-level teardowns with executable next steps",
   "status": "proven",
-  "category": "performance",
+  "category": "analysis",
   "github_path": "performance-bundle/creative-deep-dive"
 }
