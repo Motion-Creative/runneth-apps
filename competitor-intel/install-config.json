@@ -1,0 +1,79 @@
+{
+  "schema": "1.0",
+  "id": "competitor-intel",
+  "version": "1.0.0",
+  "description": "Weekly competitive intelligence scan. Tracks competitor ad strategies, spots messaging shifts and new bets, diffs against last week's baseline, and posts a delta report to Slack automatically every Monday.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "depends": [],
+  "customize": [
+    {
+      "token": "WORKSPACE_ID",
+      "description": "The Motion workspace ID for this sandbox. Found in workspace settings or resolved via motion workspace-goal.",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "token": "WORKSPACE_NAME",
+      "description": "Human-readable workspace or brand name. Used to namespace brain files and derive the workspace slug.",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "token": "WORKSPACE_SLUG",
+      "description": "URL-safe version of the workspace name \u2014 lowercase, hyphens for spaces. Derived at install time from WORKSPACE_NAME. Used as the folder name under /agent/brain/competitor-intel/.",
+      "required": true,
+      "fallback": null
+    }
+  ],
+  "installs": [
+    {
+      "from": "seed/inspoBrands.json",
+      "to": "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json",
+      "on_exists": "skip",
+      "purpose": "Empty inspoBrands seed. Populated by setup-competitor-intel on first run."
+    },
+    {
+      "from": "seed/baselines/.gitkeep",
+      "to": "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/.gitkeep",
+      "on_exists": "skip",
+      "purpose": "Creates the baselines directory. Baseline files are written here by each scan run."
+    },
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/competitor-intel/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Core competitor watch skill. Runs on schedule and on explicit trigger."
+    },
+    {
+      "from": "setup-competitor-intel/SKILL.md",
+      "to": "/agent/.agents/skills/setup-competitor-intel/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Setup and reconfiguration skill. Runs on first install; re-invokable any time."
+    }
+  ],
+  "post_install": [
+    {
+      "action": "skill-invoke",
+      "skill": "setup-competitor-intel",
+      "name": "Configure your competitor inspo brands",
+      "description": "Walks through selecting competitors, resolving them in Motion's ad library, configuring Slack delivery, and scheduling the weekly routine.",
+      "manual": false
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json",
+    "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/{brand-slug}.json"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-20",
+      "type": "major",
+      "notes": "Initial release. Translated from motion-creative-plugin competitor-intel MCP skill. Competitor brands tracked in workspace-scoped inspoBrands.json seed. MCP tools replaced with native motion CLI. Two-pass active portfolio pull, survival cohort analysis, weekly delta computation. Setup skill handles brand resolution, own-brand ID storage, Slack channel config, and reminder scheduling."
+    }
+  ]
+}
