@@ -18,7 +18,12 @@
     "building-integrations",
     "integration-capabilities-library",
     "add-roles-permissions",
-    "import-from-ai"
+    "import-from-ai",
+    "performance-bundle",
+    "brand-audit",
+    "paid-strategy-audit",
+    "creative-deep-dive",
+    "weekly-performance-deck"
   ],
   "excluded": [
     {

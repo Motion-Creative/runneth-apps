@@ -1,0 +1,77 @@
+{
+  "schema": "1.0",
+  "id": "paid-strategy-audit",
+  "version": "1.0.1",
+  "description": "Channel-agnostic paid-strategy audit. Detects every connected ad platform, researches unknown ones, produces a per-channel strategy brief plus alignment-check visualization, optionally synthesizes a cross-channel overall brief, installs a user.md instruction that reads briefs before answering performance questions, and schedules a Friday drift+ping routine.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "installs": [
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/paid-strategy-audit/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Main audit skill \u2014 channel detection, detective parsing, per-channel brief, alignment visualization, overall synthesis, drift routine, user.md install"
+    },
+    {
+      "from": "setup-paid-strategy-audit/SKILL.md",
+      "to": "/agent/.agents/skills/setup-paid-strategy-audit/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Setup skill that asks for ping channels, user tags, and excluded campaigns"
+    },
+    {
+      "type": "folder-copy",
+      "src": "seed/_channels/",
+      "dest": "/agent/brain/paid-strategy/_channels/",
+      "on_exists": "skip",
+      "purpose": "Pre-researched channel knowledge for Meta and TikTok. Other channels get auto-researched on first detection."
+    },
+    {
+      "from": "seed/_index.md",
+      "to": "/agent/brain/paid-strategy/_index.md",
+      "on_exists": "skip",
+      "purpose": "Local routing index for saved briefs"
+    },
+    {
+      "appends_to": "/agent/INDEX.md",
+      "guard": "path '/agent/brain/paid-strategy/' already present",
+      "purpose": "Global INDEX.md routing entry for the strategy library. The skills themselves are auto-discovered, intentionally not indexed."
+    }
+  ],
+  "runtime_installs": [
+    {
+      "appends_to": "/agent/user.md",
+      "guard": "sentinel 'runneth-apps:paid-strategy:read-before-performance v1' already present",
+      "trigger": "After the first successful audit for any workspace, idempotent across subsequent runs",
+      "purpose": "Standing instruction so future performance questions auto-read the channel-specific brief and use its validated-metric mapping \u2014 overriding workspace-goal and spend-threshold from the system prompt"
+    }
+  ],
+  "post_install": [
+    {
+      "action": "skill-invoke",
+      "skill": "setup-paid-strategy-audit",
+      "name": "Personalize for this workspace",
+      "description": "Walk the user through ping-channel, user-tag, and excluded-campaign setup",
+      "manual": false
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/brain/paid-strategy/<channel>/<workspace-slug>/<channel>-strategy.md",
+    "/agent/brain/paid-strategy/<channel>/<workspace-slug>/funnel-map.html",
+    "/agent/brain/paid-strategy/<channel>/<workspace-slug>/_history/<archived-iso>.md",
+    "/agent/brain/paid-strategy/overall-strategy.md (only when 2+ channels)",
+    "/agent/brain/paid-strategy/_config/<workspace-slug>.json",
+    "/agent/brain/paid-strategy/_channels/<channel>.md (when a new channel is auto-researched)"
+  ],
+  "upstream_dependencies": [],
+  "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-20",
+      "type": "major",
+      "notes": "Initial release. Channel-agnostic \u2014 auto-detects Meta, TikTok, Pinterest, AppLovin, Snapchat, or any other connected ad platform. Auto-researches unknown channels and writes _channels/<channel>.md knowledge file before producing the brief. Detective-mode naming parser replaces token-vocabulary assumptions and works on structured, underscore-separated, or free-form names. user.md runtime install (runneth-apps:paid-strategy:read-before-performance v1) overrides workspace-goal and spend-threshold from system prompt. Friday drift+ping routine baked in. Pre-seeded channel knowledge for Meta and TikTok."
+    }
+  ]
+}

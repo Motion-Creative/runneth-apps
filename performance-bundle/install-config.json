@@ -1,0 +1,51 @@
+{
+  "schema": "1.0",
+  "id": "performance-bundle",
+  "version": "1.0.0",
+  "description": "Meta-bundle that installs all four analysis skills in dependency order: brand-audit, paid-strategy-audit, creative-deep-dive, weekly-performance-deck.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "installs": [],
+  "post_install": [
+    {
+      "action": "use-case-install",
+      "slug": "brand-audit",
+      "name": "Install Brand Audit",
+      "description": "Foundation + strategy layer. Runs first \u2014 creative-deep-dive reads its output.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "paid-strategy-audit",
+      "name": "Install Paid Strategy Audit",
+      "description": "Per-channel strategy briefs. Runs after brand-audit.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "creative-deep-dive",
+      "name": "Install Creative Deep Dive",
+      "description": "9-skill diagnostic orchestrator. Reads brand-audit output.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "weekly-performance-deck",
+      "name": "Install Weekly Performance Deck",
+      "description": "Depends on all three above plus brand-kit. Installed last.",
+      "manual": false
+    }
+  ],
+  "upstream_dependencies": [],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-21",
+      "type": "major",
+      "notes": "Initial release. Bundles brand-audit, paid-strategy-audit, creative-deep-dive, and weekly-performance-deck into a single install that sets up the full analysis framework in dependency order."
+    }
+  ]
+}

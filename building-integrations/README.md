@@ -4,33 +4,7 @@
 
 **When an integration connects, your agent reads the context, chooses the right depth, applies the right protocol for the type of integration, and solves every quirk it finds before the user ever sees one.**
 
----
-
-## Platform-specific docs
-
-The [`platforms/`](./platforms/) folder contains one file per integration. Each file is auto-maintained by the daily `integration-tips-pr` routine, which scans real Runneth conversations to surface tips, workarounds, and verified patterns. Review and merge the daily PRs each morning.
-
-| Platform | Doc |
-|----------|-----|
-| Slack | [platforms/slack.md](./platforms/slack.md) |
-| Notion | [platforms/notion.md](./platforms/notion.md) |
-| Linear | [platforms/linear.md](./platforms/linear.md) |
-| HubSpot | [platforms/hubspot.md](./platforms/hubspot.md) |
-| Gong | [platforms/gong.md](./platforms/gong.md) |
-| Intercom | [platforms/intercom.md](./platforms/intercom.md) |
-| BigQuery | [platforms/bigquery.md](./platforms/bigquery.md) |
-| GitHub | [platforms/github.md](./platforms/github.md) |
-| X / Twitter | [platforms/x-twitter.md](./platforms/x-twitter.md) |
-| Anthropic | [platforms/anthropic.md](./platforms/anthropic.md) |
-| Google Drive | [platforms/google-drive.md](./platforms/google-drive.md) |
-| Google Calendar | [platforms/google-calendar.md](./platforms/google-calendar.md) |
-| Granola | [platforms/granola.md](./platforms/granola.md) |
-| LaunchDarkly | [platforms/launchdarkly.md](./platforms/launchdarkly.md) |
-| Apollo | [platforms/apollo.md](./platforms/apollo.md) |
-| Tavus | [platforms/tavus.md](./platforms/tavus.md) |
-| Datadog | [platforms/datadog.md](./platforms/datadog.md) |
-
----
+Not every integration connection needs the same treatment. Someone making a quick data pull gets a fast answer and an offer to go deeper. Someone setting up an integration for the whole team gets a full deep dive: community research, live verification, type-specific setup, a practical guide that goes beyond what the official docs say, and a custom CLI designed around how the team actually uses the platform. Quirks are found and solved proactively — surfaced to the user only as a genuine last resort.
 
 ---
 
