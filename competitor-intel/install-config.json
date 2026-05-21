@@ -31,10 +31,10 @@
   ],
   "installs": [
     {
-      "from": "seed/watchlist.json",
-      "to": "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/watchlist.json",
+      "from": "seed/inspoBrands.json",
+      "to": "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json",
       "on_exists": "skip",
-      "purpose": "Empty watchlist seed. Populated by setup-competitor-intel on first run."
+      "purpose": "Empty inspoBrands seed. Populated by setup-competitor-intel on first run."
     },
     {
       "from": "seed/baselines/.gitkeep",
@@ -59,13 +59,13 @@
     {
       "action": "skill-invoke",
       "skill": "setup-competitor-intel",
-      "name": "Configure your competitor watchlist",
+      "name": "Configure your competitor inspo brands file",
       "description": "Walks through selecting competitors, resolving them in Motion's ad library, configuring Slack delivery, and scheduling the weekly routine.",
       "manual": false
     }
   ],
   "creates_at_runtime": [
-    "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/watchlist.json",
+    "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json",
     "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/{brand-slug}.json"
   ],
   "changelog": [
@@ -81,7 +81,7 @@
         "Survival cohort classification: long-runners (60+d), survivors (15-59d), testing zone (7-14d), fresh tests (<7d)",
         "Weekly delta computation against saved JSON baselines",
         "Slack delivery via slack send CLI (teaser + full report in thread)",
-        "Setup skill handles watchlist configuration, Slack channel, and reminder scheduling",
+        "Setup skill handles inspo brands configuration, Slack channel, and reminder scheduling",
         "Post-install invokes setup-competitor-intel automatically"
       ]
     }
