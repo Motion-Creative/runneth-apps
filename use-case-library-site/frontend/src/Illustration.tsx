@@ -19,6 +19,7 @@ import shieldCheckFilled from "./icons/shield-check-filled.svg?raw";
 import splitFilled from "./icons/split-filled.svg?raw";
 import starFilled from "./icons/star-filled.svg?raw";
 import storageFilled from "./icons/storage-filled.svg?raw";
+import binocularsFilled from "./icons/binoculars-filled.svg?raw";
 import targetFilled from "./icons/target-filled.svg?raw";
 
 const ICON_BY_SLUG: Record<string, string> = {
@@ -39,6 +40,7 @@ const ICON_BY_SLUG: Record<string, string> = {
   "integration-capabilities-library": foldersFilled,
   "add-roles-permissions": shieldCheckFilled,
   "context-import": importFilled,
+  "competitor-watch": binocularsFilled,
 };
 
 const iconWrapStyle = (tint: string): CSSProperties => ({
