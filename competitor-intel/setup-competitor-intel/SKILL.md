@@ -14,7 +14,7 @@ triggers:
     - "update my watchlist"
     - "reconfigure competitor watch"
     - "personalize competitor watch"
-  intent: "User wants to configure or update the competitor watchlist for this workspace"
+  intent: "User wants to configure or update the competitor inspo brands file for this workspace"
   excludes:
     - "run competitor watch"
     - "competitor scan"
@@ -23,10 +23,10 @@ triggers:
 
 # Setup: Competitor Intel Alerts
 
-Configures the competitor watchlist and delivery settings for this workspace.
+Configures the competitor inspo brands file and delivery settings for this workspace.
 Runs automatically on first install and can be re-invoked any time to add, remove, or change competitors.
 
-**Writes to:** `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/watchlist.json`
+**Writes to:** `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json`
 
 ---
 
@@ -35,7 +35,7 @@ Runs automatically on first install and can be re-invoked any time to add, remov
 Run `motion workspace-goal`. Capture workspaceId and workspace name.
 Derive `WORKSPACE_SLUG`: lowercase workspace name, hyphens for spaces, strip special chars.
 
-Check if `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/watchlist.json` already exists.
+Check if `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json` already exists.
 
 If it exists, read it and load the existing brands list. Tell the person:
 > "You already have [N] competitors tracked: [names]. Want to add, remove, or change them?
@@ -44,7 +44,7 @@ If it exists, read it and load the existing brands list. Tell the person:
 Let them answer before continuing. If adding/removing, proceed to Step 2 targeting only the change.
 If only updating the Slack channel, skip to Step 4.
 
-If no watchlist exists, this is a fresh setup. Continue to Step 2.
+If no inspo brands file exists, this is a fresh setup. Continue to Step 2.
 
 ---
 
@@ -72,7 +72,7 @@ Do not move to the next brand until the current one is resolved or explicitly sk
 
 After all brands are resolved, confirm the full list before writing:
 
-> "Here's your watchlist:
+> "Here's your inspo brands file:
 > • [Brand 1] (brandId: ...)
 > • [Brand 2] (brandId: ...)
 > • [Brand 3] (brandId: ...)
@@ -83,9 +83,9 @@ Wait for confirmation before writing.
 
 ---
 
-## Step 3 — Write the watchlist
+## Step 3 — Write the inspo brands file
 
-Once brands are confirmed, write to `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/watchlist.json`:
+Once brands are confirmed, write to `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json`:
 
 ```json
 {
@@ -124,7 +124,7 @@ motion search-brands --search-term "{workspaceName}" --limit 5
 Read the results.
 
 - **If one clear match:** Confirm: "I found [Brand Name] in the ad library — is that your brand?"
-  If yes, store the `brandId` as `ownBrandId` in the watchlist.
+  If yes, store the `brandId` as `ownBrandId` in the inspo brands file.
 - **If multiple matches:** List them and ask which is theirs.
 - **If no match:** Ask: "What's the name your brand uses in advertising? I'll search for it."
   Try one more search with the provided name.
@@ -133,7 +133,7 @@ Read the results.
 
 **If the user wants to skip own-brand comparison:** Set `ownBrandId` to null.
 
-Update `ownBrandId` in the watchlist JSON.
+Update `ownBrandId` in the inspo brands file.
 
 ---
 
@@ -154,7 +154,7 @@ If they skip or say "not yet," set `slackChannelId` to null and note:
 > "No problem — reports will appear in your chat thread until you configure a channel.
 > Just say 'set up competitor watch' any time to add one."
 
-Update `slackChannelId` in the watchlist JSON.
+Update `slackChannelId` in the inspo brands file.
 
 ---
 
@@ -168,7 +168,7 @@ Ask:
 If they accept the default or don't specify, use `monday` at `09:00`.
 If they specify a day and/or time, parse and confirm: "Got it — every [day] at [time]."
 
-Update `scheduleDay` and `scheduleTime` in the watchlist JSON.
+Update `scheduleDay` and `scheduleTime` in the inspo brands file.
 
 Derive the workspace timezone from the sandbox runtime:
 ```bash
@@ -183,7 +183,7 @@ reminder add --recurrence "every {scheduleDay} at {scheduleTime} {WORKSPACE_TIME
   --conversation-id {currentConversationId}
 ```
 
-Read the returned reminder shortId. Store it in the watchlist JSON as `reminderId`.
+Read the returned reminder shortId. Store it in the inspo brands file as `reminderId`.
 
 ---
 
@@ -201,12 +201,12 @@ If no: "No problem — I'll run it automatically on [next scheduled day]."
 
 ---
 
-## Watchlist update flows
+## Inspo brands update flows
 
 **Adding a brand:** Resolve the new brand (Step 2 single-brand flow), append to `brands` array,
 update `updatedDate`, confirm. Do not touch other fields.
 
-**Removing a brand:** Confirm the removal ("Remove [Brand Name] from your watchlist?"),
+**Removing a brand:** Confirm the removal ("Remove [Brand Name] from your inspo brands file?"),
 remove from `brands` array, delete their baseline file at `baselines/{slug}.json`,
 update `updatedDate`.
 
