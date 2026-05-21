@@ -1,0 +1,8 @@
+{
+  "slug": "health-alerts",
+  "display_title": "Health Alerts",
+  "pitch": "Alerts you the moment a tool or routine stops working",
+  "status": "experimental",
+  "category": "agent-foundations",
+  "github_path": "health-alerts"
+}

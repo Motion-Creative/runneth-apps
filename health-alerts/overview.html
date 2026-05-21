@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Health Alerts — Use Case Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:#f8f8f8;color:#171717;font-size:14px;line-height:1.6}
+nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid #e5e7eb;padding:0 32px;display:flex;align-items:center;gap:20px;height:52px}
+.logo{font-weight:700;font-size:15px;flex:1}
+nav a{font-size:13px;color:#6b7280;text-decoration:none;font-weight:500}
+.badge{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:500;background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.hero{background:#fff;border-bottom:1px solid #e5e7eb;padding:48px 32px 40px}
+.hero h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.hero .desc{font-size:16px;color:#6b7280;max-width:640px;margin-bottom:24px}
+.stats{display:flex;gap:16px;flex-wrap:wrap}
+.stat{padding:10px 16px;background:#f8f8f8;border:1px solid #e5e7eb;border-radius:8px;font-size:13px}
+.stat strong{display:block;font-size:20px;font-weight:700}
+.stat span{color:#6b7280}
+.sec{padding:40px 32px;max-width:900px;margin:0 auto}
+.sec h2{font-size:18px;font-weight:700;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .15s}
+.card:hover{border-color:#c1f14b;box-shadow:0 2px 8px rgba(193,241,75,.2)}
+.fname{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:500;margin-bottom:4px}
+.fdest{font-size:11px;color:#9ca3af;margin-bottom:8px;word-break:break-all}
+.fdesc{font-size:12px;color:#374151;line-height:1.5}
+.rbadge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.rs{background:#eff6ff;color:#1d4ed8}
+.rd{background:#fefce8;color:#854d0e}
+.rm{background:#f3f4f6;color:#4b5563}
+.rp{background:#fff7ed;color:#c2410c}
+.cap-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.cap-grid{grid-template-columns:1fr}}
+.capcard{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px}
+.capcard h3{font-size:14px;font-weight:600;margin-bottom:8px}
+.capcard p{font-size:13px;color:#6b7280;line-height:1.6}
+.ci{font-size:24px;margin-bottom:10px;display:block}
+.tt{width:100%;border-collapse:collapse}
+.tt th{text-align:left;font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;padding:8px 12px;border-bottom:2px solid #e5e7eb}
+.tt td{padding:10px 12px;border-bottom:1px solid #f3f4f6;font-size:13px}
+.tt td:first-child{font-family:"JetBrains Mono",monospace;font-size:11px;color:#7c3aed}
+.tt td:nth-child(2){font-family:"JetBrains Mono",monospace;font-size:11px;color:#374151}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:12px;max-width:800px;width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.mh{padding:16px 20px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:10px}
+.mhname{font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:600;flex:1}
+.mhdest{font-size:11px;color:#9ca3af}
+.mc{background:none;border:none;cursor:pointer;font-size:20px;color:#9ca3af;padding:0 4px}
+.mb{flex:1;overflow-y:auto;padding:20px}
+.mb pre{font-family:"JetBrains Mono",monospace;font-size:12px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:#374151}
+</style>
+</head>
+<body>
+<nav>
+  <span class="logo">Health Alerts</span>
+  <span class="badge">v2.2.0 &middot; experimental</span>
+  <a href="#cap">What it does</a>
+  <a href="#files">File map</a>
+  <a href="#tok">Customize</a>
+</nav>
+<div class="hero">
+  <h1>Health Alerts</h1>
+  <p class="desc">Monitors all connected tools and active routines. Sends Slack alerts when integrations break, routines go overdue, dependency chains fail, or skill execution cannot be confirmed.</p>
+  <div class="stats">
+    <div class="stat"><strong>7</strong><span>files installed</span></div>
+    <div class="stat"><strong>2</strong><span>skills</span></div>
+    <div class="stat"><strong>4</strong><span>brain seeds</span></div>
+    <div class="stat"><strong>~2 min</strong><span>setup time</span></div>
+    <div class="stat"><strong>30 min</strong><span>check interval</span></div>
+  </div>
+</div>
+<div class="sec" id="cap">
+  <h2>What this enables</h2>
+  <div class="cap-grid">
+    <div class="capcard"><span class="ci">&#128268;</span><h3>Connected tool monitoring</h3><p>5-layer checks on every connected tool — Motion, GitHub, Slack, Notion, Linear, Dropbox, OpenAI, LaunchDarkly and more. Plain-language alerts when something stops working.</p></div>
+    <div class="capcard"><span class="ci">&#9889;</span><h3>Routine health checks</h3><p>Every scheduled task checked every 30 minutes. Detects overdue routines, silent drops from the reminder system, broken dependency chains, and incomplete executions.</p></div>
+    <div class="capcard"><span class="ci">&#128276;</span><h3>Smart alerts — no noise</h3><p>One alert when something breaks. One follow-up after your configured window if still unresolved. A confirmation when things recover. Nothing else.</p></div>
+    <div class="capcard"><span class="ci">&#128269;</span><h3>Missed routine detection (opt-in)</h3><p>Daily scan of conversations catches tasks requested but never created. Self-resolves when parameters are clear, asks for details when they are not.</p></div>
+  </div>
+</div>
+<div class="sec" id="files">
+  <h2>File map <span style="color:#9ca3af;font-weight:400;font-size:14px">(10 files)</span></h2>
+  <p style="color:#6b7280;font-size:13px;margin-bottom:20px">Click any file to view its full contents.</p>
+  <div class="grid">
+    <div class="card" onclick="openM('integration-health-check/SKILL.md')"><span class="rbadge rs">Skill</span><div class="fname">integration-health-check/SKILL.md</div><div class="fdest">/agent/.agents/skills/integration-health-check/SKILL.md</div><div class="fdesc">Core check skill — runs every 30 min on cron, covers tools and routines, sends Slack alerts</div></div>
+    <div class="card" onclick="openM('setup-health-alerts/SKILL.md')"><span class="rbadge rs">Setup Skill</span><div class="fname">setup-health-alerts/SKILL.md</div><div class="fdest">/agent/.agents/skills/setup-health-alerts/SKILL.md</div><div class="fdesc">Guided setup — admin channel, tagging, timezone, silence window, skill audit</div></div>
+    <div class="card" onclick="openM('integration-onboarding/SKILL.md')"><span class="rbadge rp">Patch Spec</span><div class="fname">integration-onboarding/SKILL.md</div><div class="fdest">/agent/.agents/skills/health-alerts-onboarding-patch/SKILL.md</div><div class="fdesc">Patch spec for integration-onboarding — adds admin channel notification on every connection</div></div>
+    <div class="card" onclick="openM('brain-seeds/health-config.json')"><span class="rbadge rd">Brain Seed</span><div class="fname">brain-seeds/health-config.json</div><div class="fdest">/agent/brain/integration-health/health-config.json</div><div class="fdesc">Org settings with defaults — silence window, check interval, alert channel override</div></div>
+    <div class="card" onclick="openM('brain-seeds/health-state.json')"><span class="rbadge rd">Brain Seed</span><div class="fname">brain-seeds/health-state.json</div><div class="fdest">/agent/brain/integration-health/health-state.json</div><div class="fdesc">Tool health state — written after every check run</div></div>
+    <div class="card" onclick="openM('brain-seeds/routine-health-state.json')"><span class="rbadge rd">Brain Seed</span><div class="fname">brain-seeds/routine-health-state.json</div><div class="fdest">/agent/brain/integration-health/routine-health-state.json</div><div class="fdesc">Routine health state — written after every check run</div></div>
+    <div class="card" onclick="openM('brain-seeds/known-routines-registry.json')"><span class="rbadge rd">Brain Seed</span><div class="fname">brain-seeds/known-routines-registry.json</div><div class="fdest">/agent/brain/integration-health/known-routines-registry.json</div><div class="fdesc">Baseline of known routines — populated on first run, used to detect silent drops</div></div>
+    <div class="card" onclick="openM('README.md')"><span class="rbadge rm">Docs</span><div class="fname">README.md</div><div class="fdest">(repo metadata)</div><div class="fdesc">Installation guide and full documentation</div></div>
+    <div class="card" onclick="openM('use-case.json')"><span class="rbadge rm">Library Meta</span><div class="fname">use-case.json</div><div class="fdest">(repo metadata)</div><div class="fdesc">Use case library registration metadata</div></div>
+    <div class="card" onclick="openM('marketing.md')"><span class="rbadge rm">Marketing</span><div class="fname">marketing.md</div><div class="fdest">(repo metadata)</div><div class="fdesc">Library card copy for the use case marketplace</div></div>
+  </div>
+</div>
+<div class="sec" id="tok">
+  <h2>Customize</h2>
+  <p style="color:#6b7280;font-size:13px;margin-bottom:20px">All tokens have defaults that work out of the box.</p>
+  <table class="tt">
+    <tr><th>Token</th><th>Default</th><th>What it controls</th></tr>
+    <tr><td>{{SILENCE_HOURS}}</td><td>24</td><td>Hours between repeat alerts for the same unresolved issue</td></tr>
+    <tr><td>{{CHECK_INTERVAL_MINUTES}}</td><td>30</td><td>How often the health check runs</td></tr>
+    <tr><td>{{TIMEZONE}}</td><td>UTC</td><td>Routine schedule timezone — collected from admin during setup</td></tr>
+    <tr><td>{{GITHUB_REPO}}</td><td>null</td><td>GitHub repo for deep health checks. Null skips repo-level checks.</td></tr>
+  </table>
+</div>
+<div class="overlay" id="ov">
+  <div class="modal">
+    <div class="mh">
+      <span class="mhname" id="mn"></span>
+      <span class="mhdest" id="md"></span>
+      <button class="mc" id="mclose">&times;</button>
+    </div>
+    <div class="mb"><pre id="mp">Loading...</pre></div>
+  </div>
+</div>
+<script>
+var DESCS = {
+  'integration-health-check/SKILL.md': '/agent/.agents/skills/integration-health-check/SKILL.md',
+  'setup-health-alerts/SKILL.md': '/agent/.agents/skills/setup-health-alerts/SKILL.md',
+  'integration-onboarding/SKILL.md': '/agent/.agents/skills/health-alerts-onboarding-patch/SKILL.md',
+  'brain-seeds/health-config.json': '/agent/brain/integration-health/health-config.json',
+  'brain-seeds/health-state.json': '/agent/brain/integration-health/health-state.json',
+  'brain-seeds/routine-health-state.json': '/agent/brain/integration-health/routine-health-state.json',
+  'brain-seeds/known-routines-registry.json': '/agent/brain/integration-health/known-routines-registry.json',
+  'README.md': '(repo metadata)',
+  'use-case.json': '(repo metadata)',
+  'marketing.md': '(repo metadata)'
+};
+function openM(file) {
+  document.getElementById('mn').textContent = file;
+  document.getElementById('md').textContent = DESCS[file] || '';
+  document.getElementById('mp').textContent = 'Open the zip and view this file to see its full contents.';
+  document.getElementById('ov').classList.add('open');
+}
+document.getElementById('ov').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+document.getElementById('mclose').addEventListener('click', function() {
+  document.getElementById('ov').classList.remove('open');
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') document.getElementById('ov').classList.remove('open');
+});
+</script>
+</body>
+</html>
