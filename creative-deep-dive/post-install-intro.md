@@ -1,7 +1,7 @@
 # Creative deep dive
 
 ## What just opened up
-Runneth now has 9 standalone diagnostic skills plus an orchestrator that runs the full Execution-Diagnostic-Standards stack on any creative or test set. Each skill is independently callable: hook-analysis, hook-evaluator, creative-mechanics, hook-writing, hook-tactics, hook-voice-patterns, and more. The full orchestrator reads brand-audit's output as upstream context so it never re-derives strategy on every review.
+You can now ask Runneth to read any ad the way a strategist would: what the hook is actually doing, why it's working or not, and what the next test worth running is. Drop a creative ID or a full test set and get a mechanism-level teardown with specific iteration recommendations. Every diagnostic reads the brand-audit context so the analysis is grounded in your actual strategy, not generic best practices.
 
 ## Try this now
 1. **Full deep dive on one creative**: `Deep dive on creative ID [creative-id].`
