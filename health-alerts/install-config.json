@@ -1,0 +1,105 @@
+{
+  "schema": "1.0",
+  "id": "health-alerts",
+  "version": "2.2.0",
+  "description": "Monitors all connected integrations and all active routines. Sends Slack alerts to the admin channel when integrations break, routines go overdue, dependency chains fail, or skill execution can't be confirmed. Configurable silence window, self-healing routine, and inline skill fix from alert replies.",
+  "installs": [
+    {
+      "file": "brain-seeds/health-config.json",
+      "dest": "/agent/brain/integration-health/health-config.json",
+      "if-not-exists": true,
+      "description": "Org settings: silence window, check interval, optional alert channel override"
+    },
+    {
+      "file": "brain-seeds/health-state.json",
+      "dest": "/agent/brain/integration-health/health-state.json",
+      "if-not-exists": true,
+      "description": "Integration health state file. Written after every check run."
+    },
+    {
+      "file": "brain-seeds/routine-health-state.json",
+      "dest": "/agent/brain/integration-health/routine-health-state.json",
+      "if-not-exists": true,
+      "description": "Routine health state file. Written after every check run."
+    },
+    {
+      "file": "brain-seeds/known-routines-registry.json",
+      "dest": "/agent/brain/integration-health/known-routines-registry.json",
+      "if-not-exists": true,
+      "description": "Baseline registry of known routines. Populated on first health check run. Used to detect silent reminder drops."
+    },
+    {
+      "file": "integration-health-check/SKILL.md",
+      "dest": "/agent/.agents/skills/integration-health-check/SKILL.md",
+      "if-not-exists": false,
+      "description": "Core health check skill. Covers integrations (5-layer checks) and routines (overdue, execution records, dependency chains). Sends Slack alerts with configurable silence window."
+    },
+    {
+      "file": "integration-onboarding/SKILL.md",
+      "dest": "/agent/.agents/skills/health-alerts-onboarding-patch/SKILL.md",
+      "if-not-exists": false,
+      "description": "Patch spec for integration-onboarding skill. Adds admin channel notification on every integration connection."
+    },
+    {
+      "file": "setup-health-alerts/SKILL.md",
+      "dest": "/agent/.agents/skills/setup-health-alerts/SKILL.md",
+      "if-not-exists": false,
+      "description": "Setup skill. Configures admin channel, silence window, timezone, GitHub repo. Audits installed skills for execution record support. Can be re-invoked any time."
+    }
+  ],
+  "customize": [
+    {
+      "token": "{{SILENCE_HOURS}}",
+      "description": "Hours to wait before sending a repeat alert for the same unresolved issue",
+      "required": false,
+      "default": "24"
+    },
+    {
+      "token": "{{CHECK_INTERVAL_MINUTES}}",
+      "description": "How often the health check routine runs, in minutes",
+      "required": false,
+      "default": "30"
+    },
+    {
+      "token": "{{TIMEZONE}}",
+      "description": "IANA timezone for the health check routine schedule. Collected from admin during setup.",
+      "required": false,
+      "default": "UTC"
+    },
+    {
+      "token": "{{GITHUB_REPO}}",
+      "description": "GitHub repo for L4/L5 health checks (owner/repo). Null skips repo-level checks.",
+      "required": false,
+      "default": "null"
+    }
+  ],
+  "post-install": [
+    {
+      "action": "skill-invoke",
+      "skill": "setup-health-alerts",
+      "name": "Configure health alerts",
+      "description": "Configures admin channel, silence window, timezone. Audits all installed skills for execution record support and offers to update missing ones. Starts the health check routine.",
+      "manual": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "2.2.0",
+      "date": "2026-05-21",
+      "type": "minor",
+      "notes": "Setup skill: full plain-language rewrite, routines-first framing, simplified admin tagging (tell not ask), setup only flags actionable issues not integration lists. Health check skill: Part D routine intent scan (daily, conservative self-resolution with Slack thread reply + web conversation link). All alert messages rewritten to plain language \u2014 no jargon, cause in plain language when known. Added use-case.json and marketing.md."
+    },
+    {
+      "version": "2.1.0",
+      "date": "2026-05-21",
+      "type": "minor",
+      "notes": "Setup skill: Step 0b backfills already-connected integrations on install. Question 1b resolves admin tagging from workspace-map.json, stored as admin_slack_ids array with channel membership check. Health check skill: Step B1b adds known-routines-registry for silent drop detection."
+    },
+    {
+      "version": "2.0.0",
+      "date": "2026-05-20",
+      "type": "major",
+      "notes": "Renamed from integration-health-alerts to health-alerts. Added routine health monitoring: overdue detection, execution record checks, output freshness validation, dependency chain tracking, unverifiable status with inline fix from Slack alerts. Retroactive skill audit at setup."
+    }
+  ]
+}
