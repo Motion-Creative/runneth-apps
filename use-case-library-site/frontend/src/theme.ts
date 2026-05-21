@@ -47,6 +47,35 @@ export const categoryAccents: Record<string, string> = {
 export const accent = (slug: string | undefined): string =>
   (slug && categoryAccents[slug]) || brand.lime
 
+const agentFoundationCardAccents = [brand.sky, brand.lime, brand.yellow] as const
+
+export const cardAccent = (category: string | undefined, slug: string): string => {
+  if (category !== 'agent-foundations') return accent(category)
+
+  const hash = [...slug].reduce((sum, char) => sum + char.charCodeAt(0), 0)
+  return agentFoundationCardAccents[hash % agentFoundationCardAccents.length]
+}
+
+const hexChannels = (hex: string): [number, number, number] | null => {
+  const normalized = hex.replace('#', '')
+  if (normalized.length !== 6) return null
+  return [0, 2, 4].map((i) => parseInt(normalized.slice(i, i + 2), 16)) as [number, number, number]
+}
+
+const toHex = ([r, g, b]: [number, number, number]): string =>
+  `#${[r, g, b].map((c) => Math.round(c).toString(16).padStart(2, '0')).join('')}`
+
+/** Darken a tile accent for multiply-blended card icons (keeps hue, reads on light washes). */
+export const accentIconColor = (accentHex: string, accentWeight = 0.38): string => {
+  const accent = hexChannels(accentHex)
+  const base = hexChannels(offBlack)
+  if (!accent || !base) return offBlack
+  const weight = Math.min(1, Math.max(0, accentWeight))
+  return toHex(
+    accent.map((channel, i) => channel * weight + base[i]! * (1 - weight)) as [number, number, number],
+  )
+}
+
 export const fonts = {
   sans: '"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
 } as const

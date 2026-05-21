@@ -3,33 +3,71 @@
   "slugs": [
     "authenticate-apps",
     "bootcamp",
-    "corpus-search",
-    "file-explorer",
     "plan-mode",
     "share-use-case",
-    "conversation-manager",
     "routine-storage-audit",
     "self-iteration-loop",
     "team-member-memory",
     "review-library",
-    "brief-qa",
-    "creative-qa",
-    "video-asset-search",
-    "video-qa",
+    "competitor-intel",
     "static-ad-gen",
     "brand-kit",
-    "csm-alerts",
     "landing-page-experiments",
     "landing-page-summary",
     "optimize-landing-page",
     "building-integrations",
     "integration-capabilities-library",
-    "meta-connect-use-case"
+    "add-roles-permissions",
+    "import-from-ai"
   ],
   "excluded": [
     {
       "slug": "ugc-creator-programme",
       "reason": "Source is a zip in the repo; not directly browseable. Restore in v2."
+    },
+    {
+      "slug": "corpus-search",
+      "reason": "App uses a SQLite backend; not a filesystem+HTML use case for the public library."
+    },
+    {
+      "slug": "file-explorer",
+      "reason": "App uses a SQLite backend; not a filesystem+HTML use case for the public library."
+    },
+    {
+      "slug": "conversation-manager",
+      "reason": "App reads the runtime conversations SQLite DB; not a filesystem+HTML use case for the public library."
+    },
+    {
+      "slug": "brief-qa",
+      "reason": "App uses a SQLite backend for rubric/score history; not a filesystem+HTML use case for the public library."
+    },
+    {
+      "slug": "creative-qa",
+      "reason": "App uses a SQLite backend; not a filesystem+HTML use case for the public library."
+    },
+    {
+      "slug": "video-asset-search",
+      "reason": "App uses a SQLite shots/clips DB written by a Python pipeline; not a filesystem+HTML use case for the public library."
+    },
+    {
+      "slug": "video-qa",
+      "reason": "App uses a SQLite backend; not a filesystem+HTML use case for the public library."
+    },
+    {
+      "slug": "meta-connect-use-case",
+      "reason": "Stateful OAuth app with a server backend (token + secret stored on disk); not a filesystem+HTML use case for the public library."
+    },
+    {
+      "slug": "csm-alerts",
+      "reason": "No folder exists in the repo for this slug; site silently drops it. Hide until restored."
+    },
+    {
+      "slug": "deploy-security-protocol",
+      "reason": "Renamed to add-roles-permissions."
+    },
+    {
+      "slug": "add-permissions",
+      "reason": "Renamed to add-roles-permissions."
     }
   ]
 }

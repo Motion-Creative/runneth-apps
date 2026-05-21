@@ -1,0 +1,8 @@
+{
+  "slug": "add-roles-permissions",
+  "display_title": "Add Roles + Permissions",
+  "pitch": "Knows who can do what",
+  "status": "experimental",
+  "category": "agent-foundations",
+  "github_path": "add-roles-permissions"
+}
