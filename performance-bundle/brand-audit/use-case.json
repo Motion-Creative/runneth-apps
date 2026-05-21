@@ -1,0 +1,8 @@
+{
+  "slug": "brand-audit",
+  "display_title": "Brand Audit",
+  "pitch": "The brand layer. Built once, refreshed weekly, read by everything downstream",
+  "status": "proven",
+  "category": "performance",
+  "github_path": "performance-bundle/brand-audit"
+}

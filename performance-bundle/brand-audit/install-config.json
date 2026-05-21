@@ -1,0 +1,115 @@
+{
+  "schema": "1.0",
+  "id": "brand-audit",
+  "version": "1.0.0",
+  "description": "Foundation + strategy layer of the creative-strategy framework. Runs brand-intake, product-catalog, review-audit, brand-relevant-keywords, competitor-analysis, and creative-strategy-engine to produce a durable per-workspace brand bundle that creative-deep-dive and weekly-performance-deck read as upstream context. Refreshes Monday mornings.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "installs": [
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/brand-audit/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Orchestrator skill — runs the six skills in order, writes the durable bundle, schedules Monday refresh, installs user.md snippet"
+    },
+    {
+      "from": "setup-brand-audit/SKILL.md",
+      "to": "/agent/.agents/skills/setup-brand-audit/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Setup skill — asks for brand site URL, review sources, competitors, ping channels, refresh schedule"
+    },
+    {
+      "from": "skills/brand-intake.md",
+      "to": "/agent/.agents/skills/brand-intake/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable — brand identity, value prop, audience, positioning"
+    },
+    {
+      "from": "skills/product-catalog.md",
+      "to": "/agent/.agents/skills/product-catalog/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable — products, benefits, claims, price points"
+    },
+    {
+      "from": "skills/review-audit.md",
+      "to": "/agent/.agents/skills/review-audit/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable — VOC across pain/desire/objection/comparison/use-case buckets"
+    },
+    {
+      "from": "skills/brand-relevant-keywords.md",
+      "to": "/agent/.agents/skills/brand-relevant-keywords/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable — search landscape and audience language"
+    },
+    {
+      "from": "skills/competitor-analysis.md",
+      "to": "/agent/.agents/skills/competitor-analysis/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable — competitor read with active-ad signal from motion inspo-creatives"
+    },
+    {
+      "from": "skills/creative-strategy-engine.md",
+      "to": "/agent/.agents/skills/creative-strategy-engine/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable — pain × persona × messaging-angle matrix across 5 awareness stages"
+    },
+    {
+      "from": "seed/_index.md",
+      "to": "/agent/brain/brand-audit/_index.md",
+      "on_exists": "skip",
+      "purpose": "Local routing index for saved brand bundles"
+    },
+    {
+      "appends_to": "/agent/INDEX.md",
+      "guard": "path '/agent/brain/brand-audit/' already present",
+      "purpose": "Global INDEX.md routing entry for the brand-audit library"
+    }
+  ],
+  "runtime_installs": [
+    {
+      "appends_to": "/agent/user.md",
+      "guard": "sentinel 'runneth-apps:brand-audit:read-before-creative v1' already present",
+      "trigger": "After the first successful brand-audit for any workspace, idempotent across subsequent runs",
+      "purpose": "Standing instruction so all creative work reads the workspace's brand bundle as upstream context — narrowly, not as a full re-read"
+    }
+  ],
+  "post_install": [
+    {
+      "action": "skill-invoke",
+      "skill": "setup-brand-audit",
+      "name": "Personalize for this workspace",
+      "description": "Walk the user through brand site URL, review sources, competitor list, and refresh channels",
+      "manual": false
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/brain/brand-audit/<workspace-slug>/brand-context.md",
+    "/agent/brain/brand-audit/<workspace-slug>/product-catalog.md",
+    "/agent/brain/brand-audit/<workspace-slug>/review-audit.md",
+    "/agent/brain/brand-audit/<workspace-slug>/keywords.md",
+    "/agent/brain/brand-audit/<workspace-slug>/competitor-analysis.md",
+    "/agent/brain/brand-audit/<workspace-slug>/strategy.md",
+    "/agent/brain/brand-audit/<workspace-slug>/_history/<archived-iso>/",
+    "/agent/brain/brand-audit/_config/<workspace-slug>.json"
+  ],
+  "upstream_dependencies": [],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-20",
+      "type": "major",
+      "changes": [
+        "Initial release",
+        "Six skills lifted from Alysha's creative-strategy framework (Foundation + Strategy layers)",
+        "Each skill installs standalone at /agent/.agents/skills/<skill-name>/SKILL.md so it's independently auto-discoverable",
+        "Orchestrator runs them in order and writes durable bundle under /agent/brain/brand-audit/<workspace-slug>/",
+        "Monday morning refresh routine baked in — lands before the Friday deck",
+        "user.md runtime install (runneth-apps:brand-audit:read-before-creative v1) so all creative work reads the bundle narrowly without re-running brand-audit"
+      ]
+    }
+  ]
+}

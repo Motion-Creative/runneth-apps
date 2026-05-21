@@ -1,0 +1,78 @@
+{
+  "schema": "1.0",
+  "id": "weekly-performance-deck",
+  "version": "1.0.0",
+  "description": "On-brand weekly performance deck published as dated app routes that accumulate over time. Reads the workspace's paid-strategy briefs and brand kit, runs creative-deep-dive on qualifying creatives, frames every slide against last week's deck so the narrative compounds, posts the share URL to configured Slack channels.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": ["paid-strategy-audit", "creative-deep-dive", "brand-kit"],
+    "recommended": []
+  },
+  "depends": [
+    "paid-strategy-audit",
+    "creative-deep-dive",
+    "brand-kit"
+  ],
+  "installs": [
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/weekly-performance-deck/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Deck skill — reads strategy briefs + brand kit + last week's snapshot, runs deep dives, renders dated HTML route, posts share URL to Slack"
+    },
+    {
+      "from": "seed/_index.md",
+      "to": "/agent/brain/paid-strategy/weekly-deck/_index.md",
+      "on_exists": "skip",
+      "purpose": "Local routing index for accumulated decks"
+    },
+    {
+      "appends_to": "/agent/INDEX.md",
+      "guard": "path '/agent/brain/paid-strategy/weekly-deck/' already present",
+      "purpose": "Global INDEX.md routing entry for the weekly-deck library"
+    }
+  ],
+  "post_install": [
+    {
+      "action": "app-create",
+      "name": "Create the deck app for this workspace",
+      "description": "Creates the sandbox app at /agent/apps/weekly-performance-deck-<workspace-slug>/ that hosts the dated routes",
+      "manual": false
+    },
+    {
+      "action": "app-build",
+      "name": "Build the empty deck app shell",
+      "description": "Initial build so the route base is live and reachable",
+      "manual": false
+    },
+    {
+      "action": "reminder-add",
+      "name": "Schedule the Friday deck",
+      "description": "every friday at 14:00 <workspace timezone> — generate and post the weekly deck. Resolved from /agent/.runtime/timezone at install time.",
+      "manual": false
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/apps/weekly-performance-deck-<workspace-slug>/routes/<YYYY-MM-DD>/...",
+    "/agent/brain/paid-strategy/weekly-deck/<workspace-slug>/<YYYY-MM-DD>--snapshot.json",
+    "/agent/brain/paid-strategy/weekly-deck/<workspace-slug>/_index.md"
+  ],
+  "upstream_dependencies": ["paid-strategy-audit", "creative-deep-dive", "brand-kit"],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-20",
+      "type": "major",
+      "changes": [
+        "Initial release",
+        "Single- and multi-channel deck layouts (merged-stages default, channel-separated-stages alternate)",
+        "Per-funnel-stage repeating block: stage overview → new launches & active tests → deep dives → recommendations",
+        "Dated routes that accumulate; previous Fridays remain at their original URLs",
+        "Reads last week's snapshot before drafting; classifies every item as stable/changed/new/resolved and frames slides accordingly",
+        "Composes creative-deep-dive outputs (single-creative and test-set modes)",
+        "Brand-styled rendering using brand-kit tokens over Motion design system shells",
+        "Slack post to configured channels with absolute share URL and optional user tags"
+      ]
+    }
+  ]
+}
