@@ -323,13 +323,18 @@ const ReviewItem = ({ review, slug }: { review: Review; slug: string }): JSX.Ele
   const onFlag = async (): Promise<void> => {
     setFlagState('sending')
     setFlagError(null)
-    const res = await flagReview(slug, review.id, reason.trim() || null)
-    if (res.ok) {
-      setFlagState('done')
-      setShowFlag(false)
-    } else {
+    try {
+      const res = await flagReview(slug, review.id, reason.trim() || null)
+      if (res.ok) {
+        setFlagState('done')
+        setShowFlag(false)
+      } else {
+        setFlagState('error')
+        setFlagError(res.message || 'Could not send report.')
+      }
+    } catch {
       setFlagState('error')
-      setFlagError(res.message || 'Could not send report.')
+      setFlagError('Could not send report.')
     }
   }
 
