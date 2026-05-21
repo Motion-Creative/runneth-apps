@@ -2,7 +2,7 @@
  * Runneth brand palette.
  *
  * Primary: Off Black (text + button fill). Neutrals: White / Silver / Keyline Silver.
- * Brand pops: Sky, Lime, Yellow. Used as category swatches and accent stripes.
+ * Brand pops: Sky, Lime, Yellow. Analysis: Lime. Used as category swatches and accent stripes.
  * Body color is always Off Black; brand pops live in pill swatches, tile washes,
  * and the hero gradient — never in body text.
  */
@@ -42,6 +42,7 @@ export const categoryAccents: Record<string, string> = {
   'creative-operations': brand.sky,
   'creative-production': brand.lime,
   'growth-cro': brand.yellow,
+  'analysis': brand.lime,
 }
 
 export const accent = (slug: string | undefined): string =>
