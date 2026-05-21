@@ -127,18 +127,29 @@ For each connected channel, pull the structural data. No narration needed.
 ```bash
 # Workspace metadata + own-brand context (helpful when present)
 motion workspaces                                                              # confirm workspace ID + name
-motion custom-conversion-metrics                                                # full list of custom conversions: IDs, names, archived flag
+motion meta custom-conversion-metrics                                           # full list of custom conversions: IDs, names, archived flag
 motion brand-context --data-query "strategy positioning customer audience product"
 
-# Account-wide creative pull, last 30d, FOR THE TARGET CHANNEL.
-# Channel filtering is done via the platform connection on the request; the
-# returned creatives include channel metadata on each one.
-motion creative-insights \
+# Account-wide creative pull, last 30d. Route per channel — flag shapes differ.
+
+# Meta:
+motion meta insights \
+  --workspace-id <workspace-id> \
   --date-range last_30d \
   --limit 1000 \
   --sort topSpend \
   --include-metrics \
   --group-by creative
+
+# TikTok:
+motion tiktok insights \
+  --workspace-id <workspace-id> \
+  --date-range last_30d \
+  --limit 1000 \
+  --sort-by spend \
+  --sort-direction desc \
+  --grain ads \
+  --include-metrics
 ```
 
 Do NOT call `motion workspace-goal` or `motion spend-threshold`. Those are platform-level settings that may not match the team's actual KPI per stage. Validated metric per stage comes from naming and behavior, not config.
@@ -159,7 +170,7 @@ For each campaign name, ad-set name, and ad name independently:
    - A **date**: `oct`, `2024-10`, `10-15`, `q4`, `wk42`, `H1`, ISO dates
    - A **structured token** in the `key:value` shape, treated as the highest-confidence form when present
 3. **Score each match by confidence.** Clean colon-token = high. Free-form word floating in a recognized vocabulary = medium. Near-match or single-letter abbreviations = low and flagged.
-4. **Cross-reference inferred optimization events** against `motion custom-conversion-metrics`. Skip archived conversions. Match against display names with fuzzy matching (case-insensitive, punctuation-stripped). Build:
+4. **Cross-reference inferred optimization events** against `motion meta custom-conversion-metrics`. Skip archived conversions. Match against display names with fuzzy matching (case-insensitive, punctuation-stripped). Build:
 
 ```json
 {
@@ -180,10 +191,12 @@ For each campaign name, ad-set name, and ad name independently:
 
 ### Step 2 — Pull validated-metric data per stage
 
-Re-pull `creative-insights` with the right `--chart-kpi` flags for the validated metrics inferred at Step 1a:
+Re-pull per channel with validated-metric KPI flags. Verify `--chart-kpi` flag support via `motion meta insights --help` / `motion tiktok insights --help` before first run:
 
 ```bash
-motion creative-insights \
+# Meta:
+motion meta insights \
+  --workspace-id <workspace-id> \
   --date-range last_30d \
   --limit 1000 \
   --sort topSpend \
@@ -194,6 +207,16 @@ motion creative-insights \
   --chart-kpi "<event-2-id>_count" \
   --chart-kpi "<event-2-id>_cost" \
   [...]
+
+# TikTok:
+motion tiktok insights \
+  --workspace-id <workspace-id> \
+  --date-range last_30d \
+  --limit 1000 \
+  --sort-by spend \
+  --sort-direction desc \
+  --grain ads \
+  --include-metrics
 ```
 
 Each creative's chart-kpi values live under `chartKpiMetrics[<field>].value` — not under `metrics`. Reading the wrong key returns zero.
