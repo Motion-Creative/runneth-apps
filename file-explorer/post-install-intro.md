@@ -6,9 +6,9 @@ You can now browse Runneth's brain like a folder on your laptop. Every file, eve
 ## Try this now
 1. **Open the explorer**: `Open file-explorer.`
    _You'll get back:_ the app opens with the live `/agent/` tree, click through to any folder.
-2. **Find a specific saved file**: navigate to `/agent/brain/` or `/agent/INDEX.md`.
-   _You'll get back:_ the contents rendered in-app; markdown shows formatted, JSON shows structured, edits save in place.
-3. **Spot stale files and dead routines**: open `/agent/brain/playbooks/routines/`.
+2. **Find a specific saved file**: `Show me what's in /agent/brain/ in the file explorer.`
+   _You'll get back:_ the brain folder opens in-app; markdown renders formatted, JSON renders structured, and edits save in place.
+3. **Spot stale routines**: `Open file-explorer and show me the routines folder.`
    _You'll get back:_ every routine spec file with last-modified dates so you can see which ones haven't been touched in months.
 
 ## Compounds with
