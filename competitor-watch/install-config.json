@@ -1,0 +1,89 @@
+{
+  "schema": "1.0",
+  "id": "competitor-watch",
+  "version": "1.0.0",
+  "description": "Weekly competitive intelligence scan. Tracks competitor ad strategies, spots messaging shifts and new bets, diffs against last week's baseline, and posts a delta report to Slack automatically every Monday.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "depends": [],
+  "customize": [
+    {
+      "token": "WORKSPACE_ID",
+      "description": "The Motion workspace ID for this sandbox. Found in workspace settings or resolved via motion workspace-goal.",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "token": "WORKSPACE_NAME",
+      "description": "Human-readable workspace or brand name. Used to namespace brain files and derive the workspace slug.",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "token": "WORKSPACE_SLUG",
+      "description": "URL-safe version of the workspace name — lowercase, hyphens for spaces. Derived at install time from WORKSPACE_NAME. Used as the folder name under /agent/brain/competitor-watch/.",
+      "required": true,
+      "fallback": null
+    }
+  ],
+  "installs": [
+    {
+      "from": "seed/watchlist.json",
+      "to": "/agent/brain/competitor-watch/{{WORKSPACE_SLUG}}/watchlist.json",
+      "on_exists": "skip",
+      "purpose": "Empty watchlist seed. Populated by setup-competitor-watch on first run."
+    },
+    {
+      "from": "seed/baselines/.gitkeep",
+      "to": "/agent/brain/competitor-watch/{{WORKSPACE_SLUG}}/baselines/.gitkeep",
+      "on_exists": "skip",
+      "purpose": "Creates the baselines directory. Baseline files are written here by each scan run."
+    },
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/competitor-watch/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Core competitor watch skill. Runs on schedule and on explicit trigger."
+    },
+    {
+      "from": "setup-competitor-watch/SKILL.md",
+      "to": "/agent/.agents/skills/setup-competitor-watch/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Setup and reconfiguration skill. Runs on first install; re-invokable any time."
+    }
+  ],
+  "post_install": [
+    {
+      "action": "skill-invoke",
+      "skill": "setup-competitor-watch",
+      "name": "Configure your competitor watchlist",
+      "description": "Walks through selecting competitors, resolving them in Motion's ad library, configuring Slack delivery, and scheduling the weekly routine.",
+      "manual": false
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/brain/competitor-watch/{{WORKSPACE_SLUG}}/watchlist.json",
+    "/agent/brain/competitor-watch/{{WORKSPACE_SLUG}}/baselines/{brand-slug}.json"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-20",
+      "type": "major",
+      "changes": [
+        "Initial release. Translated from motion-creative-plugin competitor-watch MCP skill.",
+        "Competitor watchlist stored as workspace-scoped brain seed instead of local ~/.claude/ files",
+        "MCP tool calls replaced with native motion CLI: inspo-creatives, inspo-context, search-brands, brand-context",
+        "Two-pass active portfolio pull (newestLaunchDate + oldestLaunchDate, merged and deduplicated)",
+        "Survival cohort classification: long-runners (60+d), survivors (15-59d), testing zone (7-14d), fresh tests (<7d)",
+        "Weekly delta computation against saved JSON baselines",
+        "Slack delivery via slack send CLI (teaser + full report in thread)",
+        "Setup skill handles watchlist configuration, Slack channel, and reminder scheduling",
+        "Post-install invokes setup-competitor-watch automatically"
+      ]
+    }
+  ]
+}
