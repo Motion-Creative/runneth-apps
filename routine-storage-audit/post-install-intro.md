@@ -12,4 +12,4 @@ Runneth can now inventory every routine in this sandbox and check it against the
    _You'll get back:_ a list of any 1:1 violations, plus the matching apps and which one should be the owner.
 
 ## Compounds with
-- **routine-planner:** The audit produces inputs; the planner re-authors a misplaced routine after you review the plan.
+- **file-explorer:** When the audit flags misplaced data, open the explorer to inspect the actual files before deciding how to migrate.
