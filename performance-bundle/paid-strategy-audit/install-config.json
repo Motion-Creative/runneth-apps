@@ -13,7 +13,7 @@
       "from": "SKILL.md",
       "to": "/agent/.agents/skills/paid-strategy-audit/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Main audit skill — channel detection, detective parsing, per-channel brief, alignment visualization, overall synthesis, drift routine, user.md install"
+      "purpose": "Main audit skill \u2014 channel detection, detective parsing, per-channel brief, alignment visualization, overall synthesis, drift routine, user.md install"
     },
     {
       "from": "setup-paid-strategy-audit/SKILL.md",
@@ -45,7 +45,7 @@
       "appends_to": "/agent/user.md",
       "guard": "sentinel 'runneth-apps:paid-strategy:read-before-performance v1' already present",
       "trigger": "After the first successful audit for any workspace, idempotent across subsequent runs",
-      "purpose": "Standing instruction so future performance questions auto-read the channel-specific brief and use its validated-metric mapping — overriding workspace-goal and spend-threshold from the system prompt"
+      "purpose": "Standing instruction so future performance questions auto-read the channel-specific brief and use its validated-metric mapping \u2014 overriding workspace-goal and spend-threshold from the system prompt"
     }
   ],
   "post_install": [
@@ -71,16 +71,7 @@
       "version": "1.0.1",
       "date": "2026-05-20",
       "type": "major",
-      "changes": [
-        "Initial release",
-        "Channel-agnostic — auto-detects Meta, TikTok, Pinterest, AppLovin, Snapchat, or any other connected ad platform",
-        "Auto-researches unknown channels and writes _channels/<channel>.md knowledge file before producing brief",
-        "Detective-mode naming parser replaces token-vocabulary assumptions; works on structured, underscore-separated, or free-form names",
-        "user.md runtime install (runneth-apps:paid-strategy:read-before-performance v1) overrides workspace-goal and spend-threshold from system prompt",
-        "Friday drift+ping routine baked into the skill, configurable channels via setup skill",
-        "Conditional overall-strategy.md synthesis only when 2+ channel briefs exist",
-        "Pre-seeded channel knowledge for Meta and TikTok"
-      ]
+      "notes": "Initial release. Channel-agnostic \u2014 auto-detects Meta, TikTok, Pinterest, AppLovin, Snapchat, or any other connected ad platform. Auto-researches unknown channels and writes _channels/<channel>.md knowledge file before producing the brief. Detective-mode naming parser replaces token-vocabulary assumptions and works on structured, underscore-separated, or free-form names. user.md runtime install (runneth-apps:paid-strategy:read-before-performance v1) overrides workspace-goal and spend-threshold from system prompt. Friday drift+ping routine baked in. Pre-seeded channel knowledge for Meta and TikTok."
     }
   ]
 }
