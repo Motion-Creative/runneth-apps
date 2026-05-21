@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "paid-strategy-audit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Channel-agnostic paid-strategy audit. Detects every connected ad platform, researches unknown ones, produces a per-channel strategy brief plus alignment-check visualization, optionally synthesizes a cross-channel overall brief, installs a user.md instruction that reads briefs before answering performance questions, and schedules a Friday drift+ping routine.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -68,7 +68,7 @@
   "upstream_dependencies": [],
   "changelog": [
     {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "date": "2026-05-20",
       "type": "major",
       "changes": [
