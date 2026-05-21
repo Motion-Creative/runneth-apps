@@ -193,18 +193,23 @@ const WriteReviewForm = ({
     if (!canSubmit) return
     setSubmitting(true)
     setError(null)
-    const res = await submitReview(slug, { name: name.trim(), stars, text: text.trim() })
-    if (res.ok) {
-      setSuccess(true)
-      setName('')
-      setStars(0)
-      setText('')
-      await onSubmitted()
-      window.setTimeout(() => setSuccess(false), 4000)
-    } else {
-      setError(res.message)
+    try {
+      const res = await submitReview(slug, { name: name.trim(), stars, text: text.trim() })
+      if (res.ok) {
+        setSuccess(true)
+        setName('')
+        setStars(0)
+        setText('')
+        await onSubmitted()
+        window.setTimeout(() => setSuccess(false), 4000)
+      } else {
+        setError(res.message)
+      }
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setSubmitting(false)
     }
-    setSubmitting(false)
   }
 
   return (
