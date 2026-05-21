@@ -25,7 +25,7 @@ triggers:
 
 # Competitor Intel Alerts — Weekly Competitive Intelligence
 
-Weekly competitive scan for brands tracked in the workspace watchlist. Reads the saved watchlist,
+Weekly competitive scan for brands tracked in the workspace inspo brands file. Reads the saved inspo brands file,
 fetches each competitor's full ad portfolio via `motion inspo-creatives`, runs survival analysis,
 diffs against last week's saved baseline, and posts a delta report to Slack.
 
@@ -38,7 +38,7 @@ against the previous baseline, reports what changed, and writes a new baseline.
 
 ---
 
-## Phase 1 — Load context and watchlist
+## Phase 1 — Load context and inspo brands
 
 ### 1a. Resolve workspace
 
@@ -47,15 +47,15 @@ Run `motion workspace-goal`. Capture the workspaceId. Use it for all subsequent 
 Derive a readable workspace slug for file paths: lowercase, hyphens for spaces, strip special chars.
 Store this as `WORKSPACE_SLUG` for all brain paths below.
 
-### 1b. Load watchlist
+### 1b. Load inspo brands
 
-Read `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/watchlist.json`.
+Read `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json`.
 
 If the file is missing or `brands` is empty, halt and invoke `setup-competitor-intel`:
-> "Your competitor watchlist isn't configured yet. Let me set that up first."
+> "Your competitor inspo brands file isn't configured yet. Let me set that up first."
 Then re-run from Phase 1b after setup completes.
 
-If the watchlist exists, extract the `brands` array. Each entry contains:
+If the file exists, extract the `brands` array. Each entry contains:
 ```json
 {
   "name": "Brand Name",
@@ -73,14 +73,14 @@ Used for competitive comparison framing ("they're messaging X, we message Y").
 
 ### 1d. Load baselines
 
-For each brand in the watchlist, look for:
+For each brand in the inspo brands file, look for:
 `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/{brand-slug}.json`
 
 Track which brands have an existing baseline (delta run) vs which are first runs (baseline-only).
 
 ### 1e. Load Slack config
 
-Read `slackChannelId` from `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/watchlist.json`.
+Read `slackChannelId` from `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json`.
 If missing, post the report as a thread reply and note that Slack delivery isn't configured.
 
 ---
@@ -231,7 +231,7 @@ Load `baselines/{brand-slug}.json`. Compare:
 
 ## Phase 5 — Own-brand self-benchmark
 
-Read `ownBrandId` from `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/watchlist.json`.
+Read `ownBrandId` from `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json`.
 
 If `ownBrandId` is null or missing, skip this phase and note in the report that own-brand
 comparison is unavailable. To enable it, re-run `setup-competitor-intel` — it will search
@@ -360,7 +360,7 @@ Rules:
 
 ### 7b. Post to Slack
 
-Read `slackChannelId` from the watchlist config. If present, post the teaser to the channel.
+Read `slackChannelId` from the inspo brands config. If present, post the teaser to the channel.
 Follow with the full report in a thread reply under the teaser.
 
 Before posting, apply the pre-post check: read what's already in the thread (if any), verify this
@@ -427,7 +427,7 @@ Preserve full active ad inventory (IDs + hooks) so the next week's delta can dif
 
 | Condition | Response |
 |-----------|----------|
-| Watchlist missing or empty | Invoke `setup-competitor-intel`, then retry |
+| `inspoBrands.json` missing or empty | Invoke `setup-competitor-intel`, then retry |
 | Brand not found in Motion | Notify in the report, skip that brand |
 | `motion inspo-creatives` returns 0 creatives | Note thin/no data, don't over-interpret, suggest checking brandId |
 | Brand context unavailable | Note it, proceed with ad data only |
