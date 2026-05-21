@@ -231,15 +231,18 @@ Load `baselines/{brand-slug}.json`. Compare:
 
 ## Phase 5 — Own-brand self-benchmark
 
-Pull own-brand active ads using the brandId from workspace brand context (if available):
+Read `ownBrandId` from `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/watchlist.json`.
+
+If `ownBrandId` is null or missing, skip this phase and note in the report that own-brand
+comparison is unavailable. To enable it, re-run `setup-competitor-intel` — it will search
+Motion's ad library for the workspace brand and store the ID.
+
+If `ownBrandId` is set, pull own-brand active ads:
 ```
 motion inspo-creatives --brand-id {ownBrandId} --status active --sort newestLaunchDate --limit 150
 motion inspo-creatives --brand-id {ownBrandId} --status active --sort oldestLaunchDate --limit 150
 ```
 Merge and deduplicate. Apply the same cohort classification and messaging analysis.
-
-If own-brand inspo data isn't available (no brand connected to the workspace), note this in the
-report and skip the comparison table.
 
 ---
 
