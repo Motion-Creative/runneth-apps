@@ -40,7 +40,7 @@ export const StarRating = ({
 }
 
 const Star = ({ size, fill }: { size: number; fill: number }): JSX.Element => {
-  const id = `star-clip-${Math.random().toString(36).slice(2, 8)}`
+  const id = useMemo(() => `star-clip-${Math.random().toString(36).slice(2, 8)}`, [])
   const path =
     'M12 2.5l2.95 5.98 6.6.96-4.78 4.66 1.13 6.58L12 17.6l-5.9 3.08 1.13-6.58L2.45 9.44l6.6-.96L12 2.5z'
   return (
