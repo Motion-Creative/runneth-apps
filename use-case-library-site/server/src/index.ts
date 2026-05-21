@@ -203,6 +203,8 @@ server.post('/api/refresh', async (request, reply) => {
     return { error: 'rate_limited', retry_after_ms: 30_000 - (now - last) }
   }
   lastRefreshByIp.set(ip, now)
+  // Prune stale entries to keep the Map bounded.
+  for (const [k, t] of lastRefreshByIp) if (now - t > 60_000) lastRefreshByIp.delete(k)
   clearCache()
   return { ok: true, refreshed_at: new Date().toISOString() }
 })
