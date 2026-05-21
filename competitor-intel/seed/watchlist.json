@@ -7,5 +7,6 @@
   "scheduleDay": "monday",
   "scheduleTime": "09:00",
   "reminderId": null,
+  "ownBrandId": null,
   "brands": []
 }
