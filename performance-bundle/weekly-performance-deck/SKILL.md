@@ -40,7 +40,7 @@ In this order:
 1. **The workspace's paid-strategy briefs.** Every `<channel>-strategy.md` under `/agent/brain/paid-strategy/<channel>/<workspace-slug>/`. If 2+ channels, also `/agent/brain/paid-strategy/overall-strategy.md`.
 2. **The brand kit.** `/agent/brain/brand-kit/<workspace-slug>--brand-kit.md`. If absent, invoke `brand-kit` for the workspace first.
 3. **Last week's snapshot.** `/agent/brain/paid-strategy/weekly-deck/<workspace-slug>/<prior-friday>--snapshot.json`. If absent (first run), the deck flags itself as the pilot.
-4. **Current week's data.** Pull `creative-insights` for the last 7 days per channel using the validated metrics from the brief.
+4. **Current week's data.** Pull per channel — `motion meta insights` for Meta or `motion tiktok insights` for TikTok, both with `--date-range last_7d`, using the validated metrics from the brief.
 5. **Workspace config.** `/agent/brain/paid-strategy/_config/<workspace-slug>.json` for ping channels and excluded campaigns.
 
 ---
