@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "health-alerts",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Monitors all connected integrations and all active routines. Sends Slack alerts to the admin channel when integrations break, routines go overdue, dependency chains fail, or skill execution can't be confirmed. Configurable silence window, self-healing routine, and inline skill fix from alert replies.",
   "installs": [
     {
@@ -80,14 +80,26 @@
       "name": "Configure health alerts",
       "description": "Configures admin channel, silence window, timezone. Audits all installed skills for execution record support and offers to update missing ones. Starts the health check routine.",
       "manual": false
+    },
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ],
   "changelog": [
     {
+      "version": "2.2.1",
+      "date": "2026-05-22",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
+    {
       "version": "2.2.0",
       "date": "2026-05-21",
       "type": "minor",
-      "notes": "Setup skill: full plain-language rewrite, routines-first framing, simplified admin tagging (tell not ask), setup only flags actionable issues not integration lists. Health check skill: Part D routine intent scan (daily, conservative self-resolution with Slack thread reply + web conversation link). All alert messages rewritten to plain language \u2014 no jargon, cause in plain language when known. Added use-case.json and marketing.md."
+      "notes": "Setup skill: full plain-language rewrite, routines-first framing, simplified admin tagging (tell not ask), setup only flags actionable issues not integration lists. Health check skill: Part D routine intent scan (daily, conservative self-resolution with Slack thread reply + web conversation link). All alert messages rewritten to plain language — no jargon, cause in plain language when known. Added use-case.json and marketing.md."
     },
     {
       "version": "2.1.0",

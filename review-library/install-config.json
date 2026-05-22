@@ -1,0 +1,52 @@
+{
+  "schema": "1.0",
+  "id": "review-library",
+  "version": "1.0.1",
+  "description": "Pulls customer reviews from any REST API, scores and tags every review for creative strategy value, and writes them as structured markdown files in the brain. Field paths, auth headers, and pagination configured at runtime.",
+  "requires": {
+    "runtime": "any Runneth sandbox; Python 3 available",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "customize": {
+    "BRAIN_PATH": {
+      "description": "Folder under /agent/brain/ where review markdown files land.",
+      "required": false,
+      "default": "/agent/brain/reviews/"
+    }
+  },
+  "installs": [
+    {
+      "file": "SKILL.md",
+      "destination": "/agent/.agents/skills/review-library/SKILL.md",
+      "on-exists": "overwrite"
+    },
+    {
+      "file": "scripts/process_reviews.py",
+      "destination": "/agent/.agents/skills/review-library/scripts/process_reviews.py",
+      "on-exists": "overwrite"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-05-21",
+      "type": "major",
+      "notes": "Initial install-config. Skill files now installable via the standard protocol."
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
+    }
+  ]
+}

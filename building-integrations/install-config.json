@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "building-integrations",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Context-aware integration intelligence: lightweight or full deep dive based on who is setting it up, type-specific protocols for five integration categories, proactive quirk solving, and a Python sync script + named SQL query library instead of a compiled CLI.",
   "installs": [
     {
@@ -46,6 +46,12 @@
   ],
   "changelog": [
     {
+      "version": "3.1.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
+    {
       "version": "3.1.0",
       "date": "2026-05-12",
       "type": "minor",
@@ -74,6 +80,14 @@
       "date": "2026-05-11",
       "type": "major",
       "notes": "Initial release. Three-stage connection flow (onboarding + activation + context sweep), CLI factory with quirks and usage feedback, three-layer retrieval model, never-twice quirks guarantee."
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ]
 }

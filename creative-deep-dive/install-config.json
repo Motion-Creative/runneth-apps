@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "creative-deep-dive",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Orchestrator + 9 standalone diagnostic skills (Execution + Diagnostic + Standards layers of the creative-strategy framework). Each skill is independently callable. The orchestrator runs the full diagnostic on one creative or every creative in a test set, reading the workspace's brand-audit bundle for upstream strategic context.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -99,6 +99,12 @@
   ],
   "changelog": [
     {
+      "version": "1.1.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
+    {
       "version": "1.1.0",
       "date": "2026-05-20",
       "type": "minor",
@@ -109,6 +115,14 @@
       "date": "2026-05-20",
       "type": "major",
       "notes": "Foundation and Strategy layers extracted to brand-audit use case. Nine underlying skills now install as independent top-level skills, each independently callable. Orchestrator reads brand-audit/strategy.md for Strategic Layer rather than re-deriving. Strategy-cell match (validated / new test / drift) added to per-creative output frontmatter. Initial release of the 15-skill stack packaged from Alysha's uploaded creative-strategy framework, with orchestrator SKILL.md supporting both single-creative and test-set run modes."
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ]
 }

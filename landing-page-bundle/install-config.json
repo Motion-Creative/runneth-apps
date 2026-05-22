@@ -1,0 +1,62 @@
+{
+  "schema": "1.0",
+  "id": "landing-page-bundle",
+  "version": "1.0.1",
+  "description": "Bundle that installs the four landing-page use cases in dependency order: landing-page-summary (upstream evidence), brand-kit, optimize-landing-page, and landing-page-experiments. After all four install, a bundle-level intro ties them together.",
+  "requires": {
+    "runtime": "any Runneth sandbox; Playwright auto-installed by landing-page-summary on first use",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "installs": [],
+  "post-install": [
+    {
+      "action": "use-case-install",
+      "slug": "landing-page-summary",
+      "name": "Install landing-page-summary",
+      "description": "Upstream evidence layer; runs first because every other landing-page skill calls it fresh.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "brand-kit",
+      "name": "Install brand-kit",
+      "description": "Brand extraction. Reads landing-page-summary output as input.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "optimize-landing-page",
+      "name": "Install optimize-landing-page",
+      "description": "CRO audit. Reads landing-page-summary output and brand-kit if present.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "landing-page-experiments",
+      "name": "Install landing-page-experiments",
+      "description": "Scored A/B test backlog. Reads all three upstream outputs.",
+      "manual": false
+    },
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-05-21",
+      "type": "major",
+      "notes": "Initial install-config for the bundle parent. Installs the four landing-page sub-use-cases in dependency order."
+    }
+  ]
+}

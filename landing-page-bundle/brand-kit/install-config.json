@@ -1,13 +1,18 @@
 {
   "name": "brand-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "kind": "skill",
   "description": "Complete brand kit builder. Computed DOM extraction, brand-styled HTML deliverable. After first build, installs a user.md usage instruction so future branded outputs auto-consult the brand-kit library.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
-    "recommended": ["landing-page-summary"],
-    "bootstrap": ["playwright", "chromium"]
+    "recommended": [
+      "landing-page-summary"
+    ],
+    "bootstrap": [
+      "playwright",
+      "chromium"
+    ]
   },
   "installs": [
     {
@@ -47,8 +52,16 @@
     "/agent/brain/brand-kit/_history/<slug>/<archived-iso>.md",
     "./artifacts/<slug>--brand-kit.html"
   ],
-  "upstream_dependencies": ["landing-page-summary"],
+  "upstream_dependencies": [
+    "landing-page-summary"
+  ],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-13",
@@ -63,6 +76,14 @@
         "Updates both local _index.md and global /agent/INDEX.md on every durable save",
         "Cross-skill dependency: always invokes landing-page-summary fresh, never reads a saved summary directly"
       ]
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ]
 }

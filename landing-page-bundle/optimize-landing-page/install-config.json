@@ -1,12 +1,14 @@
 {
   "name": "optimize-landing-page",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "kind": "skill",
   "description": "8-layer CRO audit of a landing page. Always re-fetches a fresh landing-page-summary. Returns top 3 prioritized fixes with verbatim current->replace prescriptions plus an A/B test queue.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
-    "recommended": ["landing-page-summary"],
+    "recommended": [
+      "landing-page-summary"
+    ],
     "bootstrap": []
   },
   "installs": [
@@ -27,8 +29,16 @@
     "/agent/brain/cro-audits/<slug>--<domain>/<YYYY-MM-DD>.md",
     "./artifacts/cro-audit.<host>.<date>.md"
   ],
-  "upstream_dependencies": ["landing-page-summary"],
+  "upstream_dependencies": [
+    "landing-page-summary"
+  ],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-13",
@@ -40,6 +50,14 @@
         "Updates both local _index.md and global /agent/INDEX.md",
         "Fallback to WebFetch when landing-page-summary is not installed"
       ]
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ]
 }

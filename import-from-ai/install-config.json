@@ -1,9 +1,11 @@
 {
   "schema": "1.0",
   "id": "import-from-ai",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Pull saved memories, custom instructions, projects, and recurring preferences out of ChatGPT, Claude, or Gemini in one paste. Behavioral preferences (tone, voice, format) append to the user's profile so they load every session. Contextual content (projects, memories, decisions) lands in imports and surfaces via INDEX when relevant. Raises to org or user.md are explicit, never automatic.",
-  "requires": ["add-roles-permissions"],
+  "requires": [
+    "add-roles-permissions"
+  ],
   "customize": [
     {
       "token": "{{IMPORTS_ROOT}}",
@@ -57,10 +59,24 @@
   ],
   "changelog": [
     {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
+    {
       "version": "1.0.0",
       "date": "2026-05-20",
       "type": "major",
       "notes": "Initial release. Single-shot extraction prompts for ChatGPT, Claude, and Gemini. Inline triage assigns each item a bucket (behavioral or contextual): behavioral items auto-append to the user's profile so they load every session; contextual items live in imports and surface via INDEX. Raises to org or user.md are explicit. Read-only HTML review with chat-based approval grammar."
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ]
 }

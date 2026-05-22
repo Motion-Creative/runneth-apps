@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "corpus-search",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Hybrid retrieval CLI for any folder of markdown files. SQLite + sqlite-vec + FTS5 under the hood, OpenAI text-embedding-3 for vectors, role-aware filters, sub-second queries. Index conversation transcripts, video scene summaries, research notes, briefs, anything markdown-shaped, and search by meaning rather than keywords.",
   "customize": [],
   "installs": [
@@ -93,15 +93,22 @@
     }
   ],
   "post-install": [
-    "INSTALLER PROTOCOL \u2014 follow each step in order. Do not declare the install done until every step is resolved or explicitly waived by the user. SKILL.md has the full walkthrough; the steps below are the contract.",
+    "INSTALLER PROTOCOL — follow each step in order. Do not declare the install done until every step is resolved or explicitly waived by the user. SKILL.md has the full walkthrough; the steps below are the contract.",
     "1. Run `bash /agent/tools/corpus-search/install.sh`. It vendors sqlite-vec, applies the schema, probes OPENAI_API_KEY, and prints an INSTALL PROTOCOL checklist with [done] and [TODO] lines. Read every TODO; each one tells you exactly what to do next.",
     "2. If the checklist says OPENAI_API_KEY is NOT reachable, request it via the secret-input widget (allowed_hosts: api.openai.com). Do not paste the value into chat. In Motion's primary workspaces this is pre-provisioned and will already show [done].",
     "3. ASK THE USER (in chat): 'Which folders should I keep indexed? Tell me the path of each folder, and what kind of content is in each (e.g. video-summary, brief, gong-call, note, report).' Then edit /agent/tools/corpus-search/sources.json with their real entries (set enabled: true) and run `bash /agent/tools/corpus-search/corpus-search.sh refresh` for the initial backfill. Report the results.",
     "4. ASK THE USER (in chat): 'How often should I refresh the index? Default is daily at 8:00 in your timezone, but I can do hourly, weekdays-only, weekly, or anything else.' Run `reminder list` first to avoid duplicates, then `reminder add` once with text along the lines of: 'Every day at 8:00 <user-tz>, run \"bash /agent/tools/corpus-search/corpus-search.sh refresh\". If chunks_inserted_total > 0 in the JSON output, post a one-line summary in this conversation. Otherwise post nothing.'",
     "5. Add a corpus-search row to /agent/INDEX.md so future chats can find the tool. The behavior-snippet is auto-injected into /agent/user.md so the agent in every conversation in this workspace knows when to reach for it.",
-    "6. Re-run install.sh and confirm every TODO has flipped to [done]. Tell the user the install is complete and what they can search now."
+    "6. Re-run install.sh and confirm every TODO has flipped to [done]. Tell the user the install is complete and what they can search now.",
+    "Read post-install-intro.md from this use case folder and surface its sections to the user as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox."
   ],
   "changelog": [
+    {
+      "version": "1.1.2",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
     {
       "version": "1.1.1",
       "date": "2026-05-09",

@@ -1,0 +1,82 @@
+{
+  "schema": "1.0",
+  "id": "video-qa",
+  "version": "1.0.1",
+  "description": "Video review app with an AI QA judge training loop. Runneth reviews uploaded videos with timestamp-anchored feedback; accepts and rejects train a personal QA judge over time.",
+  "requires": {
+    "runtime": "any Runneth sandbox; Node 22 and Python 3",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "installs": [
+    {
+      "file": "server",
+      "destination": "/agent/apps/video-qa/server",
+      "type": "folder-copy",
+      "on-exists": "overwrite"
+    },
+    {
+      "file": "frontend",
+      "destination": "/agent/apps/video-qa/frontend",
+      "type": "folder-copy",
+      "on-exists": "overwrite"
+    },
+    {
+      "file": "buildeth.app.json",
+      "destination": "/agent/apps/video-qa/buildeth.app.json",
+      "on-exists": "overwrite"
+    },
+    {
+      "file": "brain-template",
+      "destination": "/agent/brain/video-qa/",
+      "type": "folder-copy",
+      "on-exists": "skip"
+    }
+  ],
+  "post-install": [
+    {
+      "action": "app-create",
+      "name": "Create the video-qa app",
+      "description": "Registers the video-qa app container.",
+      "manual": false
+    },
+    {
+      "action": "app-build",
+      "name": "Build video-qa",
+      "description": "Installs dependencies and compiles server + frontend.",
+      "manual": false
+    },
+    {
+      "action": "app-verify",
+      "name": "Verify video-qa",
+      "description": "Confirms the build artifacts are present and the app is openable.",
+      "manual": false
+    },
+    {
+      "action": "app-url",
+      "name": "Surface the video-qa URL",
+      "description": "Returns the live route for the video-qa app.",
+      "manual": false
+    },
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-05-21",
+      "type": "major",
+      "notes": "Initial install-config."
+    }
+  ]
+}

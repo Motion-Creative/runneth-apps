@@ -1,9 +1,11 @@
 {
   "schema": "1.0",
   "id": "update-and-merge",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Smart merge layer for upstream use-case updates. When use-case-sync finds an installed use-case with a new repo version, this skill enumerates every file the use-case installs (user.md snippets, skill files, scripts, configs, brain templates) and does a three-way merge per file (local vs ancestor vs upstream). Clean changes auto-apply silently. Real conflicts with local customization trigger plan mode and a consolidated admin notification. Org-agnostic — reads notification config from /agent/brain/permissions/config.json, degrades to file-only mode when Slack is not connected.",
-  "depends": ["use-case-sync"],
+  "depends": [
+    "use-case-sync"
+  ],
   "customize": [],
   "installs": [
     {
@@ -31,9 +33,16 @@
     "4. Run the skill's setup mode to configure conflict notifications. Walk the admin through: (a) is Slack connected? If yes, ask them to pick a channel from `slack memberships list` and write it to /agent/brain/permissions/config.json under admin_slack_channel. (b) If Slack is not connected, proactively suggest connecting so they actually see conflicts in real time. (c) If they decline Slack entirely, confirm file-only mode in plain language.",
     "5. Verify OPENAI_API_KEY is reachable for the user.md snippet semantic conflict-check step. If not, request via secret-input widget scoped to api.openai.com. In most Motion workspaces this is pre-provisioned.",
     "6. Add an update-and-merge row to /agent/INDEX.md if maintained in this sandbox. The behavior-snippet has been auto-injected so the conversation-level agent already knows about the routine.",
-    "7. Confirm to the admin in plain language: 'You're set up. From now on: each morning at 9am, I'll check Motion-Creative/runneth-apps for updates to your installed use-cases. If something is safe to take, I'll quietly bring it in. If there's an actual conflict with changes your team has made, you'll get a writeup and three options to choose from — just reply in plain language.'"
+    "7. Confirm to the admin in plain language: 'You're set up. From now on: each morning at 9am, I'll check Motion-Creative/runneth-apps for updates to your installed use-cases. If something is safe to take, I'll quietly bring it in. If there's an actual conflict with changes your team has made, you'll get a writeup and three options to choose from — just reply in plain language.'",
+    "Read post-install-intro.md from this use case folder and surface its sections to the user as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox."
   ],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-19",

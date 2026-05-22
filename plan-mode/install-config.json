@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "plan-mode",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Hard rule that fires before any skill, routine, app, or standing instruction is built. Runneth asks 2-4 clarifying questions in chat, writes a plan file, delivers it as a link widget, and waits for approval before touching anything.",
   "installs": [
     {
@@ -12,6 +12,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.2.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
     {
       "version": "1.2.0",
       "date": "2026-05-13",
@@ -29,6 +35,14 @@
       "date": "2026-05-12",
       "type": "major",
       "notes": "Initial release. Plan file + questions before any skill/routine/app/instruction build. Split from self-iteration-loop use case."
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ]
 }

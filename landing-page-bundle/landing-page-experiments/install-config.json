@@ -1,12 +1,16 @@
 {
   "name": "landing-page-experiments",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "kind": "skill",
   "description": "A/B test backlog generator for landing pages. Scored 10-20 test prioritization grouped by element and hypothesis type. Always fetches fresh LP summary. Reads prior CRO audits to avoid suggesting fixes already shipped. Reads brand kit so variant copy stays on-brand.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
-    "recommended": ["landing-page-summary", "brand-kit", "optimize-landing-page"],
+    "recommended": [
+      "landing-page-summary",
+      "brand-kit",
+      "optimize-landing-page"
+    ],
     "bootstrap": []
   },
   "installs": [
@@ -32,9 +36,19 @@
     "/agent/brain/experiments/<slug>--<domain>/<YYYY-MM-DD>.md",
     "./artifacts/experiments.<host>.<date>.md"
   ],
-  "upstream_dependencies": ["landing-page-summary", "brand-kit", "optimize-landing-page"],
+  "upstream_dependencies": [
+    "landing-page-summary",
+    "brand-kit",
+    "optimize-landing-page"
+  ],
   "routines": [],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-13",
@@ -50,6 +64,14 @@
         "Single-line /agent/INDEX.md format per Runneth index rules",
         "No recurring routine; LP weekly refresh routine flags backlogs whose pages changed materially"
       ]
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ]
 }

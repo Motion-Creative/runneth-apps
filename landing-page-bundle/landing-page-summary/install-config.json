@@ -1,12 +1,15 @@
 {
   "name": "landing-page-summary",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "kind": "skill",
   "description": "Recreation-quality landing page summarizer. Headless Playwright browser, 17-section markdown spec, in-system changelog, always re-fetches by default.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
-    "bootstrap": ["playwright", "chromium"]
+    "bootstrap": [
+      "playwright",
+      "chromium"
+    ]
   },
   "installs": [
     {
@@ -49,8 +52,17 @@
     }
   ],
   "data_contract": "DATA-CONTRACT.md",
-  "downstream_consumers": ["brand-kit", "optimize-landing-page"],
+  "downstream_consumers": [
+    "brand-kit",
+    "optimize-landing-page"
+  ],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-05-21",
+      "type": "patch",
+      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
+    },
     {
       "version": "1.0.0",
       "date": "2026-05-13",
@@ -64,6 +76,14 @@
         "Updates both local _index.md and global /agent/INDEX.md on every durable save",
         "Phase 6: offers a weekly LP library refresh routine after the first successful summary. The routine is a self-closing loop with seven phases: discover, diff, prune history, retire dead URLs, index hygiene, cross-skill drift flags, compact report. Sentinel-guarded by reminder title. Material-change criteria are sharply defined (hero headline, primary CTA, pricing, form fields, page intent); noise is not flagged. History pruning is bounded by meaningful events, not elapsed time."
       ]
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ]
 }
