@@ -1,4 +1,4 @@
-# Runneth Health Alerts
+# Health Alerts
 
 Know when an integration breaks or a routine stops working — before either silently derails your team's work.
 
@@ -47,7 +47,7 @@ Three per issue, for both integrations and routines:
    - Audits all installed skills for execution record support, offers to update any missing
    - Starts the health check routine
 
-Re-run setup any time: say "set up runneth health alerts" or "reconfigure runneth health."
+Re-run setup any time: say "set up health alerts" or "reconfigure runneth health."
 
 ---
 
@@ -125,5 +125,5 @@ The admin channel receives all alerts — integration failures, routine issues, 
 
 | Version | Date | Notes |
 |---|---|---|
-| 2.0.0 | 2026-05-20 | Renamed to runneth-health-alerts. Added routine health monitoring: overdue detection, execution records, dependency chains, unverifiable status with inline fix. Retroactive skill audit at setup. |
+| 2.0.0 | 2026-05-20 | Renamed to health-alerts. Added routine health monitoring: overdue detection, execution records, dependency chains, unverifiable status with inline fix. Retroactive skill audit at setup. |
 | 1.0.0 | 2026-05-20 | Initial release as integration-health-alerts. Integration health monitoring only. |

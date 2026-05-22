@@ -1,4 +1,4 @@
-# Runneth health alerts
+# Health alerts
 
 ## What just opened up
 Runneth now watches every connected integration and every active routine in this sandbox. When an integration breaks, a token expires, a routine goes overdue, an execution fails, or a dependency chain snaps, it sends a single alert to your configured Slack channel. One follow-up after your silence window if unresolved. A confirmation when things recover.
