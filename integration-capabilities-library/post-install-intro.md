@@ -13,4 +13,4 @@ Runneth always has an accurate, sourced reference for what every connected integ
 
 ## Compounds with
 - **building-integrations:** The deep-dive flow writes new capability files into this library; the library keeps them fresh.
-- **runneth-health-alerts:** If a sync fails or scopes get revoked, health alerts catch it.
+- **health-alerts:** If a sync fails or scopes get revoked, health alerts catch it.
