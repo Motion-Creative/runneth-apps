@@ -13,4 +13,4 @@ You can now stage and publish ads to Meta directly from chat. The connection aut
 
 ## Compounds with
 - **static-ad-gen:** Generated ads can stage straight into Meta with one follow-up prompt.
-- **runneth-health-alerts:** If the Meta token expires or scopes change, you'll see it in the alert channel before launch day.
+- **health-alerts:** If the Meta token expires or scopes change, you'll see it in the alert channel before launch day.
