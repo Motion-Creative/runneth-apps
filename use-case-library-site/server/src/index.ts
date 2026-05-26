@@ -9,6 +9,7 @@
  *   GET  /api/reviews/:slug                   (list reviews + aggregate)
  *   POST /api/reviews/:slug                   (submit review)
  *   POST /api/reviews/:slug/:id/flag          (flag a review → emails support)
+ *   GET  /one-pager                           (customer-facing capabilities one-pager, standalone HTML)
  *   everything else  → static frontend from ./public/, with SPA fallback to index.html
  *
  * Env:
@@ -21,6 +22,7 @@
  *   FLAG_FROM_EMAIL                  — flag sender (default onboarding@resend.dev)
  *   IP_HASH_SECRET                   — server-side salt for hashing IPs (rate-limit cohort key)
  */
+import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -43,6 +45,10 @@ import { SLUG_RE, hashIp, validateFlag, validateReview } from './reviews.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const PUBLIC_DIR = resolve(__dirname, '..', 'public')
+
+// Standalone marketing pages bundled with the server (copied from src/ on build).
+// Read once at startup so requests are served from memory.
+const ONE_PAGER_HTML = readFileSync(resolve(__dirname, 'one-pager.html'), 'utf-8')
 
 const server = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' } })
 
@@ -207,6 +213,19 @@ server.post('/api/refresh', async (request, reply) => {
   for (const [k, t] of lastRefreshByIp) if (now - t > 60_000) lastRefreshByIp.delete(k)
   clearCache()
   return { ok: true, refreshed_at: new Date().toISOString() }
+})
+
+// Standalone marketing pages. Registered before the static handler so they
+// resolve cleanly with or without a trailing slash.
+server.get('/one-pager', async (_, reply) => {
+  reply.header('content-type', 'text/html; charset=utf-8')
+  reply.header('cache-control', 'public, max-age=300')
+  return ONE_PAGER_HTML
+})
+server.get('/one-pager/', async (_, reply) => {
+  reply.header('content-type', 'text/html; charset=utf-8')
+  reply.header('cache-control', 'public, max-age=300')
+  return ONE_PAGER_HTML
 })
 
 // Static frontend.
