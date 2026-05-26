@@ -42,7 +42,7 @@ COPY --from=builder /app/bundle ./
 RUN mkdir -p /data
 
 # Smoke check that the runtime layout is correct before container starts taking traffic.
-RUN node -e "require('node:fs').accessSync('./dist/index.js'); require('node:fs').accessSync('./public/index.html')"
+RUN node -e "require('node:fs').accessSync('./dist/index.js'); require('node:fs').accessSync('./dist/one-pager.html'); require('node:fs').accessSync('./public/index.html')"
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD wget -qO- "http://127.0.0.1:${PORT}/api/health" >/dev/null || exit 1

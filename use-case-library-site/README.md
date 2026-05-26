@@ -56,6 +56,7 @@ pnpm start
 
 # Server listens on http://localhost:3000
 #   GET  /                       static SPA
+#   GET  /one-pager              customer-facing capabilities one-pager (standalone HTML, source: server/src/one-pager.html)
 #   GET  /api/health             { ok, cache: { size, ttlMs, ref } }
 #   GET  /api/catalog            assembled catalog
 #   GET  /api/use-case/<slug>    detail
