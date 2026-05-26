@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "import-from-ai",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Pull saved memories, custom instructions, projects, and recurring preferences out of ChatGPT, Claude, or Gemini in one paste. Behavioral preferences (tone, voice, format) append to the user's profile so they load every session. Contextual content (projects, memories, decisions) lands in imports and surfaces via INDEX when relevant. Raises to org or user.md are explicit, never automatic.",
   "requires": [
     "add-roles-permissions"
@@ -59,6 +59,12 @@
   ],
   "changelog": [
     {
+      "version": "1.0.2",
+      "date": "2026-05-26",
+      "type": "patch",
+      "notes": "Convert post-install intro from passive nudge into an active extraction-flow trigger. Install now closes by asking which AI the user is importing from (ChatGPT, Claude, or Gemini); answering enters SKILL.md Phase 1 immediately and hands over the matching extraction prompt with paste-and-upload instructions. Removes the 'Try this now' list since the same path is now reachable in one answer. Closes the gap where users were installing the skill but never returning to trigger the flow."
+    },
+    {
       "version": "1.0.1",
       "date": "2026-05-21",
       "type": "patch",
@@ -76,7 +82,7 @@
       "action": "show-intro",
       "name": "Introduce the new capability",
       "file": "post-install-intro.md",
-      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Compounds with' only when present and at least one named use case is installed in the sandbox, then '## Start now' as the final line \u2014 verbatim \u2014 including the provider question. Do not rephrase the question or skip it. If the user's next message names a provider (ChatGPT, Claude, or Gemini), enter SKILL.md Phase 1 immediately for that provider and hand over the matching prompt from prompts/<provider>.md with paste-and-upload instructions. If the user says skip or moves on, leave the import dormant \u2014 the behavior snippet will pick it up when they trigger it later. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ]
 }
