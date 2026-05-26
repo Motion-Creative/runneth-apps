@@ -75,6 +75,23 @@
     .cta-btn { display: inline-block; background: var(--gray-12); color: white; padding: 14px 30px; border-radius: 100px; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; text-decoration: none; transition: opacity 0.15s; }
     .cta-btn:hover { opacity: 0.82; }
     .cta-btn-green { background: var(--green); color: var(--gray-12); }
+    .cta-btn-slack { background: #4A154B; color: white; }
+    /* HERO EVENT CTA */
+    .hero-event { display: inline-flex; align-items: center; gap: 10px; margin-top: 32px; background: rgba(255,255,255,0.07); border: 1px solid rgba(193,241,75,0.4); color: white; padding: 10px 20px; border-radius: 100px; font-size: 14px; font-weight: 500; letter-spacing: -0.005em; text-decoration: none; transition: background 0.15s, border-color 0.15s; }
+    .hero-event:hover { background: rgba(193,241,75,0.10); border-color: rgba(193,241,75,0.7); }
+    .hero-event-emoji { font-size: 16px; }
+    .hero-event-accent { color: var(--green); font-weight: 600; }
+    /* SLACK USE SECTION */
+    .slack-use { padding: 96px 0; background: var(--gray-1); border-top: 1px solid var(--gray-4); border-bottom: 1px solid var(--gray-5); }
+    .slack-use-header { text-align: center; max-width: 640px; margin: 0 auto 52px; }
+    .slack-use-header .pillar-badge { background: rgba(74,21,75,0.08); color: #4A154B; border: 1px solid rgba(74,21,75,0.18); }
+    .slack-use-header h2 { margin-bottom: 14px; }
+    .slack-use-header p { font-size: 16px; }
+    .slack-use-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .slack-use-card { background: white; border-radius: 18px; padding: 32px 28px; box-shadow: var(--shadow-card); border-top: 3px solid #4A154B; display: flex; flex-direction: column; gap: 12px; }
+    .slack-use-card .su-icon { font-size: 28px; }
+    .slack-use-card h4 { font-size: 17px; line-height: 1.4; }
+    .slack-use-card p { font-size: 14px; line-height: 1.68; }
     /* ROUTINES */
     .routine-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 36px; }
     .routine-card { display: flex; gap: 20px; background: white; border-radius: 16px; padding: 24px 28px; box-shadow: var(--shadow-card); align-items: flex-start; }
@@ -125,6 +142,7 @@
     @media (max-width: 920px) {
       h1 { font-size: 40px; }
       .why-special-grid { grid-template-columns: repeat(2, 1fr); }
+      .slack-use-grid { grid-template-columns: 1fr; }
       .brain-grid { grid-template-columns: 1fr; grid-template-rows: unset; }
       .brain-card { grid-template-rows: unset; grid-row: unset; display: flex; flex-direction: column; }
       .built-by-grid { grid-template-columns: repeat(3, 1fr); }
@@ -134,6 +152,7 @@
       .hero { padding: 72px 24px 88px; }
       .hero-greeting { font-size: 18px; } .hero-sub { font-size: 15px; }
       .why-special-grid { grid-template-columns: 1fr; }
+      .slack-use-grid { grid-template-columns: 1fr; }
       .integrations-2col { grid-template-columns: 1fr; }
       .built-by-grid { grid-template-columns: repeat(2, 1fr); }
       .container { padding: 0 20px; }
@@ -155,6 +174,10 @@
         <div class="hero-pill">⏰ Routines</div>
         <div class="hero-pill">🔗 Integrations</div>
       </div>
+      <a href="https://motionapp.com/event/steal-ad-ideas-like-a-strategist" target="_blank" rel="noopener" class="hero-event">
+        <span class="hero-event-emoji">🎥</span>
+        <span>Tune in <span class="hero-event-accent">May 28 at 2pm ET</span> to see Runneth live</span>
+      </a>
     </div>
   </section>
 
@@ -316,6 +339,36 @@
         <div class="prompt-block-left">
           <p>Try asking Runneth</p>
           <div class="prompt-block-text">"Runneth, can you build me an integration with <span class="prompt-blank">__________</span>?"</div>
+        </div>
+      </div>
+      <div class="cta-btn-wrap">
+        <a href="https://projects.motionapp.com" target="_blank" class="cta-btn cta-btn-slack">Connect Slack <span style="margin-left:4px">💬</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="slack-use">
+    <div class="container">
+      <div class="slack-use-header">
+        <div class="pillar-badge">💬 Slack</div>
+        <h2>How teams are using Runneth in Slack 💜</h2>
+        <p>Once Runneth is in your channels, the way your team works together shifts. Here's what people are doing first.</p>
+      </div>
+      <div class="slack-use-grid">
+        <div class="slack-use-card">
+          <div class="su-icon">⚡</div>
+          <h4>Skip the ticket. Ask in the channel.</h4>
+          <p>When someone needs a fast performance read or a creative gut-check, they tag me in Slack and I pull the answer in seconds. Live numbers, real context, no waiting on someone to free up.</p>
+        </div>
+        <div class="slack-use-card">
+          <div class="su-icon">📣</div>
+          <h4>Updates that show up on their own.</h4>
+          <p>Set me to post weekly performance reads, top-creative shifts, and competitor moves straight into your team channels. Everyone scans the headline, opens what's relevant, and stays in flow.</p>
+        </div>
+        <div class="slack-use-card">
+          <div class="su-icon">✍️</div>
+          <h4>From rough idea to filed brief.</h4>
+          <p>Share a concept in Slack and ask me to QA it against brand voice and past winners. Once it's tight, I push the brief straight into Notion so your designer or copywriter can pick it up without losing context.</p>
         </div>
       </div>
     </div>
