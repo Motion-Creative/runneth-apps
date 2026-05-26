@@ -216,6 +216,17 @@ await server.register(fastifyStatic, {
   wildcard: false,
 })
 
+// Personal pages — standalone HTML routes served from server/public.
+// Each entry maps a clean URL to a file in PUBLIC_DIR.
+const PERSONAL_PAGES: Record<string, string> = {
+  '/alysha': 'alysha.html',
+}
+for (const [route, file] of Object.entries(PERSONAL_PAGES)) {
+  server.get(route, async (_, reply) => {
+    return reply.sendFile(file)
+  })
+}
+
 // SPA fallback: anything that didn't match an /api route or a static file -> index.html.
 server.setNotFoundHandler((request, reply) => {
   if (request.url.startsWith('/api/')) {
