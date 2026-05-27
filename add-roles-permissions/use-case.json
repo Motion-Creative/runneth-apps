@@ -1,7 +1,7 @@
 {
   "slug": "add-roles-permissions",
   "display_title": "Control Who Can Do What",
-  "pitch": "Admins can change anything. Members stay in their own space. New teammates get set up automatically.",
+  "pitch": "Admins can change anything. Members can only change their own space. New teammates get set up automatically.",
   "status": "proven",
   "category": "agent-foundations",
   "github_path": "add-roles-permissions"
