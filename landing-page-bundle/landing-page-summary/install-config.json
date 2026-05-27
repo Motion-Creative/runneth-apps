@@ -66,16 +66,8 @@
     {
       "version": "1.0.0",
       "date": "2026-05-13",
-      "changes": [
-        "Initial PR-ready release",
-        "Dynamic Playwright NODE_PATH discovery, no hardcoded cache hash",
-        "Always re-fetch by default; --use-cached opt-in only",
-        "Archive-before-overwrite into per-page _history/ folder as in-system changelog",
-        "Filename never carries timestamp; timestamp lives inside the file on _Fetched: line",
-        "Section 12 colors flagged as unreliable; computed-DOM override documented",
-        "Updates both local _index.md and global /agent/INDEX.md on every durable save",
-        "Phase 6: offers a weekly LP library refresh routine after the first successful summary. The routine is a self-closing loop with seven phases: discover, diff, prune history, retire dead URLs, index hygiene, cross-skill drift flags, compact report. Sentinel-guarded by reminder title. Material-change criteria are sharply defined (hero headline, primary CTA, pricing, form fields, page intent); noise is not flagged. History pruning is bounded by meaningful events, not elapsed time."
-      ]
+      "type": "major",
+      "notes": "Initial PR-ready release. Dynamic Playwright path discovery, always re-fetch by default (--use-cached opt-in), archive-before-overwrite page history, and an optional self-closing weekly LP-library refresh routine."
     }
   ],
   "post-install": [

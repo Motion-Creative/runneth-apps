@@ -52,18 +52,8 @@
     {
       "version": "1.0.0",
       "date": "2026-05-13",
-      "changes": [
-        "Initial PR-ready release",
-        "Six-phase method: fresh LP summary, read prior audit + brand kit context, generate scored backlog, compose artifact, index hygiene, surface readout",
-        "Scoring formula: (median expected lift band) x (win-rate prior) / (effort hours). Win-rate priors table by hypothesis type. Win-bias flags adjust priors x1.3 with 80% cap",
-        "Coverage requirements: 2+ tests per element, 1+ per hypothesis type with prior > 25%, max 4 per element, total 10-20",
-        "Reads prior CRO audits and prior backlogs (default 90 days back) to filter duplicates. Carried-forward tests retain prior test IDs for traceability",
-        "Reads brand kit if present; variant copy obeys voice, vocabulary, and anti-patterns",
-        "Every test record includes 'why this might lose' failure mode as required field",
-        "Saves to both ./artifacts/ (user-facing) and /agent/brain/experiments/<slug>--<domain>/<YYYY-MM-DD>.md (durable history)",
-        "Single-line /agent/INDEX.md format per Runneth index rules",
-        "No recurring routine; LP weekly refresh routine flags backlogs whose pages changed materially"
-      ]
+      "type": "major",
+      "notes": "Initial PR-ready release. Six-phase method producing a scored A/B backlog (lift x win-rate / effort), reads prior audits + brand kit, dedupes carried-forward tests, and saves to artifacts + durable history."
     }
   ],
   "post-install": [
