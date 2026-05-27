@@ -111,3 +111,50 @@ test('card titles and pitches contain no em-dash (flagged as an AI tell)', () =>
   }
   assert.deepEqual(bad, [], `em-dash in card copy: ${bad.join(', ')}`)
 })
+
+// --- Version contract -------------------------------------------------------
+// install-config.json carries the machine-readable version history a Runneth
+// reads to detect updates: top-level `version` is the current version, and
+// `changelog` is newest-first with semver + a major|minor|patch `type`. Kept
+// consistent so a Runneth can always compare its installed version and sync.
+
+const SEMVER = /^\d+\.\d+\.\d+$/
+const cmpSemver = (a, b) => {
+  const [a1, a2, a3] = a.split('.').map(Number)
+  const [b1, b2, b3] = b.split('.').map(Number)
+  return a1 - b1 || a2 - b2 || a3 - b3
+}
+const installConfigs = gitFiles("'*install-config.json'")
+
+test('every install-config has a semver version and a non-empty changelog', () => {
+  for (const f of installConfigs) {
+    const ic = readJSON(f)
+    assert.ok(SEMVER.test(ic.version ?? ''), `${f}: version "${ic.version}" is not semver (X.Y.Z)`)
+    assert.ok(Array.isArray(ic.changelog) && ic.changelog.length > 0, `${f}: missing changelog`)
+  }
+})
+
+test('install-config version equals its newest changelog entry (no drift)', () => {
+  const bad = installConfigs
+    .map((f) => ({ f, ic: readJSON(f) }))
+    .filter(({ ic }) => ic.version !== ic.changelog?.[0]?.version)
+    .map(({ f, ic }) => `${f}: version ${ic.version} != changelog[0] ${ic.changelog?.[0]?.version}`)
+  assert.deepEqual(bad, [], bad.join('; '))
+})
+
+test('changelog entries are well-formed semver, typed, dated, and newest-first', () => {
+  const bad = []
+  for (const f of installConfigs) {
+    const cl = readJSON(f).changelog ?? []
+    for (const e of cl) {
+      if (!SEMVER.test(e.version ?? '')) bad.push(`${f}: changelog version "${e.version}" not semver`)
+      else if (!['major', 'minor', 'patch'].includes(e.type)) bad.push(`${f}: ${e.version} type "${e.type}" not major|minor|patch`)
+      else if (!(e.date && e.notes?.trim())) bad.push(`${f}: ${e.version} needs a date + notes`)
+    }
+    for (let i = 1; i < cl.length; i++) {
+      if (cmpSemver(cl[i - 1].version ?? '0.0.0', cl[i].version ?? '0.0.0') <= 0)
+        bad.push(`${f}: changelog not strictly newest-first (${cl[i - 1].version} then ${cl[i].version})`)
+    }
+  }
+  assert.deepEqual(bad, [], `changelog issues:\n  ${bad.join('\n  ')}`)
+})
