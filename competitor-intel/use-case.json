@@ -1,7 +1,7 @@
 {
   "slug": "competitor-intel",
-  "display_title": "Competitor Intel Alerts",
-  "pitch": "Weekly competitive intelligence, delivered to Slack automatically",
+  "display_title": "See What Competitors Did This Week",
+  "pitch": "Every Monday: what they launched, what survived, and what they quietly stopped running.",
   "status": "experimental",
   "category": "creative-operations",
   "github_path": "competitor-intel"
