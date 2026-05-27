@@ -37,4 +37,4 @@ Move its slug from `slugs[]` to `excluded[]` with a reason. Files can stay for h
 
 ## Conventions
 - Slugs are kebab-case and match the directory name. The landing-page bundle's sub-skills resolve under `landing-page-bundle/<slug>`.
-- No committed build artifacts — `*.zip` / `*.tar.gz` are gitignored. Distribute use cases through the library, not as bundles.
+- No committed build artifacts — keep archives out of the repo; distribute use cases through the library, not as bundles.
