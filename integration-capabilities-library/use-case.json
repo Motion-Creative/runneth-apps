@@ -1,7 +1,7 @@
 {
   "slug": "integration-capabilities-library",
-  "display_title": "Integration Capabilities",
-  "pitch": "Sourced answers about every connected tool",
+  "display_title": "Know What Each Tool Can Do",
+  "pitch": "A sourced answer for every connected tool, updated nightly. Ask 'can we do X with Y?' and get a real answer.",
   "status": "experimental",
   "category": "agent-foundations",
   "github_path": "integration-capabilities-library"
