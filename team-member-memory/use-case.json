@@ -1,7 +1,7 @@
 {
   "slug": "team-member-memory",
-  "display_title": "Team Member Memory",
-  "pitch": "Knows every teammate by name",
+  "display_title": "Remembers Everyone It Works With",
+  "pitch": "Reads each teammate's profile before every chat, then updates it after. Nobody starts cold.",
   "status": "experimental",
   "category": "agent-foundations",
   "github_path": "team-member-memory"

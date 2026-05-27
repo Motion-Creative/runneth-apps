@@ -1,7 +1,7 @@
 {
   "slug": "bootcamp",
-  "display_title": "Bootcamp",
-  "pitch": "Every Bootcamp class, searchable",
+  "display_title": "Teach Runneth the Bootcamp",
+  "pitch": "Loads all 13 sessions from the live bootcamp into your Runneth's brain. Ask it anything from class.",
   "status": "proven",
   "category": "agent-foundations",
   "github_path": "bootcamp"
