@@ -1,0 +1,73 @@
+{
+  "schema": "1.0",
+  "id": "ugc-creator-programme",
+  "version": "1.0.0",
+  "description": "A live web app for managing a UGC creator programme — VIP relationships, active ambassadors, and sourcing targets with persona filters, video confidence ratings, and ready-to-copy outreach DMs.",
+  "customize": [
+    {
+      "token": "BRAND_NAME",
+      "description": "Your brand name. Appears in the app header.",
+      "required": true
+    },
+    {
+      "token": "BRAND_SUBTITLE",
+      "description": "A one-line subtitle shown in the app header beneath the brand name.",
+      "required": false,
+      "fallback": "Creator Programme"
+    }
+  ],
+  "installs": [
+    {
+      "type": "folder-copy",
+      "src": "brain-seeds/ugc-creator-programme",
+      "dest": "/agent/brain/ugc-creator-programme",
+      "if-not-exists": true
+    },
+    {
+      "file": "setup-ugc-creator-programme/SKILL.md",
+      "dest": "/agent/.agents/skills/setup-ugc-creator-programme/SKILL.md",
+      "if-not-exists": false
+    },
+    {
+      "type": "folder-copy",
+      "src": "app",
+      "dest": "/agent/apps/ugc-creator-programme",
+      "if-not-exists": false
+    }
+  ],
+  "post-install": [
+    {
+      "action": "app-build",
+      "app": "ugc-creator-programme",
+      "name": "Build creator programme app",
+      "description": "Compiles the frontend and server into deployable bundles."
+    },
+    {
+      "action": "app-verify",
+      "app": "ugc-creator-programme",
+      "name": "Verify app is ready",
+      "description": "Confirms the built frontend and backend entrypoint exist."
+    },
+    {
+      "action": "app-url",
+      "app": "ugc-creator-programme",
+      "name": "Get app URL",
+      "description": "Surfaces the live URL for the creator programme app."
+    },
+    {
+      "action": "skill-invoke",
+      "skill": "setup-ugc-creator-programme",
+      "name": "Populate creator data",
+      "description": "Walks through adding brand name, VIP relationships, ambassadors, and sourcing targets. Can be re-run any time.",
+      "manual": false
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-08",
+      "type": "major",
+      "notes": "Initial release. Two-tab app: access panel (VIP relationships + ambassador programme) and sourcing list with persona filters, video confidence, tier system, and copy-to-clipboard outreach DMs. Creator data served from a brain JSON file — no rebuild needed when content changes."
+    }
+  ]
+}

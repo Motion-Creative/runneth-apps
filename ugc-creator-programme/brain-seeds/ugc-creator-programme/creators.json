@@ -1,0 +1,23 @@
+{
+  "brandName": "{{BRAND_NAME}}",
+  "brandSubtitle": "{{BRAND_SUBTITLE}}",
+
+  "personas": {},
+
+  "selectionCriteria": [],
+
+  "disqualifiers": [],
+
+  "tierDescriptions": {
+    "tier1": "Reach out this week. Accessible rate, strong fit, video delivery confirmed or likely. No agent, no formal process — a direct DM is the right move.",
+    "tier2": "Start outreach once Tier 1 is in motion. Either needs one verification step first, has a rate card, or is a formal brand ambassador with a managed process.",
+    "tier3": "Save for a bigger campaign. Signed talent — agents, formal rate negotiations, exclusivity clauses to navigate. Right fit, wrong moment for an early-stage programme."
+  },
+
+  "sourcingPlatform": null,
+
+  "priorityCallouts": [],
+  "vipCreators": [],
+  "ambassadors": [],
+  "creators": []
+}
