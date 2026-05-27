@@ -1,0 +1,21 @@
+name: Validate catalog
+
+# Structural gate for the Use Case Library: runs the catalog-contract tests on
+# every PR and on pushes to main. If this passes, the site can render every
+# shown card. Pairs with the @runneth semantic review in #use-case-reviews.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate-catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate the use-case catalog
+        run: node --test scripts/validate-catalog.mjs
