@@ -3,7 +3,6 @@ hero_headline: "Knows who's talking before you say a word."
 hero_subhead: "Your Runneth builds a file on every teammate and picks up exactly where the last conversation left off."
 install_time: "~2 minutes"
 requires: "add-roles-permissions skill"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

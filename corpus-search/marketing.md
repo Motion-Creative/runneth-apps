@@ -3,7 +3,6 @@ hero_headline: "Find anything you've written, in under a second, by what you mea
 hero_subhead: "Keyword and semantic search over any folder of markdown in your brain."
 install_time: "~2 minutes"
 requires: "An OpenAI API key"
-status: "proven"
 ---
 
 ## Super powers this unlocks

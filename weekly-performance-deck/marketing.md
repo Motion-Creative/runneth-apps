@@ -3,7 +3,6 @@ hero_headline: "Friday's deck reads like Friday's, framed against last Friday's.
 hero_subhead: "Brand-styled, deep-dive-backed, dated routes that accumulate. Episode 17 references episode 16."
 install_time: "~1 minute"
 requires: "paid-strategy-audit, creative-deep-dive, brand-kit"
-status: "proven"
 ---
 
 ## Super powers this unlocks

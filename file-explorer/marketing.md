@@ -3,7 +3,6 @@ hero_headline: "Walk through your Runneth's brain like a folder on your laptop."
 hero_subhead: "Every file, every routine, every saved note, browseable in the same window as the chat."
 install_time: "~2 minutes"
 requires: "Nothing"
-status: "proven"
 ---
 
 ## Super powers this unlocks

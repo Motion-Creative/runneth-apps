@@ -3,7 +3,6 @@ hero_headline: "Generate production-ready static ads from one sentence in chat."
 hero_subhead: "Brief, image prompt, generated image, and ad name in one pass. Review gate before anything renders."
 install_time: "~15 minutes including per-product setup"
 requires: "A Gemini API key, a Nano Banana API key, and a Motion workspace"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

@@ -3,7 +3,6 @@ hero_headline: "Find every routine that's saving things in the wrong place."
 hero_subhead: "Your Runneth audits its own storage decisions, flags drift, and tells you what to move where."
 install_time: "~2 minutes"
 requires: "Nothing"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

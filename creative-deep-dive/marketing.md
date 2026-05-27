@@ -3,7 +3,6 @@ hero_headline: "Stop reading ad metrics. Start reading ads."
 hero_subhead: "Nine diagnostic skills installed as independent top-level capabilities, plus an orchestrator that runs them as one mechanism-level teardown."
 install_time: "~60 seconds"
 requires: "brand-audit (recommended for richer Strategic Layer)"
-status: "proven"
 ---
 
 ## Super powers this unlocks

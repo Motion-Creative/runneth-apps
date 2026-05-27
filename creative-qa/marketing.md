@@ -3,7 +3,6 @@ hero_headline: "QA every ad before it ships, automatically."
 hero_subhead: "Uploads, pin comments, timestamped video notes, and a judge that learns what your team actually approves."
 install_time: "~5 minutes"
 requires: "Nothing"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

@@ -3,7 +3,6 @@ hero_headline: "Anything you build, your team can install in one click."
 hero_subhead: "Package any use case from your sandbox into a zip plus a pre-filled PR, ready for the shared library."
 install_time: "~1 minute"
 requires: "Nothing"
-status: "proven"
 ---
 
 ## Super powers this unlocks

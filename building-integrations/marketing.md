@@ -3,7 +3,6 @@ hero_headline: "Every new integration set up like an expert did it."
 hero_subhead: "Your Runneth reads the context, picks the right depth, solves the quirks before you ever see one, and writes the runbook."
 install_time: "~2 minutes"
 requires: "Nothing"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

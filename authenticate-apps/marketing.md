@@ -3,7 +3,6 @@ hero_headline: "Lock down any sandbox app behind a username and password."
 hero_subhead: "Self-bootstrapping login on the first visit. Every visit after that is gated. No secrets ever touch chat."
 install_time: "~3 minutes"
 requires: "A sandbox app using the standard Fastify scaffold"
-status: "proven"
 ---
 
 ## Super powers this unlocks

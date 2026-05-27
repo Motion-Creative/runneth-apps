@@ -3,7 +3,6 @@ hero_headline: "The brand layer. Built once, refreshed weekly, read by everythin
 hero_subhead: "Brand identity, products, voice-of-customer, keywords, competitor read, and the pain × persona × angle matrix — six durable files every concept brief and deep dive reads."
 install_time: "~2 minutes for the first audit, ~30 seconds per workspace after"
 requires: "Brand website URL"
-status: "proven"
 ---
 
 ## Super powers this unlocks

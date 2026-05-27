@@ -3,7 +3,6 @@ hero_headline: "Four analysis skills. One install. The whole stack."
 hero_subhead: "Brand Audit, Paid Strategy Audit, Creative Deep Dive, and Weekly Performance Deck — installed in dependency order, configured together, compounding from day one."
 install_time: "~5 minutes across all four setup flows"
 requires: "Brand website URL, at least one connected ad platform"
-status: "proven"
 ---
 
 ## Super powers this unlocks

@@ -3,7 +3,6 @@ hero_headline: "Every performance question, answered through the team's actual s
 hero_subhead: "Channel-agnostic strategy briefs that override workspace goals and spend thresholds. Drift catches itself every Friday."
 install_time: "~2 minutes for the first audit, ~30 seconds per workspace after"
 requires: "At least one connected ad platform"
-status: "proven"
 ---
 
 ## Super powers this unlocks

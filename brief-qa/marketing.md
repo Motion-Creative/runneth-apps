@@ -3,7 +3,6 @@ hero_headline: "A second set of eyes on every brief before it goes to design."
 hero_subhead: "Your Runneth reviews drafts, flags the soft spots, and gets sharper at it every time you accept or reject the call."
 install_time: "~5 minutes"
 requires: "Nothing"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

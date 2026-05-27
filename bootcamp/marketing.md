@@ -3,7 +3,6 @@ hero_headline: "Every Motion 2026 Bootcamp class, ready to quote."
 hero_subhead: "All 13 sessions from weeks 1-7, indexed and searchable from your Runneth."
 install_time: "~2 minutes"
 requires: "Nothing"
-status: "proven"
 ---
 
 ## Super powers this unlocks
