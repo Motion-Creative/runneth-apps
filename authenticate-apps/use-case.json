@@ -1,7 +1,7 @@
 {
   "slug": "authenticate-apps",
-  "display_title": "App Authentication",
-  "pitch": "Lock down any app",
+  "display_title": "Put Apps Behind a Password",
+  "pitch": "First visitor picks the password. Everyone after hits a login page. Three minutes to set up.",
   "status": "proven",
   "category": "agent-foundations",
   "github_path": "authenticate-apps"
