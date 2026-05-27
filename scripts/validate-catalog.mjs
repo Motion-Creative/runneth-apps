@@ -34,10 +34,16 @@ test('catalog.json has a non-empty slugs array', () => {
   assert.ok(Array.isArray(catalog.slugs) && catalog.slugs.length > 0, 'catalog.slugs must be a non-empty array')
 })
 
-test('categories.json entries each have slug, title, and a numeric order', () => {
+test('categories.json entries have slug, title, numeric order, blurb — and unique slugs', () => {
   assert.ok(Array.isArray(categories) && categories.length > 0)
+  const seen = new Set()
   for (const c of categories) {
-    assert.ok(c.slug && c.title && typeof c.order === 'number', `malformed category: ${JSON.stringify(c)}`)
+    assert.ok(
+      c.slug && c.title && typeof c.order === 'number' && c.blurb?.trim(),
+      `malformed category (needs slug, title, order, blurb): ${JSON.stringify(c)}`,
+    )
+    assert.ok(!seen.has(c.slug), `duplicate category slug: ${c.slug}`)
+    seen.add(c.slug)
   }
 })
 
@@ -75,6 +81,21 @@ test('every built use case is accounted for in the catalog (no orphans)', () => 
     .map((f) => readJSON(f).slug)
     .filter((s) => !known.has(s))
   assert.deepEqual(orphans, [], `built but missing from catalog (add to slugs or excluded): ${orphans.join(', ')}`)
+})
+
+test('every use-case.json slug matches its directory name', () => {
+  const bad = gitFiles("'*use-case.json'")
+    .map((f) => ({ f, slug: readJSON(f).slug, dir: f.split('/').at(-2) }))
+    .filter(({ slug, dir }) => slug !== dir)
+    .map(({ f, slug, dir }) => `${f}: slug "${slug}" != dir "${dir}"`)
+  assert.deepEqual(bad, [], `slug/dir mismatches: ${bad.join('; ')}`)
+})
+
+test('no slug resolves at both <slug>/ and landing-page-bundle/<slug>/ (ambiguous)', () => {
+  const ambiguous = catalog.slugs.filter(
+    (s) => existsSync(abs(`${s}/use-case.json`)) && existsSync(abs(`landing-page-bundle/${s}/use-case.json`)),
+  )
+  assert.deepEqual(ambiguous, [], `slug resolves at two paths: ${ambiguous.join(', ')}`)
 })
 
 test('no build artifacts are committed', () => {
