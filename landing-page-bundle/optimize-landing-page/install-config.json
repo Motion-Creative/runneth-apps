@@ -42,14 +42,8 @@
     {
       "version": "1.0.0",
       "date": "2026-05-13",
-      "changes": [
-        "Initial PR-ready release",
-        "Always invokes landing-page-summary fresh; never reads a saved summary directly",
-        "Workflow framing made explicit: creatives -> destination URL -> audit-against-ads",
-        "Durable audit history at /agent/brain/cro-audits/<slug>--<domain>/<YYYY-MM-DD>.md preserves per-page audit changelog",
-        "Updates both local _index.md and global /agent/INDEX.md",
-        "Fallback to WebFetch when landing-page-summary is not installed"
-      ]
+      "type": "major",
+      "notes": "Initial PR-ready release. Always invokes landing-page-summary fresh, frames creatives -> destination -> audit-against-ads, keeps durable per-page audit history, and falls back to WebFetch when the summary skill isn't installed."
     }
   ],
   "post-install": [

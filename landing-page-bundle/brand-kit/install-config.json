@@ -65,17 +65,8 @@
     {
       "version": "1.0.0",
       "date": "2026-05-13",
-      "changes": [
-        "Initial PR-ready release",
-        "Hardcoded motionapp.com north-star references removed; generic reference-example.md ships instead",
-        "Dynamic Playwright NODE_PATH discovery, no hardcoded cache hash",
-        "All /tmp writes replaced with ./workdir/",
-        "YAML frontmatter stripped of model: opus and skill-local allowed-tools for plug-and-play default capabilities",
-        "Step 4.5: idempotent user.md usage-snippet append so brand kits become an active primitive, not an inert file",
-        "Archive-before-overwrite into per-brand _history/ folder as in-system changelog",
-        "Updates both local _index.md and global /agent/INDEX.md on every durable save",
-        "Cross-skill dependency: always invokes landing-page-summary fresh, never reads a saved summary directly"
-      ]
+      "type": "major",
+      "notes": "Initial PR-ready release. Generic reference-example.md (no hardcoded refs), ./workdir writes, archive-before-overwrite brand history, idempotent user.md usage snippet, and local + global index updates."
     }
   ],
   "post-install": [
