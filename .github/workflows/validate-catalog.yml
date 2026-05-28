@@ -1,0 +1,51 @@
+name: Validate
+
+# Structural gate for the Use Case Library. Two jobs:
+#   validate-catalog — the catalog-contract tests (fast, zero deps)
+#   build-site       — typecheck + build use-case-library-site
+# If both pass, the catalog is renderable and the site compiles. Pairs with the
+# @runneth semantic review in #use-case-reviews.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate the use-case catalog
+        run: node --test scripts/validate-catalog.mjs
+
+  build-site:
+    # Typecheck + build the site so broken site code can't merge either.
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: use-case-library-site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+          cache-dependency-path: use-case-library-site/pnpm-lock.yaml
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build (frontend + server)
+        run: pnpm build
