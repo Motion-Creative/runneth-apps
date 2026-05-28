@@ -3,7 +3,6 @@ hero_headline: "Your brand, written down dense enough for another agent to use."
 hero_subhead: "Identity, visual system, voice, all in one place. Every future page, deck, or ad auto-consults it."
 install_time: "~30 seconds (first run adds ~90 seconds for browser setup)"
 requires: "Nothing"
-status: "proven"
 ---
 
 ## Super powers this unlocks

@@ -3,7 +3,6 @@ hero_headline: "Every recommendation your Runneth makes gets graded over time."
 hero_subhead: "Routines, briefs, and reports stop being claims that disappear. Predictions get checked, wins get tagged, misses get fixed."
 install_time: "~1 minute"
 requires: "Nothing"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

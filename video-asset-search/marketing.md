@@ -3,7 +3,6 @@ hero_headline: "Find the right clip by describing what's in it."
 hero_subhead: "Editors ask in natural language. The library finds the clip, the timestamp, and the shareable link."
 install_time: "~10 minutes"
 requires: "A folder of indexed video assets"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

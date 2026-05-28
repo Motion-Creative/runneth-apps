@@ -3,7 +3,6 @@ hero_headline: "Know when something breaks before your team does."
 hero_subhead: "Runneth watches your connected tools and automated routines — and alerts you in Slack the moment something goes off track."
 install_time: "~2 minutes"
 requires: "Slack connected, at least one integration or routine active"
-status: "experimental"
 ---
 
 ## What this enables

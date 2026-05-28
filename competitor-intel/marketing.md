@@ -3,7 +3,6 @@ hero_headline: "Weekly competitive intelligence — what changed, not just what 
 hero_subhead: "Tracks your competitor brands, runs survival analysis on their full ad portfolios, diffs against last week's baseline, and posts a delta report to Slack every Monday automatically."
 install_time: "~2 minutes"
 requires: "A Motion workspace with competitor brands accessible in the ad library"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

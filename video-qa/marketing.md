@@ -3,7 +3,6 @@ hero_headline: "Get timestamped feedback on every video before it goes live."
 hero_subhead: "Your Runneth watches the cut, notes the issues at the second they happen, and learns your standards from your accepts and rejects."
 install_time: "~5 minutes"
 requires: "Nothing"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

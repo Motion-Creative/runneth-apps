@@ -3,7 +3,6 @@ hero_headline: "Sourced answers about every connected tool, always current."
 hero_subhead: "Your Runneth keeps a permission-aware reference for every integration in your sandbox, updated every night."
 install_time: "~2 minutes"
 requires: "Nothing"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

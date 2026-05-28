@@ -3,7 +3,6 @@ hero_headline: "Stage and publish Meta ads straight from chat."
 hero_subhead: "Tell your Runneth where to put them. Drafts wait for your approval in Ads Manager."
 install_time: "~5 minutes including one Facebook Developers step"
 requires: "Access to the Runneth-test Meta app"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

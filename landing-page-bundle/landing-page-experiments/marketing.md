@@ -3,7 +3,6 @@ hero_headline: "An A/B test backlog for any landing page, written and prioritize
 hero_subhead: "Ten to twenty tests scored by lift and effort, with variant copy already drafted and brand-checked."
 install_time: "~15 seconds"
 requires: "Nothing (pairs with landing-page-summary, brand-kit, and optimize-landing-page)"
-status: "proven"
 ---
 
 ## Super powers this unlocks

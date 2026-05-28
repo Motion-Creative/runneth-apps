@@ -3,7 +3,6 @@ hero_headline: "Read any landing page like a CRO strategist would."
 hero_subhead: "Every section, every CTA, every form field, the voice, the visual system. Captured as a recreation-quality spec."
 install_time: "~30 seconds (first run adds ~90 seconds for browser setup)"
 requires: "Nothing"
-status: "proven"
 ---
 
 ## Super powers this unlocks

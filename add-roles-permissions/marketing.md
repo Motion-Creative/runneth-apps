@@ -3,7 +3,6 @@ hero_headline: "Every teammate gets the right access, automatically."
 hero_subhead: "Your Runneth knows who's an admin and who's a member the moment they say hello."
 install_time: "~10 minutes"
 requires: "Nothing"
-status: "experimental"
 ---
 
 ## Super powers this unlocks

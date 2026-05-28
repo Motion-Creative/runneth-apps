@@ -3,7 +3,6 @@ hero_headline: "Turn every customer review into raw material for your next ad."
 hero_subhead: "Real customer voice, scored for creative signal, sitting in your brain ready to quote."
 install_time: "~5 minutes"
 requires: "An API key for your review platform and Python 3"
-status: "proven"
 ---
 
 ## Super powers this unlocks

@@ -3,7 +3,6 @@ hero_headline: "The top three fixes for any landing page, in priority order."
 hero_subhead: "An eight-layer CRO audit that returns the fixes most likely to move conversion, plus an A/B queue and a do-not-touch list."
 install_time: "~30 seconds"
 requires: "Nothing (works strongest when landing-page-summary is also installed)"
-status: "proven"
 ---
 
 ## Super powers this unlocks

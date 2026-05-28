@@ -3,7 +3,6 @@ hero_headline: "Your Runneth writes the plan before it builds anything."
 hero_subhead: "Two to four clarifying questions, an openable plan file, then your green light. No surprise builds."
 install_time: "~1 minute"
 requires: "Nothing"
-status: "proven"
 ---
 
 ## Super powers this unlocks
