@@ -1,7 +1,7 @@
 {
   "slug": "share-use-case",
-  "display_title": "Use Case Installer",
-  "pitch": "Package your work for the team",
+  "display_title": "Package Your Builds to Share",
+  "pitch": "Turns anything you've built into a one-click install for your team.",
   "status": "proven",
   "category": "agent-foundations",
   "github_path": "share-use-case"
