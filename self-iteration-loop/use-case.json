@@ -1,8 +1,8 @@
 {
   "slug": "self-iteration-loop",
-  "display_title": "Self-Improving Agent",
-  "pitch": "Predictions get graded over time",
-  "status": "experimental",
+  "display_title": "Build a Loop That Improves Runneth",
+  "pitch": "Sets up a feedback process that grades Runneth's calls over time and feeds the lessons back in.",
+  "status": "proven",
   "category": "agent-foundations",
   "github_path": "self-iteration-loop"
 }

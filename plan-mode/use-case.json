@@ -1,7 +1,7 @@
 {
   "slug": "plan-mode",
-  "display_title": "Plan Mode",
-  "pitch": "Plans before it builds",
+  "display_title": "See Runneth's Plan Before It Builds",
+  "pitch": "Before touching anything, Runneth writes the plan and waits for you to say go.",
   "status": "proven",
   "category": "agent-foundations",
   "github_path": "plan-mode"
