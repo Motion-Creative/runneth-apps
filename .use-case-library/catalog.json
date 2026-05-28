@@ -17,6 +17,7 @@
     "optimize-landing-page",
     "building-integrations",
     "integration-capabilities-library",
+    "health-alerts",
     "add-roles-permissions",
     "import-from-ai",
     "performance-bundle",
@@ -28,7 +29,7 @@
   "excluded": [
     {
       "slug": "ugc-creator-programme",
-      "reason": "Source is a zip in the repo; not directly browseable. Restore in v2."
+      "reason": "Extracted to a directory; still excluded — SQLite-backed, like the other stateful apps. Promote when ready."
     },
     {
       "slug": "corpus-search",
