@@ -4,7 +4,6 @@
     "authenticate-apps",
     "bootcamp",
     "plan-mode",
-    "share-use-case",
     "routine-storage-audit",
     "self-iteration-loop",
     "team-member-memory",
@@ -74,6 +73,10 @@
     {
       "slug": "add-permissions",
       "reason": "Renamed to add-roles-permissions."
+    },
+    {
+      "slug": "share-use-case",
+      "reason": "Operator tool for packaging custom builds; not a customer-installable use case. Files remain in the repo."
     }
   ]
 }
