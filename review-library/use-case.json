@@ -1,7 +1,7 @@
 {
   "slug": "review-library",
-  "display_title": "Review Library",
-  "pitch": "Hooks from real customer reviews",
+  "display_title": "Turn Reviews Into Hook Material",
+  "pitch": "Pulls new reviews every week and tags them by theme. Real customer words, ready to use.",
   "status": "proven",
   "category": "creative-operations",
   "github_path": "review-library"
