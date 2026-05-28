@@ -26,6 +26,7 @@ import deepSearchFilled from "./icons/deep-search-filled.svg?raw";
 import targetArrowFilled from "./icons/target-arrow-filled.svg?raw";
 import zapFilled from "./icons/zap-filled.svg?raw";
 import slidesWideFilled from "./icons/slides-wide-filled.svg?raw";
+import squareChecklistBellFilled from "./icons/square-checklist-bell-filled.svg?raw";
 
 const ICON_BY_SLUG: Record<string, string> = {
   "team-member-memory": brainFilled,
@@ -51,6 +52,7 @@ const ICON_BY_SLUG: Record<string, string> = {
   "paid-strategy-audit": targetArrowFilled,
   "performance-bundle": zapFilled,
   "weekly-performance-deck": slidesWideFilled,
+  "health-alerts": squareChecklistBellFilled,
 };
 
 const iconWrapStyle = (tint: string): CSSProperties => ({
