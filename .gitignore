@@ -5,3 +5,9 @@ uploads/
 *.db-shm
 *.db-wal
 .DS_Store
+
+# Build artifacts / bundles — use git tags or releases, not committed archives
+*.zip
+*.tar.gz
+*.tgz
+_tmp_*
