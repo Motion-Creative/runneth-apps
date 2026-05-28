@@ -1,7 +1,7 @@
 {
   "slug": "performance-bundle",
-  "display_title": "Analysis Bundle",
-  "pitch": "The full analysis stack in one install \u2014 brand, strategy, deep dives, and the weekly deck.",
+  "display_title": "Install the Full Analysis Stack",
+  "pitch": "Brand context, paid strategy, ad teardowns, and the weekly deck. One install, all talking to each other.",
   "status": "proven",
   "category": "analysis",
   "github_path": "performance-bundle"
