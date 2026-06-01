@@ -1,0 +1,244 @@
+{
+  "schema": "1.0",
+  "id": "runneth-classic",
+  "version": "1.0.0",
+  "description": "The deterministic, opinionated Runneth, packaged as a single installable use case. Eleven upstream dependencies, eleven bundled Alysha craft skills, brain seed with theme classifier and per-theme chains plus Alysha framework supplements and Beta-specific references, an orchestrator that enforces a 12-theme chain and the Synthesis Gate, a 10-step setup that captures surface preference, winner-definition, integrations intent, watched brands, and customer voice before handing off to brand-audit, and a user.md sentinel encoding 11 voice and behavior rules engineered against the six failure modes from the Runneth 1.0 customer feedback dataset.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "upstream_dependencies": [
+    "bootcamp",
+    "performance-bundle",
+    "corpus-search",
+    "plan-mode",
+    "self-iteration-loop",
+    "team-member-memory",
+    "competitor-intel",
+    "health-alerts",
+    "add-roles-permissions",
+    "building-integrations",
+    "integration-capabilities-library"
+  ],
+  "installs": [
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/runneth-classic/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Orchestrator skill — 12-theme classifier, per-theme chain runner, Synthesis Gate, surgical-edit router, Step 0 re-anchor"
+    },
+    {
+      "from": "setup-runneth-classic/SKILL.md",
+      "to": "/agent/.agents/skills/setup-runneth-classic/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Setup skill — 10-step configuration conversation, runs once at install, re-invocable on demand"
+    },
+
+    {
+      "from": "skills/brand-intake.md",
+      "to": "/agent/.agents/skills/brand-intake/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Foundation skill — brand identity, value prop, audience, positioning"
+    },
+    {
+      "from": "skills/product-catalog.md",
+      "to": "/agent/.agents/skills/product-catalog/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Foundation skill — facts-only product specs from the brand site"
+    },
+    {
+      "from": "skills/review-audit.md",
+      "to": "/agent/.agents/skills/review-audit/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Foundation skill — VOC across pain, desire, objection, comparison, use-case buckets"
+    },
+    {
+      "from": "skills/brand-relevant-keywords.md",
+      "to": "/agent/.agents/skills/brand-relevant-keywords/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Foundation skill — search landscape and audience language"
+    },
+    {
+      "from": "skills/competitor-analysis.md",
+      "to": "/agent/.agents/skills/competitor-analysis/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Foundation skill — competitor read with active-ad signal from motion inspo-creatives"
+    },
+    {
+      "from": "skills/creative-strategy-engine.md",
+      "to": "/agent/.agents/skills/creative-strategy-engine/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Strategy spine — pain × persona × messaging-angle matrix across 5 awareness stages"
+    },
+
+    {
+      "from": "skills/creative-mechanics.md",
+      "to": "/agent/.agents/skills/creative-mechanics/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Execution skill — structural patterns between hook and format (Implied Answer, Pattern Interrupt, etc.)"
+    },
+    {
+      "from": "skills/hook-writing.md",
+      "to": "/agent/.agents/skills/hook-writing/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Execution skill — hook craft with 8 psychological triggers"
+    },
+    {
+      "from": "skills/hook-tactics.md",
+      "to": "/agent/.agents/skills/hook-tactics/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Execution skill — 35 hook tactic types reference"
+    },
+    {
+      "from": "skills/hook-voice-patterns.md",
+      "to": "/agent/.agents/skills/hook-voice-patterns/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Execution skill — native-feeling hook sentence templates"
+    },
+    {
+      "from": "skills/visual-formats.md",
+      "to": "/agent/.agents/skills/visual-formats/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Execution skill — 45+ visual ad formats with stage and mechanic pairing"
+    },
+
+    {
+      "from": "seed/chains/theme-classifier.md",
+      "to": "/agent/brain/runneth-classic/chains/theme-classifier.md",
+      "on_exists": "overwrite",
+      "purpose": "12-theme classification rules"
+    },
+    {
+      "from": "seed/chains/analyze.md",
+      "to": "/agent/brain/runneth-classic/chains/analyze.md",
+      "on_exists": "overwrite",
+      "purpose": "Per-theme chain — analyze (performance, top/bottom, comparison)"
+    },
+    {
+      "from": "seed/chains/concepting.md",
+      "to": "/agent/brain/runneth-classic/chains/concepting.md",
+      "on_exists": "overwrite",
+      "purpose": "Per-theme chain — concepting (ideas, directions, fresh angles)"
+    },
+    {
+      "from": "seed/chains/briefing.md",
+      "to": "/agent/brain/runneth-classic/chains/briefing.md",
+      "on_exists": "overwrite",
+      "purpose": "Per-theme chain — briefing (Strategic, Assembly, Script paths)"
+    },
+    {
+      "from": "seed/chains/creative-attributes.md",
+      "to": "/agent/brain/runneth-classic/chains/creative-attributes.md",
+      "on_exists": "overwrite",
+      "purpose": "Per-theme chain — creative_attributes (hooks, headlines, messaging angles, CTAs)"
+    },
+    {
+      "from": "seed/chains/educate.md",
+      "to": "/agent/brain/runneth-classic/chains/educate.md",
+      "on_exists": "overwrite",
+      "purpose": "Per-theme chain — educate (why/how, principles)"
+    },
+    {
+      "from": "seed/chains/feedback-qa.md",
+      "to": "/agent/brain/runneth-classic/chains/feedback-qa.md",
+      "on_exists": "overwrite",
+      "purpose": "Per-theme chain — feedback_qa (creative review and evaluation)"
+    },
+    {
+      "from": "seed/chains/research.md",
+      "to": "/agent/brain/runneth-classic/chains/research.md",
+      "on_exists": "overwrite",
+      "purpose": "Per-theme chain — research (competitor strategy, audience research)"
+    },
+
+    {
+      "from": "seed/strategy/selling-vs-offering.md",
+      "to": "/agent/brain/runneth-classic/strategy/selling-vs-offering.md",
+      "on_exists": "overwrite",
+      "purpose": "Alysha framework supplement — selling vs offering distinction"
+    },
+    {
+      "from": "seed/strategy/messaging-lenses.md",
+      "to": "/agent/brain/runneth-classic/strategy/messaging-lenses.md",
+      "on_exists": "overwrite",
+      "purpose": "Alysha framework supplement — the 11 messaging lenses with stage fit"
+    },
+    {
+      "from": "seed/strategy/format-by-purpose.md",
+      "to": "/agent/brain/runneth-classic/strategy/format-by-purpose.md",
+      "on_exists": "overwrite",
+      "purpose": "Alysha framework supplement — format-purpose-stage mapping"
+    },
+    {
+      "from": "seed/strategy/product-foundation.md",
+      "to": "/agent/brain/runneth-classic/strategy/product-foundation.md",
+      "on_exists": "overwrite",
+      "purpose": "Alysha framework supplement — product foundation and competitive feature mapping"
+    },
+
+    {
+      "from": "seed/reference/benchmark-priors-supplement.md",
+      "to": "/agent/brain/runneth-classic/reference/benchmark-priors-supplement.md",
+      "on_exists": "overwrite",
+      "purpose": "Beta benchmark supplement — 7 framings net-new to current Runneth's benchmark reference"
+    },
+    {
+      "from": "seed/reference/custom-conversion-clarification.md",
+      "to": "/agent/brain/runneth-classic/reference/custom-conversion-clarification.md",
+      "on_exists": "overwrite",
+      "purpose": "Beta custom-conversion clarification flow — halt-and-ask gate on ambiguous conversion names"
+    }
+  ],
+  "runtime_installs": [
+    {
+      "appends_to": "/agent/user.md",
+      "from": "user-md-sentinels/runneth-classic.md",
+      "guard": "sentinel 'runneth-classic:voice-rules v1' already present",
+      "trigger": "At install time, before setup runs, so the rules are loaded for the setup conversation itself",
+      "purpose": "Append the 11 voice and behavior rules to /agent/user.md with sentinel guard for idempotent install"
+    },
+    {
+      "appends_to": "/agent/INDEX.md",
+      "guard": "path '/agent/brain/runneth-classic/' already present",
+      "purpose": "Add routing entries for the runneth-classic brain seed and per-workspace state"
+    }
+  ],
+  "post_install": [
+    {
+      "action": "skill-invoke",
+      "skill": "setup-runneth-classic",
+      "name": "Run runneth-classic setup",
+      "description": "10-step configuration: surface preference, winner-definition, performance connection check, integrations inventory, watched brands, customer voice, optional uploads, hand off to brand-audit, closing handoff after brand-audit completes",
+      "manual": false
+    },
+    {
+      "action": "show-intro",
+      "name": "Closing handoff after brand-audit completes",
+      "file": "post-install-intro.md",
+      "description": "After setup-runneth-classic hands off to brand-audit and brand-audit completes, surface post-install-intro.md to the user in chat as the closing message of the install sequence. Resolve {{persona}}, {{pain}}, and {{inspo_brand}} tokens using values captured during setup and the brand-audit strategy output."
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/brain/runneth-classic/workspaces/<workspace-slug>/winner-definition.md",
+    "/agent/brain/runneth-classic/workspaces/<workspace-slug>/surface-preference.md",
+    "/agent/brain/runneth-classic/workspaces/<workspace-slug>/customer-voice-intent.md",
+    "/agent/brain/runneth-classic/workspaces/<workspace-slug>/watched-brands/inspo.md",
+    "/agent/brain/runneth-classic/workspaces/<workspace-slug>/watched-brands/competitors.md",
+    "/agent/brain/runneth-classic/workspaces/<workspace-slug>/compliance-notes.md",
+    "/agent/brain/runneth-classic/workspaces/<workspace-slug>/brand-context-upload.md",
+    "/agent/brain/runneth-classic/workspaces/<workspace-slug>/customer-voice/reviews-upload.md",
+    "/agent/brain/runneth-classic/workspaces/<workspace-slug>/competitor-references/",
+    "/agent/brain/runneth-classic/workspaces/<workspace-slug>/standing-decisions.md",
+    "/agent/brain/runneth-classic/workspaces/<workspace-slug>/conversation-anchors/",
+    "/agent/brain/runneth-classic/integrations-intent.md"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-01",
+      "type": "major",
+      "notes": "Initial release. Bundles eleven Alysha craft skills, the 12-theme orchestrator with per-theme chain definitions, four Alysha framework supplements (selling-vs-offering, messaging-lenses, format-by-purpose, product-foundation), two Beta-specific reference supplements (benchmark priors, custom-conversion clarification), a 10-step setup conversation, and a user.md sentinel with eleven voice and behavior rules engineered against the six failure modes from the Runneth 1.0 customer feedback dataset. Declares 11 upstream dependencies (bootcamp, performance-bundle which cascades to brand-audit / paid-strategy-audit / creative-deep-dive / weekly-performance-deck, corpus-search, plan-mode, self-iteration-loop, team-member-memory, competitor-intel, health-alerts, add-roles-permissions, building-integrations, integration-capabilities-library). Apps and the dossier write logic are deferred to v1.1."
+    }
+  ]
+}
