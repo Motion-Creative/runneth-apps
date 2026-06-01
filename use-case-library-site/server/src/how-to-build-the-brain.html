@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to build your Runneth brain</title>
+  <meta name="description" content="Runneth gets sharper the more it knows about you. A short guide to what your brain is, why it matters, and the documents that move your outcomes the most." />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gray-0: #ffffff; --gray-1: #fcfcfc; --gray-2: #f8f8f8; --gray-3: #f3f3f3;
+      --gray-4: #ededed; --gray-5: #e8e8e8; --gray-6: #e2e2e2; --gray-9: #8f8f8f;
+      --gray-11: #6f6f6f; --gray-12: #171717;
+      --green: #c1f14b; --green-soft: #eafad1; --green-text: #627d20;
+      --green-dim: rgba(193,241,75,0.14); --green-border: rgba(193,241,75,0.28);
+      --shadow-card: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 2px -1px rgba(0,0,0,0.18), 0 4px 10px rgba(0,0,0,0.08);
+    }
+    body { font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; line-height: 1.6; letter-spacing: -0.006em; color: var(--gray-12); background: var(--gray-0); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 54px; line-height: 1.04; letter-spacing: -0.035em; font-weight: 700; }
+    h2 { font-size: 34px; line-height: 1.14; letter-spacing: -0.024em; font-weight: 700; }
+    h3 { font-size: 22px; line-height: 1.28; letter-spacing: -0.018em; font-weight: 600; }
+    h4 { font-size: 17px; line-height: 1.4; letter-spacing: -0.012em; font-weight: 600; }
+    p  { font-size: 15px; line-height: 1.68; letter-spacing: -0.006em; color: #505050; }
+    .container { max-width: 880px; margin: 0 auto; padding: 0 36px; }
+
+    .hero { position: relative; background: var(--gray-12); overflow: hidden; padding: 100px 36px 116px; text-align: center; }
+    .hero-glow { position: absolute; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; background: radial-gradient(ellipse at center, rgba(193,241,75,0.16) 0%, transparent 68%); pointer-events: none; }
+    .hero-inner { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+    .hero-eyebrow { display: inline-block; background: var(--green-dim); border: 1px solid var(--green-border); color: var(--green); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 100px; margin-bottom: 28px; }
+    .hero-title { color: white; margin-bottom: 18px; }
+    .hero-title .accent { color: var(--green); }
+    .hero-sub { color: rgba(255,255,255,0.62); font-size: 18px; line-height: 1.6; max-width: 600px; margin: 0 auto; }
+
+    section.body { padding: 88px 0; }
+    section.body.alt { background: var(--gray-2); }
+    .section-label { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; }
+    .section-label-line { flex: 1; height: 1px; background: var(--gray-5); }
+    .section-label-text { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-9); white-space: nowrap; }
+    .section-intro h2 { margin-bottom: 16px; max-width: 700px; }
+    .section-intro p { max-width: 640px; font-size: 17px; line-height: 1.7; }
+    .section-intro { margin-bottom: 40px; }
+
+    .principle { background: white; border: 1px solid var(--gray-6); border-radius: 16px; padding: 28px 32px; }
+    .principle + .principle { margin-top: 14px; }
+    .principle h4 { margin-bottom: 8px; }
+    .principle p { color: var(--gray-12); font-size: 15px; }
+
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .compare .col { background: white; border: 1px solid var(--gray-6); border-radius: 16px; padding: 28px; }
+    .compare .col.bright { background: linear-gradient(180deg, var(--green-soft) 0%, #f6ffe0 100%); border-color: rgba(193, 241, 75, 0.5); }
+    .compare .col .label { font-size: 11px; font-weight: 600; color: var(--gray-9); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+    .compare .col.bright .label { color: var(--green-text); }
+    .compare .col p { color: var(--gray-12); font-size: 15px; margin-bottom: 10px; }
+    .compare .col .quote { font-style: italic; color: var(--gray-11); margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-6); font-size: 15px; }
+    .compare .col.bright .quote { border-top-color: rgba(193, 241, 75, 0.6); color: #506715; }
+
+    .rank-list { display: flex; flex-direction: column; gap: 14px; }
+    .rank-item { display: grid; grid-template-columns: 48px 1fr; gap: 18px; background: white; border: 1px solid var(--gray-6); border-radius: 16px; padding: 28px 32px; }
+    .rank-num { font-size: 26px; font-weight: 700; color: var(--gray-9); line-height: 1; letter-spacing: -0.02em; }
+    .rank-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+    .rank-head h4 { margin-bottom: 0; }
+    .owner-tag { display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; line-height: 16px; letter-spacing: 0.03em; color: var(--gray-11); background: var(--gray-3); border: 1px solid var(--gray-6); border-radius: 100px; padding: 3px 10px; white-space: nowrap; }
+    .rank-body .what { color: var(--gray-11); font-size: 15px; line-height: 1.65; margin-bottom: 12px; }
+    .rank-body .impact { display: inline-block; font-size: 14px; color: var(--gray-12); background: var(--green-soft); border-radius: 8px; padding: 8px 12px; }
+    .rank-body .impact strong { color: var(--green-text); font-weight: 600; }
+
+    .starter { background: var(--gray-12); border-radius: 20px; padding: 44px 48px; color: white; margin-top: 8px; }
+    .starter h3 { color: white; margin-bottom: 10px; font-size: 26px; }
+    .starter p { color: rgba(255,255,255,0.6); font-size: 16px; margin-bottom: 28px; max-width: 540px; }
+    .starter ol { list-style: none; counter-reset: starter; display: flex; flex-direction: column; gap: 12px; }
+    .starter ol li { counter-increment: starter; padding: 18px 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; display: grid; grid-template-columns: 32px 1fr; gap: 14px; color: white; }
+    .starter ol li::before { content: counter(starter); font-weight: 700; color: var(--green); font-size: 18px; line-height: 1.2; }
+    .starter ol li strong { color: white; font-weight: 600; font-size: 15px; display: block; margin-bottom: 4px; }
+    .starter ol li span { color: rgba(255,255,255,0.6); font-size: 14px; line-height: 1.55; }
+
+    .faq { display: flex; flex-direction: column; gap: 28px; }
+    .faq-item h4 { margin-bottom: 6px; }
+    .faq-item p { color: var(--gray-11); font-size: 15px; }
+
+    .footer { padding: 36px 0; border-top: 1px solid var(--gray-5); background: white; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .footer-left { display: flex; align-items: center; gap: 12px; }
+    .footer-brand { font-size: 16px; font-weight: 700; color: var(--gray-12); }
+    .footer-divider { color: var(--gray-5); }
+    .footer-by { color: var(--gray-9); font-size: 14px; }
+    .footer-built { font-size: 13px; color: var(--gray-9); font-weight: 500; }
+    .footer a { color: var(--gray-12); text-decoration: underline; }
+
+    @media (max-width: 720px) {
+      h1 { font-size: 38px; }
+      h2 { font-size: 26px; }
+      .hero { padding: 72px 24px 80px; }
+      .hero-sub { font-size: 16px; }
+      .container { padding: 0 24px; }
+      section.body { padding: 56px 0; }
+      .compare { grid-template-columns: 1fr; }
+      .rank-item { padding: 22px 24px; grid-template-columns: 36px 1fr; gap: 14px; }
+      .rank-num { font-size: 22px; }
+      .starter { padding: 32px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <span class="hero-eyebrow">A guide for new Runneth customers</span>
+      <h1 class="hero-title">Your brain is what makes Runneth <span class="accent">yours</span>.</h1>
+      <p class="hero-sub">
+        Runneth gets sharper the more it knows about you. The brain is the place that knowledge lives. This is what it is, why it matters, and the documents that move your outcomes the most.
+      </p>
+    </div>
+  </section>
+
+  <section class="body">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">Why the brain matters</span>
+        <span class="section-label-line"></span>
+      </div>
+      <div class="section-intro">
+        <h2>Most AI tools answer the same way for everyone. Runneth doesn't.</h2>
+        <p>
+          The brain is your private, durable layer of context. Brand, audience, product, strategy, voice. Runneth reads it before every reply. The more you save into it, the more Runneth sounds like a teammate who has been at your company for a year, not a stranger who showed up this morning.
+        </p>
+      </div>
+
+      <div class="principle">
+        <h4>The principle</h4>
+        <p>A great creative strategist is only as good as the context they're working with. Same goes for Runneth. Without context, you get generic. With context, you get on-brand, on-strategy, ready-to-test work.</p>
+      </div>
+      <div class="principle">
+        <h4>What lives in the brain</h4>
+        <p>Anything durable. Brand books, customer reviews, briefs, persona docs, past winners, product specs, your team's playbooks, your tone of voice. Once it's saved, it shapes everything Runneth writes for you from that point on.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="body alt">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">What changes when the brain is fed</span>
+        <span class="section-label-line"></span>
+      </div>
+      <div class="section-intro">
+        <h2>Same ad. Same ask. Two different brains.</h2>
+        <p>Here's what the output actually looks like when Runneth has context vs. when it doesn't.</p>
+      </div>
+
+      <div class="compare">
+        <div class="col">
+          <p class="label">Empty brain</p>
+          <p>You ask Runneth for 5 hooks for your new electrolyte product. It writes generic hydration hooks. "Stay hydrated all day." "The cleanest electrolyte drink you'll find." On-trend, but it could be anyone.</p>
+          <p class="quote">"Drink this and feel the difference."</p>
+        </div>
+        <div class="col bright">
+          <p class="label">Fed brain</p>
+          <p>Same ask. Runneth has your brand book (anti-Big-Sports-Drink positioning), 200 customer reviews (real word: "afternoon crash"), and your last brief (target is perimenopause women, not gym bros). It writes hooks in your customers' actual language, against your real competitor, for your real persona.</p>
+          <p class="quote">"The 3pm crash is hormonal. Not a willpower problem."</p>
+        </div>
+      </div>
+
+      <div class="principle" style="margin-top: 32px;">
+        <h4>This compounds</h4>
+        <p>Every hook, brief, concept, ad teardown, weekly report, and email Runneth produces reads the brain first. One good brand context save makes a thousand downstream outputs better. The work you do once pays off every day after.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="body">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">The 10 most impactful uploads, in order</span>
+        <span class="section-label-line"></span>
+      </div>
+      <div class="section-intro">
+        <h2>Start at the top and work down.</h2>
+        <p>Ranked by how much they move the quality of Runneth's output across the workspaces we've watched. You don't need all of these on day one. The first three cover most of the lift.</p>
+      </div>
+
+      <div class="rank-list">
+
+        <div class="rank-item">
+          <div class="rank-num">1</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Brand context</h4><span class="owner-tag">Owned by Brand / Marketing</span></div>
+            <p class="what">Your brand book, brand kit, voice and tone guide, positioning doc, or anything that explains who you are, who you're against, and how you sound. Upload the PDFs you already have. Runneth distills them into durable brand context.</p>
+            <p class="impact"><strong>Why it matters.</strong> Every hook, concept, script, brief, and ad teardown reads this first. Without it, output is generic. With it, output sounds like you wrote it.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">2</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Customer reviews and voice of customer</h4><span class="owner-tag">Owned by CX / Insights</span></div>
+            <p class="what">Review exports (Trustpilot, Amazon, Yotpo, Shopify, your support tickets), customer interview transcripts, survey responses. Even raw CSV exports work. Runneth mines them for real language: pain points, objections, transformation moments, the exact phrases your customers use.</p>
+            <p class="impact"><strong>Why it matters.</strong> The fastest path from "good ad" to "great ad" is using your customers' words instead of yours. Reviews give Runneth that vocabulary.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">3</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Persona and ICP docs</h4><span class="owner-tag">Owned by Strategy / Marketing</span></div>
+            <p class="what">Persona research, ICP definitions, target audience docs, the segmentation work you've already paid an agency or researcher to do. Upload it. Runneth uses it to scope which pain, which motivator, which awareness stage every concept is written for.</p>
+            <p class="impact"><strong>Why it matters.</strong> Without persona context, Runneth writes to everyone (which is no one). With it, concepts land on a real audience.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">4</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Product catalog</h4><span class="owner-tag">Owned by Product / Brand</span></div>
+            <p class="what">SKU list, product fact sheets, pricing, ingredients, claims, technical specs, what's allowed in copy and what isn't. Runneth treats this as ground truth and won't invent features or break claims it has on file.</p>
+            <p class="impact"><strong>Why it matters.</strong> Stops hallucinated claims. Keeps the legal team happy. Makes product-specific work accurate the first time.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">5</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Past winning briefs and concepts</h4><span class="owner-tag">Owned by Creative / Strategy</span></div>
+            <p class="what">The briefs and concepts that have actually performed for you. Two or three is enough. Runneth pattern-matches against these whenever you ask for something similar.</p>
+            <p class="impact"><strong>Why it matters.</strong> Past winners are signal. They teach Runneth what "good" looks like in your account specifically, not in general.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">6</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Competitor research and swipe files</h4><span class="owner-tag">Owned by Strategy / Creative</span></div>
+            <p class="what">Competitor ad library exports, screenshots of competitor campaigns, swipe files of ads you admire, hook libraries you've built. Runneth uses these as reference points, not blueprints.</p>
+            <p class="impact"><strong>Why it matters.</strong> Helps Runneth spot the category whitespace and write concepts that don't sound like everyone else.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">7</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Landing page and CRO context</h4><span class="owner-tag">Owned by Growth / Web</span></div>
+            <p class="what">Page summaries, CRO audits, prior A/B test results, post-purchase survey data. Anything that explains what your landing experience says and what it converts on.</p>
+            <p class="impact"><strong>Why it matters.</strong> Keeps ad copy and landing page in sync. Surfaces message-match issues before you spend budget on a mismatch.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">8</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Channel strategy briefs</h4><span class="owner-tag">Owned by Paid Media / Growth</span></div>
+            <p class="what">How your Meta, TikTok, or other paid channels are actually structured. Funnel stages, attribution setup, KPI definitions, what counts as a win on each channel.</p>
+            <p class="impact"><strong>Why it matters.</strong> Runneth reads performance data through your actual strategy, not generic defaults. "Best performing ad" means what you mean by it.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">9</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Templates</h4><span class="owner-tag">Owned by Creative Ops</span></div>
+            <p class="what">Your brief template, your concept format, your weekly report shape, your hook structure. Save the example you want Runneth to match.</p>
+            <p class="impact"><strong>Why it matters.</strong> Output comes back in your team's format, not Runneth's default.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">10</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Call notes and strategy session recordings</h4><span class="owner-tag">Owned by Account Lead / Strategy</span></div>
+            <p class="what">Discovery calls, kickoff notes, strategy session transcripts, post-mortems. Anything that captures decisions made in the room.</p>
+            <p class="impact"><strong>Why it matters.</strong> Keeps the brain aligned with what was actually agreed, not what's written down in a stale doc somewhere.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="body alt">
+    <div class="container">
+      <div class="starter">
+        <h3>If you only do three things this week</h3>
+        <p>This is the minimum brain. Most of the lift, almost none of the time.</p>
+        <ol>
+          <li>
+            <div>
+              <strong>Upload your brand book or any brand guidelines you have.</strong>
+              <span>PDF, doc, slide deck. Whatever exists. Runneth will distill it.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Export 100 customer reviews and drop them in.</strong>
+              <span>CSV from Yotpo, Trustpilot, Amazon, or your support tool. Runneth mines them for voice of customer.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Share your most recent winning brief.</strong>
+              <span>The one whose concept actually performed. Runneth pattern-matches against it for future asks.</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="body">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">Common questions</span>
+        <span class="section-label-line"></span>
+      </div>
+      <div class="faq">
+        <div class="faq-item">
+          <h4>Do I need to format anything?</h4>
+          <p>No. Drop the file in chat and say what it is. Runneth handles the rest.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What if my brand book is out of date?</h4>
+          <p>Upload it anyway, mention what's stale, and Runneth will weigh the rest accordingly. Something durable beats nothing.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I update or remove things later?</h4>
+          <p>Yes. Tell Runneth what to change or remove and it updates the saved file. Nothing is locked in.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Is the brain shared across my team?</h4>
+          <p>Anyone in your workspace reads from the same brain. One save, everyone benefits.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What if I'm not sure something is worth saving?</h4>
+          <p>Ask. Runneth will tell you whether it would shape future outputs or whether it's better kept as one-off context.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <span class="footer-brand">Runneth</span>
+          <span class="footer-divider">·</span>
+          <span class="footer-by">Your creative strategy teammate, by Motion</span>
+        </div>
+        <span class="footer-built">Built by Runneth 🤓</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
