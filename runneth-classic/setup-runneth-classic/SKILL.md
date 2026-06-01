@@ -46,11 +46,33 @@ Run these in parallel where possible. Be efficient — don't let pre-discovery t
 7. `motion tiktok insights --date-range last_30d --sort-by spend --sort-direction desc --grain ads --limit 30 --include-metrics` — what's running on TikTok (skip if no TikTok connection).
 8. **Historical creative library for graveyard inference** — `motion meta insights --date-range last_365d --sort topSpend --limit 500 --include-metrics --include-summaries --group-by creative --include-glossary` — the full year of creative work. This is what we use to infer what was tested and abandoned vs. what's still running.
 
-**From the brain (if exists):**
+**From the brain (full inventory, always run):**
 
-9. Check `/agent/brain/brand-audit/<workspace>/` — if `strategy.md` and `brand-context.md` exist from a prior brand-audit run, read them.
-10. Check `/agent/brain/runneth-classic/workspaces/<slug>/` — if this is a re-invocation, read existing setup files.
-11. Check `/agent/brain/runneth-classic/integrations-intent.md` — org-level integrations the team has already named.
+The brain is not assumed empty. Real orgs install Runneth Classic on top of existing context — prior brand-audit runs, dossiers built by other use cases, files the team saved manually, content from a previous Runneth setup. Phase 0 explicitly audits what's there and incorporates it into the model. The pack has an opinion on what to use, preserve, update, and archive.
+
+9. **Run a brain inventory.** `ls -la /agent/brain/` at the top level. For each subtree relevant to creative strategy, record what exists, when it was last modified, what it appears to cover, and whether the modification date suggests it may be stale.
+
+Specifically check these locations in order:
+
+- `/agent/brain/runneth-classic/workspaces/<slug>/` — prior runneth-classic state for this workspace (re-invocation case)
+- `/agent/brain/runneth-classic/integrations-intent.md` — org-level integrations the team has already named
+- `/agent/brain/brand-audit/<workspace>/` — prior brand-audit Foundation bundle (strategy.md, brand-context.md, review-audit.md, keywords.md, competitor-analysis.md, product-catalog.md)
+- `/agent/brain/brand-kit/<workspace>/` — visual identity content if brand-kit ran
+- `/agent/brain/paid-strategy-audit/<channel>/<workspace>/` — strategy briefs per channel
+- `/agent/brain/competitor-intel/` — prior weekly competitor scans
+- `/agent/brain/customers/<workspace-or-slug>/` — CSM dossier content if it exists
+- `/agent/brain/customer-voice/` or similar VOC stores
+- Any other top-level brain subtree modified in the last 90 days
+
+For each find, classify it as:
+
+- **Fresh** (modified within the last 60 days) — default to using as is
+- **Aging** (60–180 days) — use but flag for confirmation during setup
+- **Stale** (>180 days) — likely needs refresh; surface to the user explicitly
+
+Save the inventory to `/agent/brain/runneth-classic/workspaces/<slug>/brain-inventory.md` for the orchestrator's Step 0 re-anchor to read on every future turn.
+
+10. **Read the high-value files in full.** If brand-audit's `strategy.md` exists, read it cover to cover — the persona × angle × stage matrix is the most important piece of inherited context. Same for any prior `winner-definition.md`, `standing-decisions.md`, `graveyard-inference.md`, `customer-voice-intent.md`, `watched-brands/*.md`. These are the files Phase 1 will lead with.
 
 **From the public web (when useful):**
 
@@ -60,7 +82,7 @@ Run these in parallel where possible. Be efficient — don't let pre-discovery t
 
 ### Build the internal model
 
-Synthesize what you have into a working picture. Cover at minimum:
+Synthesize what you have into a working picture. **Inherited brain content has priority over fresh Motion data for subjective claims** (persona definitions, voice, brand positioning, standing decisions, graveyard markers); fresh Motion data has priority for **factual claims** (current active ads, current saved reports, current workspace goal). Cover at minimum:
 
 - **What they sell.** Physical product / SaaS / service / marketplace / agency / other. From `productType` and `productCategory` in brand-context, confirmed by the website if fetched.
 - **Brand category.** From `brandCategory` in brand-context.
@@ -72,9 +94,79 @@ Synthesize what you have into a working picture. Cover at minimum:
 - **What creative is currently running.** Format mix, messaging themes, persona tells from the top 30-day creatives.
 - **What's been tested and abandoned (the inferred graveyard).** From the 365-day creative library: identify patterns that were tested with meaningful spend then dropped to zero, OR formats/tactics that appeared once or twice and never returned. Group by visual format, asset type, hook tactic, and messaging angle using glossary tags. Distinguish two cases: (a) patterns that peaked then died ("tried at scale, killed") and (b) patterns that were tested once and never iterated on ("tried once, abandoned"). Save the synthesis to `/agent/brain/runneth-classic/workspaces/<slug>/graveyard-inference.md` so Turn 5b can present specific findings rather than asking blank-slate.
 - **What's been iterated on heavily (the validated patterns).** From the same 365-day pull: patterns that appear repeatedly across variants, that maintain or grow spend over time, or that show up in multiple campaigns. These are the brand's bench — what the team has signed off on as good.
-- **Whether brand-audit has already run.** Yes / no based on `/agent/brain/brand-audit/<workspace>/` existence.
+- **Whether brand-audit has already run.** Yes / no based on `/agent/brain/brand-audit/<workspace>/` existence, plus when it last ran (fresh / aging / stale).
+- **Whether prior runneth-classic state exists.** If `workspaces/<slug>/` has prior files, this is a re-invocation. Treat existing files as the starting point and only update what the user changes in Phase 1.
+- **What other use cases have contributed brain content.** Other use cases (brand-kit, paid-strategy-audit, competitor-intel, etc.) may have written useful content. Note their existence; the orchestrator reads them via corpus-search on relevant future turns.
+- **What looks stale.** Anything aging or stale gets surfaced for confirmation rather than silently used.
 
 **The graveyard inference is not a confident claim.** Patterns get paused for many reasons — seasonal rotation, creator contract ending, fatigue, a strategist's preference shift. Phase 1 surfaces specific findings as questions, not assertions, and the customer corrects what we got wrong.
+
+---
+
+## Brain handling policy
+
+The pack has an explicit opinion on how existing brain content gets used, where it lives, what gets updated, and what gets archived. This policy applies to every Phase 0 inventory and every Phase 1 write.
+
+### Use
+
+- **Inherited content is the default starting point.** If a prior brand-audit strategy file exists, the workspace persona is the one in that file — not whatever Phase 0 infers from brand-context. The user has to actively change it for the inferred version to win.
+- **Subjective inheritance.** Persona names, voice descriptions, standing decisions, graveyard markers, watched-brand reasons — if a prior file says it, trust it.
+- **Factual freshness.** Current active ads, current workspace goal, current attribution windows — always pull the live Motion data; the prior file may be stale.
+- **Read but don't claim ownership of other use cases' content.** Brain content written by brand-kit, paid-strategy-audit, competitor-intel, and others is theirs. The orchestrator reads it for context but the runneth-classic setup does not write to those paths.
+
+### Conflict resolution
+
+When Phase 0 inference contradicts inherited brain content, resolve in this priority order:
+
+1. **What the user says in this conversation** (Phase 1 explicit confirmation) wins everything.
+2. **Inherited per-workspace state under `runneth-classic/workspaces/<slug>/`** wins over fresh inference for subjective content.
+3. **Inherited `brand-audit/<workspace>/` content** wins over fresh inference for subjective content.
+4. **Fresh Motion data** wins for factual claims (current campaigns, current goal, current creative).
+5. **WebSearch / WebFetch results** are the lowest-priority signal — supporting context only.
+
+If the user's Phase 1 answer contradicts inherited content, treat that as a deliberate update. Archive the old version (see below) and write the new version. Do not silently merge.
+
+### Where state lives
+
+- **Current canonical state for this workspace** — `/agent/brain/runneth-classic/workspaces/<slug>/<filename>.md`
+- **Org-level state shared across workspaces** — `/agent/brain/runneth-classic/<filename>.md` (currently only `integrations-intent.md`)
+- **Brain inventory snapshot** — `/agent/brain/runneth-classic/workspaces/<slug>/brain-inventory.md` (written by Phase 0, read on every chain run)
+- **Archived prior versions** — `/agent/brain/runneth-classic/workspaces/<slug>/_archive/<ISO-date>-<filename>.md`
+- **Pre-discovery corrections** — `/agent/brain/runneth-classic/workspaces/<slug>/pre-discovery-corrections.md`
+
+### Updating vs. archiving
+
+When Phase 1 captures a change to durable state (winner definition, persona context, graveyard entry, watched brand, etc.):
+
+1. **If the file does not exist yet:** write it. Done.
+2. **If the file exists and the change is additive** (new entry to a list, new theme to track, new tool added): merge — append the new content, preserve everything that was there.
+3. **If the file exists and the change overrides existing content** (winner definition changes, persona gets renamed, graveyard pattern marked as not-actually-dead): archive the old version first.
+
+**Archival procedure:**
+
+```
+mv /agent/brain/runneth-classic/workspaces/<slug>/<filename>.md \
+   /agent/brain/runneth-classic/workspaces/<slug>/_archive/<ISO-date>-<filename>.md
+```
+
+Then write the new version to the original path. Add a header to the new version recording what changed and why, with a pointer to the archived original.
+
+**Never destructive overwrites for content the user has been working with.** Even if the change is small, preserve the prior version.
+
+### Stale content handling
+
+- **Fresh** (<60 days): use as is, no surface.
+- **Aging** (60–180 days): use but mention in the closing handoff: "Your brand-audit foundation is from <date> — if anything feels off in the next few weeks, say `refresh brand-audit`."
+- **Stale** (>180 days): surface during Phase 1. "Brand-audit hasn't run since <date>. Want me to refresh it as part of this setup, or trust what's there?"
+
+### Provenance markers
+
+Every per-workspace file written by setup includes a header recording:
+
+- `Captured:` ISO date
+- `Source:` Phase 0 inference / Turn N confirmation / Inherited from prior file / User upload
+- `Confidence:` high (user-confirmed) / medium (inferred and reasonable) / low (best guess, flag for confirmation)
+- `Supersedes:` path to archived prior version, if any
 
 ### After Phase 0
 
@@ -110,9 +202,9 @@ Do not list multiple questions in a single message. Do not show the user a roadm
 
 ### Turn 1 — Pre-discovery synthesis + first confirm
 
-Open with what you found. This is the message that should make the customer feel like Runneth gets them.
+Open with what you found. This is the message that should make the customer feel like Runneth gets them. The synthesis branches based on what's already in the brain.
 
-Example shape (adapt every value to what Phase 0 actually surfaced):
+**Case A: This is a fresh install (no prior runneth-classic state, no prior brand-audit, or stale).**
 
 > "Setting up your Runneth. Before asking anything, I dug through what Motion already has on <Brand Name>:
 >
@@ -122,6 +214,44 @@ Example shape (adapt every value to what Phase 0 actually surfaced):
 > - **Who you're already watching:** <names from competitorBrands>.
 >
 > Sound right at a glance, or did I miss something obvious?"
+
+**Case B: brand-audit foundation already exists and is fresh (<60 days).**
+
+> "Setting up your Runneth. I see brand-audit ran on <date> — I'll lean on that as your foundation. Quick read on what I'm carrying forward:
+>
+> - **Who you're building for:** <persona name from strategy.md> facing <specific pain>, at <awareness stage>.
+> - **How you measure:** Workspace goal is <metric>, with <attribution>. Your saved reports lean on <pattern>.
+> - **What's running right now:** <top-30-day pattern>.
+> - **Watched brands:** <existing inspo + competitor names>.
+>
+> Sound right at a glance, or has anything shifted since brand-audit last ran?"
+
+**Case C: brand-audit exists but is aging (60–180 days).**
+
+> "Setting up your Runneth. Brand-audit was last refreshed on <date>, so I'll work with what's there but flag anything that looks like it may have shifted. Quick read:
+>
+> [same four bullets as Case B]
+>
+> Sound right at a glance, or has anything material changed since <date>?"
+
+**Case D: brand-audit exists but is stale (>180 days).**
+
+> "Setting up your Runneth. Brand-audit hasn't run since <date> — that's old enough that I'd suggest refreshing it as part of this setup. For now, here's the read I have:
+>
+> [same four bullets as Case B, plus note on what's likely shifted given Motion data]
+>
+> Want me to refresh brand-audit at the end of this configuration, or trust what's there?"
+
+**Case E: This is a re-invocation (prior runneth-classic state exists).**
+
+> "Re-running your Runneth setup. I'm carrying forward what was captured on <date>:
+>
+> - **Persona:** <from prior strategy.md or persona file>
+> - **Winner definition:** <from prior file>
+> - **Watched brands:** <from prior files>
+> - **Customer voice:** <from prior file>
+>
+> Anything to update, or jump straight to refreshing the brand-audit foundation?"
 
 Wait for the user's response.
 
