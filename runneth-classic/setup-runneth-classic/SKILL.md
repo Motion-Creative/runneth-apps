@@ -119,17 +119,20 @@ Pull `motion workspace-goal` results.
 
 If they want to connect, surface the standard Motion connection flow. If not, continue and note the gap in the closing.
 
-### Turn 4 — Integrations inventory
+### Turn 4 — Creative workflow tools
+
+This question is framed around creative-strategy outcomes (briefs, assets, reviews, performance updates), not a generic CRM/PM tool audit. The strategist needs to know where work flows so it can plug in cleanly when integrations get connected later.
 
 ```
-"What tools does your team use day-to-day, even ones I'm not connected to yet?
-Slack, Notion, HubSpot, Gong, anything else — name each one and how you use it.
-I'll save it so when you connect any of them, I already know how you actually work.
+"A few quick questions about how creative work flows for your team:
 
-(Or skip — you can add them later.)"
+- Where do briefs live? Notion, Google Drive, Frame.io, somewhere else?
+- Where do creative assets and final cuts go?
+- Where do performance updates and weekly decisions get shared?
+- Anything else worth knowing — name it and how your team uses it."
 ```
 
-Open-ended response. Parse each named tool. Save to `/agent/brain/runneth-classic/integrations-intent.md` (ORG-LEVEL, not workspace-scoped):
+Parse each named tool from any of the four sub-questions. Save to `/agent/brain/runneth-classic/integrations-intent.md` (ORG-LEVEL, not workspace-scoped):
 
 ```markdown
 # Integrations Intent
@@ -137,13 +140,17 @@ Captured: <ISO date>
 
 ## <tool name>
 Connected: <yes | no>
-How we use it: <user's description>
+Used for: <brief delivery | asset storage | performance updates | other — what the user said>
+How we use it: <user's description, verbatim if short>
 Specific surfaces / IDs / channels: <if mentioned>
 ```
 
 If the file already exists, merge — don't overwrite. New entries append; existing entries update only if the user explicitly contradicts the prior entry.
 
-Acknowledge briefly: "Got it, saved [tool names]."
+Acknowledge briefly. Examples:
+
+- "Got it — briefs in Notion, assets in Frame.io, performance in #performance Slack channel."
+- "Saved. I'll know where to put briefs and where to look for assets when those integrations get connected."
 
 ### Turn 5 — Watched brands
 
