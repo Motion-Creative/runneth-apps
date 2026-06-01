@@ -1,7 +1,8 @@
 {
   "schema": "1.0",
   "id": "runneth-classic",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "install_notes": "Several bundled skill files in this pack are 12-33 KB. They will be truncated if the install runner uses WebFetch (which caps around 30 KB and often lower). The install runner MUST fetch these files via bash + curl against raw.githubusercontent.com URLs or via the GitHub Contents API (with base64 decode), NOT WebFetch. Specifically the five files in skills/ over 10 KB: creative-strategy-engine.md (33 KB), visual-formats.md (31 KB), hook-tactics.md (18 KB), creative-mechanics.md (15 KB), brand-relevant-keywords.md (13 KB), hook-voice-patterns.md (12 KB), hook-writing.md (11 KB). Example fetch: bash -c 'curl -sL https://raw.githubusercontent.com/Motion-Creative/runneth-apps/main/runneth-classic/skills/visual-formats.md > /agent/.agents/skills/visual-formats/SKILL.md'. If WebFetch is the only option available, fetch each file in multiple passes using offset/limit parameters and concatenate, or escalate to the user.",
   "description": "The deterministic, opinionated Runneth, packaged as a single installable use case. Eleven upstream dependencies, eleven bundled Alysha craft skills, brain seed with theme classifier and per-theme chains plus Alysha framework supplements and Beta-specific references, an orchestrator that enforces a 12-theme chain and the Synthesis Gate, a 10-step setup that captures surface preference, winner-definition, integrations intent, watched brands, and customer voice before handing off to brand-audit, and a user.md sentinel encoding 11 voice and behavior rules engineered against the six failure modes from the Runneth 1.0 customer feedback dataset.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -234,6 +235,12 @@
     "/agent/brain/runneth-classic/integrations-intent.md"
   ],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-06-01",
+      "type": "patch",
+      "notes": "Add install_notes field explicitly telling the install runner to fetch large skill files via curl against raw.githubusercontent.com or the GitHub Contents API, not WebFetch. Test installs found the install agent rationalizing partial content from WebFetch truncation. Same bundled skill file sizes ship without issue in brand-audit and creative-deep-dive, so the fix is fetch-tool selection at install time, not pack content."
+    },
     {
       "version": "1.0.0",
       "date": "2026-06-01",
