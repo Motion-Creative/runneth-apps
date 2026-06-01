@@ -42,19 +42,21 @@ Run these in parallel where possible. Be efficient — don't let pre-discovery t
 3. `motion reports` — list of saved reports with their `tableKpis`, `sortBy`, `filters`.
 4. `motion meta custom-conversion-metrics` — custom conversion registry (Meta only; skip if no Meta connection).
 5. `motion spend-threshold` — workspace significance threshold.
-6. `motion meta insights --date-range last_30d --sort topSpend --limit 50 --include-metrics --include-summaries` — what creatives are actually running on Meta, including format mix and messaging themes from summaries.
+6. `motion meta insights --date-range last_30d --sort topSpend --limit 50 --include-metrics --include-summaries` — what creatives are actually running on Meta right now, including format mix and messaging themes from summaries.
 7. `motion tiktok insights --date-range last_30d --sort-by spend --sort-direction desc --grain ads --limit 30 --include-metrics` — what's running on TikTok (skip if no TikTok connection).
+8. **Historical creative library for graveyard inference** — `motion meta insights --date-range last_365d --sort topSpend --limit 500 --include-metrics --include-summaries --group-by creative --include-glossary` — the full year of creative work. This is what we use to infer what was tested and abandoned vs. what's still running.
 
 **From the brain (if exists):**
 
-8. Check `/agent/brain/brand-audit/<workspace>/` — if `strategy.md` and `brand-context.md` exist from a prior brand-audit run, read them.
-9. Check `/agent/brain/runneth-classic/workspaces/<slug>/` — if this is a re-invocation, read existing setup files.
-10. Check `/agent/brain/runneth-classic/integrations-intent.md` — org-level integrations the team has already named.
+9. Check `/agent/brain/brand-audit/<workspace>/` — if `strategy.md` and `brand-context.md` exist from a prior brand-audit run, read them.
+10. Check `/agent/brain/runneth-classic/workspaces/<slug>/` — if this is a re-invocation, read existing setup files.
+11. Check `/agent/brain/runneth-classic/integrations-intent.md` — org-level integrations the team has already named.
 
 **From the public web (when useful):**
 
-11. If `brandUrl` is in brand-context, `WebFetch` the URL → confirm category, positioning, product type. Pull whatever About / How-it-works copy is visible.
-12. `WebSearch "<brand name> reviews"` — check whether public review surfaces exist (Trustpilot, G2, Capterra, Amazon, Reddit). Don't read them in depth; just identify their existence so customer-voice questions can be framed correctly.
+12. If `brandUrl` is in brand-context, `WebFetch` the URL → confirm category, positioning, product type. Pull whatever About / How-it-works copy is visible.
+13. `WebSearch "<brand name> reviews"` — check whether public review surfaces exist (Trustpilot, G2, Capterra, Amazon, Reddit). Don't read them in depth; just identify their existence so customer-voice questions can be framed correctly.
+14. **Social listening / cultural context** — `WebSearch` for category conversations on Reddit, TikTok, X. Use the brand's `brandCategory` and `productCategory` plus the implied persona's pain to seed 2–3 broad queries. Example queries for a SaaS performance-marketing tool: `site:reddit.com performance marketers complaining attribution`, `tiktok performance marketing inside jokes 2026`, `r/marketing biggest frustrations this year`. Capture: emerging language patterns, current frustrations, cultural moments the brand could credibly speak to, what's getting roasted in the category. Save the synthesis to `/agent/brain/runneth-classic/workspaces/<slug>/cultural-context.md` for downstream creative-strategy reads.
 
 ### Build the internal model
 
@@ -68,7 +70,11 @@ Synthesize what you have into a working picture. Cover at minimum:
 - **Workspace goal and attribution.** From `motion workspace-goal`.
 - **Inferred winner-definition.** From workspace-goal plus the patterns in saved reports.
 - **What creative is currently running.** Format mix, messaging themes, persona tells from the top 30-day creatives.
+- **What's been tested and abandoned (the inferred graveyard).** From the 365-day creative library: identify patterns that were tested with meaningful spend then dropped to zero, OR formats/tactics that appeared once or twice and never returned. Group by visual format, asset type, hook tactic, and messaging angle using glossary tags. Distinguish two cases: (a) patterns that peaked then died ("tried at scale, killed") and (b) patterns that were tested once and never iterated on ("tried once, abandoned"). Save the synthesis to `/agent/brain/runneth-classic/workspaces/<slug>/graveyard-inference.md` so Turn 5b can present specific findings rather than asking blank-slate.
+- **What's been iterated on heavily (the validated patterns).** From the same 365-day pull: patterns that appear repeatedly across variants, that maintain or grow spend over time, or that show up in multiple campaigns. These are the brand's bench — what the team has signed off on as good.
 - **Whether brand-audit has already run.** Yes / no based on `/agent/brain/brand-audit/<workspace>/` existence.
+
+**The graveyard inference is not a confident claim.** Patterns get paused for many reasons — seasonal rotation, creator contract ending, fatigue, a strategist's preference shift. Phase 1 surfaces specific findings as questions, not assertions, and the customer corrects what we got wrong.
 
 ### After Phase 0
 
@@ -137,13 +143,15 @@ Captured: <ISO date>
 Primary surface: <slack | web | both>
 ```
 
-### Turn 3 — Winner definition
+### Turn 3 — Winner definition + the why
 
-Lead with the inference you already built in Phase 0. Confirm in one sentence.
+Lead with the inference you already built in Phase 0. Confirm in one sentence, then ask the why in the same turn.
 
-> "Looks like ROAS is your headline metric — your workspace goal is set to it and your saved reports lean on it. Spend shows up as the scale signal. So for winners I'd default to: ROAS as the efficiency call, spend as the scale check. Sound right, or do you grade differently?"
+> "Looks like ROAS is your headline metric — your workspace goal is set to it and your saved reports lean on it. Spend shows up as the scale signal. So for winners I'd default to: ROAS as the efficiency call, spend as the scale check. Sound right, or do you grade differently? And the why behind it — growth mode, profitability squeeze, or holding steady?"
 
 (Adjust the lead based on what Phase 0 actually surfaced — if workspace-goal points to a custom conversion, frame around that. If saved reports are all spend-sorted, lead with spend.)
+
+The `why` answer changes how downstream creative bets get prioritized. Growth mode tolerates riskier upper-funnel bets. Profitability mode favors proven bottom-funnel formats. Maintenance mode wants iterations on what already works.
 
 When the user responds, save to `/agent/brain/runneth-classic/workspaces/<slug>/winner-definition.md`:
 
@@ -154,7 +162,9 @@ Captured: <ISO date>
 Primary signal: <spend | conversion value | ROAS | custom conversion | other>
 Secondary signal: <if applicable>
 Custom conversion ID: <if applicable>
-User's exact words: "<verbatim>"
+Business mode: <growth | profitability | maintenance | launch | other>
+User's exact words on the metric: "<verbatim>"
+User's exact words on the why: "<verbatim>"
 ```
 
 ### Turn 4 — Creative workflow tools
@@ -191,6 +201,69 @@ Acknowledge briefly. Examples:
 
 - "Got it — briefs in Notion, assets in Frame.io, performance in #performance Slack channel."
 - "Saved. I'll know where to put briefs and where to look for assets when those integrations get connected."
+
+### Turn 4b — The graveyard (confirm what Phase 0 inferred)
+
+**Only run this turn if Phase 0's `graveyard-inference.md` has at least one specific pattern worth surfacing.** Skip silently if the 365-day pull was too thin to identify anything.
+
+Surface 2–3 specific findings as questions. Don't list everything Phase 0 inferred — just the strongest 2–3. The customer corrects what we got wrong.
+
+> "Looking at the last year of your ad library, a few patterns stood out:
+>
+> - You tested heavily on **greenscreen / talking-head format** between October and December, peaked at $40K spend, then dropped to zero in January. Was that intentional — bad performance, or just seasonal rotation?
+> - **Founder-led testimonials** appeared in a small test in March and never came back. Tried once and not for you, or just not gotten back to?
+> - You haven't tested any **pain-agitation hooks** in the past year. Deliberate, or just not a direction yet?
+>
+> Any of those reads wrong, and is there anything else you've sworn off I should avoid proposing?"
+
+Compose dynamically from `graveyard-inference.md`. Use specific time ranges, specific spend numbers, and specific glossary categories the customer will recognize. Don't be vague.
+
+Update `graveyard-inference.md` based on the response. Save customer corrections verbatim so the orchestrator's Step 0 re-anchor reads them on every future creative-strategy turn:
+
+```markdown
+# Graveyard for <workspace>
+Last updated: <ISO date>
+
+## Confirmed dead (do not propose)
+- <Pattern>: <why — user's words>
+- <Pattern>: <why — user's words>
+
+## Not actually dead (revisit possible)
+- <Pattern>: <correction — e.g., "we paused those for fall, want to test again Q1">
+
+## Never tried, deliberately
+- <Pattern>: <why — user's words>
+
+## Inferred by Phase 0 but not confirmed
+- <Pattern>: <observation — customer didn't address>
+```
+
+When this turn fires, the orchestrator's creative-strategy chains read this file before generating concepts or hooks. The graveyard becomes binding — do not propose patterns marked "confirmed dead."
+
+### Turn 4c — Current pressure (what's coming up)
+
+Can't be inferred. Single direct question.
+
+> "Anything coming up in the next 60 days I should know about — launches, sales, big creative bets you're trying to make work?"
+
+Save to `/agent/brain/runneth-classic/workspaces/<slug>/current-pressure.md`:
+
+```markdown
+# Current pressure for <workspace>
+Captured: <ISO date>
+Refresh cadence: every 60 days, or on request
+
+## Coming up
+- <event / launch / sale / push>: <when>, <what we're trying to make work>
+
+## Active right now
+- <campaign or focus the team is invested in>
+
+## Recent changes
+- <platform shifts, attribution drift, account issues the team has been navigating>
+```
+
+This file should refresh roughly every 60 days. The orchestrator surfaces it for any creative-strategy turn so concepts respect upcoming pressure.
 
 ### Turn 5 — Watched brands
 
