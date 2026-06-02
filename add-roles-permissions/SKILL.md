@@ -163,6 +163,24 @@ If MISSING and this is a fresh install (no existing `permissions.md`): hard stop
 
 If MISSING but `permissions.md` already exists: warn and proceed. Reconfigures can still adjust spaces and people even when Neon is offline; Motion-web identity will just be blocked until the secret returns.
 
+### Look-around 7 — What shape is this org based on its Motion workspaces?
+
+```bash
+motion workspaces
+```
+
+This returns the org name and the list of workspaces with their IDs and names. The naming pattern of the workspaces is a quiet signal of how the team is organized. Hold the result as a note about the **org shape hint** and carry it into Phase 2.
+
+Read the pattern:
+
+- **One workspace** named after the company or a brand → likely a single brand or solo operator.
+- **Multiple workspaces named after brands or clients** (e.g. "Acme," "Globex," "Pied Piper") → likely an agency managing several brands.
+- **Multiple workspaces named after teams** (e.g. "Engineering," "Marketing," "Sales") → likely a dept structure.
+- **Multiple workspaces named after people** → an internal per-individual setup. Rare for customer orgs.
+- **No clear pattern** → ambiguous. Record as `unknown` and let the conversation handle it.
+
+Treat the signal as a starting hypothesis, not a decision. The Phase 3 conversation always gets the final word.
+
 ---
 
 ## PHASE 2 — FRAMING THE OPENING
@@ -189,10 +207,11 @@ Use these in your own words. Do not recite all four. Pick what fits the trigger.
 ### Adapting to what Phase 1 found
 
 - **Fresh install** (no prior config): give the fuller framing, set expectations for a brief conversation, ask the team question.
-- **Reconfigure** (an existing `spaces.json` or `permissions.md` is already there): acknowledge what's already set up at a high level ("looks like you already have permissions running"), confirm whether they want a full re-walkthrough or a targeted change, and only ask the team question if a full walkthrough was confirmed.
+- **Reconfigure** (an existing `spaces.json` or `permissions.md` is already there): acknowledge what's already set up at a high level, confirm whether they want a full re-walkthrough or a targeted change, and only ask the team question if a full walkthrough was confirmed.
 - **Partial install** (some files present, others missing): tell them you noticed a partial setup and ask if they want to finish it or start fresh.
 - **TMM v2.0.1 leak detected** (Look-around 4 found the leaked text): mention it casually as something you'll tidy up along the way, do not turn it into the headline.
 - **Neon secret missing** (Look-around 6 flagged it): say clearly that Motion-web identity needs that secret first and offer to walk them through saving it before continuing. Do not start the team conversation if Phase 1 hard-stopped.
+- **Org shape hint from workspaces** (Look-around 7 noted a pattern): use it to lean the opener in a direction without committing to a fully-formed proposal. If the workspaces look agency-shaped, frame the opener around how each brand or client gets its own space; if they look single-brand-shaped, frame around one team and a few shared spaces; if they look dept-shaped, frame around teams. If the pattern is unclear, do not invoke the workspace observation at all. The hint is a tilt, not a script — let the admin tell you whether the read is right rather than asking them to confirm a structured guess.
 
 ### Tone
 

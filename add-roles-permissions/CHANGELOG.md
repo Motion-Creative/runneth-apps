@@ -86,6 +86,11 @@ Two more changes after a fresh read:
 
 Phase 3 stays as-is (Kyra approved).
 
+### Workspace-shape signal (Kyra)
+
+25. **Phase 1 Look-around 7 added.** Runs `motion workspaces` (always available out-of-the-box on any Motion-authenticated VM) and notes a quiet org-shape hint from the workspace naming pattern: one workspace named after the company, multiple brand-named workspaces (agency), department-named workspaces (dept structure), per-person workspaces (rare for customers), or unclear. The signal is a starting hypothesis, not a decision.
+26. **Phase 2 adapts based on the hint.** New bullet in "Adapting to what Phase 1 found" tells the agent how to lean the opener in a direction (agency-flavor, single-brand-flavor, dept-flavor) without committing to a fully-formed proposal. The hint is a tilt, not a script. If the pattern is unclear, the agent does not invoke the workspace observation at all. No canned message — the agent still composes the opener in its own voice. The conversation in Phase 3 always gets the final word.
+
 ---
 
 ## v2.3.0 — 2026-06-02 (PR #98)
