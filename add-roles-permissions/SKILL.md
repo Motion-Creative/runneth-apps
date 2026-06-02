@@ -5,14 +5,14 @@ description: >
   One universal rulebook (permissions.md), three clean siblings nested under
   /agent/brain/ (admin/, members/, plus the rest of brain for team knowledge),
   member scope (replacing team), lightweight org-change flow, and
-  workspace-map.json as the sole identity source of truth.
+  organization-map.json as the sole identity source of truth.
   Idempotent — safe to re-run on a partially-installed instance.
 trigger_domains:
   - permission-setup
   - security-deploy
   - cross-org-deployment
   - bootstrap
-version: "2.1.1"
+version: "2.2.0"
 source_org: "Motion (Creative Analytics)"
 predecessor: "deploy-security-protocol@2.0.0"
 ---
@@ -41,7 +41,7 @@ targeted changes for leanness and reliability. See CHANGELOG.md for the diff.
     ├── routines.md                        ← routines registry stub
     ├── admin/                             ← the permission system (locked path)
     │   ├── permissions.md                 ← universal rulebook (admin + member rules + locked paths)
-    │   ├── workspace-map.json             ← identity registry — sole source of truth
+    │   ├── organization-map.json             ← identity registry — sole source of truth
     │   ├── slack-whoami.sh                ← Slack resolver + auto-provisioning
     │   ├── motion-whoami.sh               ← Motion web resolver + auto-provisioning
     │   └── config.json                    ← optional admin config
@@ -86,12 +86,12 @@ grep -c "MANDATORY PERMISSION PROTOCOL" /agent/user.md 2>/dev/null || echo "0"
   or an older version (longer block). Flag for the user — offer to update in Phase 3.
 - If result = 0: not installed. Proceed normally.
 
-### Check 2 — Does workspace-map.json exist and have entries?
+### Check 2 — Does organization-map.json exist and have entries?
 
 ```bash
-ls /agent/brain/admin/workspace-map.json 2>/dev/null && \
+ls /agent/brain/admin/organization-map.json 2>/dev/null && \
   python3 -c "
-import json; m = json.load(open('/agent/brain/admin/workspace-map.json'))
+import json; m = json.load(open('/agent/brain/admin/organization-map.json'))
 members = m.get('members', {})
 print(f'FOUND: {len(members)} member(s)')
 for h, e in members.items():
@@ -126,7 +126,7 @@ ls /agent/brain/permissions/ 2>/dev/null && echo "V2_FOUND" || echo "NOT_FOUND"
 ### Check 5 — Partial install detection
 
 ```bash
-for f in permissions.md workspace-map.json slack-whoami.sh motion-whoami.sh config.json; do
+for f in permissions.md organization-map.json slack-whoami.sh motion-whoami.sh config.json; do
   [ -f "/agent/brain/admin/$f" ] && echo "PRESENT: $f" || echo "MISSING: $f"
 done
 ```
@@ -158,7 +158,7 @@ mkdir -p /agent/brain
 
 ---
 
-### Step 2 — Write or merge `/agent/brain/admin/workspace-map.json`
+### Step 2 — Write or merge `/agent/brain/admin/organization-map.json`
 
 **If no existing entries:** write fresh:
 
@@ -190,7 +190,7 @@ Write verbatim, then `chmod +x`:
 #!/usr/bin/env bash
 # slack-whoami.sh — Slack-side identity resolver for Runneth v2.1.
 #
-# Resolves a Slack user ID against /agent/brain/admin/workspace-map.json.
+# Resolves a Slack user ID against /agent/brain/admin/organization-map.json.
 # Returns JSON: { "scope", "handle", "home_base", "status" }.
 #
 # Status values:
@@ -206,12 +206,12 @@ Write verbatim, then `chmod +x`:
 
 set -euo pipefail
 
-MAP_FILE="${RUNNETH_WORKSPACE_MAP:-/agent/brain/admin/workspace-map.json}"
+MAP_FILE="${RUNNETH_ORG_MAP:-/agent/brain/admin/organization-map.json}"
 SLACK_ID="${1:?slack_user_id required (e.g. U03XXXXXXXX)}"
 DISPLAY_NAME="${2:-}"
 
 if [ ! -f "$MAP_FILE" ]; then
-  echo '{"error": "workspace-map.json not found", "path": "'"$MAP_FILE"'"}' >&2
+  echo '{"error": "organization-map.json not found", "path": "'"$MAP_FILE"'"}' >&2
   exit 1
 fi
 
@@ -274,7 +274,7 @@ Write verbatim, then `chmod +x`:
 # motion-whoami.sh — Motion-side identity resolver for Runneth v2.1.
 #
 # Resolves the current Motion web user's email against
-# /agent/brain/admin/workspace-map.json.
+# /agent/brain/admin/organization-map.json.
 # Returns JSON: { "scope", "handle", "home_base", "status" }.
 #
 # Status values mirror slack-whoami.sh: resolved | provisioned | collision.
@@ -287,7 +287,7 @@ Write verbatim, then `chmod +x`:
 
 set -euo pipefail
 
-MAP_FILE="${RUNNETH_WORKSPACE_MAP:-/agent/brain/admin/workspace-map.json}"
+MAP_FILE="${RUNNETH_ORG_MAP:-/agent/brain/admin/organization-map.json}"
 CONV_DIR="/agent/conversations"
 LIVE_DB="/agent/.runtime/conversations.db"
 SNAPSHOT_DB="/tmp/motion_whoami_session.db"
@@ -316,7 +316,7 @@ if [[ -z "$USER_EMAIL" ]]; then
 fi
 
 if [ ! -f "$MAP_FILE" ]; then
-  echo '{"error": "workspace-map.json not found", "path": "'"$MAP_FILE"'"}' >&2
+  echo '{"error": "organization-map.json not found", "path": "'"$MAP_FILE"'"}' >&2
   exit 1
 fi
 
@@ -415,7 +415,7 @@ Both return `{ scope, handle, home_base, status }`. Use `scope` to determine wha
 (`/agent/brain/members/{other_handle}/`). Locked paths (§3) require explicit per-action
 confirmation.
 
-**Identity management:** edit `workspace-map.json` directly. It is the sole source of truth.
+**Identity management:** edit `organization-map.json` directly. It is the sole source of truth.
 Add an admin: set `scope: "admin"`. Offboard: set `scope: "offboarded"` and archive their
 home base (rename with `.archived-YYYY-MM-DD` suffix).
 
@@ -554,7 +554,7 @@ Run every check. Report pass/fail for each.
 
 ```bash
 # 1. All admin files present
-for f in permissions.md workspace-map.json slack-whoami.sh motion-whoami.sh config.json; do
+for f in permissions.md organization-map.json slack-whoami.sh motion-whoami.sh config.json; do
   [ -f "/agent/brain/admin/$f" ] && echo "✓ admin/$f" || echo "✗ MISSING: admin/$f"
 done
 
@@ -567,15 +567,15 @@ head -1 /agent/brain/admin/permissions.md | grep -q "Runneth Permissions" && ech
 # 4. config.json valid JSON
 python3 -c "import json; json.load(open('/agent/brain/admin/config.json')); print('✓ config.json valid JSON')" 2>/dev/null || echo "✗ config.json INVALID JSON"
 
-# 5. workspace-map.json valid JSON with expected keys
+# 5. organization-map.json valid JSON with expected keys
 python3 -c "
 import json, sys
-m = json.load(open('/agent/brain/admin/workspace-map.json'))
+m = json.load(open('/agent/brain/admin/organization-map.json'))
 expected = {'slackUserIds', 'motionUserEmails', 'members'}
 missing = expected - set(m.keys())
-if missing: print('✗ workspace-map.json missing keys:', missing); sys.exit(1)
-print('✓ workspace-map.json valid JSON with expected keys')
-" 2>/dev/null || echo "✗ workspace-map.json INVALID or missing keys"
+if missing: print('✗ organization-map.json missing keys:', missing); sys.exit(1)
+print('✓ organization-map.json valid JSON with expected keys')
+" 2>/dev/null || echo "✗ organization-map.json INVALID or missing keys"
 
 # 6. resolvers are executable
 [ -x "/agent/brain/admin/slack-whoami.sh" ] && echo "✓ slack-whoami.sh executable" || echo "✗ slack-whoami.sh NOT executable"
@@ -593,11 +593,11 @@ print('✓ workspace-map.json valid JSON with expected keys')
 # 10. Check for any admin entries
 ADMIN_COUNT=$(python3 -c "
 import json
-m = json.load(open('/agent/brain/admin/workspace-map.json'))
+m = json.load(open('/agent/brain/admin/organization-map.json'))
 admins = [h for h,e in m.get('members',{}).items() if e.get('scope') == 'admin']
 print(len(admins))
 " 2>/dev/null || echo "0")
-[ "$ADMIN_COUNT" -gt 0 ] && echo "✓ workspace-map.json has $ADMIN_COUNT admin(s)" || echo "⚠ No admins mapped yet — first-run setup will prompt"
+[ "$ADMIN_COUNT" -gt 0 ] && echo "✓ organization-map.json has $ADMIN_COUNT admin(s)" || echo "⚠ No admins mapped yet — first-run setup will prompt"
 
 # 11. jq installed (resolvers depend on it)
 command -v jq >/dev/null 2>&1 && echo "✓ jq installed" || echo "✗ jq NOT installed — resolvers will fail at runtime"
@@ -625,7 +625,7 @@ v2.1 installed. Here is what to configure before going live:
 
 1. Add your admin ID(s).
    Say: "Add me as admin. My Slack ID is U03XXXXXXXX and my Motion workspaceId is <workspaceId>."
-   Both identifiers will be mapped in workspace-map.json with scope: "admin".
+   Both identifiers will be mapped in organization-map.json with scope: "admin".
    (If you are setting this up on behalf of someone else, provide their identifiers here instead of your own.)
 
 2. (Optional) Set the admin Slack channel.
@@ -635,7 +635,7 @@ v2.1 installed. Here is what to configure before going live:
 
 3. (Optional) Seed known members.
    Auto-provisioning creates entries on first message. You can also pre-populate
-   workspace-map.json with known teammates to skip the provision flow.
+   organization-map.json with known teammates to skip the provision flow.
 
 4. Review existing user.md content for conflicts.
    If this org already has standing instructions in user.md, read through them and
@@ -664,7 +664,7 @@ v2.1 installed. Here is what to configure before going live:
 
 Safe to re-run at any time:
 
-- **workspace-map.json:** merges; never deletes existing identity entries.
+- **organization-map.json:** merges; never deletes existing identity entries.
 - **permissions.md:** only overwrites on explicit confirmation.
 - **config.json:** only overwrites if null and user did not ask to preserve.
 - **routines.md:** preserves if present.
@@ -679,11 +679,11 @@ Safe to re-run at any time:
 
 If the target sandbox has v2.0 installed (`/agent/brain/permissions/` present):
 
-1. **Identity migration:** read `workspace-map.json` from `/agent/brain/permissions/`.
+1. **Identity migration:** read `organization-map.json` from `/agent/brain/permissions/`.
    For each entry, preserve it verbatim except: rename the ref prefix from `team:` to
    `member:`, rename the top-level `team` key to `members`, and fold `admins/` home bases
    into `members/` (scope field distinguishes). Write the merged file to
-   `/agent/brain/admin/workspace-map.json`.
+   `/agent/brain/admin/organization-map.json`.
 
 2. **Resolver migration:** deploy the v2.1 resolvers to `/agent/brain/admin/`. The path and
    scope-name differences are handled by the new script bodies.
@@ -719,7 +719,7 @@ If the target sandbox has v1 installed (`user_mode.md` present, flat
 
 Alternatively, migrate directly:
 
-1. **Identity:** map v1's `index.json` entries into v2.1's workspace-map.json
+1. **Identity:** map v1's `index.json` entries into v2.1's organization-map.json
    `members` structure. Default scope is `member`. Entries that appeared in v1's
    `admins.md` get `scope: "admin"`.
 2. **Folders:** move `/agent/brain/users/<handle>/` to `/agent/brain/members/<handle>/`.

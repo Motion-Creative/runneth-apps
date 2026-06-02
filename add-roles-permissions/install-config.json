@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "add-roles-permissions",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Identity-verified permission system. Every message resolves to a Slack ID or motionapp.com email; admins can edit org-level paths and standing instructions, team members get their own home base and write only there. Includes prompt-injection defenses and auto-provisioning of unknown verified IDs.",
   "requires": {
     "runtime": "any Runneth sandbox; jq must be installed",
@@ -31,6 +31,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2026-06-02",
+      "type": "major",
+      "notes": "Renamed workspace-map.json to organization-map.json (clearer: it is the organization-wide identity registry, not a workspace-scoped artifact). Env override variable renamed RUNNETH_WORKSPACE_MAP to RUNNETH_ORG_MAP. Pure rename, no schema or behavior changes. Migration of existing orgs is deferred. Refs: PDEC-7817."
+    },
     {
       "version": "1.0.1",
       "date": "2026-05-21",

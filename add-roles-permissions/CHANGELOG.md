@@ -4,6 +4,26 @@ All notable changes to `deploy-security-protocol` are documented here.
 
 ---
 
+## Unreleased
+
+### Changed
+
+- **Map file renamed: `workspace-map.json` → `organization-map.json`.**
+  The file is the organization-wide identity registry, not a workspace-scoped
+  artifact, and the new name is clearer. Pure rename: structure, schema,
+  resolution behavior, and merge semantics are unchanged. Default path stays
+  at `/agent/brain/admin/`. Env override variable renamed
+  `RUNNETH_WORKSPACE_MAP` → `RUNNETH_ORG_MAP`.
+
+  Refs: PDEC-7817.
+
+  Migration of existing orgs from `workspace-map.json` → `organization-map.json`
+  is deferred to a follow-up once both `team-member-memory` and
+  `add-roles-permissions` are stable.
+
+---
+
+
 ## v2.0.0 — 2026-05-13
 
 Merged release combining v1's identity-verified mode integrity with
