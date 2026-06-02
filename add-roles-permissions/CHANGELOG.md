@@ -77,6 +77,15 @@ CSM-lens issue #10 (multi-customer fleet view for CSMs themselves) is intentiona
 
 Also added an org-wide saved instruction: "Use case library voice — default to non-technical." Same rule, applied across every use case in the library.
 
+### Phase 1 + Phase 2 reframing (Kyra)
+
+Two more changes after a fresh read:
+
+23. **Phase 1 renamed from "Pre-flight scan" to "Look around and plan."** The intro now describes the goal in plain language — look at what's already in the VM, gather context so the conversation in Phase 3 is informed — instead of using engineer vocabulary. Each `Check N` was renamed to `Look-around N` with an outcome-focused heading (e.g. "Does user.md already have a permission pointer?" instead of "Is the protocol already installed?"). The checks themselves are unchanged; only the framing.
+24. **Phase 2 renamed from "Welcome" to "Framing the opening" and rewritten as rules-and-direction, not a script.** The skill no longer hands the agent a canned message to recite. Instead Phase 2 gives the agent guidance on how to compose the opening turn in its own voice, shaped by (a) what the admin sent to trigger setup and (b) what Phase 1 surfaced. The opening turn always has to land three things in one message: acknowledge the trigger, give a brief outcome-focused taste of what setup will do, and transition into the first team question. Adaptive notes cover fresh install, reconfigure, partial install, TMM leak detected, and Neon missing.
+
+Phase 3 stays as-is (Kyra approved).
+
 ---
 
 ## v2.3.0 — 2026-06-02 (PR #98)
