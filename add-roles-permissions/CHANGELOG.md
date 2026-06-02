@@ -11,33 +11,31 @@ All notable changes to `deploy-security-protocol` are documented here.
 ---
 
 ## v3.0.0 — 2026-06-02
-Major rewrite. Strict permissions becomes opt-in; permissive becomes the default. The setup flow shifts from a technical multi-phase deploy into a consultative conversation that translates the admin's answers into the right primitives privately.
+Major rewrite around six primitives instead of two modes. The permissive-vs-strict framing is gone. The system is built from a small set of primitives that compose into whatever the org's strategy requires.
 
 ### Changed
 
-- **Default mode is now PERMISSIVE.** Anyone resolved through Slack or Motion web can write anywhere under `/agent/` except another person's home base. Every durable write carries `author: @<handle>` attribution. No member confinement, no locked paths, no blocked-action flow.
-- **Strict mode is opt-in** through Phase 2 (a brief warm welcome) and Phase 3 (a friendly consultative conversation). The agent never asks the admin "permissive or strict?" or "what's your org shape?" — it listens to how the team works and infers the right setup.
-- **Phase 3 is a conversation, not a form.** The agent listens for six things across the chat: who's on the team, the shape of the work, what kinds of content to keep organized, areas where only certain people should make changes, areas anyone should be able to contribute to, and who the agent is working with on setup. It pulls each one out of whatever the admin volunteers and follows up gently when needed. The admin never has to learn "scopes," "writer maps," "locked paths," "home bases," "resolvers," "organization-map.json," or "mode.json."
-- **Phase 4 reads the plan back in the admin's words first, then in plain language.** "Here's what I heard: you're an agency with three clients..." then "Here's what I'll set up: a workspace for each client, a shared space for team notes, a safety check that pings #agency-runneth when someone tries to change a protected area..." Confirms before any writes hit disk.
-- **Protocol pointer in `user.md` is mode-aware.** Reads `mode.json` to choose between permissive and strict interpretation of `permissions.md`.
+- **No more modes.** Permissive vs strict is gone. Each space has its own writer rule. Wide-open and locked-down spaces coexist in the same install. The skill never asks "permissive or strict?" because that decision lives at the space level.
+- **`spaces.json` replaces `mode.json`.** Records the spaces, writer rules, and approval channel. Lives at `/agent/brain/admin/spaces.json`. Editable by admins only.
+- **Single `permissions.md` template.** Generated from `spaces.json` instead of selected from a permissive variant or a strict variant. Lists each space and its writer rule explicitly.
+- **Protocol pointer simplified.** No longer routes based on a mode field. Points to `permissions.md` and the spaces config.
+- **Reconfigure is incremental.** "Tighten up the client space" / "open up the shared space" / "add a new space" instead of a mode switch.
 
 ### Added
 
-- **`mode.json`** at `/agent/brain/admin/mode.json`. Records the chosen mode, org shape, interview answers, version, and install timestamp. Used for idempotent reconfigure.
-- **Org-shape scaffolding** adapts the brain folder layout based on what the admin described:
-  - `solo` → `/agent/brain/notes/`, `/agent/brain/decisions/`
-  - `small_team` → `/agent/brain/shared/{notes,decisions,playbooks}/`
-  - `single_brand` → `/agent/brain/brand/{brand-context,product,audience,reviews}/`
-  - `multi_brand_agency` → `/agent/brain/brands/<brand>/{brand-context,product,audience,reviews,creative}/` per brand
-  - `dept_structure` → `/agent/brain/teams/<team>/{notes,decisions}/` per team
-  - `custom` → admin-supplied top-level folders
-- **Generated `permissions.md`** from a permissive or strict template, with interview-driven sections (per-space writer map, extra locked paths) injected for strict installs.
-- **Auto-cleanup of the team-member-memory v2.0.1 leak** in Phase 5 Step 9. If the leaked `let's set up your roles and permissions` quote is found in `user.md`, the skill offers to remove that specific block with admin confirmation, preserving everything else.
-- **Mode switch and reconfigure flow.** Re-running the skill with `upgrade to strict`, `switch to permissive`, or `reconfigure permissions` re-runs the conversation while preserving identity entries and home bases. Old `permissions.md` is archived to `/agent/brain/admin/.archive/`.
+- **The six primitives.** People (access registry), spaces (folders in the brain), writers per space (`everyone` | `specific` | `admins_only`, default `everyone`), attribution (always on), approval routing (optional Slack channel), identity resolution (Neon-only).
+- **Phase 2 welcome** with a 4-bullet outcome overview, followed by the opening question in the same turn. No "sound good?" round-trip.
+- **Phase 3 conversation** listens for six things across a flowing chat: team, work shape, content to keep organized, areas where only certain people should make changes, areas anyone should be able to contribute to, first admin (plus an approval-channel follow-up if protected areas come up). The agent never uses the words `permissive`, `strict`, `scope`, `writer map`, `locked path`, `home base`, `resolver`, `organization-map.json`, or `spaces.json` with the admin.
+- **Phase 4 readback** in plain language first, then a setup plan in plain language. Confirms before any writes.
+- **Phase 5 deployment** writes a single permissions.md generated from spaces.json. No template selection.
+- **Phase 7 setup checklist** is one consistent message.
+- **Implicit spaces** that are never configurable: `/agent/brain/admin/` (admins only), `/agent/brain/members/<handle>/` (owner only), and the shared infrastructure paths (`INDEX.md`, `routines.md`, `.agents/skills/`, `apps/`, admins only).
+- **Step 8 auto-cleans the team-member-memory v2.0.1 user.md leak** if found, with admin confirmation.
 
 ### Migration
 
-- From **v2.3.0 (post-PR-#98)**: re-run the skill and choose either path-1 (keep strict, add `mode.json` bookkeeping, regenerate `permissions.md` from the strict template) or path-2 (switch to permissive). Identity entries preserved either way.
+- From **v2.3.0 (post-PR-#98)**: re-run the skill; existing `permissions.md` rules are read and proposed as a `spaces.json` for the admin to review. Identity entries preserved.
+- From any interim v3 preview with a `mode.json` file: Phase 1 Check 3 detects it; Phase 5 offers to translate the contents into `spaces.json` and remove the old file.
 - From **v2.x with `workspace-map.json`** (pre-PR-#98): Phase 1 Check 3 detects, Phase 5 Step 2 renames and carries entries.
 - From **v1**: identity migration, folder migration (`/agent/brain/users/` → `/agent/brain/members/`), `permissions.md` regenerated.
 

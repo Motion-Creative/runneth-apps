@@ -1,9 +1,15 @@
 # deploy-admin-permissions
 
-Sets up the Runneth identity-verified permission system. Two modes:
+Sets up Runneth's permission system through a friendly consultative conversation. Six primitives compose into whatever the org's strategy requires:
 
-- **Permissive (default).** Every Slack ID and Motion email resolves to a handle, and that person can write anywhere under `/agent/` except another person's home base. Every durable write carries `author: @<handle>`. No member confinement, no locked paths, no blocked-action flow.
-- **Strict (opt-in upgrade).** Member-confined writes, locked paths, blocked-action requests routed through an admin Slack channel, and per-space writer maps tailored to the org's shape. Reached through a friendly consultative conversation that asks about the team's actual work, not technical config questions.
+1. **People** — the access registry. Each person has a handle, Slack ID, Motion email, and an `admin` flag.
+2. **Spaces** — folders in the brain that hold a category of content (a brand, a team, shared playbooks, personal notes).
+3. **Writers per space** — each space has a writer rule: `everyone`, `specific people`, or `admins only`. Default is `everyone`.
+4. **Attribution** — every durable save under `/agent/brain/` carries `author: @<handle>`. Always on.
+5. **Approval routing** — optional Slack channel where blocked-write requests get posted for admin review.
+6. **Identity resolution** — Slack ID or Motion email → handle. Neon-only.
+
+Each space gets its own writer rule. Wide-open and locked-down spaces can coexist in the same install. The skill never asks "permissive or strict?" because that decision lives at the space level, not the install level.
 
 The deploy artifact is [SKILL.md](SKILL.md) — invoke it as a skill and follow its Phase 1–7 flow.
 
