@@ -28,6 +28,7 @@ import { fileURLToPath } from 'node:url'
 
 import Fastify from 'fastify'
 import fastifyStatic from '@fastify/static'
+import fastifyMultipart from '@fastify/multipart'
 
 import { assembleCatalog, cacheStats, clearCache, loadUseCaseDetail } from './github.js'
 import {
@@ -41,6 +42,7 @@ import {
   hasRecentFromIp,
 } from './db.js'
 import { sendFlagEmail } from './email.js'
+import { sendBrainChecklistEmail, type BrainChecklistFile, type BrainChecklistSection } from './brain-checklist-email.js'
 import { SLUG_RE, hashIp, validateFlag, validateReview } from './reviews.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -214,6 +216,138 @@ server.post('/api/refresh', async (request, reply) => {
   for (const [k, t] of lastRefreshByIp) if (now - t > 60_000) lastRefreshByIp.delete(k)
   clearCache()
   return { ok: true, refreshed_at: new Date().toISOString() }
+})
+
+// Multipart support for the brain-checklist endpoint.
+// 10MB per file, 25MB total cap enforced inside the handler.
+await server.register(fastifyMultipart, {
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+    files: 30,
+    fields: 30,
+  },
+})
+
+// Brain checklist submission from the customer-facing /how-to-build-the-brain page.
+// Accepts multipart form with text fields (workspace_name, contact_email,
+// <section>_context) and file fields (<section>_files). Routes the submission to
+// the CSM team via email with files attached. See brain-checklist-email.ts.
+const BRAIN_CHECKLIST_SECTIONS: ReadonlyArray<{ key: string; label: string }> = [
+  { key: 'brand_context', label: 'Brand context' },
+  { key: 'customer_reviews', label: 'Customer reviews and voice of customer' },
+  { key: 'personas', label: 'Persona and ICP docs' },
+  { key: 'product_catalog', label: 'Product catalog' },
+  { key: 'winning_briefs', label: 'Past winning briefs and concepts' },
+  { key: 'other', label: 'Anything else' },
+]
+const BRAIN_CHECKLIST_FIELD_KEYS = new Set(BRAIN_CHECKLIST_SECTIONS.map((s) => s.key))
+const BRAIN_CHECKLIST_MAX_TOTAL_BYTES = 25 * 1024 * 1024
+
+server.post('/api/brain-checklist', async (req, reply) => {
+  if (!req.isMultipart()) {
+    reply.code(400)
+    return { error: 'invalid_request', message: 'Expected multipart/form-data.' }
+  }
+
+  let workspaceName = ''
+  let contactEmail = ''
+  const contextByKey: Record<string, string> = {}
+  const filesByKey: Record<string, BrainChecklistFile[]> = {}
+  let totalBytes = 0
+
+  try {
+    const parts = req.parts()
+    for await (const part of parts) {
+      if (part.type === 'field') {
+        const name = String(part.fieldname)
+        const value = typeof part.value === 'string' ? part.value : ''
+        if (name === 'workspace_name') workspaceName = value.trim().slice(0, 200)
+        else if (name === 'contact_email') contactEmail = value.trim().slice(0, 200)
+        else if (name.endsWith('_context')) {
+          const key = name.slice(0, -'_context'.length)
+          if (BRAIN_CHECKLIST_FIELD_KEYS.has(key)) {
+            contextByKey[key] = value.trim().slice(0, 4000)
+          }
+        }
+      } else if (part.type === 'file') {
+        const name = String(part.fieldname)
+        if (!name.endsWith('_files')) {
+          await part.toBuffer() // drain
+          continue
+        }
+        const key = name.slice(0, -'_files'.length)
+        if (!BRAIN_CHECKLIST_FIELD_KEYS.has(key)) {
+          await part.toBuffer()
+          continue
+        }
+        const buf = await part.toBuffer()
+        if (part.file.truncated) {
+          reply.code(413)
+          return { error: 'file_too_large', message: `${part.filename} is over the 10MB per-file limit.` }
+        }
+        totalBytes += buf.length
+        if (totalBytes > BRAIN_CHECKLIST_MAX_TOTAL_BYTES) {
+          reply.code(413)
+          return { error: 'payload_too_large', message: 'Total upload is over 25MB. Please trim it down or split into two submissions.' }
+        }
+        if (!filesByKey[key]) filesByKey[key] = []
+        filesByKey[key].push({
+          field: key,
+          filename: part.filename || 'unnamed',
+          mimeType: part.mimetype || 'application/octet-stream',
+          buffer: buf,
+        })
+      }
+    }
+  } catch (err) {
+    server.log.error({ err }, 'brain-checklist multipart parse failed')
+    reply.code(400)
+    return { error: 'parse_failed', message: 'Could not parse the submission. Please try again.' }
+  }
+
+  if (!workspaceName) {
+    reply.code(400)
+    return { error: 'missing_workspace_name', message: 'Workspace or brand name is required.' }
+  }
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!contactEmail || !emailRe.test(contactEmail)) {
+    reply.code(400)
+    return { error: 'invalid_email', message: 'A valid contact email is required.' }
+  }
+
+  const sections: BrainChecklistSection[] = BRAIN_CHECKLIST_SECTIONS.map((s) => ({
+    key: s.key,
+    label: s.label,
+    context: contextByKey[s.key] || '',
+    files: (filesByKey[s.key] || []).map((f) => ({ filename: f.filename, sizeBytes: f.buffer.length })),
+  }))
+  const flatFiles: BrainChecklistFile[] = []
+  for (const key of BRAIN_CHECKLIST_FIELD_KEYS) {
+    for (const f of filesByKey[key] || []) flatFiles.push(f)
+  }
+
+  const hasAnything = flatFiles.length > 0 || sections.some((s) => s.context.length > 0)
+  if (!hasAnything) {
+    reply.code(400)
+    return { error: 'empty_submission', message: 'Add at least one file or some context to send.' }
+  }
+
+  const result = await sendBrainChecklistEmail(
+    {
+      workspaceName,
+      contactEmail,
+      sections,
+      files: flatFiles,
+      submittedAt: new Date().toISOString(),
+    },
+    (msg) => server.log.info(msg),
+  )
+
+  if (!result.ok) {
+    reply.code(502)
+    return { error: 'delivery_failed', message: result.message }
+  }
+  return { ok: true }
 })
 
 // Standalone marketing pages. Registered before the static handler so they
