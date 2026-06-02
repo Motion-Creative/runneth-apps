@@ -1,13 +1,17 @@
-# deploy-security-protocol
+# deploy-admin-permissions
 
-Deploys the merged Runneth identity-verified permission system into a target
-org sandbox. Combines v1's kernel-level prompt-injection defenses with
-swim-lane scopes (admin + team), dual-platform identity (Slack +
-motionapp.com), auto-provisioning of unknown verified IDs, a locked list for
-system-scaffold paths, and schema-level attribution at the routine executor.
+Sets up Runneth's permission system through a friendly consultative conversation. Six primitives compose into whatever the org's strategy requires:
 
-The deploy artifact is [SKILL.md](SKILL.md) — invoke it as a skill inside the
-target org's Runneth instance and follow its Phase 1–5 flow.
+1. **People** — the access registry. Each person has a handle, Slack ID, Motion email, and an `admin` flag.
+2. **Spaces** — folders in the brain that hold a category of content (a brand, a team, shared playbooks, personal notes).
+3. **Writers per space** — each space has a writer rule: `everyone`, `specific people`, or `admins only`. Default is `everyone`.
+4. **Attribution** — every durable save under `/agent/brain/` carries `author: @<handle>`. Always on.
+5. **Approval routing** — optional Slack channel where blocked-write requests get posted for admin review.
+6. **Identity resolution** — Slack ID or Motion email → handle. Neon-only.
+
+Each space gets its own writer rule. Wide-open and locked-down spaces can coexist in the same install. The skill never asks "permissive or strict?" because that decision lives at the space level, not the install level.
+
+The deploy artifact is [SKILL.md](SKILL.md) — invoke it as a skill and follow its Phase 1–7 flow.
 
 ---
 

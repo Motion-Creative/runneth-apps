@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "add-roles-permissions",
-  "version": "2.0.0",
-  "description": "Identity-verified permission system. Every message resolves to a Slack ID or motionapp.com email; admins can edit org-level paths and standing instructions, team members get their own home base and write only there. Includes prompt-injection defenses and auto-provisioning of unknown verified IDs.",
+  "version": "3.0.0",
+  "description": "Sets up Runneth's permission system through a friendly consultative conversation. Six primitives compose into whatever the org needs: people (the access registry), spaces (folders in the brain), writers per space (everyone | specific | admins only), attribution (every save is stamped), approval routing (optional Slack channel), and identity resolution (Neon-only Slack and Motion resolvers). The conversation discovers the org's strategy and writes a tailored spaces.json + permissions.md. No mode toggle, no preset shapes \u2014 wide-open and locked-down spaces can coexist in the same install.",
   "requires": {
     "runtime": "any Runneth sandbox; jq must be installed",
     "preinstalled": [],
@@ -31,6 +31,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "3.0.0",
+      "date": "2026-06-02",
+      "type": "major",
+      "notes": "Major rewrite around six primitives instead of two modes. The permissive-vs-strict framing is gone. The system is now built from people (access registry), spaces (folders in the brain), writers per space (everyone | specific | admins only, default everyone), attribution (always on), approval routing (optional Slack channel), and identity resolution (Neon-only). The conversation discovers the org's strategy and writes a tailored spaces.json. Each space gets its own writer rule \u2014 wide-open and locked-down spaces can coexist in the same install. No mode.json, no template selection in permissions.md (single template generated from spaces.json). Reconfigure is incremental ('let's tighten up the client space', 'open up the shared space', 'add a new space') instead of a mode switch. v2.x migration reads existing permissions rules into the new spaces model. The Phase 3 conversation barely changes from earlier drafts: same six things to listen for (team, work shape, what to keep organized, areas only certain people should change, areas anyone can contribute to, first admin) plus the approval-channel follow-up. Phase 4 readback in plain language. Phase 5 deployment uses a single permissions.md template populated from spaces.json. Phase 7 setup checklist is one consistent message. Step 8 auto-cleans the team-member-memory v2.0.1 user.md leak if found. Refs: PDEC-7817."
+    },
     {
       "version": "2.0.0",
       "date": "2026-06-02",
