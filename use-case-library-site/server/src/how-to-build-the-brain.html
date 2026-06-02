@@ -600,6 +600,22 @@
           </div>
         </div>
 
+        <!-- 6. Other systems used to run creative strategy -->
+        <div class="upload-card">
+          <div class="upload-num">6</div>
+          <div class="upload-body">
+            <div class="upload-head">
+              <h4>Other systems you use to run creative strategy</h4>
+              <span class="owner-tag">Owned by Creative Ops / Strategy</span>
+            </div>
+            <p class="upload-what">Tell us where the rest of your creative strategy lives. Runneth can connect to Notion, Google Drive, Slack, Airtable, Asana, Monday, ClickUp, Figma, Dropbox, HubSpot, and most other modern systems with an API. Once connected, Runneth pulls briefs, assets, decisions, and project context from those tools directly.</p>
+            <div class="field">
+              <label for="connected_systems_context">What do you use, and what lives in each one?</label>
+              <textarea id="connected_systems_context" name="connected_systems_context" placeholder="e.g. Briefs and concept docs live in Notion. Asset library is in Google Drive (Brand Assets folder). Project tracking is in Asana. Design system and mockups are in Figma. Most creative decisions happen in our #creative Slack channel."></textarea>
+            </div>
+          </div>
+        </div>
+
         <!-- Anything else -->
         <div class="upload-card">
           <div class="upload-num">+</div>
@@ -810,7 +826,7 @@
         return;
       }
       const hasAnything = allFiles.length > 0 ||
-        ['brand_context_context','customer_reviews_context','personas_context','product_catalog_context','winning_briefs_context','other_context']
+        ['brand_context_context','customer_reviews_context','personas_context','product_catalog_context','winning_briefs_context','connected_systems_context','other_context']
           .some(function (k) { return (document.getElementById(k) && document.getElementById(k).value.trim().length > 0); });
       if (!hasAnything) {
         showMsg('error', 'Add at least one file or some context to send.');
@@ -824,7 +840,7 @@
         const data = new FormData();
         data.append('workspace_name', wsName);
         data.append('contact_email', email);
-        ['brand_context','customer_reviews','personas','product_catalog','winning_briefs','other'].forEach(function (field) {
+        ['brand_context','customer_reviews','personas','product_catalog','winning_briefs','connected_systems','other'].forEach(function (field) {
           const ctx = document.getElementById(field + '_context');
           if (ctx) data.append(field + '_context', ctx.value.trim());
           (fileState[field] || []).forEach(function (file) {
