@@ -36,6 +36,7 @@ const SECTION_LABELS: Record<string, string> = {
   personas: 'Persona and ICP',
   product_catalog: 'Product catalog',
   winning_briefs: 'Past winning briefs',
+  connected_systems: 'Other systems',
   other: 'Anything else',
 }
 
