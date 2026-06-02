@@ -1,19 +1,19 @@
-# Add roles and permissions
+# Roles and permissions are set up
 
 ## What just opened up
-Your sandbox now has identity-verified permissions in PERMISSIVE mode by default. Every message resolves to a specific person via Slack ID or motionapp.com email, and every durable write under `/agent/brain/` carries `author: @<handle>` so you always know who wrote what. Nobody is confined to a personal folder yet — anyone resolved can contribute anywhere except another person's home base.
+Runneth now knows who is talking to it. Every message resolves to a specific person (via Slack ID or motionapp.com email), and every durable thing I save under your team's brain gets stamped with who wrote it. By default, anyone on the team can contribute anywhere — but I'll never let one teammate overwrite another's personal space, and you can lock down sensitive areas any time.
 
-When you are ready to lock things down (multi-brand agency, sensitive content, regulated work), say "upgrade permissions to strict" and the skill will walk you through the interview to set up member confinement, locked paths, and per-space writer maps.
+If you ever want to tighten things up — say you bring on a new client, or someone needs to own a specific area — just say "let's tighten up permissions" or "I want only certain people to edit X" and I'll walk through it with you.
 
 ## Try this now
-1. **Add an admin**: `Make [name with Slack ID or @motionapp.com email] an admin.`
-   _You will get back:_ that person's identity resolved across both platforms, added to the admin list, and a confirmation of what they can now do.
-2. **Check your own scope**: `What's my scope and home base in this sandbox?`
-   _You will get back:_ your handle, scope (admin or member), home base path, and which platforms are mapped to you.
-3. **See everyone with access**: `Show me everyone with access to this sandbox and their scope.`
-   _You will get back:_ the full list of resolved identities, their scopes, when each was provisioned, and any pending unresolved IDs.
-4. **Upgrade to strict when ready**: `Upgrade permissions to strict.`
-   _You will get back:_ the educational walkthrough, then the interview to define org shape, per-space writer maps, and locked-path extras.
+1. **Add a teammate**: `Add Sophia to the team. Her Slack ID is U03... and her email is sophia@motionapp.com.`
+   _I'll get back to you with:_ her resolved identity, her own personal space, and a quick confirmation.
+2. **Promote someone to admin**: `Make [name] an admin.`
+   _I'll get back to you with:_ a confirmation that they can now manage the team setup.
+3. **Check who's around**: `Who's on the team so far?`
+   _I'll get back to you with:_ everyone I know about, what they own, and who's an admin.
+4. **Tighten things up later**: `Let's lock down our client strategy docs.`
+   _I'll walk you through:_ who should own each area, where to send approval requests, and what to leave open.
 
 ## Compounds with
-- **team-member-memory:** Memory profiles attach to the resolved identity from this layer. Both packages use the same `organization-map.json`.
+- **team-member-memory:** When team-member-memory is also installed, every person automatically gets a personal space where I save what I learn about them, alongside the shared brain we just set up.

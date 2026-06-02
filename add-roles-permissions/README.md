@@ -3,7 +3,7 @@
 Sets up the Runneth identity-verified permission system. Two modes:
 
 - **Permissive (default).** Every Slack ID and Motion email resolves to a handle, and that person can write anywhere under `/agent/` except another person's home base. Every durable write carries `author: @<handle>`. No member confinement, no locked paths, no blocked-action flow.
-- **Strict (opt-in upgrade).** Member-confined writes, locked paths, blocked-action requests routed through an admin Slack channel, and per-space writer maps tailored to the org's shape. Reached through an educational walkthrough and a conversational interview.
+- **Strict (opt-in upgrade).** Member-confined writes, locked paths, blocked-action requests routed through an admin Slack channel, and per-space writer maps tailored to the org's shape. Reached through a friendly consultative conversation that asks about the team's actual work, not technical config questions.
 
 The deploy artifact is [SKILL.md](SKILL.md) — invoke it as a skill and follow its Phase 1–7 flow.
 

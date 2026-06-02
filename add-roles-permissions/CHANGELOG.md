@@ -11,33 +11,29 @@ All notable changes to `deploy-security-protocol` are documented here.
 ---
 
 ## v3.0.0 — 2026-06-02
-
-Major rewrite. Strict permissions becomes opt-in; permissive becomes the default.
+Major rewrite. Strict permissions becomes opt-in; permissive becomes the default. The setup flow shifts from a technical multi-phase deploy into a consultative conversation that translates the admin's answers into the right primitives privately.
 
 ### Changed
 
 - **Default mode is now PERMISSIVE.** Anyone resolved through Slack or Motion web can write anywhere under `/agent/` except another person's home base. Every durable write carries `author: @<handle>` attribution. No member confinement, no locked paths, no blocked-action flow.
-- **Strict mode is opt-in** through Phase 2 (educational walkthrough) and Phase 3 (conversational interview). The first admin makes an informed choice before any lockdown gets written.
-- **Install flow is now phased and conversational.** Phase 1 pre-flight scan, Phase 2 walkthrough, Phase 3 6-question interview, Phase 4 proposal + confirmation, Phase 5 mode-aware deployment, Phase 6 verification, Phase 7 setup checklist (mode-aware).
-- **`permissions.md` is generated from templates.** Permissive variant for default installs, strict variant for opt-in installs (with interview-driven per-space writer map and extra locked paths injected).
+- **Strict mode is opt-in** through Phase 2 (a brief warm welcome) and Phase 3 (a friendly consultative conversation). The agent never asks the admin "permissive or strict?" or "what's your org shape?" — it listens to how the team works and infers the right setup.
+- **Phase 3 is a conversation, not a form.** The agent listens for six things across the chat: who's on the team, the shape of the work, what kinds of content to keep organized, areas where only certain people should make changes, areas anyone should be able to contribute to, and who the agent is working with on setup. It pulls each one out of whatever the admin volunteers and follows up gently when needed. The admin never has to learn "scopes," "writer maps," "locked paths," "home bases," "resolvers," "organization-map.json," or "mode.json."
+- **Phase 4 reads the plan back in the admin's words first, then in plain language.** "Here's what I heard: you're an agency with three clients..." then "Here's what I'll set up: a workspace for each client, a shared space for team notes, a safety check that pings #agency-runneth when someone tries to change a protected area..." Confirms before any writes hit disk.
 - **Protocol pointer in `user.md` is mode-aware.** Reads `mode.json` to choose between permissive and strict interpretation of `permissions.md`.
 
 ### Added
 
-- **`mode.json`** at `/agent/brain/admin/mode.json`. Records the chosen mode (permissive | strict), org shape (solo | small_team | single_brand | multi_brand_agency | dept_structure | custom), interview answers (brands, teams, custom folders, per-space writer maps, locked-path extras), version, and install timestamp. Used for idempotent reconfigure.
-- **Org-shape scaffolding** adapts the brain folder layout to the org:
+- **`mode.json`** at `/agent/brain/admin/mode.json`. Records the chosen mode, org shape, interview answers, version, and install timestamp. Used for idempotent reconfigure.
+- **Org-shape scaffolding** adapts the brain folder layout based on what the admin described:
   - `solo` → `/agent/brain/notes/`, `/agent/brain/decisions/`
   - `small_team` → `/agent/brain/shared/{notes,decisions,playbooks}/`
   - `single_brand` → `/agent/brain/brand/{brand-context,product,audience,reviews}/`
   - `multi_brand_agency` → `/agent/brain/brands/<brand>/{brand-context,product,audience,reviews,creative}/` per brand
   - `dept_structure` → `/agent/brain/teams/<team>/{notes,decisions}/` per team
   - `custom` → admin-supplied top-level folders
-- **Educational walkthrough** (Phase 2) explains permissive vs strict, the trade-offs of strict, and the interview that follows. Paragraph-by-paragraph with brief acknowledgments.
-- **Conversational interview** (Phase 3) with 6 questions: mode choice, org shape (with sub-prompts for brand/team names), first admin, optional admin Slack channel, per-space writer maps (strict only), locked-path extras (strict only).
-- **Proposal-and-confirm step** (Phase 4) reads the full plan back to the admin before any writes hit disk.
-- **Mode-aware setup checklist** (Phase 7) tells the admin what changed and how to upgrade/downgrade.
-- **Auto-cleanup of the team-member-memory v2.0.1 leak** in Phase 5 Step 9. If the leaked `let's set up your roles and permissions` quote is found in `user.md`, the skill offers to remove that specific block (with admin confirmation, preserving everything else).
-- **Mode switch and reconfigure flow.** Re-running the skill with `upgrade to strict`, `switch to permissive`, or `reconfigure permissions` re-runs the interview while preserving identity entries and home bases. Old `permissions.md` is archived to `/agent/brain/admin/.archive/`.
+- **Generated `permissions.md`** from a permissive or strict template, with interview-driven sections (per-space writer map, extra locked paths) injected for strict installs.
+- **Auto-cleanup of the team-member-memory v2.0.1 leak** in Phase 5 Step 9. If the leaked `let's set up your roles and permissions` quote is found in `user.md`, the skill offers to remove that specific block with admin confirmation, preserving everything else.
+- **Mode switch and reconfigure flow.** Re-running the skill with `upgrade to strict`, `switch to permissive`, or `reconfigure permissions` re-runs the conversation while preserving identity entries and home bases. Old `permissions.md` is archived to `/agent/brain/admin/.archive/`.
 
 ### Migration
 
@@ -46,7 +42,6 @@ Major rewrite. Strict permissions becomes opt-in; permissive becomes the default
 - From **v1**: identity migration, folder migration (`/agent/brain/users/` → `/agent/brain/members/`), `permissions.md` regenerated.
 
 Refs: PDEC-7817.
-
 ---
 
 ## v2.3.0 — 2026-06-02 (PR #98)

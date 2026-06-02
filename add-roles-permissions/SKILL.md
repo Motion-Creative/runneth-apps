@@ -137,161 +137,148 @@ If MISSING: surface this. The skill will still install, but Motion-web resolutio
 
 ---
 
-## PHASE 2 — EDUCATIONAL WALKTHROUGH
+## PHASE 2 — WELCOME
 
-Read the walkthrough below to the admin in chat, paragraph by paragraph. Pause after each paragraph for a brief acknowledgment. Do not collapse it into one block.
+Before any technical setup, set the tone in chat. Keep it brief, warm, and curious. The admin should feel like they are about to sit down with a thoughtful consultant, not a configuration wizard.
 
-> "Quick walkthrough before we set this up. The permission system runs in one of two modes. By default it is **permissive**: anyone who messages you over Slack or Motion web resolves to a handle, and that person can write anywhere in your brain except another person's personal folder. Every durable write gets stamped with `author: @<handle>` so you always know who wrote what. This is enough for most solo operators, small teams, and any setup where attribution is the goal."
->
-> "The opt-in upgrade is **strict** mode. In strict, every person is confined to their own personal folder by default. They can read anywhere, but they can only write to `/agent/brain/members/<their-handle>/`. Out-of-home-base changes go through an admin approval flow that routes to a Slack channel of your choosing. Some paths are locked entirely to admins: the permission system itself, your global brain index, the routines registry, and the shared skills and apps."
->
-> "Strict is heavier. It prevents accidental cross-writes and makes it impossible for one teammate to overwrite another's home base or the org-level setup. But it adds friction: members can't just save things to shared spaces without asking, and you'll get pings in the admin Slack channel for those requests. It is worth it for orgs with sensitive content, regulated industries, or multi-brand agencies where each brand has its own writer list. It is overkill for a solo operator who just wants attribution."
->
-> "Then there is the brain shape itself. The skill will ask what your org looks like (solo, small team, single brand, agency with multiple brands, dept structure, or something else) and scaffold folders to match. For an agency it will create per-brand folders and let you say who is authorized to write to each one. That writer-map only fires in strict mode. In permissive mode the brain shape still gets scaffolded but anyone resolved can write to any of the spaces."
->
-> "Three questions you should know the answers to: (1) Do you want permissive or strict to start? (2) What does your org look like? (3) Who is the first admin? Tell me when you are ready and I will start the interview."
+Say something like the following (paraphrase to fit the moment, do not collapse it into a single dense block):
 
-When the admin signals ready, continue to Phase 3.
+> "Hey, before we set anything up I want to learn how your team works so I can shape this to fit you, not the other way around. I'll ask a few questions — nothing technical, just about your team and what you're trying to build together. Then I'll come back with a plan and we can adjust anything before I write a thing. Sound good?"
+
+Wait for a brief acknowledgment. Then move to Phase 3.
 
 ---
 
-## PHASE 3 — INTERVIEW
+## PHASE 3 — THE CONVERSATION
 
-Conduct this as a conversation, one question at a time. Capture answers in a working JSON object (in-memory). Do not write files yet.
+Conduct Phase 3 as a flowing conversation, not a form. The admin should never have to learn the words "permissive," "strict," "scope," "writer map," "locked path," "home base," "resolver," or "org shape." Your job is to listen to their world and translate it into those primitives privately.
 
-### Q1 — Mode choice
+You are listening for six things across the conversation. Do not march through them in order. Pull each one out of whatever the admin volunteers, and follow up gently when you need more.
 
-> "Permissive or strict? Permissive = anyone resolved writes anywhere with attribution. Strict = member-confined writes, locked paths, admin approval flow for out-of-home-base changes. You can change this later by re-running the skill — it is not a one-way door."
+What you are listening for:
 
-Capture: `mode: "permissive" | "strict"`.
+1. **Who is on the team.** Names, what each person does, who tends to own what.
+2. **The shape of the work.** One team on one thing? One brand? Multiple clients or brands? Several departments?
+3. **What you will be helping them organize.** Brand context, customer research, strategy docs, weekly notes, meeting recaps, performance data, briefs — whatever they describe.
+4. **Areas where only certain people should make changes.** Brand positioning the brand lead owns, client strategy a specific CSM touches, financial models the finance lead handles.
+5. **Areas where anyone on the team should be able to contribute.** Weekly findings, team brainstorms, meeting notes, shared playbooks.
+6. **Who you will be working with most.** Usually the person you are talking to. Sometimes they are setting it up for someone else.
 
-### Q2 — Org shape
+If areas in (4) come up, also ask one follow-up:
 
-> "What does your org look like? Pick the closest match — we will customize from there.
-> 1. Solo — just me
-> 2. Small team (under 10 people, single context)
-> 3. Single brand or product
-> 4. Multi-brand agency (each brand has its own writers)
-> 5. Dept structure (multiple teams: eng, marketing, sales, etc.)
-> 6. Something else — describe it"
+7. **Where to send approval requests.** "When someone outside the owner list tries to change one of those protected areas, I can ping a Slack channel for approval. Want me to do that, and which channel?"
 
-Capture: `org_shape: "solo" | "small_team" | "single_brand" | "multi_brand_agency" | "dept_structure" | "custom"`.
+### How to open
 
-- If `multi_brand_agency`: ask for the brand names ("Which brands? Comma-separated list."). Capture as `brands: ["acme", "globex", ...]`. Brand handles are lowercased slugs.
-- If `dept_structure`: ask for team names. Capture as `teams: [...]`.
-- If `custom`: ask the admin to describe the shape in plain language. Capture as `custom_description`. Follow up: "What folders should exist at the top level of your brain?" Capture as `custom_folders: [...]`.
+Pick whatever feels natural for the moment. A few options:
 
-### Q3 — First admin
+> "Let's start at the top — tell me a bit about your team. What do you all do, and who's on it?"
 
-> "Who is the first admin? Best to give me both their Slack user ID (starts with `U`) and their motionapp.com email so I can resolve them on either platform. If you are setting this up for someone else, give me their identifiers instead of your own."
+> "Walk me through your setup. How big is the team, and what does everyone do?"
 
-Capture: `first_admin: { slack_id?, email?, name }`.
+> "What does your day-to-day look like? Who do you work with, and on what?"
 
-### Q4 — Admin Slack channel (optional, strict only by default)
+### How to follow up
 
-> "If you want member out-of-home-base requests routed to a Slack channel, give me the channel ID (starts with `C`). I will need to be a member of that channel. Skip if you don't want that flow yet — you can set it later."
+After they describe the team, drift to content:
 
-Capture: `admin_slack_channel: string | null`.
+> "Got it. So when you think about the kinds of things you'd want me to remember and keep organized for you all — what comes to mind first? Brand stuff, customer feedback, strategy docs, meeting notes?"
 
-Skip this question in permissive mode unless the admin asks for it.
+After they describe content types, drift to ownership. Use a concrete example from their world if you can:
 
-### Q5 — Per-space writer maps (strict only)
+> "Are any of those things where you'd really only want specific people making changes? For example, if Sophia owns the brand strategy for one of your clients, you probably don't want someone outside that team accidentally rewriting it."
 
-For strict mode with `multi_brand_agency`, `dept_structure`, or `custom`, loop through every top-level space:
+If they say yes, get the names and the areas. If they say no or sound unsure, that's fine — default to leaving everything open.
 
-> "For each space in your brain, who should be able to write? Pick one per space:
-> a) Anyone resolved (anyone in the org)
-> b) Specific handles (give me the handles)
-> c) Admins only
->
-> Space: `/agent/brain/<space>/`"
+Then drift to openness:
 
-Capture: `space_writers: { "<space>": { mode: "open" | "specific" | "admins_only", handles?: [...] } }`.
+> "And the other way — are there areas you want to leave open so anyone on the team can drop in? Weekly findings, meeting notes, shared playbooks?"
 
-Skip this question in permissive mode.
+To wrap, confirm who is driving setup:
 
-### Q6 — Locked paths extras (strict only)
+> "Last thing — who am I going to be working with on stuff like this, you or someone else? I'll set them up first."
 
-Default locked paths in strict mode: `/agent/brain/admin/`, `/agent/INDEX.md`, `/agent/brain/routines.md`, `/agent/.agents/skills/`, `/agent/apps/`.
+If protected areas came up, ask the approval channel:
 
-> "Locked paths are admin-only and require explicit confirmation per write. Defaults are the permission system itself, the global index, the routines registry, and the shared skills and apps directories. Want to add any others?"
+> "When someone tries to change one of those protected areas and they're not on the list, I can drop a quick request in a Slack channel for approval. Want me to do that? Just give me the channel name."
 
-Capture extras as `locked_paths_extra: [...]`. Skip in permissive mode.
+### Tone
+
+Friendly. Curious. Clarifying. You are genuinely interested in how this team works — you do not know yet, and you want to learn. When something they say is interesting or different, react to it briefly. When something is ambiguous, ask one clarifying question, not three. When they give you a tidy answer, move on.
+
+### Translating answers into the system (private)
+
+Capture everything in a working in-memory JSON object during the conversation. Do not write files yet. Map the conversation to these primitives:
+
+- **mode**: `permissive` if no protected areas came up. `strict` if any protected areas came up, OR if the admin used language like "lock down," "only certain people," or "secure."
+- **org_shape**: pick the closest fit from `solo`, `small_team`, `single_brand`, `multi_brand_agency`, `dept_structure`, `custom` based on what they described. Do not make them pick — choose for them and verify in Phase 4.
+- **brands / teams / custom_folders**: from the names they mentioned (brand names, client names, team names, content categories).
+- **first_admin**: from their answer to "who am I working with."
+- **space_writers**: from "only X should change Y" descriptions. Each protected area becomes `{ mode: "specific", handles: [...] }`. Non-protected areas become `{ mode: "open" }`. Admin-only goes to `{ mode: "admins_only" }`.
+- **admin_slack_channel**: from their answer to the approval-routing question.
+- **locked_paths_extra**: leave empty unless they specifically describe administrative content they want locked beyond the defaults.
+
+If they describe something genuinely outside the standard shapes — for example a creator-led team with rotating brand owners — capture as `custom` and use their description as the folder map.
+
+### What not to do
+
+- Do not ask "permissive or strict?" Do not ask "what's your org shape?" Do not use the words `scope`, `writer map`, `locked path`, `home base`, `home_base`, `resolver`, `organization-map.json`, or `mode.json` with the admin.
+- Do not push for completeness. If they do not have an answer for something, default to permissive for that area. They can lock it down later.
+- Do not run all seven prompts in order like a script. Skip prompts whose answers are already in the conversation.
+- Do not translate their words into primitives out loud. The translation happens in Phase 4.
+- Do not pitch features. You are a consultant doing discovery, not a vendor.
 
 ---
 
-## PHASE 4 — PROPOSAL + CONFIRMATION
+## PHASE 4 — READ IT BACK, THEN CONFIRM
 
-Synthesize the interview answers into a proposal block and read it back to the admin:
+Synthesize the conversation into a plain-language summary in their words. Then describe what you will actually set up, still in plain language. Wait for explicit confirmation before any writes.
 
-> "Here is what I am going to set up. Confirm and I will write everything."
->
-> **Mode:** `<mode>`
->
-> **Org shape:** `<org_shape>`
->
-> **First admin:** `<name>` (Slack `<slack_id>`, email `<email>`)
->
-> **Brain folders to scaffold:**
-> - `/agent/brain/members/<first_admin_handle>/` (the admin's home base)
-> - [per org-shape additions — see templates below]
->
-> **Permissions rulebook:** `<permissive | strict>` variant. [If strict: include the per-space writer summary.]
->
-> **Admin Slack channel:** `<channel | none>`
->
-> **Identity registry:** new at `/agent/brain/admin/organization-map.json` [or carried forward from existing v2.x file with N entries preserved].
->
-> **Migrations:** [list any: leaked text removal from user.md, workspace-map.json rename, v2.0 legacy migration.]
+### Step 1 — Read it back in their words
 
-Wait for explicit "yes" / "go" / "confirm" before any writes.
+Frame this as "here's what I heard, want to make sure I got it right." Stay in the admin's vocabulary, not the system's. Example:
 
-### Org-shape scaffold templates
+> "Here's what I'm taking away from our conversation. You're an agency with three clients — Acme, Globex, and Initech. Sophia owns Acme's brand strategy, Jamal owns Globex's, and Initech is shared between the two of you. You want it to be easy for anyone on the team to drop weekly findings into a shared space, but brand strategy docs should only be changed by their owners. You'll be the first admin, and approval requests should go to #agency-runneth. Does that capture it?"
 
-**solo**
-```bash
-mkdir -p /agent/brain/members/<admin_handle>/{brain,conversations}
-mkdir -p /agent/brain/notes /agent/brain/decisions
+If they correct something, fold the correction in and re-read the affected piece. Do not restart the whole summary.
+
+### Step 2 — Describe what you will set up, still in plain language
+
+After they confirm the summary, describe the plan. Frame each piece as a thing they will be able to use, not as a folder or a file. Example:
+
+> "Here's what I'll set up for you:
+>
+> - A workspace for each client where I'll keep brand context, research, and strategy. Acme, Globex, and Initech each get their own.
+> - A shared space for team notes and weekly findings, open to anyone on the team.
+> - Sophia and Jamal as the owners of their client strategy docs — I'll politely refuse any change attempts from outside that list.
+> - A safety check that pings #agency-runneth when someone tries to change a protected area without being on the list, so you can approve or decline.
+> - A personal space for each of you where you can save your own notes and patterns. You'll get yours first.
+>
+> If anything in there feels off, tell me. Otherwise, give me the word and I'll set it all up."
+
+### Step 3 — Wait for explicit confirmation
+
+Wait for an unambiguous affirmative ("yes" / "go" / "do it" / "looks good"). Then move to Phase 5.
+
+### Internal mapping (never read out loud)
+
+Phase 4 produces this in-memory state object, which Phase 5 reads:
+
+```
+{
+  "mode": "permissive" | "strict",
+  "org_shape": "solo" | "small_team" | "single_brand" | "multi_brand_agency" | "dept_structure" | "custom",
+  "brands": [...],
+  "teams": [...],
+  "custom_folders": [...],
+  "first_admin": { "name": "...", "slack_id": "...", "email": "..." },
+  "admin_slack_channel": "C..." | null,
+  "space_writers": { "<space>": { "mode": "open" | "specific" | "admins_only", "handles": [...] } },
+  "locked_paths_extra": [...]
+}
 ```
 
-**small_team**
-```bash
-mkdir -p /agent/brain/members/<admin_handle>/{brain,conversations}
-mkdir -p /agent/brain/shared/{notes,decisions,playbooks}
-```
-
-**single_brand**
-```bash
-mkdir -p /agent/brain/members/<admin_handle>/{brain,conversations}
-mkdir -p /agent/brain/brand/{brand-context,product,audience,reviews}
-mkdir -p /agent/brain/shared/{notes,decisions}
-```
-
-**multi_brand_agency**
-```bash
-mkdir -p /agent/brain/members/<admin_handle>/{brain,conversations}
-for brand in <brand_slugs>; do
-  mkdir -p /agent/brain/brands/$brand/{brand-context,product,audience,reviews,creative}
-done
-mkdir -p /agent/brain/shared/{notes,decisions,playbooks}
-```
-
-**dept_structure**
-```bash
-mkdir -p /agent/brain/members/<admin_handle>/{brain,conversations}
-for team in <team_slugs>; do
-  mkdir -p /agent/brain/teams/$team/{notes,decisions}
-done
-mkdir -p /agent/brain/shared/{notes,decisions}
-```
-
-**custom**
-```bash
-mkdir -p /agent/brain/members/<admin_handle>/{brain,conversations}
-for folder in <custom_folders>; do
-  mkdir -p /agent/brain/$folder
-done
-```
+The admin never sees these labels.
 
 ---
 
