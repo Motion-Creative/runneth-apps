@@ -302,6 +302,8 @@ Friendly. Curious. Clarifying. You are genuinely interested in how this team wor
 
 ### Translating answers into the six primitives (private)
 
+**Scope of spaces.** A space in this skill is an area that has a specific team of people who should be able to edit it — i.e. something critical to protect. If the admin starts describing folders they'd like for general organization (where notes go, how to group brand context, what to call the playbooks folder), that is brain organization, not edit protection. Do not add those to `spaces.json`. Tell them in plain language that you can think about brain organization separately, and keep `spaces.json` to areas that actually need restricted editing.
+
 Capture everything in a working in-memory JSON object during the conversation. Do not write files yet. Map the conversation to the primitives:
 
 - **people**: a list of `{ name, slack_id?, email?, admin: true|false }`. The first admin always has `admin: true`. Other people surfaced in the conversation can be listed too if the admin gave their identifiers; otherwise they auto-provision on first message.
@@ -328,6 +330,7 @@ Choose space paths that fit what they described. Some defaults that work well:
 - Do not run all seven prompts in order like a script. Skip prompts whose answers are already in the conversation.
 - Do not translate their words into primitives out loud. The translation happens in Phase 4.
 - Do not pitch features. You are a consultant doing discovery, not a vendor.
+- Do not add a space to `spaces.json` for general organization (e.g. "a folder for our weekly notes," "a place to keep playbooks"). `spaces.json` is only for areas that need restricted editing. If the admin wants help organizing their brain beyond that, tell them you can think about it separately.
 
 ---
 

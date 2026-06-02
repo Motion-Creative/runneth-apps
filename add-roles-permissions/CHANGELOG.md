@@ -91,6 +91,10 @@ Phase 3 stays as-is (Kyra approved).
 25. **Phase 1 Look-around 7 added.** Runs `motion workspaces` (always available out-of-the-box on any Motion-authenticated VM) and notes a quiet org-shape hint from the workspace naming pattern: one workspace named after the company, multiple brand-named workspaces (agency), department-named workspaces (dept structure), per-person workspaces (rare for customers), or unclear. The signal is a starting hypothesis, not a decision.
 26. **Phase 2 adapts based on the hint.** New bullet in "Adapting to what Phase 1 found" tells the agent how to lean the opener in a direction (agency-flavor, single-brand-flavor, dept-flavor) without committing to a fully-formed proposal. The hint is a tilt, not a script. If the pattern is unclear, the agent does not invoke the workspace observation at all. No canned message — the agent still composes the opener in its own voice. The conversation in Phase 3 always gets the final word.
 
+### Scope of spaces clarified (Kyra)
+
+27. **`spaces.json` is for areas that need restricted editing, not for general brain organization.** Phase 3 now spells this out: a space is an area that has a specific team of people who should be able to edit it. If the admin starts describing folders they want for general organization, the agent tells them brain organization is a separate concern and keeps `spaces.json` lean. Added as guidance in the "Translating answers" section plus a matching "do not do" bullet.
+
 ---
 
 ## v2.3.0 — 2026-06-02 (PR #98)
