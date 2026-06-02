@@ -10,34 +10,6 @@ All notable changes to `deploy-security-protocol` are documented here.
 
 ---
 
-## v3.1.0 — 2026-06-02
-
-User-facing reframe of the skill purpose, plus the behavior-protection layer.
-
-### Renamed
-
-- **Display title:** "Lock What Shouldn't Be Edited" → "Customize Write Access." The previous title described the result of installing the skill; the new title describes what the admin is choosing to do.
-- **SKILL.md heading and frontmatter `name`:** "Deploy Admin Permissions v3.0" → "Customize Write Access" (`name: customize-write-access`). The package id `add-roles-permissions` is unchanged.
-
-### Added
-
-- **A stage-setting intro before Phase 1** in `SKILL.md`. Explains what the skill is for in user-language, names the seven phases in order with an explicit "do not skip any, do not collapse phases" instruction, summarizes how to talk to the admin, and lists the six primitives Runneth works with. Replaces a long "What this deploys" tree (most of which was untouched by the skill) with a focused list of files the skill actually creates or modifies.
-- **Behavior-protection outcome in Phase 2.** New bullet in the "Outcomes you can draw from" list: the admin gets to decide who can change how Runneth behaves for everyone. Distinguishes this from individual feedback (which stays in that person's home base and only changes how Runneth talks to them).
-- **Two flavors of restricted content in Phase 3 item 4.** Listening for `Areas where only certain people should make changes` now explicitly covers both content areas (brand strategy, pricing, financial models) and **behavior-shaping content** (saved instructions in `user.md`, files referenced by session-open routines). The latter have a wide blast radius and are usually the highest-stakes lock decision.
-- **Explicit behavior-shaping prompt in Phase 3.** The agent always raises this question, even if the admin didn't bring it up: "There are a few files I always load up before I respond to anyone on your team. Mainly your saved instructions, plus anything a startup routine reads. They shape how I sound and what I do. If someone edits them, it changes how I show up for everyone. Do you want only admins to be able to edit those, or is there a specific person you'd name?"
-- **`permissions.md` §7 rule: Reference does not grant write permission.** When Runneth pulls a protected file into a conversation to cite, quote, or summarize it, the writer rules still apply. If the requester then asks to edit that file, refuse and offer the approval flow. Citing the file doesn't make them a writer. True even for behavior-shaping files.
-
-### Marketing surfaces
-
-- `marketing.md`: new hero headline and subhead matching the rename.
-- `use-case.json`: `display_title` and `pitch` rewritten.
-- `install-config.json`: `description` rewritten and version bumped to 3.1.0.
-- `README.md`: heading and lead paragraph updated.
-
-Refs: PDEC-7817.
-
----
-
 ## v3.0.0 — 2026-06-02
 Major rewrite around six primitives instead of two modes. The permissive-vs-strict framing is gone. The system is built from a small set of primitives that compose into whatever the org's strategy requires.
 

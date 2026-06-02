@@ -1,6 +1,6 @@
 ---
-hero_headline: "Customize who can change what."
-hero_subhead: "Decide who can change what in your team's brain. Lock specific areas (brand strategy, pricing, the saved instructions that shape how Runneth behaves) to specific people. Approval requests get routed through your Slack channel. Every save is stamped so you always see who wrote what."
+hero_headline: "Lock the things only certain people should change."
+hero_subhead: "Tell Runneth what shouldn't get casually edited and who owns it. It locks those areas, routes any change requests through your approval channel, and stamps every save so you always see who wrote what."
 install_time: "~5 minutes"
 requires: "Nothing"
 ---

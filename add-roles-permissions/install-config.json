@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "add-roles-permissions",
-  "version": "3.1.0",
-  "description": "Decide who can change what in your team's brain. The default state is that anyone the team trusts to chat with Runneth can also edit anything in the brain. This skill is for the cases where that's not the right call: brand strategy that only the brand lead should change, pricing claims that need admin approval, the saved instructions that shape how Runneth behaves across every conversation. A short consultative chat captures what to lock and who owns each area, then Runneth blocks unauthorized edits and routes change requests through your approval channel. Every save in your brain gets stamped with who wrote it. New teammates onboard automatically.",
+  "version": "3.0.0",
+  "description": "Lock the areas of your team's brain that only certain people should be editing. Brand strategy, pricing, client positioning, anything sensitive. A short conversation captures what to protect and who owns each area, then Runneth blocks unauthorized edits and routes change requests through your approval channel. Every save in your brain gets stamped with who wrote it. New teammates onboard automatically.",
   "installs": [
     {
       "file": "SKILL.md",

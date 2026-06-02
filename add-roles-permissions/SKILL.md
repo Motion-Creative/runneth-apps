@@ -1,90 +1,86 @@
 ---
-name: customize-write-access
+name: deploy-admin-permissions
 description: >
-  Helps an admin customize who can change what in their team's Runneth
-  brain. By default, anyone resolved through Slack or Motion web can
-  edit anything except another teammate's personal space. This skill
-  is for the cases where some things shouldn't be editable by
-  everyone: brand strategy, pricing, client positioning, the saved
-  instructions that shape how Runneth behaves, anything sensitive.
-  Runs a short consultative conversation, then writes a tailored set
-  of rules. Idempotent. Safe to re-run.
+  Sets up Runneth's permission system through a friendly consultative
+  conversation. The system has six primitives: people (the access registry),
+  spaces (folders in the brain), writers per space (who can change each
+  space — everyone, specific people, or admins only), attribution (every
+  durable save is stamped with the author's handle), approval routing
+  (optional Slack channel for blocked writes), and identity resolution
+  (Neon-only Slack and Motion resolvers). The conversation discovers the
+  org's strategy and writes a tailored spaces.json + permissions.md.
+  Idempotent. Safe to re-run.
 trigger_domains:
   - permission-setup
   - security-deploy
   - cross-org-deployment
   - bootstrap
-version: "3.1.0"
+version: "3.0.0"
 source_org: "Motion (Creative Analytics)"
-predecessor: "deploy-admin-permissions@3.0.0"
+predecessor: "deploy-admin-permissions@2.3.0"
 ---
 
-# Customize Write Access
+# Deploy Admin Permissions v3.0
 
-## What this skill is for
+The permission system is built from six primitives. The conversation in Phase 3 discovers how the org wants to use them; Phase 5 writes the result.
 
-This skill helps an admin decide who can change what in their team's Runneth brain.
+1. **People.** The access registry. Each person has a handle, name, Slack ID, Motion email, and an `admin` flag. Stored in `organization-map.json`.
+2. **Spaces.** Folders in the brain that hold a category of content. A brand. A team. Shared playbooks. Personal notes. Defined in `spaces.json`.
+3. **Writers per space.** Each space has a writer rule. Three options: `everyone`, `specific people`, or `admins only`. Default is `everyone`.
+4. **Attribution.** Every durable save under `/agent/brain/` carries `author: @<handle>`. Always on.
+5. **Approval routing.** Optional Slack channel where blocked writes get sent for review.
+6. **Identity resolution.** Slack ID or Motion email → handle. Always on. Neon-only, no SQLite fallback.
 
-The default state, even without this skill, is that anyone the team trusts to chat with Runneth can also save things to the team's shared brain. That's fine for plenty of teams. This skill is for the moments when it isn't.
+These compose into whatever the org's strategy is. A solo operator has one space with one writer. A multi-brand agency has a space per brand with brand-specific writer lists, plus a shared space open to everyone. A dept-structure org has a space per team. Mixed setups are normal: wide-open shared notes and locked-down client strategy can coexist in the same install. The skill never asks "permissive or strict?" because that decision lives at the space level, not the install level.
 
-Two flavors of content usually motivate someone to install this:
-
-- **Things only certain people should be editing.** A client's brand strategy, pricing claims, financial models, anything where an unauthorized change would cause harm.
-- **Things that shape how Runneth behaves for everyone.** Saved instructions in `user.md`, files referenced by session-open routines. These get loaded into every conversation, so a change to them changes how Runneth responds to every teammate. The blast radius is unusually wide.
-
-The skill asks the admin what falls into either category, then writes a small set of rules that protect those areas going forward.
-
-## How this skill runs
-
-Seven phases. Run them in order. **Do not skip any. Do not collapse phases.** Each one has a specific job and the phases after it depend on the work of the phases before it.
-
-1. **Phase 1 — Look around and plan.** Silently inspect the VM. Hold what you learn.
-2. **Phase 2 — Framing the opening.** Compose the first message in your own voice, shaped by what Phase 1 found and the trigger message from the admin.
-3. **Phase 3 — The conversation.** A flowing chat. Listen for who's on the team, what to protect, who owns each protected area, and the optional approval channel.
-4. **Phase 4 — Read it back, then confirm.** Plain-language summary in the admin's own words. Wait for an explicit confirmation before any writes.
-5. **Phase 5 — Deployment.** Scaffold folders, write the people registry and the rules file, generate `permissions.md`, prepend a pointer to `user.md`, clean up any old leak text if present.
-6. **Phase 6 — Verification.**
-7. **Phase 7 — Setup complete.** One consistent plain-language message describing what's now in place.
-
-If you find yourself wanting to combine phases or skip the readback, don't. The conversational structure is what keeps the admin in control.
+The skill is **idempotent**. Re-running it lets the admin add or remove spaces, change writer rules, or update the people registry without losing identity entries or member home bases.
 
 ## How to talk to the admin (every phase)
 
 Assume the admin is a marketing team member, not a developer. Never show code, JSON, regex, file paths, or other technical artifacts in chat unless they explicitly ask. Default to plain, friendly language that describes outcomes ("I'll set up a workspace for each client," "I found some leftover text from an older version"), not implementation ("I'll write `spaces.json`," "I'll regex-match `Pre-flight — check add-roles-permissions...`").
 
-If the admin is clearly technical (asks for the file format, says "show me the JSON," uses internal terms unprompted), raise the technical depth to match. Mirror their level. Default down.
+If the admin is clearly technical (asks for the file format, says "show me the JSON," asks about the resolver, uses internal terms unprompted), raise the technical depth to match. Mirror their level. Default down.
 
 The same rule applies during reconfigures and at every runtime moment described in `permissions.md` §7.
 
-## The six primitives the skill works with
-
-You'll translate the admin's answers into these privately. The admin never sees the names.
-
-1. **People.** The access registry. Each person has a handle, name, Slack ID, Motion email, and an `admin` flag.
-2. **Spaces.** Areas of the brain whose editing is restricted. **Only restricted areas live here.** Folders that exist purely for general organization are not in scope for this skill.
-3. **Writers per space.** Each space has a writer rule: `everyone`, `specific`, or `admins_only`. Default is `everyone`. Anything in `everyone` is implicit and does not need to be listed.
-4. **Attribution.** Every durable save under `/agent/brain/` carries `author: @<handle>`. Always on.
-5. **Approval routing.** Optional Slack channel where blocked-edit requests get posted with the requester's handle, the space they tried to edit, and a short summary.
-6. **Identity resolution.** Slack ID or Motion email → handle. Neon-only.
-
-The skill is **idempotent**. Re-running it lets the admin add or remove spaces, change writer rules, or update the people registry without losing identity entries or member home bases.
-
 ---
 
-## What this skill creates or modifies
+## What this deploys
 
-The skill touches a small, specific set of files. Nothing else.
+```
+/agent/
+├── user.md                                ← thin protocol pointer prepended
+├── .agents/skills/                        ← org skills (not touched)
+├── apps/                                  ← org apps (not touched)
+└── brain/
+    ├── INDEX.md                           ← map of brain files (not touched by this skill)
+    ├── routines.md                        ← routines registry stub
+    ├── admin/                             ← the permission system (always admins-only)
+    │   ├── permissions.md                 ← generated rulebook, populated from spaces.json
+    │   ├── spaces.json                    ← the spaces, writer rules, and approval channel
+    │   ├── organization-map.json          ← people registry — sole source of truth for identity
+    │   ├── slack-whoami.sh                ← Slack resolver + auto-provisioning
+    │   ├── motion-whoami.sh               ← Motion web resolver (Neon-only) + auto-provisioning
+    │   └── motion-whoami-neon.py          ← Neon agent_conversation query helper
+    ├── members/                           ← per-person home bases (admins included)
+    │   └── <handle>/                      ← per-person home base, writers = owner only
+    │       ├── <handle>.md
+    │       ├── brain/
+    │       └── conversations/
+    └── (other spaces from the conversation — brands/, teams/, shared/, custom — each with the writer rule chosen in Phase 3)
+```
 
-- `/agent/brain/admin/permissions.md` — generated rulebook.
-- `/agent/brain/admin/spaces.json` — the list of protected areas and their writers.
-- `/agent/brain/admin/organization-map.json` — people registry.
-- `/agent/brain/admin/slack-whoami.sh` — Slack identity resolver.
-- `/agent/brain/admin/motion-whoami.sh` — Motion web identity resolver.
-- `/agent/brain/admin/motion-whoami-neon.py` — Neon `agent_conversation` query helper.
-- `/agent/brain/members/<handle>/` — per-person home base for each named teammate (scaffolded if it doesn't exist yet).
-- `/agent/user.md` — prepends a short pointer to the rulebook so identity resolution runs on every message.
+## Implicit spaces
 
-Personal home bases under `/agent/brain/members/<handle>/` are owner-write only by built-in rule. Shared infrastructure paths (`/agent/brain/admin/`, `/agent/INDEX.md`, `/agent/brain/routines.md`, `/agent/.agents/skills/`, `/agent/apps/`) are admins-only by built-in rule. Neither is configurable through `spaces.json`.
+A few spaces always exist and have built-in writer rules. They are not configured in `spaces.json` because they cannot vary:
+
+- `/agent/brain/admin/`: writers = admins only. The permission system itself.
+- `/agent/brain/members/<handle>/`: writers = the owner only. Personal home bases.
+- `/agent/INDEX.md`, `/agent/brain/routines.md`, `/agent/.agents/skills/`, `/agent/apps/`: writers = admins only. Shared infrastructure that one teammate should not be able to overwrite for everyone else.
+
+Every other space comes from the conversation.
+
+---
 
 ## Prerequisites
 
@@ -246,9 +242,7 @@ What you are listening for:
 1. **Who is on the team.** Names, what each person does, who tends to own what.
 2. **The shape of the work.** One team on one thing? One brand? Multiple clients or brands? Several departments? You are not picking a preset — you are mapping their world into a set of spaces.
 3. **What you will be helping them organize.** Brand context, customer research, strategy docs, weekly notes, meeting recaps, performance data, briefs. Each meaningful category becomes a space.
-4. **Areas where only certain people should make changes.** Two flavors to listen for:
-   - **Content areas** the team works in: brand positioning, client strategy, pricing claims, financial models, anything where an unauthorized edit causes harm. These get `writers: specific` (or `writers: admins_only` if they're truly admin-only).
-   - **Behavior-shaping content** that changes how Runneth talks to everyone: the saved instructions in `user.md`, files referenced by session-open routines. An edit to these changes Runneth's behavior for every teammate, every conversation, with no signal that anything shifted. They're usually the highest-stakes lock decision. Always raise these explicitly if the admin doesn't bring them up. Distinguish clearly from individual feedback like "I prefer short answers," which goes to that person's own home base and only changes how Runneth talks to that person.
+4. **Areas where only certain people should make changes.** Brand positioning the brand lead owns, client strategy a specific CSM touches, financial models the finance lead handles. Those spaces get `writers: specific`.
 5. **Areas where anyone on the team should be able to contribute.** Weekly findings, team brainstorms, meeting notes, shared playbooks. Those spaces get `writers: everyone` (the default).
 6. **Who you will be working with most.** Usually the person you are talking to. Sometimes they are setting it up for someone else. That person becomes the first admin.
 
@@ -277,12 +271,6 @@ After they describe content types, drift to ownership. Use a concrete example fr
 > "Are any of those things where you'd really only want specific people making changes? For example, if Sophia owns the brand strategy for one of your clients, you probably don't want someone outside that team accidentally rewriting it."
 
 If they say yes, get the names and the areas. If they say no or sound unsure, that's fine. Default each space to `writers: everyone`.
-
-Then, whether or not they brought it up, raise the behavior-shaping question explicitly. Most admins don't realize how much weight the saved instructions and session-open routines carry until you point it out:
-
-> "One I always ask about, even if you didn't mention it. There are a few files I always load up before I respond to anyone on your team. Mainly your saved instructions, plus anything a startup routine reads. They shape how I sound and what I do across every conversation. If someone edits them, it changes how I show up for everyone, not just them. Do you want only admins to be able to edit those, or is there a specific person you'd name as the owner?"
-
-Capture the answer as a writer rule on a space whose path is `agent-instructions` (or another slug the admin uses to refer to it). The safe default is `admins_only`.
 
 Then drift to openness:
 
@@ -889,8 +877,6 @@ How Runneth talks to people and handles common moments after install. These rule
 3. Two options: send a request to the approval channel (if set), or contact the admin directly.
 
 Same rule for `writers: admins_only` spaces — name the admins.
-
-**Reference does not grant write permission.** When you pull a protected file into a conversation to cite, quote, or summarize it, the writer rules still apply. If the requester then asks to edit that file and they're not on the writer list, refuse and offer the approval flow. Citing the file doesn't make them a writer. This is true even for behavior-shaping files (saved instructions, session-open routine content): Runneth can reference what's in them at any time, but only the named writers can change them.
 
 **Offboarding cleanup.** When an admin says someone is leaving the team, do not just flip their `scope` to `offboarded`. Walk every space they appear in as a writer. For each one, ask the admin who should replace them. Surface it in plain language:
 
