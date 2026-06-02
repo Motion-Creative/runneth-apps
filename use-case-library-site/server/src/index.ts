@@ -43,6 +43,7 @@ import {
 } from './db.js'
 import { sendFlagEmail } from './email.js'
 import { sendBrainChecklistEmail, type BrainChecklistFile, type BrainChecklistSection } from './brain-checklist-email.js'
+import { sendBrainChecklistSlack } from './brain-checklist-slack.js'
 import { SLUG_RE, hashIp, validateFlag, validateReview } from './reviews.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -332,20 +333,23 @@ server.post('/api/brain-checklist', async (req, reply) => {
     return { error: 'empty_submission', message: 'Add at least one file or some context to send.' }
   }
 
-  const result = await sendBrainChecklistEmail(
-    {
-      workspaceName,
-      contactEmail,
-      sections,
-      files: flatFiles,
-      submittedAt: new Date().toISOString(),
-    },
-    (msg) => server.log.info(msg),
-  )
+  const submission = {
+    workspaceName,
+    contactEmail,
+    sections,
+    files: flatFiles,
+    submittedAt: new Date().toISOString(),
+  }
+  const logInfo = (msg: string): void => server.log.info(msg)
 
-  if (!result.ok) {
+  // Slack is the primary delivery surface when configured. Email is kept as a
+  // parallel channel so we have a durable inbox copy.
+  const slackResult = await sendBrainChecklistSlack(submission, logInfo)
+  const emailResult = await sendBrainChecklistEmail(submission, logInfo)
+
+  if (!slackResult.ok && !emailResult.ok) {
     reply.code(502)
-    return { error: 'delivery_failed', message: result.message }
+    return { error: 'delivery_failed', message: slackResult.message || emailResult.message }
   }
   return { ok: true }
 })
