@@ -45,6 +45,12 @@
       "chmod": "0755"
     },
     {
+      "file": "motion-whoami-neon.py",
+      "dest": "/agent/brain/admin/motion-whoami-neon.py",
+      "if-not-exists": true,
+      "chmod": "0755"
+    },
+    {
       "file": "motion-whoami.sh",
       "dest": "/agent/brain/admin/motion-whoami.sh",
       "if-not-exists": true,
@@ -62,7 +68,7 @@
       "version": "3.0.0",
       "date": "2026-06-02",
       "type": "major",
-      "notes": "Standalone rebuild. Drops add-roles-permissions dependency. Ships its own lightweight slack-whoami.sh and motion-whoami.sh resolvers plus an empty organization-map.json (renamed from workspace-map.json). On first message, auto-scaffolds each person's home base at /agent/brain/members/<handle>/ with a stub <handle>.md and a brain/ subfolder. Removes the Phase 1 pre-flight from behavior-snippet.md that was leaking the post-install intro quote into user.md (PDEC-7817). If add-roles-permissions is installed later, its stricter resolvers overwrite these and add scope rules on top of the same map file."
+      "notes": "Standalone rebuild. Drops add-roles-permissions dependency. Ships its own lightweight slack-whoami.sh and a Neon-first motion-whoami.sh resolver (with motion-whoami-neon.py helper) that queries the Neon agent_conversation table for the speaker email and falls back to the local SQLite snapshot when Neon is unreachable plus an empty organization-map.json (renamed from workspace-map.json). On first message, auto-scaffolds each person's home base at /agent/brain/members/<handle>/ with a stub <handle>.md and a brain/ subfolder. Removes the Phase 1 pre-flight from behavior-snippet.md that was leaking the post-install intro quote into user.md (PDEC-7817). If add-roles-permissions is installed later, its stricter resolvers overwrite these and add scope rules on top of the same map file."
     },
     {
       "version": "2.0.1",

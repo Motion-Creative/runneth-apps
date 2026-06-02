@@ -21,7 +21,8 @@ Runneth gets to know each person it works with — their goals, preferences, and
     ├── admin/
     │   ├── organization-map.json           ← identity registry — auto-provisioned on first message
     │   ├── slack-whoami.sh                 ← Slack resolver + auto-scaffolding
-    │   └── motion-whoami.sh                ← Motion-web resolver + auto-scaffolding
+    │   ├── motion-whoami.sh                ← Motion-web resolver + auto-scaffolding (Neon-first)
+    │   └── motion-whoami-neon.py           ← Neon agent_conversation query helper
     ├── members/
     │   ├── TEMPLATE.md                     ← team-member template (configurable path)
     │   └── <handle>/                       ← per-person home base, created on first message
@@ -36,7 +37,7 @@ Runneth gets to know each person it works with — their goals, preferences, and
 ## How identity resolution works
 
 - **Slack:** `slack-whoami.sh <slack_user_id> [<display_name>]` reads `/agent/brain/admin/organization-map.json`. Known IDs resolve. Unknown IDs auto-provision a new entry and home base.
-- **Motion web:** `motion-whoami.sh [<display_name>]` reads `userEmail` from the conversation's row in the local SQLite DB and resolves it against the same map. Same auto-provisioning behavior.
+- **Motion web:** `motion-whoami.sh [<display_name>]` resolves the speaker email in this priority order: (1) Neon `agent_conversation` table via `motion-whoami-neon.py` invoked through `secret run --env DATABASE_URL=NEON_DATABASE_URL` — authoritative, zero-lag, works for brand-new conversations; (2) local `conversations.db` snapshot (live or latest backup) as a fallback when Neon is unreachable. Then resolves the email against the same `organization-map.json` and auto-provisions if unknown.
 
 Both resolvers return `{ handle, home_base, status }`. Status is `resolved` or `provisioned`.
 
