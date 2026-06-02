@@ -1,0 +1,11 @@
+{
+  "_note": "Identity registry — the source of truth for who Runneth is talking to in this org. Resolution via Slack ID (slack-whoami.sh) or Motion account email (motion-whoami.sh). Both paths return the same { handle, home_base }. Auto-provisioned on first message. If add-roles-permissions is installed, scope rules layer on top of this same file.",
+  "_entry_shape": {
+    "slackUserIds": "Slack user ID -> 'member:<handle>'",
+    "motionUserEmails": "Motion account email -> 'member:<handle>'",
+    "members": "<handle> -> { name, handle, slack_id?, email? }"
+  },
+  "slackUserIds": {},
+  "motionUserEmails": {},
+  "members": {}
+}

@@ -1,11 +1,13 @@
 {
   "schema": "1.0",
   "id": "team-member-memory",
-  "version": "2.0.1",
-  "description": "Runneth gets to know each person it works with \u2014 their goals, preferences, and working style \u2014 and adapts to them over time.",
-  "requires": [
-    "add-permissions"
-  ],
+  "version": "3.0.0",
+  "description": "Runneth gets to know each person it works with \u2014 their goals, preferences, and working style \u2014 and adapts to them over time. Standalone: resolves identity from Slack ID or Motion email and scaffolds each person's home base on first message. No permissions setup required.",
+  "requires": {
+    "runtime": "any Runneth sandbox; jq must be installed",
+    "preinstalled": [],
+    "recommended": []
+  },
   "customize": [
     {
       "token": "{{TEAM_MEMBER_TEMPLATE_PATH}}",
@@ -32,6 +34,29 @@
       "if-not-exists": true
     },
     {
+      "file": "organization-map.json",
+      "dest": "/agent/brain/admin/organization-map.json",
+      "if-not-exists": true
+    },
+    {
+      "file": "slack-whoami.sh",
+      "dest": "/agent/brain/admin/slack-whoami.sh",
+      "if-not-exists": true,
+      "chmod": "0755"
+    },
+    {
+      "file": "motion-whoami-neon.py",
+      "dest": "/agent/brain/admin/motion-whoami-neon.py",
+      "if-not-exists": true,
+      "chmod": "0755"
+    },
+    {
+      "file": "motion-whoami.sh",
+      "dest": "/agent/brain/admin/motion-whoami.sh",
+      "if-not-exists": true,
+      "chmod": "0755"
+    },
+    {
       "file": "behavior-snippet.md",
       "dest": "user-md",
       "insert-after": "## System routines",
@@ -39,6 +64,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "3.0.0",
+      "date": "2026-06-02",
+      "type": "major",
+      "notes": "Standalone rebuild. Drops add-roles-permissions dependency. Ships its own lightweight slack-whoami.sh and a Neon-only motion-whoami.sh resolver (with motion-whoami-neon.py helper) that queries the Neon agent_conversation table for the speaker email. No SQLite fallback \u2014 the local conversations.db is unreliable for brand-new conversations (live DB is a 0-byte placeholder; backups lag 30 min), so on Neon failure the resolver returns status: \"unresolved\" and the behavior-snippet asks the user at write time where the durable note should land (org level or a specific person's folder) instead of guessing a handle. Auto-scaffolds each person's home base on first resolved/provisioned message at /agent/brain/members/<handle>/ with a stub <handle>.md and a brain/ subfolder. Removes the Phase 1 pre-flight from behavior-snippet.md that was leaking the post-install intro quote into user.md (PDEC-7817). If add-roles-permissions is installed later, its stricter resolvers overwrite these and add scope rules on top of the same map file."
+    },
     {
       "version": "2.0.1",
       "date": "2026-05-21",

@@ -1,7 +1,7 @@
 {
   "slug": "team-member-memory",
   "display_title": "Remembers Everyone It Works With",
-  "pitch": "Reads each teammate's profile before every chat, then updates it after. Nobody starts cold.",
+  "pitch": "Reads each teammate's profile before every chat, then updates it after. Nobody starts cold. Standalone — no permissions setup required.",
   "status": "experimental",
   "category": "agent-foundations",
   "github_path": "team-member-memory"
