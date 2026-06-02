@@ -1,7 +1,7 @@
 # Team member memory
 
 ## What just opened up
-Runneth now remembers who it's talking to. Every person it works with gets a profile that grows over time: goals, preferences, working style, the patterns it notices. The next time you or anyone else on the team starts a conversation, it already knows the context, and it adapts how it answers to the specific person asking.
+Runneth now remembers who it's talking to. Every person it works with gets a profile that grows over time: goals, preferences, working style, the patterns it notices. The next time you or anyone else on the team starts a conversation, it already knows the context, and it adapts how it answers to the specific person asking. No setup needed — Runneth resolves identity from Slack ID or Motion email and scaffolds each person's home base on their first message.
 
 ## Try this now
 1. **Introduce yourself**: `Quick intro: my name is [name], I lead [role/team], and the projects I care about most right now are [projects].`
@@ -14,4 +14,4 @@ Runneth now remembers who it's talking to. Every person it works with gets a pro
    _You'll get back:_ their profile if one exists, or a note that Runneth hasn't met them yet.
 
 ## Compounds with
-- **add-roles-permissions:** Identity resolution comes from the permissions layer; team-member-memory is the durable profile it points to. Both have to be installed for either to work well.
+- **add-roles-permissions:** Layer scope rules on top of the same identity map. Memory keeps working without it; permissions make member writes safer when an admin opts in.

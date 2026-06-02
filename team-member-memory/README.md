@@ -1,66 +1,55 @@
 # team-member-memory
 
-**Runneth gets to know each person it works with — their goals, preferences, and working style — and adapts to them over time.**
+Runneth gets to know each person it works with — their goals, preferences, and working style — and adapts to them over time. Standalone: no permissions setup required.
 
-Every session starts with the agent reading who it's talking to and what they've worked on before. Every session ends with it updating what it learned. Over time, the agent becomes genuinely useful to each specific person rather than generic to everyone.
+## What it does
 
-**Install time:** ~2 minutes  
-**Requires:** [add-permissions](../add-permissions) (must be installed and configured first)
-
----
-
-## Prerequisites
-
-`add-permissions` must be installed and have at least one admin mapped before you install this. Team Member Memory delegates all identity resolution to the permissions resolvers — it does not maintain its own user registry.
-
----
+- On every new conversation, resolves the speaker's identity from Slack ID or Motion email.
+- If the person is new, scaffolds their home base at `/agent/brain/members/<handle>/` with:
+  - a stub `<handle>.md` profile (from `team-member-template.md`)
+  - a `brain/` subfolder for their personal sub-brain
+  - a `conversations/` subfolder for per-conversation one-pagers
+- Reads the speaker's `<handle>.md` plus their most recent one-pager before responding.
+- After every response, updates the one-pager for the current conversation and refreshes `<handle>.md` when something durable surfaces.
 
 ## What gets installed
 
-| File | Destination | Behavior |
-|---|---|---|
-| `team-member-template.md` | `{{TEAM_MEMBER_TEMPLATE_PATH}}` | Blank template for new team member files (skipped if exists) |
-| `onepager-template.md` | `{{ONEPAGER_TEMPLATE_PATH}}` | Template for per-conversation one-pagers (skipped if exists) |
-| `behavior-snippet.md` | `user.md` | Adds session-open and one-pager routines to agent behavior |
+```
+/agent/
+├── user.md                                 ← behavior-snippet appended (session-open + post-response steps)
+└── brain/
+    ├── admin/
+    │   ├── organization-map.json           ← identity registry — auto-provisioned on first message
+    │   ├── slack-whoami.sh                 ← Slack resolver + auto-scaffolding
+    │   └── motion-whoami.sh                ← Motion-web resolver + auto-scaffolding
+    ├── members/
+    │   ├── TEMPLATE.md                     ← team-member template (configurable path)
+    │   └── <handle>/                       ← per-person home base, created on first message
+    │       ├── <handle>.md
+    │       ├── brain/
+    │       └── conversations/
+    │           └── <conversationId>/one-pager.md
+    └── conversations/
+        └── TEMPLATE.md                     ← one-pager template (configurable path)
+```
 
----
+## How identity resolution works
 
-## What to customize
+- **Slack:** `slack-whoami.sh <slack_user_id> [<display_name>]` reads `/agent/brain/admin/organization-map.json`. Known IDs resolve. Unknown IDs auto-provision a new entry and home base.
+- **Motion web:** `motion-whoami.sh [<display_name>]` reads `userEmail` from the conversation's row in the local SQLite DB and resolves it against the same map. Same auto-provisioning behavior.
 
-| Token | Default | When to change |
-|---|---|---|
-| `{{TEAM_MEMBER_TEMPLATE_PATH}}` | `/agent/brain/members/TEMPLATE.md` | Custom template location |
-| `{{ONEPAGER_TEMPLATE_PATH}}` | `/agent/brain/conversations/TEMPLATE.md` | Custom conversations directory |
+Both resolvers return `{ handle, home_base, status }`. Status is `resolved` or `provisioned`.
 
----
+## Relationship to add-roles-permissions
 
-## How it works
+This package is fully standalone. If an admin later installs `add-roles-permissions`, its stricter resolvers overwrite these ones and layer scope rules and collision detection on top of the same `organization-map.json`. Memory keeps working through the rename and the upgrade.
 
-On every new conversation the agent:
-1. Checks that `add-permissions` is installed. If not, it stops and prompts the user to install it first.
-2. Resolves identity from the active surface — Slack ID via `slack-whoami.sh`, or Motion web email via `motion-whoami.sh`.
-3. Reads the person's team file from their permissions home base (`/agent/brain/members/<handle>/<handle>.md`).
-4. Finds and reads the most recent conversation one-pager for that person.
+## Prerequisites
 
-After every response the agent updates the current conversation's one-pager. If anything durable emerged — a new preference, a decision, a pattern — it updates the team file too.
-
-New users are handled by the permissions auto-provisioner on first encounter. Once provisioned, the agent creates their team file from the template.
-
-Works on both Slack and Motion web.
-
----
-
-## Fallbacks
-
-- **add-permissions not installed:** Agent stops session-open and tells the user to install it first.
-- **Permissions collision:** Agent blocks writes and routes to the admin channel per the permissions flow.
-- **New user (provisioned this session):** Agent creates their team file from `{{TEAM_MEMBER_TEMPLATE_PATH}}`.
-- **No prior one-pager found:** Agent starts fresh with no error.
-- **`## System routines` missing from `user.md`:** Snippet is appended to the end.
-- **Any seed file already exists:** Install step is skipped. Existing data is never overwritten.
-
----
+- Any Runneth sandbox
+- `jq` installed
+- A platform identifier (Slack ID or Motion `userEmail`) for the speaker — otherwise the resolvers fall back gracefully and the conversation proceeds without personalized context.
 
 ## Version history
 
-See `install-config.json` changelog.
+See `install-config.json` → `changelog`.

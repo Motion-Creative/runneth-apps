@@ -1,46 +1,27 @@
-<!-- use-case: team-member-memory v2.0.0 -->
+<!-- use-case: team-member-memory v3.0.0 -->
 
 ### On every new conversation — session open
 
 Run silently before answering the first message:
 
-1. **Pre-flight — check add-roles-permissions is installed:**
-   ```bash
-   [ -f /agent/brain/admin/workspace-map.json ] && echo "OK" || echo "MISSING"
-   ```
-   If MISSING: say this, then immediately begin the add-roles-permissions setup flow inline
-   (fetch and follow SKILL.md from `Motion-Creative/runneth-apps/tree/main/add-roles-permissions/SKILL.md`
-   via the GitHub repo, or read from its installed location if available).
-   Do not ask the user to do anything themselves — just start it:
-
-   > "Hey, let's set up your roles and permissions before we jump into adding memory. This will
-   > make sure that team members aren't making org-wide changes — only admins can do that. Are you
-   > good to be the first admin? You can add more admins at any time."
-
-   Run all phases of the add-roles-permissions skill. Once `workspace-map.json` exists and at
-   least one admin is mapped, continue with the remaining session-open steps below.
-
-2. **Resolve identity from the active surface:**
+1. **Resolve identity from the active surface:**
    - **Slack:** `bash /agent/brain/admin/slack-whoami.sh <currentMessage.authorId> [<display_name>]`
-   - **Motion web:** extract `userEmail` from the conversations DB:
-     ```sql
-     SELECT json_extract(conversation_json, '$.userEmail')
-     FROM conversations
-     WHERE conversation_id = '<currentConversationId>'
-     ```
-     Then: `bash /agent/brain/admin/motion-whoami.sh <userEmail> [<display_name>]`
+   - **Motion web:** `bash /agent/brain/admin/motion-whoami.sh [<display_name>]`
 
-   Both return `{ scope, handle, home_base, status }`.
+   Both return `{ handle, home_base, status }` against `/agent/brain/admin/organization-map.json`.
 
-   - If `status: "collision"`: follow the permissions collision flow — block writes, do not proceed with memory steps.
-   - If `status: "provisioned"`: new member, no team file yet. Proceed normally.
+   - If `status: "provisioned"`: new person, a home base was just scaffolded at `<home_base>` with a stub `<handle>.md` and a `brain/` subfolder. Proceed normally — there is no prior context to load.
+   - If `status: "resolved"`: known person, continue.
+   - If the resolver returns an error (no platform identifier, missing map file): proceed without personalized context. Do not block the conversation.
 
-3. **Read the team file** at `<home_base><handle>.md`.
-   If it does not exist: create it from `{{TEAM_MEMBER_TEMPLATE_PATH}}`.
+   If `add-roles-permissions` is also installed, the resolver may additionally return a `scope` field and a `collision` status. Handle those per the permissions package — for memory purposes, both `resolved` and `provisioned` are the only statuses that gate the memory steps below.
 
-4. **Find the most recent one-pager** under `<home_base>conversations/`. Pick the most recently modified file that is not the current conversation.
+2. **Read the team file** at `<home_base><handle>.md`.
+   If it does not exist (rare, only if the auto-provision step somehow skipped it): create it from `{{TEAM_MEMBER_TEMPLATE_PATH}}`.
 
-5. Do not narrate or announce. Use loaded context silently.
+3. **Find the most recent one-pager** under `<home_base>conversations/`. Pick the most recently modified file that is not the current conversation.
+
+4. Do not narrate or announce. Use loaded context silently.
 
 ---
 

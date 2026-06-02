@@ -2,7 +2,7 @@
 hero_headline: "Knows who's talking before you say a word."
 hero_subhead: "Your Runneth builds a file on every teammate and picks up exactly where the last conversation left off."
 install_time: "~2 minutes"
-requires: "add-roles-permissions skill"
+requires: "Nothing"
 ---
 
 ## Super powers this unlocks
@@ -14,7 +14,7 @@ requires: "add-roles-permissions skill"
 
 ## How it works
 
-At the start of every conversation, your Runneth reads the file on that person and their most recent conversation recap. At the end, it updates both. The file on each person gets sharper every session.
+On the first message from anyone new, Runneth resolves their identity from Slack or Motion, then scaffolds a home base for them with a stub profile and a personal sub-brain. At the start of every conversation after that, it reads the file on that person and their most recent conversation recap. At the end, it updates both. The file on each person gets sharper every session. Works standalone — no permissions setup required.
 
 ## A real example
 
