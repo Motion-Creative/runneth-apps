@@ -37,7 +37,8 @@ Runneth gets to know each person it works with — their goals, preferences, and
 ## How identity resolution works
 
 - **Slack:** `slack-whoami.sh <slack_user_id> [<display_name>]` reads `/agent/brain/admin/organization-map.json`. Known IDs resolve. Unknown IDs auto-provision a new entry and home base.
-- **Motion web:** `motion-whoami.sh [<display_name>]` resolves the speaker email in this priority order: (1) Neon `agent_conversation` table via `motion-whoami-neon.py` invoked through `secret run --env DATABASE_URL=NEON_DATABASE_URL` — authoritative, zero-lag, works for brand-new conversations; (2) local `conversations.db` snapshot (live or latest backup) as a fallback when Neon is unreachable. Then resolves the email against the same `organization-map.json` and auto-provisions if unknown.
+- **Motion web:** `motion-whoami.sh [<display_name>]` resolves the speaker email via the Neon `agent_conversation` table, invoked through `motion-whoami-neon.py` + `secret run --env DATABASE_URL=NEON_DATABASE_URL`. Authoritative, zero-lag, works for brand-new conversations.
+- **No SQLite fallback.** If Neon fails, the resolver returns `status: "unresolved"`. The behavior-snippet handles unresolved sessions by continuing read-only and, when a durable write is about to happen, asking the user where it should land (org level vs. a specific person's folder) instead of guessing a handle.
 
 Both resolvers return `{ handle, home_base, status }`. Status is `resolved` or `provisioned`.
 
