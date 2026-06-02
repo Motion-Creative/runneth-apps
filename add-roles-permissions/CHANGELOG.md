@@ -6,6 +6,101 @@ All notable changes to `deploy-security-protocol` are documented here.
 
 ## Unreleased
 
+(nothing yet)
+
+---
+
+## v3.0.0 — 2026-06-02
+Major rewrite around six primitives instead of two modes. The permissive-vs-strict framing is gone. The system is built from a small set of primitives that compose into whatever the org's strategy requires.
+
+### Changed
+
+- **No more modes.** Permissive vs strict is gone. Each space has its own writer rule. Wide-open and locked-down spaces coexist in the same install. The skill never asks "permissive or strict?" because that decision lives at the space level.
+- **`spaces.json` replaces `mode.json`.** Records the spaces, writer rules, and approval channel. Lives at `/agent/brain/admin/spaces.json`. Editable by admins only.
+- **Single `permissions.md` template.** Generated from `spaces.json` instead of selected from a permissive variant or a strict variant. Lists each space and its writer rule explicitly.
+- **Protocol pointer simplified.** No longer routes based on a mode field. Points to `permissions.md` and the spaces config.
+- **Reconfigure is incremental.** "Tighten up the client space" / "open up the shared space" / "add a new space" instead of a mode switch.
+
+### Added
+
+- **The six primitives.** People (access registry), spaces (folders in the brain), writers per space (`everyone` | `specific` | `admins_only`, default `everyone`), attribution (always on), approval routing (optional Slack channel), identity resolution (Neon-only).
+- **Phase 2 welcome** with a 4-bullet outcome overview, followed by the opening question in the same turn. No "sound good?" round-trip.
+- **Phase 3 conversation** listens for six things across a flowing chat: team, work shape, content to keep organized, areas where only certain people should make changes, areas anyone should be able to contribute to, first admin (plus an approval-channel follow-up if protected areas come up). The agent never uses the words `permissive`, `strict`, `scope`, `writer map`, `locked path`, `home base`, `resolver`, `organization-map.json`, or `spaces.json` with the admin.
+- **Phase 4 readback** in plain language first, then a setup plan in plain language. Confirms before any writes.
+- **Phase 5 deployment** writes a single permissions.md generated from spaces.json. No template selection.
+- **Phase 7 setup checklist** is one consistent message.
+- **Implicit spaces** that are never configurable: `/agent/brain/admin/` (admins only), `/agent/brain/members/<handle>/` (owner only), and the shared infrastructure paths (`INDEX.md`, `routines.md`, `.agents/skills/`, `apps/`, admins only).
+- **Step 8 auto-cleans the team-member-memory v2.0.1 user.md leak** if found, with admin confirmation.
+
+### Migration
+
+- From **v2.3.0 (post-PR-#98)**: re-run the skill; existing `permissions.md` rules are read and proposed as a `spaces.json` for the admin to review. Identity entries preserved.
+- From any interim v3 preview with a `mode.json` file: Phase 1 Check 3 detects it; Phase 5 offers to translate the contents into `spaces.json` and remove the old file.
+- From **v2.x with `workspace-map.json`** (pre-PR-#98): Phase 1 Check 3 detects, Phase 5 Step 2 renames and carries entries.
+- From **v1**: identity migration, folder migration (`/agent/brain/users/` → `/agent/brain/members/`), `permissions.md` regenerated.
+
+Refs: PDEC-7817.
+
+### Hardening (pre-merge review)
+
+Fresh-eyes review surfaced ten failure modes. All addressed in-PR:
+
+1. **Approval-channel mechanic implemented.** `permissions.md` §5 now spells out the exact flow: draft request, show it to the requester, post via `slack send` on confirmation, wait for explicit admin approval before executing. No more vapor feature.
+2. **Slug-pinning on reconfigure.** Slugs are immutable once a space is created. Reconfigure fuzzy-matches new names against existing slugs and asks the admin to confirm rename vs. new space. Stops "Acme" → `acme` from orphaning the original `brands/acme-corp`.
+3. **v2.x migration is re-interview, not parser.** The skill no longer tries to parse prose `permissions.md` into structured config. On v2.x detection, it tells the admin honestly that prose-to-config is too easy to get wrong and walks through the conversation again, preserving identity entries and home bases.
+4. **Home-base scaffolding at promotion time.** When anyone is added to the people registry, promoted to admin, or added to a writer list, their `/agent/brain/members/<handle>/` home base is created immediately. Phase 5 Step 1 scaffolds for every named person, not just admins. The behavior is also encoded in `permissions.md` §6 for runtime use.
+5. **Flexible identifier capture.** Phase 3 Q3 now accepts whichever identifier the admin has handy (Slack handle, @-mention, or motionapp.com email) instead of demanding both. Missing identifiers fill in on first message.
+6. **Phase 4 readback shows per-space writer attribution.** Instead of an aggregate summary, the readback lists each space and its writers by name. Wrong attribution becomes easy to spot.
+7. **Fast path for pragmatic admins.** Phase 3 detects "keep it simple" signals (solo, small team, skip questions, just defaults) and offers a one-space deployment without running the full conversation.
+8. **TMM leak cleanup shows exact lines.** Phase 5 Step 8 shows the matched block in a code fence before asking for confirmation. Fuzzy matches refuse auto-removal and ask the admin to clean up manually.
+9. **`spaces.json` validation gate.** Phase 5 Step 3 validates every entry before writing: `writers: specific` requires non-empty `writer_handles` that all exist in `organization-map.json`; `writers: admins_only` requires at least one admin in the registry. Failures re-ask the relevant interview question.
+10. **NEON_DATABASE_URL hard stop on fresh installs.** Phase 1 Check 6 escalates from warning to hard stop when no `permissions.md` exists yet. Existing installs still get a soft warn so reconfigures can proceed offline.
+
+### CSM-lens hardening
+
+A second fresh-eyes review through CSM eyes surfaced operational failure modes that don't show up in code review but eat CSM time and erode customer trust. Twelve more fixes:
+
+11. **Communication style rule at the top of SKILL.md.** Assume the admin is a marketing team member, not a developer. Never show code, JSON, regex, or file paths in chat unless they ask. Default down. The same rule lives in `permissions.md` §7 so the deployed skill behaves the same way at runtime, every conversation.
+12. **Backup admin question** added to Phase 3 after the first-admin question. Prevents the single-admin bus factor when the first admin leaves or moves on.
+13. **Backup approver question** added to Phase 3 when an approval channel is set. Prevents stalled requests when the admin is OOO.
+14. **Admins-only bottleneck warning** at Phase 4 readback. If any space is admins-only with only one admin in the registry, soft-warn before writing.
+15. **Plain-language TMM leak cleanup** in Phase 5 Step 8. The default prompt is friendly and outcome-focused ("I found some leftover instruction text from an older version. Want me to clean it up?"). Technical detail only on explicit request.
+16. **Never refuse silently** rule in `permissions.md` §7. When a write is blocked, always tell the requester which space they hit, who the writers are, and offer either an approval request or direct admin contact.
+17. **Offboarding cleanup** rule in `permissions.md` §7. Before flipping `scope` to `offboarded`, the agent walks every space the person writes to and asks the admin who replaces them. Prevents bricked spaces.
+18. **"Show me the current setup"** runtime rule in `permissions.md` §7. Plain-language summary of people + spaces + approval channel on natural-language asks ("who can write to X?", "what's locked and what's open?", "show me the setup"). Never dumps JSON unless asked.
+19. **Natural-language reconfigure intents** in `permissions.md` §7. Recognize "Add Jamie to Acme," "Sarah needs access to financials," "remove Sophia from Globex," and similar phrasings as reconfigure intent. Customers will never say "tighten up the client space."
+20. **Lightweight reconfigure path** in `permissions.md` §7. Atomic changes (add/remove one writer, lock/unlock one space, add or remove one person) skip the full Phase 2-4 re-interview. Confirm in plain language, update the config, scaffold home bases if needed, post a one-line diff.
+21. **Diff broadcast** in `permissions.md` §7. After every reconfigure that lands a real change, post a short "what changed" summary to the approval channel so teammates are not surprised.
+22. **Approval-request reminders** in `permissions.md` §7. Nudge after 4 hours, give up after 24 with a suggestion to contact the admin directly. Maximum two nudges.
+
+CSM-lens issue #10 (multi-customer fleet view for CSMs themselves) is intentionally out of scope for this skill and tracked separately.
+
+Also added an org-wide saved instruction: "Use case library voice — default to non-technical." Same rule, applied across every use case in the library.
+
+### Phase 1 + Phase 2 reframing (Kyra)
+
+Two more changes after a fresh read:
+
+23. **Phase 1 renamed from "Pre-flight scan" to "Look around and plan."** The intro now describes the goal in plain language — look at what's already in the VM, gather context so the conversation in Phase 3 is informed — instead of using engineer vocabulary. Each `Check N` was renamed to `Look-around N` with an outcome-focused heading (e.g. "Does user.md already have a permission pointer?" instead of "Is the protocol already installed?"). The checks themselves are unchanged; only the framing.
+24. **Phase 2 renamed from "Welcome" to "Framing the opening" and rewritten as rules-and-direction, not a script.** The skill no longer hands the agent a canned message to recite. Instead Phase 2 gives the agent guidance on how to compose the opening turn in its own voice, shaped by (a) what the admin sent to trigger setup and (b) what Phase 1 surfaced. The opening turn always has to land three things in one message: acknowledge the trigger, give a brief outcome-focused taste of what setup will do, and transition into the first team question. Adaptive notes cover fresh install, reconfigure, partial install, TMM leak detected, and Neon missing.
+
+Phase 3 stays as-is (Kyra approved).
+
+### Workspace-shape signal (Kyra)
+
+25. **Phase 1 Look-around 7 added.** Runs `motion workspaces` (always available out-of-the-box on any Motion-authenticated VM) and notes a quiet org-shape hint from the workspace naming pattern: one workspace named after the company, multiple brand-named workspaces (agency), department-named workspaces (dept structure), per-person workspaces (rare for customers), or unclear. The signal is a starting hypothesis, not a decision.
+26. **Phase 2 adapts based on the hint.** New bullet in "Adapting to what Phase 1 found" tells the agent how to lean the opener in a direction (agency-flavor, single-brand-flavor, dept-flavor) without committing to a fully-formed proposal. The hint is a tilt, not a script. If the pattern is unclear, the agent does not invoke the workspace observation at all. No canned message — the agent still composes the opener in its own voice. The conversation in Phase 3 always gets the final word.
+
+### Scope of spaces clarified (Kyra)
+
+27. **`spaces.json` is for areas that need restricted editing, not for general brain organization.** Phase 3 now spells this out: a space is an area that has a specific team of people who should be able to edit it. If the admin starts describing folders they want for general organization, the agent tells them brain organization is a separate concern and keeps `spaces.json` lean. Added as guidance in the "Translating answers" section plus a matching "do not do" bullet.
+
+---
+
+## v2.3.0 — 2026-06-02 (PR #98)
+
+Map rename and Neon-only motion-whoami. Bundled with v3.0.0 in a single deploy.
+
 ### Changed
 
 - **Map file renamed: `workspace-map.json` → `organization-map.json`.**
@@ -45,7 +140,6 @@ All notable changes to `deploy-security-protocol` are documented here.
   `add-roles-permissions` are stable.
 
 ---
-
 
 ## v2.0.0 — 2026-05-13
 

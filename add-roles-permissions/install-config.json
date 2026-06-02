@@ -1,13 +1,8 @@
 {
   "schema": "1.0",
   "id": "add-roles-permissions",
-  "version": "2.0.0",
-  "description": "Identity-verified permission system. Every message resolves to a Slack ID or motionapp.com email; admins can edit org-level paths and standing instructions, team members get their own home base and write only there. Includes prompt-injection defenses and auto-provisioning of unknown verified IDs.",
-  "requires": {
-    "runtime": "any Runneth sandbox; jq must be installed",
-    "preinstalled": [],
-    "recommended": []
-  },
+  "version": "3.0.0",
+  "description": "Lock the areas of your team's brain that only certain people should be editing. Brand strategy, pricing, client positioning, anything sensitive. A short conversation captures what to protect and who owns each area, then Runneth blocks unauthorized edits and routes change requests through your approval channel. Every save in your brain gets stamped with who wrote it. New teammates onboard automatically.",
   "installs": [
     {
       "file": "SKILL.md",
@@ -19,35 +14,9 @@
     {
       "action": "skill-invoke",
       "skill": "add-roles-permissions",
-      "name": "Run the five-phase deployment",
-      "description": "Invokes the skill's full deployment: pre-flight scan, summary + confirmation, file writes, post-deploy verification, post-deploy setup checklist.",
+      "name": "Run the setup conversation",
+      "description": "Invokes the skill, which walks the admin through the install conversation, deploys the result, and surfaces a plain-language setup-complete message at the end.",
       "manual": false
-    },
-    {
-      "action": "show-intro",
-      "name": "Introduce the new capability",
-      "file": "post-install-intro.md",
-      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
-    }
-  ],
-  "changelog": [
-    {
-      "version": "2.0.0",
-      "date": "2026-06-02",
-      "type": "major",
-      "notes": "Two changes: (1) renamed workspace-map.json to organization-map.json (clearer: it is the organization-wide identity registry, not a workspace-scoped artifact); env override variable renamed RUNNETH_WORKSPACE_MAP to RUNNETH_ORG_MAP. (2) motion-whoami.sh is now Neon-only: queries the Neon agent_conversation table via a new motion-whoami-neon.py helper (invoked through secret run --env DATABASE_URL=NEON_DATABASE_URL) for authoritative, zero-lag identity resolution. No SQLite fallback \u2014 on Neon failure the script exits non-zero and the permissions layer treats the user as unknown (no writes) per the \u00a72.Unknown rule. Accepts CONVERSATION_ID from env in addition to cwd-basename. Fixes the failure mode where brand-new conversations could not be resolved because the live conversations.db is a 0-byte placeholder until the backup cycle. Migration of existing orgs is deferred. Refs: PDEC-7817."
-    },
-    {
-      "version": "1.0.1",
-      "date": "2026-05-21",
-      "type": "patch",
-      "notes": "Added post-install intro. After install completes, Runneth surfaces a short 'what just opened up + try this now' message sourced from post-install-intro.md."
-    },
-    {
-      "version": "1.0.0",
-      "date": "2026-05-21",
-      "type": "major",
-      "notes": "Initial install-config. Replaces ad-hoc skill-invoke install with the standard protocol."
     }
   ]
 }
