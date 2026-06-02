@@ -33,6 +33,7 @@ const esc = (s: string): string =>
 const SECTION_LABELS: Record<string, string> = {
   brand_context: 'Brand context',
   customer_reviews: 'Customer reviews and VOC',
+  competitor_research: 'Competitor research and swipe files',
   personas: 'Persona and ICP',
   product_catalog: 'Product catalog',
   winning_briefs: 'Past winning briefs',
