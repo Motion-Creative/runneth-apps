@@ -1,0 +1,8 @@
+{
+  "slug": "brain-onboard",
+  "display_title": "Set up your team brain",
+  "pitch": "Your CSM prepares a brain package about your brand. You upload it. Runneth turns it into a populated org brain on day one.",
+  "status": "experimental",
+  "category": "agent-foundations",
+  "github_path": "brain-onboard"
+}

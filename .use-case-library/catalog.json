@@ -2,6 +2,7 @@
   "version": 1,
   "slugs": [
     "authenticate-apps",
+    "brain-onboard",
     "bootcamp",
     "plan-mode",
     "routine-storage-audit",
@@ -20,7 +21,7 @@
   "excluded": [
     {
       "slug": "ugc-creator-programme",
-      "reason": "Extracted to a directory; still excluded — SQLite-backed, like the other stateful apps. Promote when ready."
+      "reason": "Extracted to a directory; still excluded \u2014 SQLite-backed, like the other stateful apps. Promote when ready."
     },
     {
       "slug": "corpus-search",
@@ -72,15 +73,15 @@
     },
     {
       "slug": "review-library",
-      "reason": "Install-eval data shows 1/7 installs pass (14% pass, 14% value rate) — hits the hide-recommendation threshold (≥5 installs, <30% value). Hide while we investigate and rework. See /agent/brain/rax/team/kyra/use-case-migration-plan.md (bucket 2)."
+      "reason": "Install-eval data shows 1/7 installs pass (14% pass, 14% value rate) \u2014 hits the hide-recommendation threshold (\u22655 installs, <30% value). Hide while we investigate and rework. See /agent/brain/rax/team/kyra/use-case-migration-plan.md (bucket 2)."
     },
     {
       "slug": "weekly-performance-deck",
-      "reason": "install-config.json auto-runs app-create + app-build + reminder-add at install — three v2-schema violations. 1/1 install in the eval window failed. Hide until bucket 3 of the v2 migration ships a clean customize-weekly-performance-deck flow."
+      "reason": "install-config.json auto-runs app-create + app-build + reminder-add at install \u2014 three v2-schema violations. 1/1 install in the eval window failed. Hide until bucket 3 of the v2 migration ships a clean customize-weekly-performance-deck flow."
     },
     {
       "slug": "building-integrations",
-      "reason": "Being removed from the use case library entirely — moving into runneth-volume as part of the agent's standing capability. Hide preemptively."
+      "reason": "Being removed from the use case library entirely \u2014 moving into runneth-volume as part of the agent's standing capability. Hide preemptively."
     },
     {
       "slug": "performance-bundle",
