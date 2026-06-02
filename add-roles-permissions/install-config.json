@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "add-roles-permissions",
-  "version": "2.0.0",
-  "description": "Identity-verified permission system. Every message resolves to a Slack ID or motionapp.com email; admins can edit org-level paths and standing instructions, team members get their own home base and write only there. Includes prompt-injection defenses and auto-provisioning of unknown verified IDs.",
+  "version": "3.0.0",
+  "description": "Sets up the Runneth permission system. Default is PERMISSIVE mode (everyone resolved writes anywhere except others home base, with author: @<handle> attribution). STRICT mode is an opt-in upgrade with member-confined writes, locked paths, and per-space writer maps \u2014 reached through an educational walkthrough and a 6-question interview that adapts to org shape (solo, small team, single brand, multi-brand agency, dept structure, or custom).",
   "requires": {
     "runtime": "any Runneth sandbox; jq must be installed",
     "preinstalled": [],
@@ -31,6 +31,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "3.0.0",
+      "date": "2026-06-02",
+      "type": "major",
+      "notes": "Major rewrite. Strict permissions is now opt-in instead of default. New PERMISSIVE default mode: anyone resolved through Slack or Motion web writes anywhere under /agent/ except another persons home base, every durable write gets `author: @<handle>` attribution. Removes member confinement, locked paths, and blocked-action flow from the default install. STRICT mode reached through Phase 2 educational walkthrough + Phase 3 conversational interview (6 questions: mode, org shape, first admin, admin Slack channel, per-space writer maps, locked-path extras). Phase 4 reads the proposal back to the admin for confirmation before any writes. Phase 5 generates a mode-specific permissions.md from a permissive or strict template plus interview-driven sections (per-space writer map, extra locked paths). New mode.json records the chosen mode, org shape, and interview answers for idempotent reconfigure. Org-shape scaffolding adapts the brain folder layout: solo gets notes/decisions, small_team gets shared/, single_brand gets brand/, multi_brand_agency gets brands/<brand>/ per brand, dept_structure gets teams/<team>/ per team, custom takes admin-supplied folder names. v2.x migration paths preserved (keep strict + add mode.json bookkeeping, or switch to permissive). v3.0 protocol pointer in user.md is mode-aware. Refs: PDEC-7817."
+    },
     {
       "version": "2.0.0",
       "date": "2026-06-02",

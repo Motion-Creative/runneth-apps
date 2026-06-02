@@ -1,13 +1,11 @@
-# deploy-security-protocol
+# deploy-admin-permissions
 
-Deploys the merged Runneth identity-verified permission system into a target
-org sandbox. Combines v1's kernel-level prompt-injection defenses with
-swim-lane scopes (admin + team), dual-platform identity (Slack +
-motionapp.com), auto-provisioning of unknown verified IDs, a locked list for
-system-scaffold paths, and schema-level attribution at the routine executor.
+Sets up the Runneth identity-verified permission system. Two modes:
 
-The deploy artifact is [SKILL.md](SKILL.md) — invoke it as a skill inside the
-target org's Runneth instance and follow its Phase 1–5 flow.
+- **Permissive (default).** Every Slack ID and Motion email resolves to a handle, and that person can write anywhere under `/agent/` except another person's home base. Every durable write carries `author: @<handle>`. No member confinement, no locked paths, no blocked-action flow.
+- **Strict (opt-in upgrade).** Member-confined writes, locked paths, blocked-action requests routed through an admin Slack channel, and per-space writer maps tailored to the org's shape. Reached through an educational walkthrough and a conversational interview.
+
+The deploy artifact is [SKILL.md](SKILL.md) — invoke it as a skill and follow its Phase 1–7 flow.
 
 ---
 
