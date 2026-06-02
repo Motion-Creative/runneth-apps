@@ -56,6 +56,27 @@ Fresh-eyes review surfaced ten failure modes. All addressed in-PR:
 9. **`spaces.json` validation gate.** Phase 5 Step 3 validates every entry before writing: `writers: specific` requires non-empty `writer_handles` that all exist in `organization-map.json`; `writers: admins_only` requires at least one admin in the registry. Failures re-ask the relevant interview question.
 10. **NEON_DATABASE_URL hard stop on fresh installs.** Phase 1 Check 6 escalates from warning to hard stop when no `permissions.md` exists yet. Existing installs still get a soft warn so reconfigures can proceed offline.
 
+### CSM-lens hardening
+
+A second fresh-eyes review through CSM eyes surfaced operational failure modes that don't show up in code review but eat CSM time and erode customer trust. Twelve more fixes:
+
+11. **Communication style rule at the top of SKILL.md.** Assume the admin is a marketing team member, not a developer. Never show code, JSON, regex, or file paths in chat unless they ask. Default down. The same rule lives in `permissions.md` §7 so the deployed skill behaves the same way at runtime, every conversation.
+12. **Backup admin question** added to Phase 3 after the first-admin question. Prevents the single-admin bus factor when the first admin leaves or moves on.
+13. **Backup approver question** added to Phase 3 when an approval channel is set. Prevents stalled requests when the admin is OOO.
+14. **Admins-only bottleneck warning** at Phase 4 readback. If any space is admins-only with only one admin in the registry, soft-warn before writing.
+15. **Plain-language TMM leak cleanup** in Phase 5 Step 8. The default prompt is friendly and outcome-focused ("I found some leftover instruction text from an older version. Want me to clean it up?"). Technical detail only on explicit request.
+16. **Never refuse silently** rule in `permissions.md` §7. When a write is blocked, always tell the requester which space they hit, who the writers are, and offer either an approval request or direct admin contact.
+17. **Offboarding cleanup** rule in `permissions.md` §7. Before flipping `scope` to `offboarded`, the agent walks every space the person writes to and asks the admin who replaces them. Prevents bricked spaces.
+18. **"Show me the current setup"** runtime rule in `permissions.md` §7. Plain-language summary of people + spaces + approval channel on natural-language asks ("who can write to X?", "what's locked and what's open?", "show me the setup"). Never dumps JSON unless asked.
+19. **Natural-language reconfigure intents** in `permissions.md` §7. Recognize "Add Jamie to Acme," "Sarah needs access to financials," "remove Sophia from Globex," and similar phrasings as reconfigure intent. Customers will never say "tighten up the client space."
+20. **Lightweight reconfigure path** in `permissions.md` §7. Atomic changes (add/remove one writer, lock/unlock one space, add or remove one person) skip the full Phase 2-4 re-interview. Confirm in plain language, update the config, scaffold home bases if needed, post a one-line diff.
+21. **Diff broadcast** in `permissions.md` §7. After every reconfigure that lands a real change, post a short "what changed" summary to the approval channel so teammates are not surprised.
+22. **Approval-request reminders** in `permissions.md` §7. Nudge after 4 hours, give up after 24 with a suggestion to contact the admin directly. Maximum two nudges.
+
+CSM-lens issue #10 (multi-customer fleet view for CSMs themselves) is intentionally out of scope for this skill and tracked separately.
+
+Also added an org-wide saved instruction: "Use case library voice — default to non-technical." Same rule, applied across every use case in the library.
+
 ---
 
 ## v2.3.0 — 2026-06-02 (PR #98)
