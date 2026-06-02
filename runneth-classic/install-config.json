@@ -1,7 +1,8 @@
 {
   "schema": "1.0",
   "id": "runneth-classic",
-  "version": "1.0.0",
+  "version": "1.0.2",
+  "install_notes": "Several bundled skill files in this pack are 12-33 KB. They will be truncated if the install runner uses WebFetch (which caps around 30 KB and often lower). The install runner MUST fetch these files via bash + curl against raw.githubusercontent.com URLs or via the GitHub Contents API (with base64 decode), NOT WebFetch. Specifically the five files in skills/ over 10 KB: creative-strategy-engine.md (33 KB), visual-formats.md (31 KB), hook-tactics.md (18 KB), creative-mechanics.md (15 KB), brand-relevant-keywords.md (13 KB), hook-voice-patterns.md (12 KB), hook-writing.md (11 KB). Example fetch: bash -c 'curl -sL https://raw.githubusercontent.com/Motion-Creative/runneth-apps/main/runneth-classic/skills/visual-formats.md > /agent/.agents/skills/visual-formats/SKILL.md'. If WebFetch is the only option available, fetch each file in multiple passes using offset/limit parameters and concatenate, or escalate to the user.",
   "description": "The deterministic, opinionated Runneth, packaged as a single installable use case. Eleven upstream dependencies, eleven bundled Alysha craft skills, brain seed with theme classifier and per-theme chains plus Alysha framework supplements and Beta-specific references, an orchestrator that enforces a 12-theme chain and the Synthesis Gate, a 10-step setup that captures surface preference, winner-definition, integrations intent, watched brands, and customer voice before handing off to brand-audit, and a user.md sentinel encoding 11 voice and behavior rules engineered against the six failure modes from the Runneth 1.0 customer feedback dataset.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -206,10 +207,87 @@
   ],
   "post_install": [
     {
+      "action": "use-case-install",
+      "slug": "add-roles-permissions",
+      "name": "Install add-roles-permissions",
+      "description": "Foundation infra — admins / members scoped before anything else installs so subsequent installs respect permissions.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "corpus-search",
+      "name": "Install corpus-search",
+      "description": "Brain-wide retrieval layer — the orchestrator's Step 0 re-anchor uses it for searches across the brain.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "plan-mode",
+      "name": "Install plan-mode",
+      "description": "Plan-before-build enforcement — the orchestrator surfaces plans for user confirmation before executing chains.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "self-iteration-loop",
+      "name": "Install self-iteration-loop",
+      "description": "Grading layer that captures what worked and what didn't, feeds lessons back over time.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "team-member-memory",
+      "name": "Install team-member-memory",
+      "description": "Per-teammate profile that reads before chat and updates after. Nobody starts cold.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "health-alerts",
+      "name": "Install health-alerts",
+      "description": "Notifies when tools or routines break. Production hygiene for any pack that runs background work.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "building-integrations",
+      "name": "Install building-integrations",
+      "description": "Pairs with the integrations-intent file from Turn 4 of setup. When the customer later connects an integration, this skill uses the saved intent to scaffold it.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "integration-capabilities-library",
+      "name": "Install integration-capabilities-library",
+      "description": "Nightly-refreshed sourced reference for every connected tool. Companion to building-integrations.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "bootcamp",
+      "name": "Install bootcamp",
+      "description": "Motion 2026 Creative Strategy Bootcamp corpus — 13 sessions across weeks 1–7, summaries plus full transcripts. The orchestrator's educate chain reads bootcamp content via corpus-search.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "performance-bundle",
+      "name": "Install performance-bundle",
+      "description": "Meta-bundle that cascades to brand-audit, paid-strategy-audit, creative-deep-dive, and weekly-performance-deck. The full analysis stack. brand-audit specifically is required because setup-runneth-classic hands off to it in Turn 8.",
+      "manual": false
+    },
+    {
+      "action": "use-case-install",
+      "slug": "competitor-intel",
+      "name": "Install competitor-intel",
+      "description": "Weekly competitor scan capability. Pairs with the watched-brands list captured in Turn 5 of setup. Routine stays opt-in until the customer explicitly configures cadence.",
+      "manual": false
+    },
+    {
       "action": "skill-invoke",
       "skill": "setup-runneth-classic",
       "name": "Run runneth-classic setup",
-      "description": "10-step configuration: surface preference, winner-definition, performance connection check, integrations inventory, watched brands, customer voice, optional uploads, hand off to brand-audit, closing handoff after brand-audit completes",
+      "description": "Phase 0 silent pre-discovery, then Phase 1 conversational onboarding. Surface preference, winner-definition + business mode, integrations inventory, watched brands, customer voice, optional uploads, hand off to brand-audit, closing handoff after brand-audit completes. Must run AFTER all upstream use-case installs complete so brand-audit (installed via performance-bundle) is available when Turn 8 hands off to it.",
       "manual": false
     },
     {
@@ -234,6 +312,18 @@
     "/agent/brain/runneth-classic/integrations-intent.md"
   ],
   "changelog": [
+    {
+      "version": "1.0.2",
+      "date": "2026-06-01",
+      "type": "patch",
+      "notes": "Critical fix: upstream dependencies (bootcamp, performance-bundle, corpus-search, plan-mode, self-iteration-loop, team-member-memory, competitor-intel, health-alerts, add-roles-permissions, building-integrations, integration-capabilities-library) were declared in upstream_dependencies as metadata only and never actually installed. Test installs found the pack installing standalone with no dependencies. Mirrors performance-bundle's post_install pattern — each dependency gets an action: use-case-install entry in post_install, ordered so add-roles-permissions runs first for security scoping, brain/foundation use cases run next, bootcamp + performance-bundle install before setup-runneth-classic runs (Turn 8 of setup hands off to brand-audit which is cascaded by performance-bundle). 11 new post_install actions added before the setup-runneth-classic skill-invoke. setup runs only after all dependencies finish installing."
+    },
+    {
+      "version": "1.0.1",
+      "date": "2026-06-01",
+      "type": "patch",
+      "notes": "Add install_notes field explicitly telling the install runner to fetch large skill files via curl against raw.githubusercontent.com or the GitHub Contents API, not WebFetch. Test installs found the install agent rationalizing partial content from WebFetch truncation. Same bundled skill file sizes ship without issue in brand-audit and creative-deep-dive, so the fix is fetch-tool selection at install time, not pack content."
+    },
     {
       "version": "1.0.0",
       "date": "2026-06-01",
