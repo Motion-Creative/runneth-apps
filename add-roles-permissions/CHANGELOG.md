@@ -15,17 +15,19 @@ All notable changes to `deploy-security-protocol` are documented here.
   at `/agent/brain/admin/`. Env override variable renamed
   `RUNNETH_WORKSPACE_MAP` → `RUNNETH_ORG_MAP`.
 
-- **`motion-whoami.sh` is now Neon-first.** The local SQLite
+- **`motion-whoami.sh` is now Neon-only.** The local SQLite
   `conversations.db` is unreliable for brand-new conversations (live DB is a
-  0-byte placeholder for the agent; backups run every 30 min), which made
+  0-byte placeholder for the agent; backups lag 30 min), which made
   motion-whoami fail for the first message in a fresh chat. The authoritative
   source is Neon's `agent_conversation` table — same pattern proven out in
   `/agent/tools/admin/whoami.sh` + `_neon_resolve_conv.py`. The skill now
   installs a small `motion-whoami-neon.py` helper alongside
-  `motion-whoami.sh`. The shell script tries Neon first via
+  `motion-whoami.sh`. The shell script queries Neon via
   `secret run --env DATABASE_URL=NEON_DATABASE_URL -- python3 motion-whoami-neon.py`
-  and falls back to the SQLite snapshot only when Neon is unreachable. Also
-  accepts `CONVERSATION_ID` from env (which the Runneth runtime sets) in
+  and **fails loudly** on Neon failure: no SQLite fallback. Silent fallback
+  to stale or missing data would weaken the permissions contract. The
+  permissions layer treats a non-zero exit as 'identity unknown' per
+  §2.Unknown — no writes. Also accepts `CONVERSATION_ID` from env in
   addition to the cwd-basename fallback.
 
 ### Added

@@ -266,7 +266,9 @@ chmod +x /agent/brain/admin/slack-whoami.sh
 
 ---
 
-### Step 4 — Write the Motion-side resolver (Neon-first) and its helper
+### Step 4 — Write the Motion-side resolver (Neon-only) and its helper
+
+The strict permissions resolver routes identity exclusively through Neon's `agent_conversation` table. There is no SQLite fallback. The local `conversations.db` is unreliable for brand-new conversations (live DB is a 0-byte placeholder; backups lag 30 min), and silently falling back to stale or missing data inside the permissions layer would weaken the contract. On Neon failure this script exits non-zero and writes are refused.
 
 Write `/agent/brain/admin/motion-whoami-neon.py` verbatim, then `chmod +x`:
 
@@ -352,7 +354,7 @@ Then write `/agent/brain/admin/motion-whoami.sh` verbatim, and `chmod +x`:
 
 ```bash
 #!/usr/bin/env bash
-# motion-whoami.sh — Motion-side identity resolver for Runneth v2.1.
+# motion-whoami.sh — Motion-side identity resolver for Runneth v2.1 (strict).
 #
 # Resolves the current Motion web user's email against
 # /agent/brain/admin/organization-map.json.
@@ -360,13 +362,14 @@ Then write `/agent/brain/admin/motion-whoami.sh` verbatim, and `chmod +x`:
 #
 # Status values mirror slack-whoami.sh: resolved | provisioned | collision.
 #
-# Resolution order:
-#   1. Neon agent_conversation table (authoritative, zero-lag) via the helper
-#      script motion-whoami-neon.py, invoked through secret run.
-#   2. Local SQLite conversations.db snapshot (live or latest backup) as a
-#      fallback when Neon is unreachable.
+# Resolution path: Neon agent_conversation table only. No SQLite fallback. On
+# Neon failure (helper missing, connection error, timeout, empty user_email)
+# the script exits non-zero with a clean error JSON on stderr. The permissions
+# layer reads non-zero as 'identity unknown -> no writes' per the §2.Unknown
+# rule in permissions.md.
 #
-# Accepts CONVERSATION_ID from env; falls back to the cwd basename when not set.
+# Accepts CONVERSATION_ID from env (the runtime sets it); falls back to the
+# cwd basename when not set.
 #
 # Usage:
 #   motion-whoami.sh [<display_name>]
@@ -376,9 +379,6 @@ set -euo pipefail
 MAP_FILE="${RUNNETH_ORG_MAP:-/agent/brain/admin/organization-map.json}"
 NEON_HELPER="${RUNNETH_MOTION_WHOAMI_NEON:-/agent/brain/admin/motion-whoami-neon.py}"
 CONV_DIR="/agent/conversations"
-LIVE_DB="/agent/.runtime/conversations.db"
-BACKUP_DIR="/agent/.runtime/conversation-db-backups"
-SNAPSHOT_DB="/tmp/motion_whoami_session_$$.db"
 DISPLAY_NAME="${1:-}"
 
 # Resolve conversation_id: env first (runtime sets it), then cwd basename.
@@ -393,66 +393,41 @@ else
   CONV_ID="$(basename "$CWD")"
 fi
 
-USER_EMAIL=""
-RESOLUTION=""
-
-# 1. Try Neon (authoritative).
-if [[ -f "$NEON_HELPER" ]]; then
-  NEON_OUT=$(timeout 6 secret run --env DATABASE_URL=NEON_DATABASE_URL -- \
-    python3 "$NEON_HELPER" "$CONV_ID" 2>/dev/null || true)
-  if [[ -n "$NEON_OUT" ]]; then
-    USER_EMAIL=$(echo "$NEON_OUT" | jq -r '.user_email // empty' 2>/dev/null || true)
-    if [[ -n "$USER_EMAIL" ]]; then
-      RESOLUTION="neon"
-    fi
-  fi
+if [[ ! -f "$NEON_HELPER" ]]; then
+  echo '{"error":"motion-whoami-neon.py helper missing","path":"'"$NEON_HELPER"'","conversation_id":"'"$CONV_ID"'"}' >&2
+  exit 2
 fi
 
-# 2. Fallback to local SQLite snapshot (live or latest backup).
-if [[ -z "$USER_EMAIL" ]]; then
-  DB_USED=""
-  if cp "$LIVE_DB" "$SNAPSHOT_DB" 2>/dev/null && [[ -s "$SNAPSHOT_DB" ]]; then
-    DB_USED="live"
-  else
-    LATEST_BACKUP=$(ls -t "${BACKUP_DIR}"/*.db 2>/dev/null | head -1)
-    if [[ -n "$LATEST_BACKUP" ]] && cp "$LATEST_BACKUP" "$SNAPSHOT_DB" 2>/dev/null; then
-      DB_USED="backup"
-    fi
-  fi
+NEON_OUT=$(timeout 6 secret run --env DATABASE_URL=NEON_DATABASE_URL -- \
+  python3 "$NEON_HELPER" "$CONV_ID" 2>/dev/null)
+NEON_RC=$?
 
-  if [[ -n "$DB_USED" ]]; then
-    USER_EMAIL=$(sqlite3 "$SNAPSHOT_DB" \
-      "SELECT json_extract(conversation_json,'\$.userEmail') FROM conversations WHERE conversation_id='$CONV_ID'" \
-      2>/dev/null || true)
-    rm -f "$SNAPSHOT_DB"
-    if [[ -n "$USER_EMAIL" && "$USER_EMAIL" != "null" ]]; then
-      RESOLUTION="sqlite-$DB_USED"
-    else
-      USER_EMAIL=""
-    fi
-  fi
+if [[ $NEON_RC -ne 0 || -z "$NEON_OUT" ]]; then
+  echo '{"error":"Neon agent_conversation lookup failed","helper_exit_code":'"$NEON_RC"',"conversation_id":"'"$CONV_ID"'"}' >&2
+  exit 3
 fi
 
+USER_EMAIL=$(echo "$NEON_OUT" | jq -r '.user_email // empty' 2>/dev/null)
 if [[ -z "$USER_EMAIL" ]]; then
-  echo '{"error":"userEmail not found for conversation in Neon or local SQLite","conversation_id":"'"$CONV_ID"'"}' >&2
-  exit 1
+  echo '{"error":"Neon returned no user_email for this conversation","conversation_id":"'"$CONV_ID"'"}' >&2
+  exit 4
 fi
 
 if [ ! -f "$MAP_FILE" ]; then
-  echo '{"error": "organization-map.json not found", "path": "'"$MAP_FILE"'"}' >&2
-  exit 1
+  echo '{"error":"organization-map.json missing","path":"'"$MAP_FILE"'"}' >&2
+  exit 5
 fi
 
 REF=$(jq -r --arg email "$USER_EMAIL" '.motionUserEmails[$email] // empty' "$MAP_FILE")
 
 if [ -n "$REF" ]; then
   HANDLE="${REF#member:}"
-  jq -c --arg h "$HANDLE" --arg res "$RESOLUTION" '
+  jq -c --arg h "$HANDLE" '
     .members[$h]
     | { scope: .scope, handle: .handle,
         home_base: ("/agent/brain/members/" + .handle + "/"),
         status: "resolved",
-        resolution: $res }
+        resolution: "neon" }
   ' "$MAP_FILE"
   exit 0
 fi
@@ -470,7 +445,7 @@ COLLISION=$(jq -c --arg name "$DISPLAY_NAME" --arg email "$USER_EMAIL" '
 ' "$MAP_FILE")
 
 if [ -n "$COLLISION" ] && [ "$COLLISION" != "null" ]; then
-  echo "{\"status\": \"collision\", \"candidate\": $COLLISION, \"proposed_handle\": \"$HANDLE\", \"display_name\": \"$DISPLAY_NAME\", \"email\": \"$USER_EMAIL\", \"resolution\": \"$RESOLUTION\"}"
+  echo "{\"status\": \"collision\", \"candidate\": $COLLISION, \"proposed_handle\": \"$HANDLE\", \"display_name\": \"$DISPLAY_NAME\", \"email\": \"$USER_EMAIL\", \"resolution\": \"neon\"}"
   exit 0
 fi
 
@@ -482,7 +457,7 @@ jq --arg email "$USER_EMAIL" --arg h "$HANDLE" --arg name "${DISPLAY_NAME:-$EMAI
   | .members[$h] = { "name": $name, "scope": "member", "handle": $h, "email": $email }
 ' "$MAP_FILE" > "$tmp" && mv "$tmp" "$MAP_FILE"
 
-echo "{\"scope\": \"member\", \"handle\": \"$HANDLE\", \"home_base\": \"/agent/brain/members/$HANDLE/\", \"status\": \"provisioned\", \"resolution\": \"$RESOLUTION\"}"
+echo "{\"scope\": \"member\", \"handle\": \"$HANDLE\", \"home_base\": \"/agent/brain/members/$HANDLE/\", \"status\": \"provisioned\", \"resolution\": \"neon\"}"
 ```
 
 ```bash
