@@ -29,6 +29,7 @@ import { fileURLToPath } from 'node:url'
 import Fastify from 'fastify'
 import fastifyStatic from '@fastify/static'
 import fastifyMultipart from '@fastify/multipart'
+import fastifyFormbody from '@fastify/formbody'
 
 import { assembleCatalog, cacheStats, clearCache, loadUseCaseDetail } from './github.js'
 import {
@@ -44,6 +45,17 @@ import {
 import { sendFlagEmail } from './email.js'
 import { sendBrainChecklistEmail, type BrainChecklistFile, type BrainChecklistSection } from './brain-checklist-email.js'
 import { sendBrainChecklistSlack } from './brain-checklist-slack.js'
+import archiver from 'archiver'
+import {
+  persistSubmission,
+  listSubmissions,
+  listSubmissionsSince,
+  listFilesForSubmission,
+  getFileBytes,
+  getFilesByIds,
+  dbPath as brainSubmissionsDbPath,
+} from './brain-submissions-db.js'
+import { renderDashboard } from './brain-submissions-dashboard.js'
 import { SLUG_RE, hashIp, validateFlag, validateReview } from './reviews.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -221,6 +233,8 @@ server.post('/api/refresh', async (request, reply) => {
 
 // Multipart support for the brain-checklist endpoint.
 // 10MB per file, 25MB total cap enforced inside the handler.
+await server.register(fastifyFormbody)
+
 await server.register(fastifyMultipart, {
   limits: {
     fileSize: 10 * 1024 * 1024,
@@ -342,6 +356,21 @@ server.post('/api/brain-checklist', async (req, reply) => {
   }
   const logInfo = (msg: string): void => server.log.info(msg)
 
+  // Persist before any delivery so the dashboard always has the record even
+  // if Slack or email is temporarily misconfigured.
+  try {
+    const subId = persistSubmission({
+      workspaceName: submission.workspaceName,
+      contactEmail: submission.contactEmail,
+      sections: submission.sections,
+      files: submission.files,
+      submittedAt: submission.submittedAt,
+    })
+    server.log.info(`[brain-checklist] persisted submission ${subId}`)
+  } catch (err) {
+    server.log.error({ err }, '[brain-checklist] persist failed')
+  }
+
   // Slack is the primary delivery surface when configured. Email is kept as a
   // parallel channel so we have a durable inbox copy.
   const slackResult = await sendBrainChecklistSlack(submission, logInfo)
@@ -375,6 +404,142 @@ server.get('/how-to-build-the-brain/', async (_, reply) => {
   reply.header('content-type', 'text/html; charset=utf-8')
   reply.header('cache-control', 'public, max-age=300')
   return HOW_TO_BUILD_THE_BRAIN_HTML
+})
+
+// Brain submissions dashboard + file download routes.
+// All routes are gated by BRAIN_DASHBOARD_TOKEN. Token can come from a
+// ?token=... query parameter, an Authorization: Bearer header, or a
+// `token` field in a POSTed form.
+const BRAIN_DASHBOARD_TOKEN = process.env.BRAIN_DASHBOARD_TOKEN || ''
+server.log.info(`brain submissions db: ${brainSubmissionsDbPath}`)
+if (!BRAIN_DASHBOARD_TOKEN) {
+  server.log.warn('BRAIN_DASHBOARD_TOKEN not set — /brain-submissions routes will reject all requests.')
+}
+
+const checkDashboardAuth = (req: { query: unknown; headers: Record<string, unknown>; body?: unknown }): boolean => {
+  if (!BRAIN_DASHBOARD_TOKEN) return false
+  const queryToken = (req.query as { token?: string })?.token
+  const headerAuth = String(req.headers['authorization'] || '')
+  const headerToken = headerAuth.toLowerCase().startsWith('bearer ') ? headerAuth.slice(7) : ''
+  const bodyToken = (req.body as { token?: string } | undefined)?.token
+  const candidates = [queryToken, headerToken, bodyToken].filter((x): x is string => typeof x === 'string' && x.length > 0)
+  return candidates.some((t) => t === BRAIN_DASHBOARD_TOKEN)
+}
+
+server.get('/brain-submissions', async (req, reply) => {
+  if (!checkDashboardAuth(req)) {
+    reply.code(401)
+    reply.header('content-type', 'text/html; charset=utf-8')
+    return '<html><body style="font-family:sans-serif;padding:40px;color:#171717"><h2>Unauthorized</h2><p>Append <code>?token=YOUR_TOKEN</code> to the URL.</p></body></html>'
+  }
+  const submissions = listSubmissions(200)
+  reply.header('content-type', 'text/html; charset=utf-8')
+  reply.header('cache-control', 'no-store')
+  return renderDashboard(submissions, BRAIN_DASHBOARD_TOKEN)
+})
+
+server.get('/api/brain-submissions', async (req, reply) => {
+  if (!checkDashboardAuth(req)) {
+    reply.code(401)
+    return { error: 'unauthorized' }
+  }
+  const since = (req.query as { since?: string }).since
+  const subs = since ? listSubmissionsSince(since) : listSubmissions(200)
+  return { submissions: subs }
+})
+
+server.get<{ Params: { id: string } }>('/api/brain-submissions/:id/files', async (req, reply) => {
+  if (!checkDashboardAuth(req)) {
+    reply.code(401)
+    return { error: 'unauthorized' }
+  }
+  const id = Number(req.params.id)
+  if (!Number.isFinite(id)) {
+    reply.code(400)
+    return { error: 'bad_id' }
+  }
+  return { files: listFilesForSubmission(id) }
+})
+
+server.get<{ Params: { id: string; fileId: string } }>('/api/brain-submissions/:id/files/:fileId/download', async (req, reply) => {
+  if (!checkDashboardAuth(req)) {
+    reply.code(401)
+    return { error: 'unauthorized' }
+  }
+  const fileId = Number(req.params.fileId)
+  if (!Number.isFinite(fileId)) {
+    reply.code(400)
+    return { error: 'bad_id' }
+  }
+  const f = getFileBytes(fileId)
+  if (!f) {
+    reply.code(404)
+    return { error: 'not_found' }
+  }
+  reply.header('content-type', f.mime_type || 'application/octet-stream')
+  reply.header('content-disposition', `attachment; filename="${f.filename.replace(/"/g, '')}"`)
+  reply.header('cache-control', 'no-store')
+  return f.data
+})
+
+server.get<{ Params: { id: string } }>('/api/brain-submissions/:id/zip', async (req, reply) => {
+  if (!checkDashboardAuth(req)) {
+    reply.code(401)
+    return { error: 'unauthorized' }
+  }
+  const id = Number(req.params.id)
+  if (!Number.isFinite(id)) {
+    reply.code(400)
+    return { error: 'bad_id' }
+  }
+  const files = listFilesForSubmission(id)
+  if (files.length === 0) {
+    reply.code(404)
+    return { error: 'no_files' }
+  }
+  const fullFiles = getFilesByIds(files.map((f) => f.id))
+  reply.header('content-type', 'application/zip')
+  reply.header('content-disposition', `attachment; filename="brain-submission-${id}.zip"`)
+  reply.header('cache-control', 'no-store')
+  const archive = archiver('zip', { zlib: { level: 6 } })
+  archive.on('warning', (err) => server.log.warn({ err }, 'zip warning'))
+  archive.on('error', (err) => server.log.error({ err }, 'zip error'))
+  for (const f of fullFiles) {
+    archive.append(f.data, { name: `${f.section_key}/${f.filename}` })
+  }
+  archive.finalize()
+  return reply.send(archive)
+})
+
+// POST form variant for the dashboard "Download selected (.zip)" button.
+server.post('/api/brain-submissions/zip-form', async (req, reply) => {
+  if (!checkDashboardAuth(req)) {
+    reply.code(401)
+    return { error: 'unauthorized' }
+  }
+  const body = req.body as { file_ids?: string } | undefined
+  const idsStr = body?.file_ids || ''
+  const ids = idsStr.split(',').map((s) => Number(s.trim())).filter((n) => Number.isFinite(n) && n > 0)
+  if (ids.length === 0) {
+    reply.code(400)
+    return { error: 'no_files' }
+  }
+  const fullFiles = getFilesByIds(ids)
+  if (fullFiles.length === 0) {
+    reply.code(404)
+    return { error: 'not_found' }
+  }
+  reply.header('content-type', 'application/zip')
+  reply.header('content-disposition', `attachment; filename="brain-files-${Date.now()}.zip"`)
+  reply.header('cache-control', 'no-store')
+  const archive = archiver('zip', { zlib: { level: 6 } })
+  archive.on('warning', (err) => server.log.warn({ err }, 'zip warning'))
+  archive.on('error', (err) => server.log.error({ err }, 'zip error'))
+  for (const f of fullFiles) {
+    archive.append(f.data, { name: `sub-${f.submission_id}/${f.section_key}/${f.filename}` })
+  }
+  archive.finalize()
+  return reply.send(archive)
 })
 
 // Static frontend.
