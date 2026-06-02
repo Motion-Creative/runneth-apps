@@ -253,6 +253,7 @@ const BRAIN_CHECKLIST_SECTIONS: ReadonlyArray<{ key: string; label: string }> = 
   { key: 'personas', label: 'Persona and ICP docs' },
   { key: 'product_catalog', label: 'Product catalog' },
   { key: 'winning_briefs', label: 'Past winning briefs and concepts' },
+  { key: 'connected_systems', label: 'Other systems used to run creative strategy' },
   { key: 'other', label: 'Anything else' },
 ]
 const BRAIN_CHECKLIST_FIELD_KEYS = new Set(BRAIN_CHECKLIST_SECTIONS.map((s) => s.key))
