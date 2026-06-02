@@ -1,6 +1,6 @@
-# add-roles-permissions
+# customize-write-access
 
-Locks the areas of a team's Runneth brain that should only be edited by certain people. Routes blocked-edit requests through an approval channel. Stamps every save with the writer's handle.
+Helps an admin decide who can change what in their team's Runneth brain. By default, anyone the team trusts to chat with Runneth can also edit anything in the brain. This skill is for the cases where that's not the right call: brand strategy that only the brand lead should change, pricing claims that need admin approval, the saved instructions that shape how Runneth behaves across every conversation.
 
 The skill is built from six primitives. The install conversation discovers which of them the org actually needs; nothing gets written until the admin confirms the plan in plain language.
 
