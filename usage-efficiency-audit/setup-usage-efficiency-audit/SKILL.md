@@ -61,13 +61,14 @@ Accept zero, one, or many. Tags get inserted at the start of the parent message.
 
 ## Step 4 — Billing anniversary day (required)
 
-> What day of the month does this customer's Runneth billing cycle reset? Just the day number (1 through 28 — I'll cap at 28 so it works in February).
+> What day of the month does this customer's Runneth billing cycle reset? Just the day number, 1 through 31.
 
 **Rules:**
-- Accept 1 through 28 only. If the user gives 29, 30, or 31, explain the February problem and ask for a different day.
+- Accept 1 through 31.
+- For 29, 30, and 31, the audit automatically falls back to the last day of any month that doesn't have that day (e.g. February falls back to the 28th or 29th in leap years). This is how Stripe handles it, so the cycle stays aligned with their real billing.
 - If they don't know, suggest checking Stripe or HubSpot for the subscription start date — the day-of-month from that is the answer.
 
-**Write to** `billingAnniversaryDay` (integer 1-28).
+**Write to** `billingAnniversaryDay` (integer 1-31).
 
 ---
 

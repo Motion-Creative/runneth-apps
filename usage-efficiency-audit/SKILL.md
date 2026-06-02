@@ -42,29 +42,41 @@ Extract: `organizationId`, `billingAnniversaryDay`, `slackChannelId`, `slackUser
 
 ### 1b. Compute the current cycle window
 
-Today's date is the reference. The cycle starts on the most recent `billingAnniversaryDay` that is on or before today.
+Today's date is the reference. The cycle starts on the most recent occurrence of `billingAnniversaryDay`. If the anniversary day does not exist in a given month (e.g. day 31 in April, or day 29 in non-leap February), clamp to the last day of that month. This matches how Stripe schedules monthly billing.
 
 ```python
 from datetime import date, timedelta
 import calendar
 
-today = date.today()
-anchor_day = config["billingAnniversaryDay"]  # 1-28
+def safe_anniversary(year, month, anchor_day):
+    last_day = calendar.monthrange(year, month)[1]
+    return date(year, month, min(anchor_day, last_day))
 
-if today.day >= anchor_day:
-    cycle_start = today.replace(day=anchor_day)
+today = date.today()
+anchor_day = config["billingAnniversaryDay"]  # 1-31
+
+# Effective anchor for this month (clamped if month is short)
+this_month_anchor = safe_anniversary(today.year, today.month, anchor_day)
+
+if today >= this_month_anchor:
+    cycle_start = this_month_anchor
 else:
     # previous month
-    prev_month = today.replace(day=1) - timedelta(days=1)
-    cycle_start = prev_month.replace(day=anchor_day)
+    if today.month == 1:
+        prev_year, prev_month = today.year - 1, 12
+    else:
+        prev_year, prev_month = today.year, today.month - 1
+    cycle_start = safe_anniversary(prev_year, prev_month, anchor_day)
 
-# Cycle end is the day before the next anniversary
+# Next anniversary (cycle end is the day before it)
 if cycle_start.month == 12:
-    cycle_end = cycle_start.replace(year=cycle_start.year + 1, month=1) - timedelta(days=1)
+    next_year, next_month = cycle_start.year + 1, 1
 else:
-    cycle_end = cycle_start.replace(month=cycle_start.month + 1) - timedelta(days=1)
+    next_year, next_month = cycle_start.year, cycle_start.month + 1
+next_anniversary = safe_anniversary(next_year, next_month, anchor_day)
 
-reset_date = cycle_end + timedelta(days=1)
+reset_date = next_anniversary
+cycle_end = reset_date - timedelta(days=1)
 days_until_reset = (reset_date - today).days
 ```
 
