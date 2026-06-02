@@ -249,7 +249,7 @@ await server.register(fastifyMultipart, {
 // the CSM team via email with files attached. See brain-checklist-email.ts.
 const BRAIN_CHECKLIST_SECTIONS: ReadonlyArray<{ key: string; label: string }> = [
   { key: 'brand_context', label: 'Brand context' },
-  { key: 'customer_reviews', label: 'Customer reviews and voice of customer' },
+  { key: 'competitor_research', label: 'Competitor research and swipe files' },
   { key: 'personas', label: 'Persona and ICP docs' },
   { key: 'product_catalog', label: 'Product catalog' },
   { key: 'winning_briefs', label: 'Past winning briefs and concepts' },
