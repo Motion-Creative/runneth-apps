@@ -1,7 +1,7 @@
 {
   "slug": "add-roles-permissions",
-  "display_title": "Control Who Can Do What",
-  "pitch": "Admins can change anything. Members can only change their own space. New teammates get set up automatically.",
+  "display_title": "Lock What Shouldn't Be Edited",
+  "pitch": "Decide which areas of your team's brain are off-limits to most people. Runneth blocks unauthorized edits, routes change requests through your approval channel, and stamps every save so you always see who wrote what.",
   "status": "proven",
   "category": "agent-foundations",
   "github_path": "add-roles-permissions"
