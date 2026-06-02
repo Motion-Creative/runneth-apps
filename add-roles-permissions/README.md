@@ -61,9 +61,10 @@ config are preserved or overwritten only on explicit confirmation.
 └── brain/
     ├── permissions/
     │   ├── admins.md                    ← admin registry (Slack IDs or motionapp.com emails)
-    │   ├── workspace-map.json           ← identity registry — source of truth (both platforms)
+    │   ├── organization-map.json           ← identity registry — source of truth (both platforms)
     │   ├── slack-whoami.sh              ← Slack-side resolver + auto-provisioning
-    │   ├── motion-whoami.sh             ← Motion-side resolver + auto-provisioning
+    │   ├── motion-whoami.sh             ← Motion-side resolver (Neon-first) + auto-provisioning
+    │   ├── motion-whoami-neon.py          ← Neon agent_conversation query helper
     │   ├── admin_mode.md                ← admin-mode operating rules
     │   ├── team_mode.md                 ← team-mode operating rules
     │   ├── locked-list.md               ← system paths only admins can edit (with extra confirmation)
@@ -103,7 +104,7 @@ confirmation in Phase 2.
 
 After Phase 4 verification passes:
 
-1. **Add your admin ID(s).** Map admins in both `workspace-map.json` and
+1. **Add your admin ID(s).** Map admins in both `organization-map.json` and
    `admins.md`. Best practice: register their Slack ID *and* their
    `@motionapp.com` email so cross-platform resolution works without
    prompts.
@@ -148,12 +149,12 @@ not migrate silently.
 Re-running the skill is safe. Specifically:
 
 - `admins.md` is never overwritten when populated.
-- `workspace-map.json` merges; identity entries are never deleted.
+- `organization-map.json` merges; identity entries are never deleted.
 - `team_mode.md` / `admin_mode.md` overwrite only on explicit confirmation.
 - `locked-list.md` and `config.json` prompt before overwriting differing or
   set values.
 - `routines.md` is preserved if present.
-- `slack-whoami.sh` / `motion-whoami.sh` are pure scripts and safe to rewrite.
+- `slack-whoami.sh` / `motion-whoami.sh` / `motion-whoami-neon.py` are pure scripts and safe to rewrite.
 - `user.md` only prepends the protocol block if absent; updates in place if
   the installed version differs (with confirmation).
 

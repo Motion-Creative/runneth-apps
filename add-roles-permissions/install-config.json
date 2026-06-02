@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "add-roles-permissions",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Identity-verified permission system. Every message resolves to a Slack ID or motionapp.com email; admins can edit org-level paths and standing instructions, team members get their own home base and write only there. Includes prompt-injection defenses and auto-provisioning of unknown verified IDs.",
   "requires": {
     "runtime": "any Runneth sandbox; jq must be installed",
@@ -31,6 +31,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2026-06-02",
+      "type": "major",
+      "notes": "Two changes: (1) renamed workspace-map.json to organization-map.json (clearer: it is the organization-wide identity registry, not a workspace-scoped artifact); env override variable renamed RUNNETH_WORKSPACE_MAP to RUNNETH_ORG_MAP. (2) motion-whoami.sh is now Neon-only: queries the Neon agent_conversation table via a new motion-whoami-neon.py helper (invoked through secret run --env DATABASE_URL=NEON_DATABASE_URL) for authoritative, zero-lag identity resolution. No SQLite fallback \u2014 on Neon failure the script exits non-zero and the permissions layer treats the user as unknown (no writes) per the \u00a72.Unknown rule. Accepts CONVERSATION_ID from env in addition to cwd-basename. Fixes the failure mode where brand-new conversations could not be resolved because the live conversations.db is a 0-byte placeholder until the backup cycle. Migration of existing orgs is deferred. Refs: PDEC-7817."
+    },
     {
       "version": "1.0.1",
       "date": "2026-05-21",

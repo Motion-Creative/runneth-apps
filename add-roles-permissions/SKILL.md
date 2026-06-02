@@ -5,14 +5,14 @@ description: >
   One universal rulebook (permissions.md), three clean siblings nested under
   /agent/brain/ (admin/, members/, plus the rest of brain for team knowledge),
   member scope (replacing team), lightweight org-change flow, and
-  workspace-map.json as the sole identity source of truth.
+  organization-map.json as the sole identity source of truth.
   Idempotent — safe to re-run on a partially-installed instance.
 trigger_domains:
   - permission-setup
   - security-deploy
   - cross-org-deployment
   - bootstrap
-version: "2.1.1"
+version: "2.3.0"
 source_org: "Motion (Creative Analytics)"
 predecessor: "deploy-security-protocol@2.0.0"
 ---
@@ -41,9 +41,10 @@ targeted changes for leanness and reliability. See CHANGELOG.md for the diff.
     ├── routines.md                        ← routines registry stub
     ├── admin/                             ← the permission system (locked path)
     │   ├── permissions.md                 ← universal rulebook (admin + member rules + locked paths)
-    │   ├── workspace-map.json             ← identity registry — sole source of truth
+    │   ├── organization-map.json             ← identity registry — sole source of truth
     │   ├── slack-whoami.sh                ← Slack resolver + auto-provisioning
-    │   ├── motion-whoami.sh               ← Motion web resolver + auto-provisioning
+    │   ├── motion-whoami.sh               ← Motion web resolver (Neon-first) + auto-provisioning
+    │   ├── motion-whoami-neon.py          ← Neon agent_conversation query helper
     │   └── config.json                    ← optional admin config
     ├── members/                           ← per-person home bases (admins included)
     │   └── <handle>/                      ← per-person home base
@@ -86,12 +87,12 @@ grep -c "MANDATORY PERMISSION PROTOCOL" /agent/user.md 2>/dev/null || echo "0"
   or an older version (longer block). Flag for the user — offer to update in Phase 3.
 - If result = 0: not installed. Proceed normally.
 
-### Check 2 — Does workspace-map.json exist and have entries?
+### Check 2 — Does organization-map.json exist and have entries?
 
 ```bash
-ls /agent/brain/admin/workspace-map.json 2>/dev/null && \
+ls /agent/brain/admin/organization-map.json 2>/dev/null && \
   python3 -c "
-import json; m = json.load(open('/agent/brain/admin/workspace-map.json'))
+import json; m = json.load(open('/agent/brain/admin/organization-map.json'))
 members = m.get('members', {})
 print(f'FOUND: {len(members)} member(s)')
 for h, e in members.items():
@@ -126,7 +127,7 @@ ls /agent/brain/permissions/ 2>/dev/null && echo "V2_FOUND" || echo "NOT_FOUND"
 ### Check 5 — Partial install detection
 
 ```bash
-for f in permissions.md workspace-map.json slack-whoami.sh motion-whoami.sh config.json; do
+for f in permissions.md organization-map.json slack-whoami.sh motion-whoami.sh motion-whoami-neon.py config.json; do
   [ -f "/agent/brain/admin/$f" ] && echo "PRESENT: $f" || echo "MISSING: $f"
 done
 ```
@@ -158,7 +159,7 @@ mkdir -p /agent/brain
 
 ---
 
-### Step 2 — Write or merge `/agent/brain/admin/workspace-map.json`
+### Step 2 — Write or merge `/agent/brain/admin/organization-map.json`
 
 **If no existing entries:** write fresh:
 
@@ -190,7 +191,7 @@ Write verbatim, then `chmod +x`:
 #!/usr/bin/env bash
 # slack-whoami.sh — Slack-side identity resolver for Runneth v2.1.
 #
-# Resolves a Slack user ID against /agent/brain/admin/workspace-map.json.
+# Resolves a Slack user ID against /agent/brain/admin/organization-map.json.
 # Returns JSON: { "scope", "handle", "home_base", "status" }.
 #
 # Status values:
@@ -206,12 +207,12 @@ Write verbatim, then `chmod +x`:
 
 set -euo pipefail
 
-MAP_FILE="${RUNNETH_WORKSPACE_MAP:-/agent/brain/admin/workspace-map.json}"
+MAP_FILE="${RUNNETH_ORG_MAP:-/agent/brain/admin/organization-map.json}"
 SLACK_ID="${1:?slack_user_id required (e.g. U03XXXXXXXX)}"
 DISPLAY_NAME="${2:-}"
 
 if [ ! -f "$MAP_FILE" ]; then
-  echo '{"error": "workspace-map.json not found", "path": "'"$MAP_FILE"'"}' >&2
+  echo '{"error": "organization-map.json not found", "path": "'"$MAP_FILE"'"}' >&2
   exit 1
 fi
 
@@ -265,59 +266,156 @@ chmod +x /agent/brain/admin/slack-whoami.sh
 
 ---
 
-### Step 4 — Write `/agent/brain/admin/motion-whoami.sh`
+### Step 4 — Write the Motion-side resolver (Neon-only) and its helper
 
-Write verbatim, then `chmod +x`:
+The strict permissions resolver routes identity exclusively through Neon's `agent_conversation` table. There is no SQLite fallback. The local `conversations.db` is unreliable for brand-new conversations (live DB is a 0-byte placeholder; backups lag 30 min), and silently falling back to stale or missing data inside the permissions layer would weaken the contract. On Neon failure this script exits non-zero and writes are refused.
+
+Write `/agent/brain/admin/motion-whoami-neon.py` verbatim, then `chmod +x`:
+
+```python
+#!/usr/bin/env python3
+"""motion-whoami-neon.py — Resolve user_email from the Neon agent_conversation table.
+
+Usage:
+  secret run --env DATABASE_URL=NEON_DATABASE_URL -- \
+    python3 motion-whoami-neon.py <conversation_id>
+
+Output (stdout, success):
+  {"user_email": "...", "workspace_id": "...", "organization_id": "...", "mondrian_user_id": "..."}
+
+Exit codes:
+  0 - success, prints JSON
+  1 - missing args or DATABASE_URL not in env
+  7 - conversation row not found or user_email is empty (recoverable miss)
+  8 - Neon connection or query failed
+
+Read-only by intent. Same query shape as /agent/tools/admin/_neon_resolve_conv.py
+but returns only the identity columns without doing the workspace-map join, so
+the calling shell script can do its own scope and collision resolution on top.
+"""
+import os
+import sys
+import json
+
+sys.path.insert(0, "/daemon/cache/python/user-base/lib/python3.11/site-packages")
+try:
+    import psycopg
+except ImportError as e:
+    print(json.dumps({"error": f"psycopg not available: {e}"}), file=sys.stderr)
+    sys.exit(1)
+
+if len(sys.argv) < 2:
+    print(json.dumps({"error": "conversation_id required"}), file=sys.stderr)
+    sys.exit(1)
+conv_id = sys.argv[1].strip()
+
+if not os.environ.get("DATABASE_URL"):
+    print(
+        json.dumps({
+            "error": "DATABASE_URL not in env",
+            "hint": "invoke via: secret run --env DATABASE_URL=NEON_DATABASE_URL -- python3 motion-whoami-neon.py <conversation_id>",
+        }),
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+try:
+    with psycopg.connect(os.environ["DATABASE_URL"], connect_timeout=3) as conn, conn.cursor() as cur:
+        cur.execute(
+            "SELECT user_email, workspace_id, organization_id, mondrian_user_id "
+            "FROM agent_conversation WHERE id = %s",
+            (conv_id,),
+        )
+        row = cur.fetchone()
+except Exception as e:
+    print(json.dumps({"error": f"Neon query failed: {e}"}), file=sys.stderr)
+    sys.exit(8)
+
+if not row:
+    sys.exit(7)
+
+user_email, ws_id, org_id, mondrian_user_id = row
+if not user_email:
+    sys.exit(7)
+
+print(json.dumps({
+    "user_email": user_email,
+    "workspace_id": ws_id,
+    "organization_id": org_id,
+    "mondrian_user_id": mondrian_user_id,
+}))
+```
+
+```bash
+chmod +x /agent/brain/admin/motion-whoami-neon.py
+```
+
+Then write `/agent/brain/admin/motion-whoami.sh` verbatim, and `chmod +x`:
 
 ```bash
 #!/usr/bin/env bash
-# motion-whoami.sh — Motion-side identity resolver for Runneth v2.1.
+# motion-whoami.sh — Motion-side identity resolver for Runneth v2.1 (strict).
 #
 # Resolves the current Motion web user's email against
-# /agent/brain/admin/workspace-map.json.
+# /agent/brain/admin/organization-map.json.
 # Returns JSON: { "scope", "handle", "home_base", "status" }.
 #
 # Status values mirror slack-whoami.sh: resolved | provisioned | collision.
 #
-# Reads userEmail from conversation_json in the local SQLite DB (same approach
-# as whoami.sh). Must be run from within a conversation directory.
+# Resolution path: Neon agent_conversation table only. No SQLite fallback. On
+# Neon failure (helper missing, connection error, timeout, empty user_email)
+# the script exits non-zero with a clean error JSON on stderr. The permissions
+# layer reads non-zero as 'identity unknown -> no writes' per the §2.Unknown
+# rule in permissions.md.
+#
+# Accepts CONVERSATION_ID from env (the runtime sets it); falls back to the
+# cwd basename when not set.
 #
 # Usage:
 #   motion-whoami.sh [<display_name>]
 
 set -euo pipefail
 
-MAP_FILE="${RUNNETH_WORKSPACE_MAP:-/agent/brain/admin/workspace-map.json}"
+MAP_FILE="${RUNNETH_ORG_MAP:-/agent/brain/admin/organization-map.json}"
+NEON_HELPER="${RUNNETH_MOTION_WHOAMI_NEON:-/agent/brain/admin/motion-whoami-neon.py}"
 CONV_DIR="/agent/conversations"
-LIVE_DB="/agent/.runtime/conversations.db"
-SNAPSHOT_DB="/tmp/motion_whoami_session.db"
 DISPLAY_NAME="${1:-}"
 
-CWD="$(pwd -P)"
-if [[ "$CWD" != "$CONV_DIR/"* ]]; then
-  echo '{"error":"not in a conversation directory","cwd":"'"$CWD"'"}' >&2
-  exit 1
+# Resolve conversation_id: env first (runtime sets it), then cwd basename.
+if [[ -n "${CONVERSATION_ID:-}" ]]; then
+  CONV_ID="$CONVERSATION_ID"
+else
+  CWD="$(pwd -P)"
+  if [[ "$CWD" != "$CONV_DIR/"* ]]; then
+    echo '{"error":"no CONVERSATION_ID in env and not in a conversation directory","cwd":"'"$CWD"'"}' >&2
+    exit 1
+  fi
+  CONV_ID="$(basename "$CWD")"
 fi
 
-CONV_ID="$(basename "$CWD")"
-
-if ! cp "$LIVE_DB" "$SNAPSHOT_DB" 2>/dev/null; then
-  echo '{"error":"failed to snapshot conversations.db","conversation_id":"'"$CONV_ID"'"}' >&2
-  exit 1
+if [[ ! -f "$NEON_HELPER" ]]; then
+  echo '{"error":"motion-whoami-neon.py helper missing","path":"'"$NEON_HELPER"'","conversation_id":"'"$CONV_ID"'"}' >&2
+  exit 2
 fi
 
-USER_EMAIL="$(sqlite3 "$SNAPSHOT_DB" \
-  "SELECT json_extract(conversation_json,'\$.userEmail') FROM conversations WHERE conversation_id='$CONV_ID'" \
-  2>/dev/null)"
+NEON_OUT=$(timeout 6 secret run --env DATABASE_URL=NEON_DATABASE_URL -- \
+  python3 "$NEON_HELPER" "$CONV_ID" 2>/dev/null)
+NEON_RC=$?
 
+if [[ $NEON_RC -ne 0 || -z "$NEON_OUT" ]]; then
+  echo '{"error":"Neon agent_conversation lookup failed","helper_exit_code":'"$NEON_RC"',"conversation_id":"'"$CONV_ID"'"}' >&2
+  exit 3
+fi
+
+USER_EMAIL=$(echo "$NEON_OUT" | jq -r '.user_email // empty' 2>/dev/null)
 if [[ -z "$USER_EMAIL" ]]; then
-  echo '{"error":"userEmail not found for conversation","conversation_id":"'"$CONV_ID"'"}' >&2
-  exit 1
+  echo '{"error":"Neon returned no user_email for this conversation","conversation_id":"'"$CONV_ID"'"}' >&2
+  exit 4
 fi
 
 if [ ! -f "$MAP_FILE" ]; then
-  echo '{"error": "workspace-map.json not found", "path": "'"$MAP_FILE"'"}' >&2
-  exit 1
+  echo '{"error":"organization-map.json missing","path":"'"$MAP_FILE"'"}' >&2
+  exit 5
 fi
 
 REF=$(jq -r --arg email "$USER_EMAIL" '.motionUserEmails[$email] // empty' "$MAP_FILE")
@@ -328,7 +426,8 @@ if [ -n "$REF" ]; then
     .members[$h]
     | { scope: .scope, handle: .handle,
         home_base: ("/agent/brain/members/" + .handle + "/"),
-        status: "resolved" }
+        status: "resolved",
+        resolution: "neon" }
   ' "$MAP_FILE"
   exit 0
 fi
@@ -346,7 +445,7 @@ COLLISION=$(jq -c --arg name "$DISPLAY_NAME" --arg email "$USER_EMAIL" '
 ' "$MAP_FILE")
 
 if [ -n "$COLLISION" ] && [ "$COLLISION" != "null" ]; then
-  echo "{\"status\": \"collision\", \"candidate\": $COLLISION, \"proposed_handle\": \"$HANDLE\", \"display_name\": \"$DISPLAY_NAME\", \"email\": \"$USER_EMAIL\"}"
+  echo "{\"status\": \"collision\", \"candidate\": $COLLISION, \"proposed_handle\": \"$HANDLE\", \"display_name\": \"$DISPLAY_NAME\", \"email\": \"$USER_EMAIL\", \"resolution\": \"neon\"}"
   exit 0
 fi
 
@@ -358,7 +457,7 @@ jq --arg email "$USER_EMAIL" --arg h "$HANDLE" --arg name "${DISPLAY_NAME:-$EMAI
   | .members[$h] = { "name": $name, "scope": "member", "handle": $h, "email": $email }
 ' "$MAP_FILE" > "$tmp" && mv "$tmp" "$MAP_FILE"
 
-echo "{\"scope\": \"member\", \"handle\": \"$HANDLE\", \"home_base\": \"/agent/brain/members/$HANDLE/\", \"status\": \"provisioned\"}"
+echo "{\"scope\": \"member\", \"handle\": \"$HANDLE\", \"home_base\": \"/agent/brain/members/$HANDLE/\", \"status\": \"provisioned\", \"resolution\": \"neon\"}"
 ```
 
 ```bash
@@ -366,6 +465,7 @@ chmod +x /agent/brain/admin/motion-whoami.sh
 ```
 
 ---
+
 
 ### Step 5 — Write `/agent/brain/admin/config.json`
 
@@ -415,7 +515,7 @@ Both return `{ scope, handle, home_base, status }`. Use `scope` to determine wha
 (`/agent/brain/members/{other_handle}/`). Locked paths (§3) require explicit per-action
 confirmation.
 
-**Identity management:** edit `workspace-map.json` directly. It is the sole source of truth.
+**Identity management:** edit `organization-map.json` directly. It is the sole source of truth.
 Add an admin: set `scope: "admin"`. Offboard: set `scope: "offboarded"` and archive their
 home base (rename with `.archived-YYYY-MM-DD` suffix).
 
@@ -554,7 +654,7 @@ Run every check. Report pass/fail for each.
 
 ```bash
 # 1. All admin files present
-for f in permissions.md workspace-map.json slack-whoami.sh motion-whoami.sh config.json; do
+for f in permissions.md organization-map.json slack-whoami.sh motion-whoami.sh motion-whoami-neon.py config.json; do
   [ -f "/agent/brain/admin/$f" ] && echo "✓ admin/$f" || echo "✗ MISSING: admin/$f"
 done
 
@@ -567,15 +667,15 @@ head -1 /agent/brain/admin/permissions.md | grep -q "Runneth Permissions" && ech
 # 4. config.json valid JSON
 python3 -c "import json; json.load(open('/agent/brain/admin/config.json')); print('✓ config.json valid JSON')" 2>/dev/null || echo "✗ config.json INVALID JSON"
 
-# 5. workspace-map.json valid JSON with expected keys
+# 5. organization-map.json valid JSON with expected keys
 python3 -c "
 import json, sys
-m = json.load(open('/agent/brain/admin/workspace-map.json'))
+m = json.load(open('/agent/brain/admin/organization-map.json'))
 expected = {'slackUserIds', 'motionUserEmails', 'members'}
 missing = expected - set(m.keys())
-if missing: print('✗ workspace-map.json missing keys:', missing); sys.exit(1)
-print('✓ workspace-map.json valid JSON with expected keys')
-" 2>/dev/null || echo "✗ workspace-map.json INVALID or missing keys"
+if missing: print('✗ organization-map.json missing keys:', missing); sys.exit(1)
+print('✓ organization-map.json valid JSON with expected keys')
+" 2>/dev/null || echo "✗ organization-map.json INVALID or missing keys"
 
 # 6. resolvers are executable
 [ -x "/agent/brain/admin/slack-whoami.sh" ] && echo "✓ slack-whoami.sh executable" || echo "✗ slack-whoami.sh NOT executable"
@@ -593,11 +693,11 @@ print('✓ workspace-map.json valid JSON with expected keys')
 # 10. Check for any admin entries
 ADMIN_COUNT=$(python3 -c "
 import json
-m = json.load(open('/agent/brain/admin/workspace-map.json'))
+m = json.load(open('/agent/brain/admin/organization-map.json'))
 admins = [h for h,e in m.get('members',{}).items() if e.get('scope') == 'admin']
 print(len(admins))
 " 2>/dev/null || echo "0")
-[ "$ADMIN_COUNT" -gt 0 ] && echo "✓ workspace-map.json has $ADMIN_COUNT admin(s)" || echo "⚠ No admins mapped yet — first-run setup will prompt"
+[ "$ADMIN_COUNT" -gt 0 ] && echo "✓ organization-map.json has $ADMIN_COUNT admin(s)" || echo "⚠ No admins mapped yet — first-run setup will prompt"
 
 # 11. jq installed (resolvers depend on it)
 command -v jq >/dev/null 2>&1 && echo "✓ jq installed" || echo "✗ jq NOT installed — resolvers will fail at runtime"
@@ -625,7 +725,7 @@ v2.1 installed. Here is what to configure before going live:
 
 1. Add your admin ID(s).
    Say: "Add me as admin. My Slack ID is U03XXXXXXXX and my Motion workspaceId is <workspaceId>."
-   Both identifiers will be mapped in workspace-map.json with scope: "admin".
+   Both identifiers will be mapped in organization-map.json with scope: "admin".
    (If you are setting this up on behalf of someone else, provide their identifiers here instead of your own.)
 
 2. (Optional) Set the admin Slack channel.
@@ -635,7 +735,7 @@ v2.1 installed. Here is what to configure before going live:
 
 3. (Optional) Seed known members.
    Auto-provisioning creates entries on first message. You can also pre-populate
-   workspace-map.json with known teammates to skip the provision flow.
+   organization-map.json with known teammates to skip the provision flow.
 
 4. Review existing user.md content for conflicts.
    If this org already has standing instructions in user.md, read through them and
@@ -664,7 +764,7 @@ v2.1 installed. Here is what to configure before going live:
 
 Safe to re-run at any time:
 
-- **workspace-map.json:** merges; never deletes existing identity entries.
+- **organization-map.json:** merges; never deletes existing identity entries.
 - **permissions.md:** only overwrites on explicit confirmation.
 - **config.json:** only overwrites if null and user did not ask to preserve.
 - **routines.md:** preserves if present.
@@ -679,11 +779,11 @@ Safe to re-run at any time:
 
 If the target sandbox has v2.0 installed (`/agent/brain/permissions/` present):
 
-1. **Identity migration:** read `workspace-map.json` from `/agent/brain/permissions/`.
+1. **Identity migration:** read `organization-map.json` from `/agent/brain/permissions/`.
    For each entry, preserve it verbatim except: rename the ref prefix from `team:` to
    `member:`, rename the top-level `team` key to `members`, and fold `admins/` home bases
    into `members/` (scope field distinguishes). Write the merged file to
-   `/agent/brain/admin/workspace-map.json`.
+   `/agent/brain/admin/organization-map.json`.
 
 2. **Resolver migration:** deploy the v2.1 resolvers to `/agent/brain/admin/`. The path and
    scope-name differences are handled by the new script bodies.
@@ -719,7 +819,7 @@ If the target sandbox has v1 installed (`user_mode.md` present, flat
 
 Alternatively, migrate directly:
 
-1. **Identity:** map v1's `index.json` entries into v2.1's workspace-map.json
+1. **Identity:** map v1's `index.json` entries into v2.1's organization-map.json
    `members` structure. Default scope is `member`. Entries that appeared in v1's
    `admins.md` get `scope: "admin"`.
 2. **Folders:** move `/agent/brain/users/<handle>/` to `/agent/brain/members/<handle>/`.

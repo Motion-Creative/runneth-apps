@@ -4,6 +4,49 @@ All notable changes to `deploy-security-protocol` are documented here.
 
 ---
 
+## Unreleased
+
+### Changed
+
+- **Map file renamed: `workspace-map.json` → `organization-map.json`.**
+  The file is the organization-wide identity registry, not a workspace-scoped
+  artifact, and the new name is clearer. Pure rename: structure, schema,
+  resolution behavior, and merge semantics are unchanged. Default path stays
+  at `/agent/brain/admin/`. Env override variable renamed
+  `RUNNETH_WORKSPACE_MAP` → `RUNNETH_ORG_MAP`.
+
+- **`motion-whoami.sh` is now Neon-only.** The local SQLite
+  `conversations.db` is unreliable for brand-new conversations (live DB is a
+  0-byte placeholder for the agent; backups lag 30 min), which made
+  motion-whoami fail for the first message in a fresh chat. The authoritative
+  source is Neon's `agent_conversation` table — same pattern proven out in
+  `/agent/tools/admin/whoami.sh` + `_neon_resolve_conv.py`. The skill now
+  installs a small `motion-whoami-neon.py` helper alongside
+  `motion-whoami.sh`. The shell script queries Neon via
+  `secret run --env DATABASE_URL=NEON_DATABASE_URL -- python3 motion-whoami-neon.py`
+  and **fails loudly** on Neon failure: no SQLite fallback. Silent fallback
+  to stale or missing data would weaken the permissions contract. The
+  permissions layer treats a non-zero exit as 'identity unknown' per
+  §2.Unknown — no writes. Also accepts `CONVERSATION_ID` from env in
+  addition to the cwd-basename fallback.
+
+### Added
+
+- **`motion-whoami-neon.py` helper.** Small psycopg query against
+  `agent_conversation`. Read-only. Returns
+  `{ user_email, workspace_id, organization_id, mondrian_user_id }` for the
+  given conversation id. Exit code 7 for recoverable misses, 8 for connection
+  failures.
+
+  Refs: PDEC-7817.
+
+  Migration of existing orgs from `workspace-map.json` → `organization-map.json`
+  is deferred to a follow-up once both `team-member-memory` and
+  `add-roles-permissions` are stable.
+
+---
+
+
 ## v2.0.0 — 2026-05-13
 
 Merged release combining v1's identity-verified mode integrity with
