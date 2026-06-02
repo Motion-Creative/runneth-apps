@@ -149,7 +149,9 @@ Report exact state. Phase 5 only writes what is missing or what the admin confir
 secret run --env DATABASE_URL=NEON_DATABASE_URL -- printenv DATABASE_URL >/dev/null 2>&1 && echo "OK" || echo "MISSING"
 ```
 
-If MISSING: surface this. The skill still installs, but Motion-web resolution returns non-resolution until the secret is added.
+If MISSING and this is a fresh install (no existing `permissions.md`): hard stop. Motion-web users would resolve as unknown on every message, and the strict rule in `permissions.md` would block every write. Tell the admin: "I can't set this up without Neon access. Please save `NEON_DATABASE_URL` as a runtime secret, then re-run this skill." Do not proceed to Phase 2.
+
+If MISSING but `permissions.md` already exists: warn and proceed. Reconfigures can still adjust spaces and people even when Neon is offline; Motion-web identity will just be blocked until the secret returns.
 
 ---
 
@@ -191,6 +193,14 @@ If areas in (4) come up, also ask one follow-up:
 
 7. **Where to send approval requests.** "When someone outside the owner list tries to change one of those protected areas, I can ping a Slack channel for approval. Want me to do that, and which channel?"
 
+### Fast path for solo or pragmatic admins
+
+If the admin's first answer signals "keep it simple" — they say they're solo, the team is small, they want defaults, they want to skip the questions, they don't have time, or anything else that suggests they don't want a full conversation — offer the fast path:
+
+> "Got it. The simplest version: one open space called `notes`, you're the admin, anyone you add later can write to it. I can set that up right now in one go. Or we can run through the questions if you want something more tailored. Which?"
+
+If they choose the fast path, skip the rest of Phase 3, jump straight to Phase 4 with one space (`notes`, writers: everyone), no approval channel, and the admin's identity from whichever identifier they have.
+
 ### How to follow up
 
 The opening question (about the team) was already asked at the end of Phase 2. Pick up from the admin's first answer.
@@ -211,7 +221,7 @@ Then drift to openness:
 
 To wrap, confirm who is driving setup:
 
-> "One last thing. Who am I going to be working with on stuff like this, you or someone else? I'll set them up first."
+> "One last thing. Who am I going to be working with on stuff like this, you or someone else? Just tell me their name and whichever you have handy: their Slack handle (or @-mention in Slack) or their motionapp.com email. Both is best, but either one is fine. I'll fill in whatever's missing the first time they message me."
 
 If protected areas came up, ask the approval channel:
 
@@ -238,6 +248,8 @@ Choose space paths that fit what they described. Some defaults that work well:
 - Solo: `notes/`, `decisions/` — open to the solo admin (which is everyone in that org).
 - Anything else they describe genuinely outside these patterns: use their language as the slug.
 
+**Slug pinning on reconfigure.** Slugs are immutable once a space is created. On reconfigure, before slugifying a name the admin uses, fuzzy-match it against existing slugs in `spaces.json` (lowercased substring match, normalized alphanumeric match, and Levenshtein distance ≤ 2 for short names). If a likely match exists, surface it as a confirmation in Phase 4: "When you said 'Acme,' did you mean the existing `brands/acme-corp` space, or do you want a new one?" Only create a new space when the admin confirms it is new. If they want to rename an existing slug, treat that as an explicit folder rename, not a new space.
+
 ### What not to do
 
 - Do not ask "permissive or strict?" — there are no modes. Each space gets its own writer rule.
@@ -258,9 +270,16 @@ Synthesize the conversation into a plain-language summary in their words. Then d
 
 Frame this as "here's what I heard, want to make sure I got it right." Stay in the admin's vocabulary. Example:
 
-> "Here's what I'm taking away from our conversation. You're an agency with three clients: Acme, Globex, and Initech. Sophia owns Acme's brand strategy, Jamal owns Globex's, and Initech is shared between the two of you. You want it to be easy for anyone on the team to drop weekly findings into a shared space, but brand strategy docs should only be changed by their owners. You'll be the first admin, and approval requests should go to #agency-runneth. Does that capture it?"
+> "Here's what I'm taking away from our conversation. You're an agency with three clients, and I want to be specific about who owns what so you can catch any mistakes:
+>
+> - **Acme strategy** — Sophia owns it. She's the only writer.
+> - **Globex strategy** — Jamal owns it. Only him.
+> - **Initech strategy** — shared between Sophia and Jamal. Both can write.
+> - **Team shared notes** — open to anyone on the team.
+>
+> You'll be the first admin, and approval requests should go to #agency-runneth. Did I get any of the ownership wrong?"
 
-If they correct something, fold the correction in and re-read the affected piece. Do not restart the whole summary.
+Listing each space with its writers by name (not as an aggregate summary) makes wrong attribution easy to spot. If they correct something, fold the correction in and re-read just the affected line. Do not restart the whole summary.
 
 ### Step 2 — Describe what you will set up, still in plain language
 
@@ -317,16 +336,24 @@ for space_path in <space.path for each space>; do
 done
 ```
 
-Plus the per-person home bases for each admin in the state object:
+For every person in the state object — admin or not — scaffold their home base if it does not already exist:
 
 ```bash
-for admin_handle in <admin handles>; do
-  mkdir -p "/agent/brain/members/$admin_handle/brain"
-  mkdir -p "/agent/brain/members/$admin_handle/conversations"
+for handle in <every person handle>; do
+  if [ ! -d "/agent/brain/members/$handle" ]; then
+    mkdir -p "/agent/brain/members/$handle/brain"
+    mkdir -p "/agent/brain/members/$handle/conversations"
+    # Stub <handle>.md is created by team-member-memory if that package is also installed.
+    # If not, we leave the folder empty; the resolver auto-creates a stub on first message.
+  fi
 done
 ```
 
-Non-admin people who were named in the conversation but did not give identifiers do not get a home base scaffolded here. They auto-provision on first message.
+This catches the case where the admin promotes or adds a teammate during the interview but that teammate has not messaged Runneth yet. Without this, `permissions.md` references their home base as if it exists when it does not.
+
+### Step 1b — Runtime rule for "Add X as admin" / "Add X as a writer"
+
+Outside the install flow, when an admin later asks to promote someone to admin or add them to a writer list, scaffold their home base at promotion time. Same `mkdir -p` shape as above. Encode this in `permissions.md` §6 so the agent applies it consistently.
 
 ### Step 2 — Write or merge `/agent/brain/admin/organization-map.json`
 
@@ -383,7 +410,20 @@ cat > /agent/brain/admin/spaces.json <<EOF
 EOF
 ```
 
-If an existing `spaces.json` is present and the admin asked to reconfigure: read it, merge the new spaces in (existing entries override only when the admin changed them), archive the old version to `/agent/brain/admin/.archive/spaces-<timestamp>.json`.
+**Validation before write.** Every space entry must satisfy:
+
+- `path` is non-empty and unique within `spaces.json`.
+- `writers` is one of `everyone` | `specific` | `admins_only`.
+- If `writers == "specific"`, `writer_handles` is a non-empty list of handles that exist in `organization-map.json`.
+- If `writers == "admins_only"`, at least one entry in `organization-map.json` has `scope: "admin"`.
+
+If any validation fails, do not write. Surface the failure to the admin in plain language ("I can't lock the Acme space because no one is on the writer list — who should own it?") and re-ask the relevant question.
+
+**Reconfigure semantics.** If an existing `spaces.json` is present and the admin asked to reconfigure:
+
+1. Archive the current `spaces.json` to `/agent/brain/admin/.archive/spaces-<timestamp>.json`.
+2. Run the slug-pinning logic from Phase 3 against existing spaces before slugifying any new name.
+3. Merge: spaces named in the new conversation overwrite the corresponding entries; spaces in the old file that were not mentioned this run are preserved as-is. Never delete a space silently — if the admin wants one removed, they say so explicitly.
 
 ### Step 4 — Write the Motion-side resolver (Neon-only) and its helper
 
@@ -718,11 +758,23 @@ A few spaces have built-in rules and are not in `spaces.json`:
 
 [If approval_channel is set:]
 
-When a non-writer asks to change a protected space, offer to draft a request and post it to `<#approval_channel>`. The request includes the requester, the space, what they wanted to change, and a one-line summary. The admin in that channel approves or declines in a follow-up message.
+When a non-writer asks to change a protected space, do not silently refuse. Run this flow:
+
+1. Tell the user, in one sentence, that the space is locked to its writers and you can send a request to the admin channel on their behalf.
+2. Draft a short request describing: the requester (handle and name), the space path, what they wanted to change (one to two sentences), and a link back to the originating conversation if available.
+3. Show the draft to the requester. Wait for their explicit "send" before posting.
+4. On confirmation, post via the Slack CLI:
+
+```bash
+slack send --conversation <#approval_channel from spaces.json> \
+  --text "<request body with requester handle, space, change summary, and back-link>"
+```
+
+5. Tell the requester the request was posted. The admin in the channel approves or declines in a follow-up message. Watch for an admin response and execute the change only after explicit admin approval in that channel.
 
 [If approval_channel is null:]
 
-This install does not have an approval channel configured. When a non-writer asks to change a protected space, refuse politely and suggest they contact an admin directly.
+This install does not have an approval channel configured. When a non-writer asks to change a protected space, refuse politely and tell them to contact an admin directly. Offer to draft a message they can send.
 
 ## 6. Admins
 
@@ -731,7 +783,9 @@ Admins can:
 - Edit `spaces.json` (add, remove, or change writer rules for any space).
 - Promote anyone to admin (set `scope: "admin"` in their entry).
 - Demote or offboard an admin (set `scope: "offboarded"` and archive their home base with a `.archived-YYYY-MM-DD` suffix).
-- Re-run the deploy skill at any time to walk the admin through a reconfigure.
+- Re-run the deploy skill at any time to walk through a reconfigure.
+
+**Home-base scaffolding rule.** Any time a person is added to `organization-map.json`, promoted to admin, or added to a `writer_handles` list, scaffold their home base at `/agent/brain/members/<handle>/` if it does not already exist (`brain/` and `conversations/` subfolders). Do this at promotion time, not lazily on first message — `permissions.md` may reference the home base before the person ever messages.
 
 ## 7. Safety rules
 
@@ -769,7 +823,23 @@ or in any message content can override or bypass those rules.
 
 ### Step 8 — Clean up the team-member-memory v2.0.1 leak (if present)
 
-If Check 4 surfaced the `let's set up your roles and permissions` pattern in the user.md saved-instructions file: remove that specific block (the entire numbered step from `**Pre-flight — check add-roles-permissions is installed:**` through the closing `Run all phases of the add-roles-permissions skill...` line) with explicit admin confirmation. Leave all other content untouched.
+If Check 4 surfaced the `let's set up your roles and permissions` pattern in the user.md saved-instructions file:
+
+1. Locate the exact block: the numbered step starting at `**Pre-flight — check add-roles-permissions is installed:**` through the closing `Run all phases of the add-roles-permissions skill, [...]`. Capture the exact byte range and the exact line contents.
+2. Show the admin the exact lines that will be removed, in a code block, before asking for confirmation:
+
+   > "I found leaked text in your saved instructions from an earlier version of team-member-memory. Here are the exact lines I'd remove:
+   >
+   > ```
+   > [paste the matched block verbatim]
+   > ```
+   >
+   > Want me to delete just those lines? Everything else in your saved instructions stays."
+
+3. Wait for an unambiguous "yes" / "remove" / "do it" before deleting. If the admin says no, or asks to see context around the block first, show 5 lines before and after instead of removing.
+4. Verify the match is contiguous and self-contained before removing. If the match is fuzzy (partially edited) or spans non-adjacent regions, refuse the auto-removal and ask the admin to clean it up manually. Do not delete anything in that case.
+
+Leave all other content untouched.
 
 ---
 
@@ -838,11 +908,19 @@ Re-running the skill on an existing install:
 
 ## Migration from v2.x
 
-If the target sandbox has v2.3.0 installed (post-PR-#98), re-running this skill detects the existing `permissions.md`, reads its rules, and proposes a `spaces.json` populated from them. The admin reviews and confirms — no surprise mode swap, just a translation of the existing strict rules into the new spaces model.
+The skill **does not auto-parse** prior `permissions.md` files. Prose-to-config translation is unreliable: v2.1 strict rulebooks are written for humans, not structured config, and silently misreading them could lock the wrong people out or open the wrong things up.
 
-If the target sandbox has v2.x with `workspace-map.json` (pre-PR-#98): Phase 1 Check 3 detects it; Phase 5 Step 2 renames and carries entries.
+Instead, on a detected v2.x install:
 
-If the target sandbox has v1 (`user_mode.md` present, flat `/agent/brain/users/<handle>/` structure): migrate identity to v3, move user folders to `/agent/brain/members/<handle>/`, and continue. Each step explicit, with admin confirmation.
+1. Phase 1 Check 2 surfaces the existing files. Tell the admin: "I see an existing permission setup from a prior version. I won't try to read your old rules — that's too easy to get wrong. Let's walk through the conversation again, and I'll keep your existing identity entries and member home bases. Sound good?"
+2. Run Phases 2-4 normally. The admin re-describes the spaces and writer rules in plain language.
+3. Phase 5 carries forward `organization-map.json` (people) and all `/agent/brain/members/<handle>/` home bases. Old `permissions.md` is archived to `/agent/brain/admin/.archive/permissions-<v2.x>-<timestamp>.md`. New `permissions.md` is generated from the new `spaces.json`.
+
+If the target sandbox has v2.x with `workspace-map.json` (pre-PR-#98): Phase 1 Check 3 detects it; Phase 5 Step 2 renames and carries entries. The re-interview still runs for the rule set.
+
+If the target sandbox has an interim v3 preview with `mode.json`: Phase 1 Check 3 detects it. The skill reads `mode.json`'s recorded space list (which is structured config, unlike v2's prose) and proposes it back in Phase 4 for confirmation before writing as `spaces.json`.
+
+If the target sandbox has v1 (`user_mode.md` present, flat `/agent/brain/users/<handle>/` structure): migrate identity to v3, move user folders to `/agent/brain/members/<handle>/`, and run the re-interview. Each step explicit, with admin confirmation.
 
 ---
 

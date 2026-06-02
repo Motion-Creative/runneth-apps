@@ -40,6 +40,22 @@ Major rewrite around six primitives instead of two modes. The permissive-vs-stri
 - From **v1**: identity migration, folder migration (`/agent/brain/users/` → `/agent/brain/members/`), `permissions.md` regenerated.
 
 Refs: PDEC-7817.
+
+### Hardening (pre-merge review)
+
+Fresh-eyes review surfaced ten failure modes. All addressed in-PR:
+
+1. **Approval-channel mechanic implemented.** `permissions.md` §5 now spells out the exact flow: draft request, show it to the requester, post via `slack send` on confirmation, wait for explicit admin approval before executing. No more vapor feature.
+2. **Slug-pinning on reconfigure.** Slugs are immutable once a space is created. Reconfigure fuzzy-matches new names against existing slugs and asks the admin to confirm rename vs. new space. Stops "Acme" → `acme` from orphaning the original `brands/acme-corp`.
+3. **v2.x migration is re-interview, not parser.** The skill no longer tries to parse prose `permissions.md` into structured config. On v2.x detection, it tells the admin honestly that prose-to-config is too easy to get wrong and walks through the conversation again, preserving identity entries and home bases.
+4. **Home-base scaffolding at promotion time.** When anyone is added to the people registry, promoted to admin, or added to a writer list, their `/agent/brain/members/<handle>/` home base is created immediately. Phase 5 Step 1 scaffolds for every named person, not just admins. The behavior is also encoded in `permissions.md` §6 for runtime use.
+5. **Flexible identifier capture.** Phase 3 Q3 now accepts whichever identifier the admin has handy (Slack handle, @-mention, or motionapp.com email) instead of demanding both. Missing identifiers fill in on first message.
+6. **Phase 4 readback shows per-space writer attribution.** Instead of an aggregate summary, the readback lists each space and its writers by name. Wrong attribution becomes easy to spot.
+7. **Fast path for pragmatic admins.** Phase 3 detects "keep it simple" signals (solo, small team, skip questions, just defaults) and offers a one-space deployment without running the full conversation.
+8. **TMM leak cleanup shows exact lines.** Phase 5 Step 8 shows the matched block in a code fence before asking for confirmation. Fuzzy matches refuse auto-removal and ask the admin to clean up manually.
+9. **`spaces.json` validation gate.** Phase 5 Step 3 validates every entry before writing: `writers: specific` requires non-empty `writer_handles` that all exist in `organization-map.json`; `writers: admins_only` requires at least one admin in the registry. Failures re-ask the relevant interview question.
+10. **NEON_DATABASE_URL hard stop on fresh installs.** Phase 1 Check 6 escalates from warning to hard stop when no `permissions.md` exists yet. Existing installs still get a soft warn so reconfigures can proceed offline.
+
 ---
 
 ## v2.3.0 — 2026-06-02 (PR #98)
