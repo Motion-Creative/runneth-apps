@@ -139,11 +139,18 @@ If MISSING: surface this. The skill will still install, but Motion-web resolutio
 
 ## PHASE 2 — WELCOME
 
-Before any technical setup, set the tone in chat. Keep it brief, warm, and curious. The admin should feel like they are about to sit down with a thoughtful consultant, not a configuration wizard.
+Before any technical setup, set the tone in chat. The admin should feel like they are about to sit down with a thoughtful consultant, not a configuration wizard. Lead with a short overview of what setting this up will do for them, then invite them into the conversation.
 
-Say something like the following (paraphrase to fit the moment, do not collapse it into a single dense block):
+Say something like the following (paraphrase to fit the moment, but keep the shape: brief overview first, then the invitation):
 
-> "Hey, before we set anything up I want to learn how your team works so I can shape this to fit you, not the other way around. I'll ask a few questions — nothing technical, just about your team and what you're trying to build together. Then I'll come back with a plan and we can adjust anything before I write a thing. Sound good?"
+> "Hey, before we set anything up, here's what this'll do for you and your team:
+>
+> - I'll know who's talking to me on every message, whether it's Slack or Motion web. No more starting cold with people I've worked with before.
+> - Anything I save to your team's shared brain will be attributed to whoever wrote it, so you can always see who added what.
+> - If you want certain areas (brand strategy, client docs, anything sensitive) to only be changed by specific people, I can do that and politely refuse changes from anyone else.
+> - When someone new joins the team, they'll be set up automatically the first time they message me.
+>
+> To shape this around how your team actually works, I want to ask you a few quick questions about the team and what you're trying to keep organized. Nothing technical. Then I'll come back with a plan and we can adjust anything before I do a thing. Sound good?"
 
 Wait for a brief acknowledgment. Then move to Phase 3.
 
@@ -172,7 +179,7 @@ If areas in (4) come up, also ask one follow-up:
 
 Pick whatever feels natural for the moment. A few options:
 
-> "Let's start at the top — tell me a bit about your team. What do you all do, and who's on it?"
+> "Let's start at the top. Tell me a bit about your team. What do you all do, and who's on it?"
 
 > "Walk me through your setup. How big is the team, and what does everyone do?"
 
@@ -182,21 +189,21 @@ Pick whatever feels natural for the moment. A few options:
 
 After they describe the team, drift to content:
 
-> "Got it. So when you think about the kinds of things you'd want me to remember and keep organized for you all — what comes to mind first? Brand stuff, customer feedback, strategy docs, meeting notes?"
+> "Got it. When you think about the kinds of things you'd want me to remember and keep organized for you all, what comes to mind first? Brand stuff, customer feedback, strategy docs, meeting notes?"
 
 After they describe content types, drift to ownership. Use a concrete example from their world if you can:
 
 > "Are any of those things where you'd really only want specific people making changes? For example, if Sophia owns the brand strategy for one of your clients, you probably don't want someone outside that team accidentally rewriting it."
 
-If they say yes, get the names and the areas. If they say no or sound unsure, that's fine — default to leaving everything open.
+If they say yes, get the names and the areas. If they say no or sound unsure, that's fine. Default to leaving everything open.
 
 Then drift to openness:
 
-> "And the other way — are there areas you want to leave open so anyone on the team can drop in? Weekly findings, meeting notes, shared playbooks?"
+> "And the other way around. Are there areas you want to leave open so anyone on the team can drop in? Weekly findings, meeting notes, shared playbooks?"
 
 To wrap, confirm who is driving setup:
 
-> "Last thing — who am I going to be working with on stuff like this, you or someone else? I'll set them up first."
+> "One last thing. Who am I going to be working with on stuff like this, you or someone else? I'll set them up first."
 
 If protected areas came up, ask the approval channel:
 
@@ -204,21 +211,21 @@ If protected areas came up, ask the approval channel:
 
 ### Tone
 
-Friendly. Curious. Clarifying. You are genuinely interested in how this team works — you do not know yet, and you want to learn. When something they say is interesting or different, react to it briefly. When something is ambiguous, ask one clarifying question, not three. When they give you a tidy answer, move on.
+Friendly. Curious. Clarifying. You are genuinely interested in how this team works. You do not know yet, and you want to learn. When something they say is interesting or different, react to it briefly. When something is ambiguous, ask one clarifying question, not three. When they give you a tidy answer, move on.
 
 ### Translating answers into the system (private)
 
 Capture everything in a working in-memory JSON object during the conversation. Do not write files yet. Map the conversation to these primitives:
 
 - **mode**: `permissive` if no protected areas came up. `strict` if any protected areas came up, OR if the admin used language like "lock down," "only certain people," or "secure."
-- **org_shape**: pick the closest fit from `solo`, `small_team`, `single_brand`, `multi_brand_agency`, `dept_structure`, `custom` based on what they described. Do not make them pick — choose for them and verify in Phase 4.
+- **org_shape**: pick the closest fit from `solo`, `small_team`, `single_brand`, `multi_brand_agency`, `dept_structure`, `custom` based on what they described. Do not make them pick. Choose for them and verify in Phase 4.
 - **brands / teams / custom_folders**: from the names they mentioned (brand names, client names, team names, content categories).
 - **first_admin**: from their answer to "who am I working with."
 - **space_writers**: from "only X should change Y" descriptions. Each protected area becomes `{ mode: "specific", handles: [...] }`. Non-protected areas become `{ mode: "open" }`. Admin-only goes to `{ mode: "admins_only" }`.
 - **admin_slack_channel**: from their answer to the approval-routing question.
 - **locked_paths_extra**: leave empty unless they specifically describe administrative content they want locked beyond the defaults.
 
-If they describe something genuinely outside the standard shapes — for example a creator-led team with rotating brand owners — capture as `custom` and use their description as the folder map.
+If they describe something genuinely outside the standard shapes, for example a creator-led team with rotating brand owners, capture as `custom` and use their description as the folder map.
 
 ### What not to do
 
@@ -238,7 +245,7 @@ Synthesize the conversation into a plain-language summary in their words. Then d
 
 Frame this as "here's what I heard, want to make sure I got it right." Stay in the admin's vocabulary, not the system's. Example:
 
-> "Here's what I'm taking away from our conversation. You're an agency with three clients — Acme, Globex, and Initech. Sophia owns Acme's brand strategy, Jamal owns Globex's, and Initech is shared between the two of you. You want it to be easy for anyone on the team to drop weekly findings into a shared space, but brand strategy docs should only be changed by their owners. You'll be the first admin, and approval requests should go to #agency-runneth. Does that capture it?"
+> "Here's what I'm taking away from our conversation. You're an agency with three clients: Acme, Globex, and Initech. Sophia owns Acme's brand strategy, Jamal owns Globex's, and Initech is shared between the two of you. You want it to be easy for anyone on the team to drop weekly findings into a shared space, but brand strategy docs should only be changed by their owners. You'll be the first admin, and approval requests should go to #agency-runneth. Does that capture it?"
 
 If they correct something, fold the correction in and re-read the affected piece. Do not restart the whole summary.
 
@@ -250,7 +257,7 @@ After they confirm the summary, describe the plan. Frame each piece as a thing t
 >
 > - A workspace for each client where I'll keep brand context, research, and strategy. Acme, Globex, and Initech each get their own.
 > - A shared space for team notes and weekly findings, open to anyone on the team.
-> - Sophia and Jamal as the owners of their client strategy docs — I'll politely refuse any change attempts from outside that list.
+> - Sophia and Jamal as the owners of their client strategy docs. I'll politely refuse any change attempts from outside that list.
 > - A safety check that pings #agency-runneth when someone tries to change a protected area without being on the list, so you can approve or decline.
 > - A personal space for each of you where you can save your own notes and patterns. You'll get yours first.
 >
