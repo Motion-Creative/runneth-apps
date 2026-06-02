@@ -2,7 +2,7 @@
   "schema": "1.0",
   "id": "add-roles-permissions",
   "version": "3.0.0",
-  "description": "Sets up Runneth's permission system through a friendly consultative conversation. Six primitives compose into whatever the org needs: people (the access registry), spaces (folders in the brain), writers per space (everyone | specific | admins only), attribution (every save is stamped), approval routing (optional Slack channel), and identity resolution (Neon-only Slack and Motion resolvers). The conversation discovers the org's strategy and writes a tailored spaces.json + permissions.md. No mode toggle, no preset shapes \u2014 wide-open and locked-down spaces can coexist in the same install.",
+  "description": "Lock the areas of your team's brain that only certain people should be editing. Brand strategy, pricing, client positioning, anything sensitive. A short conversation captures what to protect and who owns each area, then Runneth blocks unauthorized edits and routes change requests through your approval channel. Every save in your brain gets stamped with who wrote it. New teammates onboard automatically.",
   "requires": {
     "runtime": "any Runneth sandbox; jq must be installed",
     "preinstalled": [],
