@@ -5,25 +5,19 @@
     "bootcamp",
     "plan-mode",
     "routine-storage-audit",
-    "self-iteration-loop",
     "team-member-memory",
-    "review-library",
     "competitor-intel",
-    "static-ad-gen",
     "brand-kit",
     "landing-page-experiments",
     "landing-page-summary",
     "optimize-landing-page",
-    "building-integrations",
     "integration-capabilities-library",
     "health-alerts",
     "add-roles-permissions",
     "import-from-ai",
-    "performance-bundle",
     "brand-audit",
     "paid-strategy-audit",
-    "creative-deep-dive",
-    "weekly-performance-deck"
+    "creative-deep-dive"
   ],
   "excluded": [
     {
@@ -77,6 +71,30 @@
     {
       "slug": "share-use-case",
       "reason": "Operator tool for packaging custom builds; not a customer-installable use case. Files remain in the repo."
+    },
+    {
+      "slug": "review-library",
+      "reason": "Install-eval data shows 1/7 installs pass (14% pass, 14% value rate) — hits the hide-recommendation threshold (≥5 installs, <30% value). Hide while we investigate and rework. See /agent/brain/rax/team/kyra/use-case-migration-plan.md (bucket 2)."
+    },
+    {
+      "slug": "weekly-performance-deck",
+      "reason": "install-config.json auto-runs app-create + app-build + reminder-add at install — three v2-schema violations. 1/1 install in the eval window failed. Hide until bucket 3 of the v2 migration ships a clean customize-weekly-performance-deck flow."
+    },
+    {
+      "slug": "building-integrations",
+      "reason": "Being removed from the use case library entirely — moving into runneth-volume as part of the agent's standing capability. Hide preemptively."
+    },
+    {
+      "slug": "performance-bundle",
+      "reason": "1/1 install in the eval window failed. Bundle currently points at child use cases that are being reshaped in the v2 migration. Hide until the bundle is reshaped against the migrated children."
+    },
+    {
+      "slug": "static-ad-gen",
+      "reason": "Missing root SKILL.md (has a generate-ad/ subfolder instead). 1/1 install in the eval window failed. Hide until bucket 1 of the v2 migration fixes the skill structure."
+    },
+    {
+      "slug": "self-iteration-loop",
+      "reason": "2/2 installs in the eval window failed. Hide while we investigate the failure mode and write a customize skill."
     }
   ]
 }
