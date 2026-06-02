@@ -95,6 +95,12 @@ Phase 3 stays as-is (Kyra approved).
 
 27. **`spaces.json` is for areas that need restricted editing, not for general brain organization.** Phase 3 now spells this out: a space is an area that has a specific team of people who should be able to edit it. If the admin starts describing folders they want for general organization, the agent tells them brain organization is a separate concern and keeps `spaces.json` lean. Added as guidance in the "Translating answers" section plus a matching "do not do" bullet.
 
+### Phase 3 + 4 cleanup to match the scope-of-spaces rule (Kyra)
+
+28. **Path conventions list in Phase 3 trimmed.** Removed the "sub-folders auto-scaffolded" implication for single-brand setups, plus the "shared scratch" and "solo notes/decisions" examples. Those are brain organization (folders that don't restrict editing) and don't belong in `spaces.json`. Added an explicit note: the path is just the location of the protected area, no sub-folder auto-creation.
+29. **Phase 4 readback example simplified.** The "shared space for team notes and weekly findings, open to anyone" bullet was removed from the agency example. Open-to-everyone areas aren't protected and don't need to be listed.
+30. **Internal state object example simplified.** Removed the `{ "path": "shared", "writers": "everyone" }` entry so the example reflects the rule that `spaces.json` only records restricted areas.
+
 ---
 
 ## v2.3.0 — 2026-06-02 (PR #98)

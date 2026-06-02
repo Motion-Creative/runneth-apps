@@ -310,14 +310,14 @@ Capture everything in a working in-memory JSON object during the conversation. D
 - **spaces**: a list of `{ path, purpose, writers, writer_handles? }`. `path` is a slug under `/agent/brain/` (e.g. `brands/acme`, `teams/eng`, `shared`, `notes`). `writers` is one of `everyone` | `specific` | `admins_only`. `writer_handles` is required when `writers == specific`.
 - **approval_channel**: a Slack channel ID, or `null`. Ask only if any space has `writers: specific` or `writers: admins_only`.
 
-Choose space paths that fit what they described. Some defaults that work well:
+Choose a space path that matches what the admin called the area. Slug conventions:
 
-- A single brand or product: `brand/` (with sub-folders for brand-context, product, audience, reviews — auto-scaffolded).
-- Multiple brands or clients: `brands/<slug>/` per brand, slug derived from the brand name (lowercased, alphanumeric, dashes).
-- Multiple teams or departments: `teams/<slug>/` per team.
-- Shared scratch: `shared/` open to everyone.
-- Solo: `notes/`, `decisions/` — open to the solo admin (which is everyone in that org).
-- Anything else they describe genuinely outside these patterns: use their language as the slug.
+- A single brand or product whose strategy is protected: a slug derived from the admin's name for it (e.g. `brand-strategy`, `pricing`, `brand-voice`).
+- Per-brand or per-client protection: `brands/<slug>/` per brand. Slug is the brand name lowercased, alphanumeric, dashes.
+- Per-team protection: `teams/<slug>/` per team.
+- Anything else: use the admin's own language as the slug.
+
+The path is just the location of the protected area. Do not pre-scaffold sub-folders or auto-create related folders the admin did not ask for. That is brain organization, which is outside the scope of this skill.
 
 **Slug pinning on reconfigure.** Slugs are immutable once a space is created. On reconfigure, before slugifying a name the admin uses, fuzzy-match it against existing slugs in `spaces.json` (lowercased substring match, normalized alphanumeric match, and Levenshtein distance ≤ 2 for short names). If a likely match exists, surface it as a confirmation in Phase 4: "When you said 'Acme,' did you mean the existing `brands/acme-corp` space, or do you want a new one?" Only create a new space when the admin confirms it is new. If they want to rename an existing slug, treat that as an explicit folder rename, not a new space.
 
@@ -365,8 +365,7 @@ After they confirm the summary, describe the plan. Frame each piece as a thing t
 
 > "Here's what I'll set up for you:
 >
-> - A space for each client where I'll keep brand context, research, and strategy. Acme, Globex, and Initech each get their own.
-> - A shared space for team notes and weekly findings, open to anyone on the team.
+> - A protected space for each client's brand strategy. Acme, Globex, and Initech each get their own.
 > - Sophia and Jamal as the owners of their client strategy spaces. I'll politely refuse any change attempts from outside that list.
 > - A safety check that pings #agency-runneth when someone tries to change a protected space without being on the list, so you can approve or decline.
 > - A personal space for each of you where you can save your own notes and patterns. You'll get yours first.
@@ -387,10 +386,9 @@ Phase 4 produces this in-memory state. Phase 5 consumes it.
     { "name": "...", "handle": "...", "slack_id": "...", "email": "...", "admin": true }
   ],
   "spaces": [
-    { "path": "brands/acme", "purpose": "Brand context, research, and strategy for Acme", "writers": "specific", "writer_handles": ["sophia"] },
-    { "path": "brands/globex", "purpose": "Brand context, research, and strategy for Globex", "writers": "specific", "writer_handles": ["jamal"] },
-    { "path": "brands/initech", "purpose": "Brand context, research, and strategy for Initech", "writers": "specific", "writer_handles": ["sophia", "jamal"] },
-    { "path": "shared", "purpose": "Team notes and weekly findings", "writers": "everyone" }
+    { "path": "brands/acme", "purpose": "Acme brand strategy", "writers": "specific", "writer_handles": ["sophia"] },
+    { "path": "brands/globex", "purpose": "Globex brand strategy", "writers": "specific", "writer_handles": ["jamal"] },
+    { "path": "brands/initech", "purpose": "Initech brand strategy", "writers": "specific", "writer_handles": ["sophia", "jamal"] }
   ],
   "approval_channel": "C0AGENCY"
 }
