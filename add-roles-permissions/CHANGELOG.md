@@ -15,6 +15,27 @@ All notable changes to `deploy-security-protocol` are documented here.
   at `/agent/brain/admin/`. Env override variable renamed
   `RUNNETH_WORKSPACE_MAP` → `RUNNETH_ORG_MAP`.
 
+- **`motion-whoami.sh` is now Neon-first.** The local SQLite
+  `conversations.db` is unreliable for brand-new conversations (live DB is a
+  0-byte placeholder for the agent; backups run every 30 min), which made
+  motion-whoami fail for the first message in a fresh chat. The authoritative
+  source is Neon's `agent_conversation` table — same pattern proven out in
+  `/agent/tools/admin/whoami.sh` + `_neon_resolve_conv.py`. The skill now
+  installs a small `motion-whoami-neon.py` helper alongside
+  `motion-whoami.sh`. The shell script tries Neon first via
+  `secret run --env DATABASE_URL=NEON_DATABASE_URL -- python3 motion-whoami-neon.py`
+  and falls back to the SQLite snapshot only when Neon is unreachable. Also
+  accepts `CONVERSATION_ID` from env (which the Runneth runtime sets) in
+  addition to the cwd-basename fallback.
+
+### Added
+
+- **`motion-whoami-neon.py` helper.** Small psycopg query against
+  `agent_conversation`. Read-only. Returns
+  `{ user_email, workspace_id, organization_id, mondrian_user_id }` for the
+  given conversation id. Exit code 7 for recoverable misses, 8 for connection
+  failures.
+
   Refs: PDEC-7817.
 
   Migration of existing orgs from `workspace-map.json` → `organization-map.json`
