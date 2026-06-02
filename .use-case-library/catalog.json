@@ -5,7 +5,6 @@
     "bootcamp",
     "plan-mode",
     "routine-storage-audit",
-    "team-member-memory",
     "competitor-intel",
     "brand-kit",
     "landing-page-experiments",
@@ -13,7 +12,6 @@
     "optimize-landing-page",
     "integration-capabilities-library",
     "health-alerts",
-    "add-roles-permissions",
     "import-from-ai",
     "brand-audit",
     "paid-strategy-audit",
@@ -95,6 +93,14 @@
     {
       "slug": "self-iteration-loop",
       "reason": "2/2 installs in the eval window failed. Hide while we investigate the failure mode and write a customize skill."
+    },
+    {
+      "slug": "team-member-memory",
+      "reason": "Active rework in flight. Hide until the team-member-memory work is finished."
+    },
+    {
+      "slug": "add-roles-permissions",
+      "reason": "Active rework in flight (customer-facing org access framework while the in-app primitive ships). Hide until the work is finished."
     }
   ]
 }
