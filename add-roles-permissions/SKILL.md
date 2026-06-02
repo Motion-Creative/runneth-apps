@@ -150,9 +150,9 @@ Say something like the following (paraphrase to fit the moment, but keep the sha
 > - If you want certain areas (brand strategy, client docs, anything sensitive) to only be changed by specific people, I can do that and politely refuse changes from anyone else.
 > - When someone new joins the team, they'll be set up automatically the first time they message me.
 >
-> To shape this around how your team actually works, I want to ask you a few quick questions about the team and what you're trying to keep organized. Nothing technical. Then I'll come back with a plan and we can adjust anything before I do a thing. Sound good?"
+> To shape this around how your team actually works, I'll ask you a few quick questions and come back with a plan you can adjust before I do a thing. Let's start at the top: tell me a bit about your team. What do you all do, and who's on it?"
 
-Wait for a brief acknowledgment. Then move to Phase 3.
+Wait for their answer and continue with the conversation choreography in Phase 3.
 
 ---
 
@@ -175,17 +175,9 @@ If areas in (4) come up, also ask one follow-up:
 
 7. **Where to send approval requests.** "When someone outside the owner list tries to change one of those protected areas, I can ping a Slack channel for approval. Want me to do that, and which channel?"
 
-### How to open
-
-Pick whatever feels natural for the moment. A few options:
-
-> "Let's start at the top. Tell me a bit about your team. What do you all do, and who's on it?"
-
-> "Walk me through your setup. How big is the team, and what does everyone do?"
-
-> "What does your day-to-day look like? Who do you work with, and on what?"
-
 ### How to follow up
+
+The opening question (about the team) was already asked at the end of Phase 2. Pick up from the admin's first answer.
 
 After they describe the team, drift to content:
 
