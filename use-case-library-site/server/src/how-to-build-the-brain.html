@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to build your Runneth brain</title>
+  <meta name="description" content="Runneth gets sharper the more it knows about you. A short guide to what your brain is, why it matters, and the documents that move your outcomes the most." />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gray-0: #ffffff; --gray-1: #fcfcfc; --gray-2: #f8f8f8; --gray-3: #f3f3f3;
+      --gray-4: #ededed; --gray-5: #e8e8e8; --gray-6: #e2e2e2; --gray-9: #8f8f8f;
+      --gray-11: #6f6f6f; --gray-12: #171717;
+      --green: #c1f14b; --green-soft: #eafad1; --green-text: #627d20;
+      --green-dim: rgba(193,241,75,0.14); --green-border: rgba(193,241,75,0.28);
+      --error: #c83a3a; --error-soft: #fce8e8;
+      --shadow-card: 0 0 0 1px rgba(0,0,0,0.06), 0 1px 2px -1px rgba(0,0,0,0.18), 0 4px 10px rgba(0,0,0,0.08);
+    }
+    body { font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; line-height: 1.6; letter-spacing: -0.006em; color: var(--gray-12); background: var(--gray-0); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 54px; line-height: 1.04; letter-spacing: -0.035em; font-weight: 700; }
+    h2 { font-size: 34px; line-height: 1.14; letter-spacing: -0.024em; font-weight: 700; }
+    h3 { font-size: 22px; line-height: 1.28; letter-spacing: -0.018em; font-weight: 600; }
+    h4 { font-size: 17px; line-height: 1.4; letter-spacing: -0.012em; font-weight: 600; }
+    p  { font-size: 15px; line-height: 1.68; letter-spacing: -0.006em; color: #505050; }
+    .container { max-width: 880px; margin: 0 auto; padding: 0 36px; }
+
+    /* HERO */
+    .hero { position: relative; background: var(--gray-12); overflow: hidden; padding: 100px 36px 116px; text-align: center; }
+    .hero-glow { position: absolute; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; background: radial-gradient(ellipse at center, rgba(193,241,75,0.16) 0%, transparent 68%); pointer-events: none; }
+    .hero-inner { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+    .hero-eyebrow { display: inline-block; background: var(--green-dim); border: 1px solid var(--green-border); color: var(--green); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 100px; margin-bottom: 28px; }
+    .hero-title { color: white; margin-bottom: 18px; }
+    .hero-title .accent { color: var(--green); }
+    .hero-sub { color: rgba(255,255,255,0.62); font-size: 18px; line-height: 1.6; max-width: 600px; margin: 0 auto; }
+
+    /* TABS */
+    .tabs-wrap { background: white; border-bottom: 1px solid var(--gray-5); position: sticky; top: 0; z-index: 10; }
+    .tabs { max-width: 880px; margin: 0 auto; padding: 0 36px; display: flex; gap: 0; }
+    .tab-button { background: transparent; border: none; padding: 22px 24px 18px; font-family: inherit; font-size: 15px; font-weight: 500; color: var(--gray-9); cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; letter-spacing: -0.006em; }
+    .tab-button:hover { color: var(--gray-12); }
+    .tab-button.active { color: var(--gray-12); border-bottom-color: var(--gray-12); font-weight: 600; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    section.body { padding: 88px 0; }
+    section.body.alt { background: var(--gray-2); }
+    .section-label { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; }
+    .section-label-line { flex: 1; height: 1px; background: var(--gray-5); }
+    .section-label-text { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-9); white-space: nowrap; }
+    .section-intro h2 { margin-bottom: 16px; max-width: 700px; }
+    .section-intro p { max-width: 640px; font-size: 17px; line-height: 1.7; }
+    .section-intro { margin-bottom: 40px; }
+
+    .principle { background: white; border: 1px solid var(--gray-6); border-radius: 16px; padding: 28px 32px; }
+    .principle + .principle { margin-top: 14px; }
+    .principle h4 { margin-bottom: 8px; }
+    .principle p { color: var(--gray-12); font-size: 15px; }
+
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .compare .col { background: white; border: 1px solid var(--gray-6); border-radius: 16px; padding: 28px; }
+    .compare .col.bright { background: linear-gradient(180deg, var(--green-soft) 0%, #f6ffe0 100%); border-color: rgba(193, 241, 75, 0.5); }
+    .compare .col .label { font-size: 11px; font-weight: 600; color: var(--gray-9); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+    .compare .col.bright .label { color: var(--green-text); }
+    .compare .col p { color: var(--gray-12); font-size: 15px; margin-bottom: 10px; }
+    .compare .col .quote { font-style: italic; color: var(--gray-11); margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-6); font-size: 15px; }
+    .compare .col.bright .quote { border-top-color: rgba(193, 241, 75, 0.6); color: #506715; }
+
+    .rank-list { display: flex; flex-direction: column; gap: 14px; }
+    .rank-item { display: grid; grid-template-columns: 48px 1fr; gap: 18px; background: white; border: 1px solid var(--gray-6); border-radius: 16px; padding: 28px 32px; }
+    .rank-num { font-size: 26px; font-weight: 700; color: var(--gray-9); line-height: 1; letter-spacing: -0.02em; }
+    .rank-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+    .rank-head h4 { margin-bottom: 0; }
+    .owner-tag { display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; line-height: 16px; letter-spacing: 0.03em; color: var(--gray-11); background: var(--gray-3); border: 1px solid var(--gray-6); border-radius: 100px; padding: 3px 10px; white-space: nowrap; }
+    .rank-body .what { color: var(--gray-11); font-size: 15px; line-height: 1.65; margin-bottom: 12px; }
+    .rank-body .impact { display: inline-block; font-size: 14px; color: var(--gray-12); background: var(--green-soft); border-radius: 8px; padding: 8px 12px; }
+    .rank-body .impact strong { color: var(--green-text); font-weight: 600; }
+
+    .starter { background: var(--gray-12); border-radius: 20px; padding: 44px 48px; color: white; margin-top: 8px; }
+    .starter h3 { color: white; margin-bottom: 10px; font-size: 26px; }
+    .starter p { color: rgba(255,255,255,0.6); font-size: 16px; margin-bottom: 28px; max-width: 540px; }
+    .starter ol { list-style: none; counter-reset: starter; display: flex; flex-direction: column; gap: 12px; }
+    .starter ol li { counter-increment: starter; padding: 18px 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; display: grid; grid-template-columns: 32px 1fr; gap: 14px; color: white; }
+    .starter ol li::before { content: counter(starter); font-weight: 700; color: var(--green); font-size: 18px; line-height: 1.2; }
+    .starter ol li strong { color: white; font-weight: 600; font-size: 15px; display: block; margin-bottom: 4px; }
+    .starter ol li span { color: rgba(255,255,255,0.6); font-size: 14px; line-height: 1.55; }
+
+    .faq { display: flex; flex-direction: column; gap: 28px; }
+    .faq-item h4 { margin-bottom: 6px; }
+    .faq-item p { color: var(--gray-11); font-size: 15px; }
+
+    /* CHECKLIST */
+    .checklist-form { display: flex; flex-direction: column; gap: 24px; }
+    .who-card { background: white; border: 1px solid var(--gray-6); border-radius: 16px; padding: 28px 32px; }
+    .who-card h4 { margin-bottom: 6px; }
+    .who-card p.who-sub { color: var(--gray-11); margin-bottom: 20px; font-size: 14px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 13px; font-weight: 600; color: var(--gray-12); }
+    .field label .req { color: var(--error); margin-left: 2px; }
+    .field input[type="text"], .field input[type="email"], .field textarea { font-family: inherit; font-size: 14px; line-height: 1.5; padding: 10px 14px; border: 1px solid var(--gray-6); border-radius: 10px; background: white; color: var(--gray-12); resize: vertical; transition: border-color 0.15s; }
+    .field input:focus, .field textarea:focus { outline: none; border-color: var(--gray-12); }
+    .field textarea { min-height: 80px; }
+
+    .upload-card { background: white; border: 1px solid var(--gray-6); border-radius: 16px; padding: 28px 32px; display: grid; grid-template-columns: 40px 1fr; gap: 18px; }
+    .upload-num { font-size: 22px; font-weight: 700; color: var(--gray-9); line-height: 1; letter-spacing: -0.02em; }
+    .upload-body { display: flex; flex-direction: column; gap: 16px; }
+    .upload-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .upload-head h4 { margin-bottom: 0; }
+    .upload-what { color: var(--gray-11); font-size: 14px; line-height: 1.55; }
+
+    .file-drop { position: relative; border: 1.5px dashed var(--gray-6); border-radius: 12px; padding: 22px 20px; background: var(--gray-2); transition: border-color 0.15s, background 0.15s; cursor: pointer; }
+    .file-drop:hover { border-color: var(--gray-9); background: var(--gray-3); }
+    .file-drop.dragover { border-color: var(--green-text); background: var(--green-soft); }
+    .file-drop.has-file { border-style: solid; border-color: var(--green-text); background: var(--green-soft); cursor: default; }
+    .file-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .file-drop.has-file input[type="file"] { display: none; }
+    .file-drop-label { display: flex; align-items: center; gap: 12px; }
+    .file-drop-icon { width: 32px; height: 32px; border-radius: 8px; background: white; border: 1px solid var(--gray-6); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .file-drop-icon svg { width: 16px; height: 16px; color: var(--gray-9); }
+    .file-drop.has-file .file-drop-icon { background: white; border-color: var(--green-text); }
+    .file-drop.has-file .file-drop-icon svg { color: var(--green-text); }
+    .file-drop-text { flex: 1; min-width: 0; }
+    .file-drop-title { font-size: 14px; font-weight: 500; color: var(--gray-12); margin-bottom: 2px; }
+    .file-drop-hint { font-size: 12px; color: var(--gray-9); }
+    .file-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+    .file-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 12px; background: white; border: 1px solid var(--gray-6); border-radius: 8px; font-size: 13px; }
+    .file-row .file-name { color: var(--gray-12); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-row .file-size { color: var(--gray-9); font-size: 12px; flex-shrink: 0; }
+    .file-row .file-remove { background: transparent; border: none; color: var(--gray-9); cursor: pointer; font-size: 14px; padding: 4px; line-height: 1; }
+    .file-row .file-remove:hover { color: var(--error); }
+
+    .submit-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 24px; padding: 28px 32px; background: var(--gray-12); border-radius: 16px; color: white; }
+    .submit-text { flex: 1; }
+    .submit-text strong { display: block; font-size: 16px; font-weight: 600; margin-bottom: 2px; color: white; }
+    .submit-text span { font-size: 13px; color: rgba(255,255,255,0.6); }
+    .submit-btn { background: var(--green); color: var(--gray-12); border: none; padding: 12px 24px; border-radius: 10px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+    .submit-btn:hover { background: #b7e73a; }
+    .submit-btn:disabled { background: var(--gray-9); color: var(--gray-3); cursor: not-allowed; }
+
+    .form-msg { padding: 16px 20px; border-radius: 12px; font-size: 14px; line-height: 1.55; margin-top: 16px; display: none; }
+    .form-msg.error { display: block; background: var(--error-soft); border: 1px solid var(--error); color: var(--error); }
+    .form-msg.success { display: block; background: var(--green-soft); border: 1px solid var(--green-text); color: var(--green-text); }
+
+    /* FOOTER */
+    .footer { padding: 36px 0; border-top: 1px solid var(--gray-5); background: white; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .footer-left { display: flex; align-items: center; gap: 12px; }
+    .footer-brand { font-size: 16px; font-weight: 700; color: var(--gray-12); }
+    .footer-divider { color: var(--gray-5); }
+    .footer-by { color: var(--gray-9); font-size: 14px; }
+    .footer-built { font-size: 13px; color: var(--gray-9); font-weight: 500; }
+    .footer a { color: var(--gray-12); text-decoration: underline; }
+
+    @media (max-width: 720px) {
+      h1 { font-size: 38px; }
+      h2 { font-size: 26px; }
+      .hero { padding: 72px 24px 80px; }
+      .hero-sub { font-size: 16px; }
+      .container { padding: 0 24px; }
+      .tabs { padding: 0 24px; }
+      section.body { padding: 56px 0; }
+      .compare { grid-template-columns: 1fr; }
+      .rank-item, .upload-card { padding: 22px 24px; grid-template-columns: 36px 1fr; gap: 14px; }
+      .rank-num, .upload-num { font-size: 22px; }
+      .starter { padding: 32px 28px; }
+      .field-row { grid-template-columns: 1fr; }
+      .submit-row { flex-direction: column; align-items: stretch; padding: 22px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-inner">
+      <span class="hero-eyebrow">A guide for new Runneth customers</span>
+      <h1 class="hero-title">Your brain is what makes Runneth <span class="accent">yours</span>.</h1>
+      <p class="hero-sub">
+        Runneth gets sharper the more it knows about you. The brain is the place that knowledge lives. This is what it is, why it matters, and the documents that move your outcomes the most.
+      </p>
+    </div>
+  </section>
+
+  <div class="tabs-wrap">
+    <div class="tabs" role="tablist">
+      <button class="tab-button active" role="tab" aria-selected="true" aria-controls="panel-guide" data-tab="guide">The guide</button>
+      <button class="tab-button" role="tab" aria-selected="false" aria-controls="panel-checklist" data-tab="checklist">Your checklist</button>
+    </div>
+  </div>
+
+  <!-- ============================== -->
+  <!--           TAB 1: GUIDE         -->
+  <!-- ============================== -->
+  <div id="panel-guide" class="tab-panel active" role="tabpanel">
+
+  <section class="body">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">Why the brain matters</span>
+        <span class="section-label-line"></span>
+      </div>
+      <div class="section-intro">
+        <h2>Most AI tools answer the same way for everyone. Runneth doesn't.</h2>
+        <p>
+          The brain is your private, durable layer of context. Brand, audience, product, strategy, voice. Runneth reads it before every reply. The more you save into it, the more Runneth sounds like a teammate who has been at your company for a year, not a stranger who showed up this morning.
+        </p>
+      </div>
+
+      <div class="principle">
+        <h4>The principle</h4>
+        <p>A great creative strategist is only as good as the context they're working with. Same goes for Runneth. Without context, you get generic. With context, you get on-brand, on-strategy, ready-to-test work.</p>
+      </div>
+      <div class="principle">
+        <h4>What lives in the brain</h4>
+        <p>Anything durable. Brand books, customer reviews, briefs, persona docs, past winners, product specs, your team's playbooks, your tone of voice. Once it's saved, it shapes everything Runneth writes for you from that point on.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="body alt">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">What changes when the brain is fed</span>
+        <span class="section-label-line"></span>
+      </div>
+      <div class="section-intro">
+        <h2>Same ad. Same ask. Two different brains.</h2>
+        <p>Here's what the output actually looks like when Runneth has context vs. when it doesn't.</p>
+      </div>
+
+      <div class="compare">
+        <div class="col">
+          <p class="label">Empty brain</p>
+          <p>You ask Runneth for 5 hooks for your new electrolyte product. It writes generic hydration hooks. "Stay hydrated all day." "The cleanest electrolyte drink you'll find." On-trend, but it could be anyone.</p>
+          <p class="quote">"Drink this and feel the difference."</p>
+        </div>
+        <div class="col bright">
+          <p class="label">Fed brain</p>
+          <p>Same ask. Runneth has your brand book (anti-Big-Sports-Drink positioning), 200 customer reviews (real word: "afternoon crash"), and your last brief (target is perimenopause women, not gym bros). It writes hooks in your customers' actual language, against your real competitor, for your real persona.</p>
+          <p class="quote">"The 3pm crash is hormonal. Not a willpower problem."</p>
+        </div>
+      </div>
+
+      <div class="principle" style="margin-top: 32px;">
+        <h4>This compounds</h4>
+        <p>Every hook, brief, concept, ad teardown, weekly report, and email Runneth produces reads the brain first. One good brand context save makes a thousand downstream outputs better. The work you do once pays off every day after.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="body">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">The 10 most impactful uploads, in order</span>
+        <span class="section-label-line"></span>
+      </div>
+      <div class="section-intro">
+        <h2>Start at the top and work down.</h2>
+        <p>Ranked by how much they move the quality of Runneth's output across the workspaces we've watched. You don't need all of these on day one. The first three cover most of the lift.</p>
+      </div>
+
+      <div class="rank-list">
+
+        <div class="rank-item">
+          <div class="rank-num">1</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Brand context</h4><span class="owner-tag">Owned by Brand / Marketing</span></div>
+            <p class="what">Your brand book, brand kit, voice and tone guide, positioning doc, or anything that explains who you are, who you're against, and how you sound. Upload the PDFs you already have. Runneth distills them into durable brand context.</p>
+            <p class="impact"><strong>Why it matters.</strong> Every hook, concept, script, brief, and ad teardown reads this first. Without it, output is generic. With it, output sounds like you wrote it.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">2</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Customer reviews and voice of customer</h4><span class="owner-tag">Owned by CX / Insights</span></div>
+            <p class="what">Review exports (Trustpilot, Amazon, Yotpo, Shopify, your support tickets), customer interview transcripts, survey responses. Even raw CSV exports work. Runneth mines them for real language: pain points, objections, transformation moments, the exact phrases your customers use.</p>
+            <p class="impact"><strong>Why it matters.</strong> The fastest path from "good ad" to "great ad" is using your customers' words instead of yours. Reviews give Runneth that vocabulary.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">3</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Persona and ICP docs</h4><span class="owner-tag">Owned by Strategy / Marketing</span></div>
+            <p class="what">Persona research, ICP definitions, target audience docs, the segmentation work you've already paid an agency or researcher to do. Upload it. Runneth uses it to scope which pain, which motivator, which awareness stage every concept is written for.</p>
+            <p class="impact"><strong>Why it matters.</strong> Without persona context, Runneth writes to everyone (which is no one). With it, concepts land on a real audience.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">4</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Product catalog</h4><span class="owner-tag">Owned by Product / Brand</span></div>
+            <p class="what">SKU list, product fact sheets, pricing, ingredients, claims, technical specs, what's allowed in copy and what isn't. Runneth treats this as ground truth and won't invent features or break claims it has on file.</p>
+            <p class="impact"><strong>Why it matters.</strong> Stops hallucinated claims. Keeps the legal team happy. Makes product-specific work accurate the first time.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">5</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Past winning briefs and concepts</h4><span class="owner-tag">Owned by Creative / Strategy</span></div>
+            <p class="what">The briefs and concepts that have actually performed for you. Two or three is enough. Runneth pattern-matches against these whenever you ask for something similar.</p>
+            <p class="impact"><strong>Why it matters.</strong> Past winners are signal. They teach Runneth what "good" looks like in your account specifically, not in general.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">6</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Competitor research and swipe files</h4><span class="owner-tag">Owned by Strategy / Creative</span></div>
+            <p class="what">Competitor ad library exports, screenshots of competitor campaigns, swipe files of ads you admire, hook libraries you've built. Runneth uses these as reference points, not blueprints.</p>
+            <p class="impact"><strong>Why it matters.</strong> Helps Runneth spot the category whitespace and write concepts that don't sound like everyone else.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">7</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Landing page and CRO context</h4><span class="owner-tag">Owned by Growth / Web</span></div>
+            <p class="what">Page summaries, CRO audits, prior A/B test results, post-purchase survey data. Anything that explains what your landing experience says and what it converts on.</p>
+            <p class="impact"><strong>Why it matters.</strong> Keeps ad copy and landing page in sync. Surfaces message-match issues before you spend budget on a mismatch.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">8</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Channel strategy briefs</h4><span class="owner-tag">Owned by Paid Media / Growth</span></div>
+            <p class="what">How your Meta, TikTok, or other paid channels are actually structured. Funnel stages, attribution setup, KPI definitions, what counts as a win on each channel.</p>
+            <p class="impact"><strong>Why it matters.</strong> Runneth reads performance data through your actual strategy, not generic defaults. "Best performing ad" means what you mean by it.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">9</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Templates</h4><span class="owner-tag">Owned by Creative Ops</span></div>
+            <p class="what">Your brief template, your concept format, your weekly report shape, your hook structure. Save the example you want Runneth to match.</p>
+            <p class="impact"><strong>Why it matters.</strong> Output comes back in your team's format, not Runneth's default.</p>
+          </div>
+        </div>
+
+        <div class="rank-item">
+          <div class="rank-num">10</div>
+          <div class="rank-body">
+            <div class="rank-head"><h4>Call notes and strategy session recordings</h4><span class="owner-tag">Owned by Account Lead / Strategy</span></div>
+            <p class="what">Discovery calls, kickoff notes, strategy session transcripts, post-mortems. Anything that captures decisions made in the room.</p>
+            <p class="impact"><strong>Why it matters.</strong> Keeps the brain aligned with what was actually agreed, not what's written down in a stale doc somewhere.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="body alt">
+    <div class="container">
+      <div class="starter">
+        <h3>If you only do three things this week</h3>
+        <p>This is the minimum brain. Most of the lift, almost none of the time.</p>
+        <ol>
+          <li>
+            <div>
+              <strong>Upload your brand book or any brand guidelines you have.</strong>
+              <span>PDF, doc, slide deck. Whatever exists. Runneth will distill it.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Export 100 customer reviews and drop them in.</strong>
+              <span>CSV from Yotpo, Trustpilot, Amazon, or your support tool. Runneth mines them for voice of customer.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Share your most recent winning brief.</strong>
+              <span>The one whose concept actually performed. Runneth pattern-matches against it for future asks.</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="body">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">Common questions</span>
+        <span class="section-label-line"></span>
+      </div>
+      <div class="faq">
+        <div class="faq-item">
+          <h4>Do I need to format anything?</h4>
+          <p>No. Drop the file in chat and say what it is. Runneth handles the rest.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What if my brand book is out of date?</h4>
+          <p>Upload it anyway, mention what's stale, and Runneth will weigh the rest accordingly. Something durable beats nothing.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I update or remove things later?</h4>
+          <p>Yes. Tell Runneth what to change or remove and it updates the saved file. Nothing is locked in.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Is the brain shared across my team?</h4>
+          <p>Anyone in your workspace reads from the same brain. One save, everyone benefits.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What if I'm not sure something is worth saving?</h4>
+          <p>Ask. Runneth will tell you whether it would shape future outputs or whether it's better kept as one-off context.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </div><!-- /panel-guide -->
+
+  <!-- ============================== -->
+  <!--        TAB 2: CHECKLIST        -->
+  <!-- ============================== -->
+  <div id="panel-checklist" class="tab-panel" role="tabpanel">
+
+  <section class="body">
+    <div class="container">
+      <div class="section-label">
+        <span class="section-label-text">Your brain checklist</span>
+        <span class="section-label-line"></span>
+      </div>
+      <div class="section-intro">
+        <h2>Drop the files. Tell us what each one is. We'll handle the rest.</h2>
+        <p>This is the short version of what most teams upload first. For each item, attach the file and add a sentence or two about what it is so Runneth knows how to use it. Skip what you don't have. Everything routes straight into your workspace.</p>
+      </div>
+
+      <form class="checklist-form" id="brain-checklist-form" enctype="multipart/form-data" novalidate>
+
+        <div class="who-card">
+          <h4>Tell us where to send this</h4>
+          <p class="who-sub">So we route the docs into your workspace and loop your CSM in.</p>
+          <div class="field-row">
+            <div class="field">
+              <label for="ws_name">Workspace or brand name <span class="req">*</span></label>
+              <input type="text" id="ws_name" name="workspace_name" required placeholder="e.g. Beco Pets" />
+            </div>
+            <div class="field">
+              <label for="ws_email">Your email <span class="req">*</span></label>
+              <input type="email" id="ws_email" name="contact_email" required placeholder="you@yourcompany.com" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. Brand context -->
+        <div class="upload-card">
+          <div class="upload-num">1</div>
+          <div class="upload-body">
+            <div class="upload-head">
+              <h4>Brand context</h4>
+              <span class="owner-tag">Owned by Brand / Marketing</span>
+            </div>
+            <p class="upload-what">Brand book, brand kit, voice and tone guide, positioning doc. Whatever explains who you are and how you sound.</p>
+            <div class="file-drop" data-field="brand_context">
+              <input type="file" name="brand_context_files" multiple aria-label="Upload brand context files" />
+              <div class="file-drop-label">
+                <div class="file-drop-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <div class="file-drop-text">
+                  <div class="file-drop-title">Drop files or click to upload</div>
+                  <div class="file-drop-hint">PDF, doc, slides. Up to 10MB per file.</div>
+                </div>
+              </div>
+              <div class="file-list"></div>
+            </div>
+            <div class="field">
+              <label for="brand_context_context">What is this? Anything Runneth should know?</label>
+              <textarea id="brand_context_context" name="brand_context_context" placeholder="e.g. This is our 2025 brand refresh. The voice section on page 4 is most important. Skip the merchandise rules."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Customer reviews -->
+        <div class="upload-card">
+          <div class="upload-num">2</div>
+          <div class="upload-body">
+            <div class="upload-head">
+              <h4>Customer reviews and voice of customer</h4>
+              <span class="owner-tag">Owned by CX / Insights</span>
+            </div>
+            <p class="upload-what">Review exports, support ticket themes, customer interview transcripts, survey data. Raw CSVs are fine.</p>
+            <div class="file-drop" data-field="customer_reviews">
+              <input type="file" name="customer_reviews_files" multiple aria-label="Upload customer reviews files" />
+              <div class="file-drop-label">
+                <div class="file-drop-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <div class="file-drop-text">
+                  <div class="file-drop-title">Drop files or click to upload</div>
+                  <div class="file-drop-hint">CSV, PDF, doc. Up to 10MB per file.</div>
+                </div>
+              </div>
+              <div class="file-list"></div>
+            </div>
+            <div class="field">
+              <label for="customer_reviews_context">What is this? Anything Runneth should know?</label>
+              <textarea id="customer_reviews_context" name="customer_reviews_context" placeholder="e.g. Trustpilot reviews from the last 12 months. Mostly 4-5 star, so it's positive-skewed. Reviews of our Pro plan are the most relevant for paid social."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Persona / ICP -->
+        <div class="upload-card">
+          <div class="upload-num">3</div>
+          <div class="upload-body">
+            <div class="upload-head">
+              <h4>Persona and ICP docs</h4>
+              <span class="owner-tag">Owned by Strategy / Marketing</span>
+            </div>
+            <p class="upload-what">Persona research, ICP definitions, target audience docs. The segmentation work you've already done.</p>
+            <div class="file-drop" data-field="personas">
+              <input type="file" name="personas_files" multiple aria-label="Upload persona files" />
+              <div class="file-drop-label">
+                <div class="file-drop-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <div class="file-drop-text">
+                  <div class="file-drop-title">Drop files or click to upload</div>
+                  <div class="file-drop-hint">Doc, PDF, slides. Up to 10MB per file.</div>
+                </div>
+              </div>
+              <div class="file-list"></div>
+            </div>
+            <div class="field">
+              <label for="personas_context">What is this? Anything Runneth should know?</label>
+              <textarea id="personas_context" name="personas_context" placeholder="e.g. We have three personas. Persona A (perimenopause women, 45-55) is the focus for the next quarter. Personas B and C are secondary."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Product catalog -->
+        <div class="upload-card">
+          <div class="upload-num">4</div>
+          <div class="upload-body">
+            <div class="upload-head">
+              <h4>Product catalog</h4>
+              <span class="owner-tag">Owned by Product / Brand</span>
+            </div>
+            <p class="upload-what">SKU list, fact sheets, pricing, ingredients, claims, what's allowed in copy and what isn't.</p>
+            <div class="file-drop" data-field="product_catalog">
+              <input type="file" name="product_catalog_files" multiple aria-label="Upload product catalog files" />
+              <div class="file-drop-label">
+                <div class="file-drop-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <div class="file-drop-text">
+                  <div class="file-drop-title">Drop files or click to upload</div>
+                  <div class="file-drop-hint">CSV, PDF, doc, spreadsheet. Up to 10MB per file.</div>
+                </div>
+              </div>
+              <div class="file-list"></div>
+            </div>
+            <div class="field">
+              <label for="product_catalog_context">What is this? Anything Runneth should know?</label>
+              <textarea id="product_catalog_context" name="product_catalog_context" placeholder="e.g. Our full product list, prices, and FDA claim restrictions. Anything tagged 'avoid' must not appear in copy."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Past winning briefs -->
+        <div class="upload-card">
+          <div class="upload-num">5</div>
+          <div class="upload-body">
+            <div class="upload-head">
+              <h4>Past winning briefs and concepts</h4>
+              <span class="owner-tag">Owned by Creative / Strategy</span>
+            </div>
+            <p class="upload-what">The briefs and concepts that actually performed. Two or three is enough.</p>
+            <div class="file-drop" data-field="winning_briefs">
+              <input type="file" name="winning_briefs_files" multiple aria-label="Upload past winning briefs" />
+              <div class="file-drop-label">
+                <div class="file-drop-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <div class="file-drop-text">
+                  <div class="file-drop-title">Drop files or click to upload</div>
+                  <div class="file-drop-hint">Doc, PDF, slides. Up to 10MB per file.</div>
+                </div>
+              </div>
+              <div class="file-list"></div>
+            </div>
+            <div class="field">
+              <label for="winning_briefs_context">What is this? Anything Runneth should know?</label>
+              <textarea id="winning_briefs_context" name="winning_briefs_context" placeholder="e.g. Our two best-performing TikTok concepts from Q1. The Sleep concept hit 3.2x ROAS and ran for 8 weeks. The Crash concept hit 2.4x and is still scaling."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Anything else -->
+        <div class="upload-card">
+          <div class="upload-num">+</div>
+          <div class="upload-body">
+            <div class="upload-head">
+              <h4>Anything else worth knowing?</h4>
+              <span class="owner-tag">Optional</span>
+            </div>
+            <p class="upload-what">Other docs we should have: competitor research, landing page audits, paid strategy briefs, templates, call notes. Drop them here with context.</p>
+            <div class="file-drop" data-field="other">
+              <input type="file" name="other_files" multiple aria-label="Upload other files" />
+              <div class="file-drop-label">
+                <div class="file-drop-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <div class="file-drop-text">
+                  <div class="file-drop-title">Drop files or click to upload</div>
+                  <div class="file-drop-hint">Any format. Up to 10MB per file.</div>
+                </div>
+              </div>
+              <div class="file-list"></div>
+            </div>
+            <div class="field">
+              <label for="other_context">What is each one? Anything Runneth should know?</label>
+              <textarea id="other_context" name="other_context" placeholder="Tell us what each file is and how Runneth should use it."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-msg" id="form-msg" role="status" aria-live="polite"></div>
+
+        <div class="submit-row">
+          <div class="submit-text">
+            <strong>Ready to feed your brain?</strong>
+            <span>We'll route your files into your workspace and follow up if anything needs clarifying.</span>
+          </div>
+          <button type="submit" class="submit-btn" id="submit-btn">Send to Runneth</button>
+        </div>
+
+      </form>
+    </div>
+  </section>
+
+  </div><!-- /panel-checklist -->
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <span class="footer-brand">Runneth</span>
+          <span class="footer-divider">·</span>
+          <span class="footer-by">Your creative strategy teammate, by Motion</span>
+        </div>
+        <span class="footer-built">Built by Runneth 🤓</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Tab switching
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    tabButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const target = btn.getAttribute('data-tab');
+        tabButtons.forEach(function (b) {
+          const active = b.getAttribute('data-tab') === target;
+          b.classList.toggle('active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        tabPanels.forEach(function (p) {
+          p.classList.toggle('active', p.id === 'panel-' + target);
+        });
+        if (target === 'checklist' && window.location.hash !== '#checklist') {
+          history.replaceState(null, '', '#checklist');
+        } else if (target === 'guide' && window.location.hash === '#checklist') {
+          history.replaceState(null, '', '#');
+        }
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      });
+    });
+    if (window.location.hash === '#checklist') {
+      const btn = document.querySelector('.tab-button[data-tab="checklist"]');
+      if (btn) btn.click();
+    }
+
+    // File drop UX
+    const MAX_FILE_BYTES = 10 * 1024 * 1024;
+    const MAX_TOTAL_BYTES = 25 * 1024 * 1024;
+    const fileState = {}; // field name -> File[]
+
+    function fmtSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+    }
+
+    function renderFileList(card) {
+      const field = card.getAttribute('data-field');
+      const list = card.querySelector('.file-list');
+      const files = fileState[field] || [];
+      list.innerHTML = '';
+      files.forEach(function (file, idx) {
+        const row = document.createElement('div');
+        row.className = 'file-row';
+        const oversize = file.size > MAX_FILE_BYTES;
+        row.innerHTML =
+          '<span class="file-name">' + escapeHtml(file.name) + '</span>' +
+          '<span class="file-size"' + (oversize ? ' style="color:#c83a3a"' : '') + '>' +
+          fmtSize(file.size) + (oversize ? ' (too large)' : '') + '</span>' +
+          '<button type="button" class="file-remove" aria-label="Remove ' + escapeHtml(file.name) + '">×</button>';
+        row.querySelector('.file-remove').addEventListener('click', function () {
+          fileState[field].splice(idx, 1);
+          renderFileList(card);
+          updateCardState(card);
+        });
+        list.appendChild(row);
+      });
+      updateCardState(card);
+    }
+
+    function updateCardState(card) {
+      const field = card.getAttribute('data-field');
+      const files = fileState[field] || [];
+      card.classList.toggle('has-file', files.length > 0);
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    document.querySelectorAll('.file-drop').forEach(function (card) {
+      const field = card.getAttribute('data-field');
+      const input = card.querySelector('input[type="file"]');
+      fileState[field] = [];
+
+      input.addEventListener('change', function (e) {
+        const incoming = Array.from(e.target.files || []);
+        fileState[field] = (fileState[field] || []).concat(incoming);
+        input.value = '';
+        renderFileList(card);
+      });
+
+      ['dragenter', 'dragover'].forEach(function (evt) {
+        card.addEventListener(evt, function (e) {
+          e.preventDefault();
+          card.classList.add('dragover');
+        });
+      });
+      ['dragleave', 'drop'].forEach(function (evt) {
+        card.addEventListener(evt, function (e) {
+          e.preventDefault();
+          card.classList.remove('dragover');
+        });
+      });
+      card.addEventListener('drop', function (e) {
+        const dropped = Array.from((e.dataTransfer && e.dataTransfer.files) || []);
+        if (dropped.length === 0) return;
+        fileState[field] = (fileState[field] || []).concat(dropped);
+        renderFileList(card);
+      });
+    });
+
+    // Submit
+    const form = document.getElementById('brain-checklist-form');
+    const msg = document.getElementById('form-msg');
+    const submitBtn = document.getElementById('submit-btn');
+
+    function showMsg(kind, text) {
+      msg.className = 'form-msg ' + kind;
+      msg.textContent = text;
+    }
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      msg.className = 'form-msg';
+      msg.textContent = '';
+
+      const wsName = document.getElementById('ws_name').value.trim();
+      const email = document.getElementById('ws_email').value.trim();
+      if (!wsName || !email) {
+        showMsg('error', 'Please add your workspace name and email so we know where to route this.');
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showMsg('error', 'That email address looks off. Please double-check.');
+        return;
+      }
+
+      // Aggregate and validate file sizes
+      let totalSize = 0;
+      const allFiles = [];
+      Object.keys(fileState).forEach(function (field) {
+        (fileState[field] || []).forEach(function (file) {
+          totalSize += file.size;
+          allFiles.push({ field: field, file: file });
+        });
+      });
+      const oversize = allFiles.find(function (x) { return x.file.size > MAX_FILE_BYTES; });
+      if (oversize) {
+        showMsg('error', 'One or more files is over 10MB (' + oversize.file.name + '). Please remove or split it, then resubmit.');
+        return;
+      }
+      if (totalSize > MAX_TOTAL_BYTES) {
+        showMsg('error', 'Total upload is over 25MB. Please trim it down or split into two submissions.');
+        return;
+      }
+      const hasAnything = allFiles.length > 0 ||
+        ['brand_context_context','customer_reviews_context','personas_context','product_catalog_context','winning_briefs_context','other_context']
+          .some(function (k) { return (document.getElementById(k) && document.getElementById(k).value.trim().length > 0); });
+      if (!hasAnything) {
+        showMsg('error', 'Add at least one file or some context to send.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+
+      try {
+        const data = new FormData();
+        data.append('workspace_name', wsName);
+        data.append('contact_email', email);
+        ['brand_context','customer_reviews','personas','product_catalog','winning_briefs','other'].forEach(function (field) {
+          const ctx = document.getElementById(field + '_context');
+          if (ctx) data.append(field + '_context', ctx.value.trim());
+          (fileState[field] || []).forEach(function (file) {
+            data.append(field + '_files', file, file.name);
+          });
+        });
+
+        const resp = await fetch('/api/brain-checklist', { method: 'POST', body: data });
+        let payload = null;
+        try { payload = await resp.json(); } catch (_) { /* not JSON */ }
+        if (!resp.ok) {
+          const err = (payload && payload.message) || ('Submission failed (' + resp.status + ').');
+          showMsg('error', err + ' If this keeps happening, email support@motionapp.com directly.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send to Runneth';
+          return;
+        }
+        showMsg('success', 'Got it. Your CSM will route this into your brain and follow up if anything needs clarifying.');
+        form.reset();
+        Object.keys(fileState).forEach(function (k) {
+          fileState[k] = [];
+        });
+        document.querySelectorAll('.file-drop').forEach(function (card) { renderFileList(card); });
+        submitBtn.textContent = 'Sent';
+      } catch (err) {
+        showMsg('error', 'Could not send. Check your connection and try again, or email support@motionapp.com directly.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send to Runneth';
+      }
+    });
+  </script>
+</body>
+</html>

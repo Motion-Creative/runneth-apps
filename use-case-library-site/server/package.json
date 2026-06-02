@@ -5,11 +5,12 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json && cp src/one-pager.html dist/one-pager.html",
+    "build": "tsc -p tsconfig.json && cp src/one-pager.html dist/one-pager.html && cp src/how-to-build-the-brain.html dist/how-to-build-the-brain.html",
     "start": "node dist/index.js",
     "dev": "tsc -p tsconfig.json --watch & node --watch dist/index.js"
   },
   "dependencies": {
+    "@fastify/multipart": "^9.0.0",
     "@fastify/static": "^8.0.0",
     "better-sqlite3": "^11.0.0",
     "fastify": "^5.0.0",
