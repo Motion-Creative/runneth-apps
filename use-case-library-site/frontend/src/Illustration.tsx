@@ -5,6 +5,7 @@ import { accentIconColor, cardAccent } from "./theme";
 import apiConnectionFilled from "./icons/api-connection-filled.svg?raw";
 import arrowRotateClockwiseFilled from "./icons/arrow-rotate-clockwise-filled.svg?raw";
 import brainFilled from "./icons/brain-filled.svg?raw";
+import brainOnboardFilled from "./icons/brain-onboard-filled.svg?raw";
 import checkCircleFilled from "./icons/check-circle-filled.svg?raw";
 import cloudDownloadFilled from "./icons/cloud-download-filled.svg?raw";
 import colorPaletteFilled from "./icons/color-palette-filled.svg?raw";
@@ -30,6 +31,7 @@ import squareChecklistBellFilled from "./icons/square-checklist-bell-filled.svg?
 
 const ICON_BY_SLUG: Record<string, string> = {
   "team-member-memory": brainFilled,
+  "brain-onboard": brainOnboardFilled,
   "plan-mode": checkCircleFilled,
   "self-iteration-loop": arrowRotateClockwiseFilled,
   "share-use-case": cloudDownloadFilled,

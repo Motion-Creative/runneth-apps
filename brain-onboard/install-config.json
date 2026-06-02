@@ -1,0 +1,35 @@
+{
+  "schema": "1.0",
+  "id": "brain-onboard",
+  "version": "1.0.0",
+  "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "depends": [],
+  "customize": [],
+  "installs": [
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/brain-onboard/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Core brain-onboard skill. Triggered by user prompts like 'build my brain' or 'run brain-onboard' after the CSM uploads the brain package."
+    },
+    {
+      "from": "seed/HOW-TO-USE.md",
+      "to": "/agent/brain/runneth-onboarding/HOW-TO-USE.md",
+      "on_exists": "overwrite",
+      "purpose": "Plain-language guide for the team on what to do when the CSM sends them a brain package."
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-02",
+      "type": "major",
+      "notes": "Initial release. Customer-side skill that turns a CSM-prepared brain package into a populated ten-domain org brain. Reads the package from uploads or sources directory, runs Motion workspace pulls, runs Apify scrapers, pulls customer-wired integrations like Yotpo, and synthesizes the brain with source citations. Welcome card leads with what each person on the team can now do."
+    }
+  ]
+}
