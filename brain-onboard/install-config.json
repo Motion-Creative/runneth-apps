@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.4.0",
+      "date": "2026-06-03",
+      "type": "minor",
+      "notes": "Three changes: (1) Restore GitHub clone path in Step 1 as the PRIMARY package-staging path. Customer Runneth clones from Motion-Creative/customer_brain/<customer-slug>/ via CUSTOMER_BRAIN_READ_PAT. Tar and Drive paths stay as legacy fallbacks. (2) Remove motion meta age-gender from Step 2 pull list and remove age-gender.json from Performance domain inputs. (3) Add explicit never-run rule for Meta demographic analysis: demographics not load-bearing for creative strategy; personas come from VoC, not Meta-targeting. Supersedes the GitHub transport removal from PR #119; we are restoring it now that the CUSTOMER_BRAIN_READ_PAT secret is wired and the customer_brain repo flow is the canonical path (matches Ankhway example)."
+    },
     {
       "version": "1.3.0",
       "date": "2026-06-03",

@@ -115,19 +115,26 @@ These hold for every install. Apply them whenever the skill runs.
 
 ## Step 1 — Find and stage the package
 
-The CSM ships a tar.gz or directory containing a `_manifest.json`, a `README.md`,
-`identity-seed/team.md`, and a `_sources/` tree.
+The CSM pushes the customer-facing package to `Motion-Creative/customer_brain/<customer-slug>/` as a flat directory tree (README.md, _manifest.json, _skills/, _sources/, identity-seed/). Clone it.
 
 Check these locations in order:
 
 1. **Already staged**: `/agent/brain/_sources/_manifest.json` present? You're set.
-2. **Tar in uploads**: any `./uploads/*runneth-package*.tar.gz`? Extract:
+2. **GitHub clone (primary path)**: if `CUSTOMER_BRAIN_READ_PAT` is in this sandbox's secrets and the customer slug is known (from `_state.json`, the prep-customer-brain handoff, or the CSM telling you in conversation), clone the customer's subdirectory:
+   ```bash
+   cd /tmp && rm -rf cb
+   git clone https://x-access-token:$(secret env CUSTOMER_BRAIN_READ_PAT)@github.com/Motion-Creative/customer_brain.git cb
+   mkdir -p /agent/brain/_sources/
+   cp -r cb/<customer-slug>/* /agent/brain/_sources/
+   ```
+   The customer-slug is the same slug the CSM used when running prep-customer-brain. Verify `/agent/brain/_sources/_manifest.json` exists after the copy.
+3. **Tar in uploads (legacy fallback)**: any `./uploads/*runneth-package*.tar.gz`? Extract:
    ```bash
    mkdir -p /agent/brain/_sources/
    tar -xzf ./uploads/<file>.tar.gz --strip-components=1 -C /agent/brain/_sources/
    ```
-3. **Loose files in uploads** (README, _manifest.json, identity-seed/, _sources/): copy to `/agent/brain/_sources/`.
-4. **Drive URL shared in conversation**: use `google url download <url>` to grab the tar.gz, then extract per option 2.
+4. **Loose files in uploads (legacy fallback)** (README, _manifest.json, identity-seed/, _sources/): copy to `/agent/brain/_sources/`.
+5. **Drive URL shared in conversation (legacy fallback)**: use `google url download <url>` to grab the tar.gz, then extract per option 3.
 
 If none of these are present, tell the user the package hasn't arrived yet and
 ask them to upload it. Do not try to build a brain from public web alone — the
@@ -167,7 +174,6 @@ arguments needed unless specified — they default to this workspace.
 | `motion spend-threshold` | `_sources/motion/spend-threshold.json` |
 | `motion meta insights --date-range last_30d --limit 30 --include-metrics --sort topSpend` | `_sources/motion/meta-insights-30d.json` |
 | `motion tiktok insights --date-range last_30d --include-metrics` | `_sources/motion/tiktok-insights-30d.json` |
-| `motion meta age-gender --date-range last_30d --include-metrics` | `_sources/motion/age-gender.json` |
 | `motion creative-trends` | `_sources/motion/creative-trends.json` |
 | `motion cache search-summaries` | `_sources/motion/creative-cache.json` |
 | `motion meta custom-conversion-metrics` | `_sources/motion/custom-conversions.json` |
@@ -422,7 +428,7 @@ For three domains, synthesis populates structured substructures, not just a flat
 | **Brand** | `_sources/web/*` + `_sources/motion/brand-context.json` + `_sources/company-facts.json` |
 | **Customers** | Yotpo reviews (archive-first, then live) + `_sources/motion/brand-context.json` ICP + Apify Reddit/IG/TikTok output if no first-party VoC source is wired |
 | **Competition** | Confirmed competitor set (seed + team additions) + the `_sources/inspo/<slug>.json` files for each |
-| **Performance** | All `_sources/motion/meta-*`, `tiktok-*`, `age-gender.json`, `creative-trends.json`, `creative-cache.json`, `benchmark.json` |
+| **Performance** | All `_sources/motion/meta-*`, `tiktok-*`, `creative-trends.json`, `creative-cache.json`, `benchmark.json` |
 | **Strategy** | `_sources/motion/workspace-goal.json` + `_sources/motion/spend-threshold.json` + `_sources/motion/custom-conversions.json` |
 | **Calendar** | Leave mostly empty pending Notion/Calendar OAuth; note as "pending integration" |
 | **Library** | `_sources/motion/creative-cache.json` index + pending Drive/Notion OAuth for briefs/assets |
@@ -566,3 +572,4 @@ Re-run it.
 - Invent facts to fill empty domains
 - Skip the Yotpo / customer-wired integrations when they're available — those
   are the highest-signal customer-side data and the brain needs them
+- **Never run `motion meta age-gender` or any Meta demographic analysis.** Demographics are not part of the brain build. They are expensive to pull, slow to synthesize, and not load-bearing for creative strategy work. Personas come from VoC (Yotpo reviews, ad comments), not from Meta-targeting demographics.
