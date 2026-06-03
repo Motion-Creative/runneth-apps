@@ -10,6 +10,119 @@ All notable changes to `deploy-security-protocol` are documented here.
 
 ---
 
+## v3.1.5 — 2026-06-03
+
+Slim pass. 73 lines trimmed from SKILL.md (1,137 → 1,064) without dropping a single rule, look-around, phase, or piece of educational content. Pure deduplication and prose tightening.
+
+### Changed
+
+- **Phase 4 internal-state JSON example** collapsed from a 20-line JSON sample to a one-line description.
+- **Phase 2 Tone subsection** removed — duplicated the top-of-file communication-style rule.
+- **Phase 5 Step 4 intro** collapsed from 4 paragraphs that said the same thing to one.
+- **`motion-whoami-neon.py` docstring** trimmed from 18 lines of comment to 4 lines that still cover usage and exit codes.
+- **`motion-whoami.sh` and `slack-whoami.sh` file headers** trimmed. Both now have tight comment blocks that name purpose, return shape, status values, and usage; verbose explanation prose removed.
+- **Phase 1 intro and Look-arounds 6, 7, 8** prose tightened.
+- **Phase 2 subsections "What the opening turn has to do," "Outcomes," and "Adapting"** tightened.
+- **Phase 3 "Scope of spaces," "Choose space paths," and "What not to do"** tightened.
+
+No content loss. Refs: PDEC-7817.
+
+---
+
+## v3.1.4 — 2026-06-03
+
+Kyra: "Session open could also be part of the user.md."
+
+### Changed
+
+- **Look-around 8 now scans three places**, not two. Session-open behavior can live as an inline section inside the team's saved instructions themselves (in `user.md`), in the routines registry (`/agent/brain/routines.md`), or as a reminder triggered on session open. The look-around now greps `user.md` for the common phrasings ("session open," "every conversation," "before responding," "at the start of every," "on every new conversation," etc.) in addition to the other two checks.
+- **Look-around 8 prose updated** to treat inline session-open content the same way as a separate routine: both behave identically, so both get flagged when you raise the behavior-shaping question in Phase 3.
+
+Refs: PDEC-7817.
+
+---
+
+## v3.1.3 — 2026-06-03
+
+Three changes from Kyra.
+
+### Changed
+
+- **Renamed `/agent/brain/members/` → `/agent/brain/team/`** everywhere. Every reference in `SKILL.md` (including the permissions.md template and the inline resolver scripts), `README.md`, and `marketing.md` updated. Personal spaces now live at `/agent/brain/team/<handle>/`. Same writer rule applies (only the owner can edit their own folder).
+- **Phase 5 Step 7 description clarified.** Now explicitly states that this step adds the permission pointer to `user.md` (the saved-instructions file the agent loads on every conversation), and notes that without this step the rest of what you wrote in Phase 5 is unenforced. The actual write behavior is unchanged.
+
+### Added
+
+- **Phase 1 Look-around 8 — What other files get automatically loaded at the start of every conversation?** Runs `cat /agent/brain/routines.md` and `reminder list | grep session-open` to find any session-open routines that pull additional files into every conversation. Holds the list of file paths + a one-sentence description of each routine, then carries it into Phase 2 and Phase 3.
+- **Phase 2 adapting note** for the session-open signal: the opener doesn't have to mention it, but the list gets used in Phase 3.
+- **Phase 3 behavior-shaping prompt made adaptive.** If Look-around 8 found other auto-loaded files, the prompt names them specifically. The admin almost certainly didn't know all of those were getting loaded on every conversation, and seeing the list is the moment they realize the stakes. Plain-language description always — never use "session-open routine" or "startup routine" with the admin.
+
+Refs: PDEC-7817.
+
+---
+
+## v3.1.2 — 2026-06-03
+
+Voice and framing pass. Kyra: "Let's not say startup-routines, use more simple language a marketer would understand. The skill is also written in 3rd person it feels like instead of being the instructions to follow when it runs."
+
+### Changed
+
+- **SKILL.md now reads as direct instructions to Runneth (the agent), with the goal stated up front.** The top of the file leads with "Your goal in this skill" instead of "This skill helps an admin." A new "What the admin needs to understand first" section calls out the education Runneth has to deliver before the rest of the conversation makes sense. "How this skill runs" reframed as "How you'll run this skill," with the seven phases as your instructions. Each Phase intro (Phase 2-5) rewritten to lead with "In Phase X you..." instead of describing what the phase is.
+- **Replaced "startup-routine" and "session-open routine" jargon everywhere** with plain language ("the team's saved instructions and any other files Runneth automatically reads at the start of every conversation"). Added an explicit instruction to Phase 3: never use those internal terms with the admin.
+
+Refs: PDEC-7817.
+
+---
+
+## v3.1.1 — 2026-06-02
+
+Voice and framing pass on the v3.1.0 reframe. Kyra: "We shouldn't be using words like identity and resolve. Everything in this skill should reflect language that a marketing person can understand as much as possible because Runneth will carry through that language as it's talking to the admin... We need to educate people that out of the box, by default, anybody that gives Runneth feedback can impact the rest of the org."
+
+### Changed
+
+- **Hero headline:** "Customize who can change what." → "Decide who can change what Runneth knows and how it behaves." More specific, names the two flavors.
+- **Hero subhead, install-config description, use-case pitch, README lead, SKILL.md `What this skill is for`** all rewritten to lead with the educational framing: most teams don't realize this until something gets accidentally changed, but out of the box, anyone the team trusts to chat with Runneth can also edit anything Runneth knows. That includes the context Runneth references AND the rules for how it behaves for everyone. Saved feedback like "let's not use the word cheap anymore" can quietly become the rule for everyone, not just the person who said it. This skill is the way to control that.
+- **"The six primitives the skill works with"** section renamed to **"The pieces the skill works with"**. Each primitive renamed in prose: identity resolution → "knowing who is talking"; writers per space → "who can edit each area"; attribution → "who wrote what"; approval routing → "approval requests"; spaces → "protected areas"; people → "people."
+- **Phase 2 outcomes** section now opens with a "Lead with the surprising default state" instruction. The five value-prop bullets follow it, with the behavior-protection one explicitly flagged as the usually-highest-stakes lock decision.
+- **`permissions.md` §1 renamed** from "Identity" to "Who's talking." Internal jargon ("resolver," "resolves to a person," "identity claims") rewritten in plain language.
+- **Display title** in `use-case.json`: "Customize Write Access" → "Decide who can change Runneth." Plainer, names the action.
+
+### Why
+
+Runneth carries through the language it reads in SKILL.md. Marketing-friendly prose throughout the skill means marketing-friendly prose when the agent talks to the admin. The educational framing matters because most admins don't know about the default behavior until they install — and they need to know it to make good decisions about what to protect.
+
+Refs: PDEC-7817.
+
+---
+
+## v3.1.0 — 2026-06-02
+
+User-facing reframe of the skill purpose, plus the behavior-protection layer.
+
+### Renamed
+
+- **Display title:** "Lock What Shouldn't Be Edited" → "Customize Write Access." The previous title described the result of installing the skill; the new title describes what the admin is choosing to do.
+- **SKILL.md heading and frontmatter `name`:** "Deploy Admin Permissions v3.0" → "Customize Write Access" (`name: customize-write-access`). The package id `add-roles-permissions` is unchanged.
+
+### Added
+
+- **A stage-setting intro before Phase 1** in `SKILL.md`. Explains what the skill is for in user-language, names the seven phases in order with an explicit "do not skip any, do not collapse phases" instruction, summarizes how to talk to the admin, and lists the six primitives Runneth works with. Replaces a long "What this deploys" tree (most of which was untouched by the skill) with a focused list of files the skill actually creates or modifies.
+- **Behavior-protection outcome in Phase 2.** New bullet in the "Outcomes you can draw from" list: the admin gets to decide who can change how Runneth behaves for everyone. Distinguishes this from individual feedback (which stays in that person's home base and only changes how Runneth talks to them).
+- **Two flavors of restricted content in Phase 3 item 4.** Listening for `Areas where only certain people should make changes` now explicitly covers both content areas (brand strategy, pricing, financial models) and **behavior-shaping content** (saved instructions in `user.md`, files referenced by session-open routines). The latter have a wide blast radius and are usually the highest-stakes lock decision.
+- **Explicit behavior-shaping prompt in Phase 3.** The agent always raises this question, even if the admin didn't bring it up: "There are a few files I always load up before I respond to anyone on your team. Mainly your saved instructions, plus anything a startup routine reads. They shape how I sound and what I do. If someone edits them, it changes how I show up for everyone. Do you want only admins to be able to edit those, or is there a specific person you'd name?"
+- **`permissions.md` §7 rule: Reference does not grant write permission.** When Runneth pulls a protected file into a conversation to cite, quote, or summarize it, the writer rules still apply. If the requester then asks to edit that file, refuse and offer the approval flow. Citing the file doesn't make them a writer. True even for behavior-shaping files.
+
+### Marketing surfaces
+
+- `marketing.md`: new hero headline and subhead matching the rename.
+- `use-case.json`: `display_title` and `pitch` rewritten.
+- `install-config.json`: `description` rewritten and version bumped to 3.1.0.
+- `README.md`: heading and lead paragraph updated.
+
+Refs: PDEC-7817.
+
+---
+
 ## v3.0.0 — 2026-06-02
 Major rewrite around six primitives instead of two modes. The permissive-vs-strict framing is gone. The system is built from a small set of primitives that compose into whatever the org's strategy requires.
 
@@ -29,7 +142,7 @@ Major rewrite around six primitives instead of two modes. The permissive-vs-stri
 - **Phase 4 readback** in plain language first, then a setup plan in plain language. Confirms before any writes.
 - **Phase 5 deployment** writes a single permissions.md generated from spaces.json. No template selection.
 - **Phase 7 setup checklist** is one consistent message.
-- **Implicit spaces** that are never configurable: `/agent/brain/admin/` (admins only), `/agent/brain/members/<handle>/` (owner only), and the shared infrastructure paths (`INDEX.md`, `routines.md`, `.agents/skills/`, `apps/`, admins only).
+- **Implicit spaces** that are never configurable: `/agent/brain/admin/` (admins only), `/agent/brain/team/<handle>/` (owner only), and the shared infrastructure paths (`INDEX.md`, `routines.md`, `.agents/skills/`, `apps/`, admins only).
 - **Step 8 auto-cleans the team-member-memory v2.0.1 user.md leak** if found, with admin confirmation.
 
 ### Migration
@@ -37,7 +150,7 @@ Major rewrite around six primitives instead of two modes. The permissive-vs-stri
 - From **v2.3.0 (post-PR-#98)**: re-run the skill; existing `permissions.md` rules are read and proposed as a `spaces.json` for the admin to review. Identity entries preserved.
 - From any interim v3 preview with a `mode.json` file: Phase 1 Check 3 detects it; Phase 5 offers to translate the contents into `spaces.json` and remove the old file.
 - From **v2.x with `workspace-map.json`** (pre-PR-#98): Phase 1 Check 3 detects, Phase 5 Step 2 renames and carries entries.
-- From **v1**: identity migration, folder migration (`/agent/brain/users/` → `/agent/brain/members/`), `permissions.md` regenerated.
+- From **v1**: identity migration, folder migration (`/agent/brain/users/` → `/agent/brain/team/`), `permissions.md` regenerated.
 
 Refs: PDEC-7817.
 
@@ -48,7 +161,7 @@ Fresh-eyes review surfaced ten failure modes. All addressed in-PR:
 1. **Approval-channel mechanic implemented.** `permissions.md` §5 now spells out the exact flow: draft request, show it to the requester, post via `slack send` on confirmation, wait for explicit admin approval before executing. No more vapor feature.
 2. **Slug-pinning on reconfigure.** Slugs are immutable once a space is created. Reconfigure fuzzy-matches new names against existing slugs and asks the admin to confirm rename vs. new space. Stops "Acme" → `acme` from orphaning the original `brands/acme-corp`.
 3. **v2.x migration is re-interview, not parser.** The skill no longer tries to parse prose `permissions.md` into structured config. On v2.x detection, it tells the admin honestly that prose-to-config is too easy to get wrong and walks through the conversation again, preserving identity entries and home bases.
-4. **Home-base scaffolding at promotion time.** When anyone is added to the people registry, promoted to admin, or added to a writer list, their `/agent/brain/members/<handle>/` home base is created immediately. Phase 5 Step 1 scaffolds for every named person, not just admins. The behavior is also encoded in `permissions.md` §6 for runtime use.
+4. **Home-base scaffolding at promotion time.** When anyone is added to the people registry, promoted to admin, or added to a writer list, their `/agent/brain/team/<handle>/` home base is created immediately. Phase 5 Step 1 scaffolds for every named person, not just admins. The behavior is also encoded in `permissions.md` §6 for runtime use.
 5. **Flexible identifier capture.** Phase 3 Q3 now accepts whichever identifier the admin has handy (Slack handle, @-mention, or motionapp.com email) instead of demanding both. Missing identifiers fill in on first message.
 6. **Phase 4 readback shows per-space writer attribution.** Instead of an aggregate summary, the readback lists each space and its writers by name. Wrong attribution becomes easy to spot.
 7. **Fast path for pragmatic admins.** Phase 3 detects "keep it simple" signals (solo, small team, skip questions, just defaults) and offers a one-space deployment without running the full conversation.

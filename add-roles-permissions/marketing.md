@@ -1,6 +1,6 @@
 ---
-hero_headline: "Lock the things only certain people should change."
-hero_subhead: "Tell Runneth what shouldn't get casually edited and who owns it. It locks those areas, routes any change requests through your approval channel, and stamps every save so you always see who wrote what."
+hero_headline: "Decide who can change what Runneth knows and how it behaves."
+hero_subhead: "Out of the box, anyone the team trusts to chat with Runneth can also edit anything Runneth knows. That includes the context Runneth references and the rules for how it behaves for everyone on the team. Most teams don't realize this until something gets accidentally changed. This skill lets you choose what gets protected and who is allowed to change each protected area."
 install_time: "~5 minutes"
 requires: "Nothing"
 ---
