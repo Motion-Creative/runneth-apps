@@ -260,3 +260,16 @@ export const getFilesByIds = (
     submission_id: number
   }>
 }
+
+
+// Wipe everything. Returns counts. Used by the admin wipe endpoint only.
+export const wipeAllSubmissions = (): { submissions: number; files: number } => {
+  const tx = db.transaction(() => {
+    const fileCount = (db.prepare('SELECT COUNT(*) AS n FROM brain_submission_files').get() as { n: number }).n
+    const subCount = (db.prepare('SELECT COUNT(*) AS n FROM brain_submissions').get() as { n: number }).n
+    db.exec('DELETE FROM brain_submission_files; DELETE FROM brain_submissions;')
+    db.exec("DELETE FROM sqlite_sequence WHERE name IN ('brain_submissions','brain_submission_files');")
+    return { submissions: subCount, files: fileCount }
+  })
+  return tx()
+}

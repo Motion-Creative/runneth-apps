@@ -54,9 +54,11 @@ import {
   getFileBytes,
   getFilesByIds,
   countSubmissionsByCsm,
+  wipeAllSubmissions,
   dbPath as brainSubmissionsDbPath,
 } from './brain-submissions-db.js'
 import { renderDashboard } from './brain-submissions-dashboard.js'
+import { resolveCsmFromHubSpot } from './brain-csm-resolver.js'
 import { SLUG_RE, hashIp, validateFlag, validateReview } from './reviews.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -364,6 +366,22 @@ server.post('/api/brain-checklist', async (req, reply) => {
   }
   const logInfo = (msg: string): void => server.log.info(msg)
 
+  // HubSpot ownership lookup. If the contact email's company has a CSM in
+  // HubSpot that matches our roster, that wins over the URL-suggested CSM.
+  // This is best-effort: any failure leaves the URL-provided handle in place.
+  const csmFromUrl = csmHandle
+  const hubspotResult = await resolveCsmFromHubSpot(contactEmail, logInfo)
+  if (hubspotResult.ok) {
+    csmHandle = hubspotResult.handle
+    if (csmHandle !== csmFromUrl) {
+      logInfo(`[brain-checklist] CSM resolved via HubSpot: ${csmHandle} (URL said ${csmFromUrl})`)
+    } else {
+      logInfo(`[brain-checklist] CSM confirmed via HubSpot: ${csmHandle}`)
+    }
+  } else {
+    logInfo(`[brain-checklist] HubSpot lookup did not resolve a CSM (${hubspotResult.reason}); keeping URL handle ${csmFromUrl}`)
+  }
+
   // Persist before any delivery so the dashboard always has the record even
   // if Slack or email is temporarily misconfigured.
   try {
@@ -452,6 +470,23 @@ const checkDashboardAuth = (req: { query: unknown; headers: Record<string, unkno
   const candidates = [queryToken, headerToken, bodyToken].filter((x): x is string => typeof x === 'string' && x.length > 0)
   return candidates.some((t) => t === BRAIN_DASHBOARD_TOKEN)
 }
+
+// Admin endpoint to clear all submissions. Useful for cleaning up after
+// development churn. Requires the dashboard token plus an explicit
+// confirm=yes guard so it never fires by accident.
+server.delete('/api/brain-submissions/all', async (req, reply) => {
+  if (!checkDashboardAuth(req)) {
+    reply.code(401)
+    return { error: 'unauthorized' }
+  }
+  const q = req.query as { confirm?: string }
+  if (q.confirm !== 'yes') {
+    reply.code(400)
+    return { error: 'missing_confirmation', message: 'Append ?confirm=yes to wipe all submissions.' }
+  }
+  const result = wipeAllSubmissions()
+  return { ok: true, deletedSubmissions: result.submissions, deletedFiles: result.files }
+})
 
 server.get('/brain-submissions', async (req, reply) => {
   if (!checkDashboardAuth(req)) {
