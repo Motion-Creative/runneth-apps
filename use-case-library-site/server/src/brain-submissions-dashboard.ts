@@ -41,9 +41,49 @@ const SECTION_LABELS: Record<string, string> = {
   other: 'Anything else',
 }
 
-export const renderDashboard = (submissions: StoredSubmission[], token: string): string => {
+const CSM_DISPLAY_NAME: Record<string, string> = {
+  ale: 'Ale',
+  aoife: 'Aoife',
+  carissa: 'Carissa',
+  josh: 'Josh',
+  krishna: 'Krishna',
+  quinn: 'Quinn',
+  rabia: 'Rabia',
+  sophia: 'Sophia',
+  unassigned: 'Unassigned',
+}
+
+export type DashboardInput = {
+  submissions: StoredSubmission[]
+  counts: Record<string, number>
+  activeCsm: string
+  roster: readonly string[]
+  token: string
+}
+
+export const renderDashboard = (input: DashboardInput): string => {
+  const { submissions, counts, activeCsm, roster, token } = input
   const totalFiles = submissions.reduce((acc, s) => acc + s.file_count, 0)
   const totalBytes = submissions.reduce((acc, s) => acc + s.total_bytes, 0)
+  const grandTotal = Object.values(counts).reduce((a, b) => a + b, 0)
+
+  const tabHref = (csm: string): string => {
+    const params = new URLSearchParams({ token })
+    if (csm !== 'all') params.set('csm', csm)
+    return `/brain-submissions?${params.toString()}`
+  }
+
+  const tabs = [
+    { key: 'all', label: 'All', count: grandTotal },
+    ...roster.map((c) => ({ key: c, label: CSM_DISPLAY_NAME[c] || c, count: counts[c] || 0 })),
+    { key: 'unassigned', label: 'Unassigned', count: counts['unassigned'] || 0 },
+  ]
+
+  const tabsHtml = tabs.map((t) => {
+    const isActive = t.key === activeCsm
+    const cls = 'csm-tab' + (isActive ? ' active' : '')
+    return `<a class="${cls}" href="${tabHref(t.key)}">${esc(t.label)}<span class="count">${t.count}</span></a>`
+  }).join('')
 
   const subRows = submissions
     .map((s) => {
@@ -126,6 +166,12 @@ export const renderDashboard = (submissions: StoredSubmission[], token: string):
   .btn-primary:disabled{opacity:0.4;cursor:not-allowed}
   .btn-secondary{background:white;border:1px solid var(--gray-6);color:var(--gray-12)}
   .btn-secondary:hover{background:var(--gray-3)}
+  .csm-tabs{background:white;border-bottom:1px solid var(--gray-6);padding:0 32px;display:flex;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .csm-tab{display:inline-flex;align-items:center;gap:8px;padding:14px 16px;font-size:13px;font-weight:500;color:var(--gray-11);text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap;transition:color 0.15s,border-color 0.15s}
+  .csm-tab:hover{color:var(--gray-12)}
+  .csm-tab.active{color:var(--gray-12);font-weight:600;border-bottom-color:var(--gray-12)}
+  .csm-tab .count{background:var(--gray-3);color:var(--gray-11);font-size:11px;font-weight:500;padding:1px 7px;border-radius:100px;min-width:18px;text-align:center}
+  .csm-tab.active .count{background:var(--green-soft);color:var(--green-text);font-weight:600}
   .submission{background:white;border:1px solid var(--gray-6);border-radius:14px;padding:24px 28px;margin-bottom:14px}
   .submission-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
   .submission-head h3{font-size:17px;font-weight:600;letter-spacing:-0.013em;margin-bottom:4px}
@@ -161,12 +207,14 @@ export const renderDashboard = (submissions: StoredSubmission[], token: string):
         <div class="sub">From the customer-facing brain checklist at <a href="/how-to-build-the-brain" style="color:var(--green);text-decoration:none">/how-to-build-the-brain</a></div>
       </div>
       <div class="stats">
-        <div class="stat"><strong>${submissions.length}</strong> submission${submissions.length === 1 ? '' : 's'}</div>
+        <div class="stat"><strong>${submissions.length}</strong> submission${submissions.length === 1 ? '' : 's'}${activeCsm !== 'all' ? ' from ' + esc(CSM_DISPLAY_NAME[activeCsm] || activeCsm) : ''}</div>
         <div class="stat"><strong>${totalFiles}</strong> file${totalFiles === 1 ? '' : 's'}</div>
         <div class="stat"><strong>${fmtBytes(totalBytes)}</strong> total</div>
       </div>
     </div>
   </header>
+
+  <nav class="csm-tabs">${tabsHtml}</nav>
 
   <div class="container">
     <div class="toolbar">

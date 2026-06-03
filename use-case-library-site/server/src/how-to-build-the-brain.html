@@ -442,7 +442,7 @@
 
         <div class="who-card">
           <h4>Tell us where to send this</h4>
-          <p class="who-sub">So we route the docs into your workspace and loop your CSM in.</p>
+          <p class="who-sub" id="who-sub-text">So we route the docs into your workspace and loop your CSM in.</p>
           <div class="field-row">
             <div class="field">
               <label for="ws_name">Workspace or brand name <span class="req">*</span></label>
@@ -453,6 +453,7 @@
               <input type="email" id="ws_email" name="contact_email" required placeholder="you@yourcompany.com" />
             </div>
           </div>
+          <input type="hidden" id="csm_handle" name="csm_handle" value="" />
         </div>
 
         <!-- 1. Brand context -->
@@ -675,6 +676,17 @@
   </footer>
 
   <script>
+    // CSM handle, injected by the server when the page is requested under /how-to-build-the-brain/<csm>.
+    /* __CSM_INJECT__ */
+    if (typeof window.__CSM__ === 'string' && window.__CSM__.length > 0) {
+      const handle = window.__CSM__;
+      const input = document.getElementById('csm_handle');
+      if (input) input.value = handle;
+      const csmLabel = handle.charAt(0).toUpperCase() + handle.slice(1);
+      const sub = document.getElementById('who-sub-text');
+      if (sub) sub.innerHTML = 'You\'re working with <strong>' + csmLabel + '</strong> at Runneth. We\'ll route everything you upload to them directly.';
+    }
+
     // Tab switching
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanels = document.querySelectorAll('.tab-panel');
