@@ -49,7 +49,7 @@ Store this as `WORKSPACE_SLUG` for all brain paths below.
 
 ### 1b. Load inspo brands
 
-Read `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json`.
+Read `/agent/brain/competition/{{WORKSPACE_SLUG}}/inspoBrands.json`.
 
 If the file is missing or `brands` is empty, halt and invoke `setup-competitor-intel`:
 > "Your competitor inspo brands file isn't configured yet. Let me set that up first."
@@ -74,13 +74,13 @@ Used for competitive comparison framing ("they're messaging X, we message Y").
 ### 1d. Load baselines
 
 For each brand in the inspo brands file, look for:
-`/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/{brand-slug}.json`
+`/agent/brain/competition/{{WORKSPACE_SLUG}}/baselines/{brand-slug}.json`
 
 Track which brands have an existing baseline (delta run) vs which are first runs (baseline-only).
 
 ### 1e. Load Slack config
 
-Read `slackChannelId` from `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json`.
+Read `slackChannelId` from `/agent/brain/competition/{{WORKSPACE_SLUG}}/inspoBrands.json`.
 If missing, post the report as a thread reply and note that Slack delivery isn't configured.
 
 ---
@@ -231,7 +231,7 @@ Load `baselines/{brand-slug}.json`. Compare:
 
 ## Phase 5 — Own-brand self-benchmark
 
-Read `ownBrandId` from `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json`.
+Read `ownBrandId` from `/agent/brain/competition/{{WORKSPACE_SLUG}}/inspoBrands.json`.
 
 If `ownBrandId` is null or missing, skip this phase and note in the report that own-brand
 comparison is unavailable. To enable it, re-run `setup-competitor-intel` — it will search
@@ -381,7 +381,7 @@ conversation.
 
 After the report is delivered, write the new baseline for each scanned competitor.
 
-**Baseline file path:** `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/{brand-slug}.json`
+**Baseline file path:** `/agent/brain/competition/{{WORKSPACE_SLUG}}/baselines/{brand-slug}.json`
 
 **Baseline schema:**
 ```json

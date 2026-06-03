@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "competitor-intel",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Weekly competitive intelligence scan. Tracks competitor ad strategies, spots messaging shifts and new bets, diffs against last week's baseline, and posts a delta report to Slack automatically every Monday.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -24,7 +24,7 @@
     },
     {
       "token": "WORKSPACE_SLUG",
-      "description": "URL-safe version of the workspace name \u2014 lowercase, hyphens for spaces. Derived at install time from WORKSPACE_NAME. Used as the folder name under /agent/brain/competitor-intel/.",
+      "description": "URL-safe version of the workspace name \u2014 lowercase, hyphens for spaces. Derived at install time from WORKSPACE_NAME. Used as the folder name under /agent/brain/competition/.",
       "required": true,
       "fallback": null
     }
@@ -32,13 +32,13 @@
   "installs": [
     {
       "from": "seed/inspoBrands.json",
-      "to": "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json",
+      "to": "/agent/brain/competition/{{WORKSPACE_SLUG}}/inspoBrands.json",
       "on_exists": "skip",
       "purpose": "Empty inspoBrands seed. Populated by setup-competitor-intel on first run."
     },
     {
       "from": "seed/baselines/.gitkeep",
-      "to": "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/.gitkeep",
+      "to": "/agent/brain/competition/{{WORKSPACE_SLUG}}/baselines/.gitkeep",
       "on_exists": "skip",
       "purpose": "Creates the baselines directory. Baseline files are written here by each scan run."
     },
@@ -53,6 +53,12 @@
       "to": "/agent/.agents/skills/setup-competitor-intel/SKILL.md",
       "on_exists": "overwrite",
       "purpose": "Setup and reconfiguration skill. Runs on first install; re-invokable any time."
+    },
+    {
+      "file": "migration-helper.sh",
+      "dest": "/agent/brain/admin/competitor-intel-migration-helper.sh",
+      "if-not-exists": true,
+      "chmod": "0755"
     }
   ],
   "post_install": [
@@ -75,6 +81,12 @@
     "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/{brand-slug}.json"
   ],
   "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2026-06-02",
+      "type": "minor",
+      "notes": "Path migration. Brain data write path moves from /agent/brain/competitor-intel/<workspace-slug>/ to /agent/brain/competition/<workspace-slug>/ so competitor watch output sits inside the Competition brain domain instead of a sibling root. Aligns with brain-onboard's ten-domain layout. The skill install path stays at /agent/.agents/skills/competitor-intel/ \u2014 only the brain data path moves. Includes migration-helper.sh that detects /agent/brain/competitor-intel/ on existing installs, moves contents to /agent/brain/competition/ preserving accumulated weekly snapshots and baselines, and leaves a 30-day stub at the old path. No behavior changes to the weekly run itself."
+    },
     {
       "version": "1.0.1",
       "date": "2026-05-21",

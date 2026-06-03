@@ -18,8 +18,8 @@ Install time: ~2 minutes. No upstream use cases required.
 |------|-------------|-----------|
 | `SKILL.md` | `/agent/.agents/skills/competitor-intel/SKILL.md` | Overwrite |
 | `setup-competitor-intel/SKILL.md` | `/agent/.agents/skills/setup-competitor-intel/SKILL.md` | Overwrite |
-| `seed/inspoBrands.json` | `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json` | Skip |
-| `seed/baselines/.gitkeep` | `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/.gitkeep` | Skip |
+| `seed/inspoBrands.json` | `/agent/brain/competition/{{WORKSPACE_SLUG}}/inspoBrands.json` | Skip |
+| `seed/baselines/.gitkeep` | `/agent/brain/competition/{{WORKSPACE_SLUG}}/baselines/.gitkeep` | Skip |
 
 Post-install: the `setup-competitor-intel` skill runs automatically to configure the watchlist,
 Slack channel, and weekly schedule.
@@ -38,9 +38,9 @@ cp setup-competitor-intel/SKILL.md /agent/.agents/skills/setup-competitor-intel/
 
 # 2. Seed the brain directory (replace {{WORKSPACE_SLUG}} with the actual slug)
 WORKSPACE_SLUG="your-workspace-slug"
-mkdir -p /agent/brain/competitor-intel/${WORKSPACE_SLUG}/baselines
-[ -f /agent/brain/competitor-intel/${WORKSPACE_SLUG}/inspoBrands.json ] || \
-  cp seed/inspoBrands.json /agent/brain/competitor-intel/${WORKSPACE_SLUG}/inspoBrands.json
+mkdir -p /agent/brain/competition/${WORKSPACE_SLUG}/baselines
+[ -f /agent/brain/competition/${WORKSPACE_SLUG}/inspoBrands.json ] || \
+  cp seed/inspoBrands.json /agent/brain/competition/${WORKSPACE_SLUG}/inspoBrands.json
 
 # 3. Post-install: invoke setup
 # Say "set up competitor watch" in chat, or Runneth will prompt you automatically.
@@ -76,7 +76,7 @@ Second run onward produces the weekly delta intelligence.
 ## What this creates at runtime
 
 ```
-/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/
+/agent/brain/competition/{{WORKSPACE_SLUG}}/
   inspoBrands.json                    — saved brands, Slack config, schedule
   baselines/
     {brand-slug}.json               — weekly snapshot per competitor (overwritten each run)
@@ -119,13 +119,13 @@ The skill runs automatically on the scheduled reminder. It also fires on explici
 
 On every scheduled or triggered run, Runneth:
 
-1. Reads `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json` for brand IDs and config
+1. Reads `/agent/brain/competition/{{WORKSPACE_SLUG}}/inspoBrands.json` for brand IDs and config
 2. Runs `motion workspace-goal` to resolve workspace context
 3. Runs `motion inspo-creatives --brand-id {id} --status active --sort newestLaunchDate --limit 150` for each brand
 4. Runs the same call with `--sort oldestLaunchDate` and merges by creative ID
 5. Runs `motion inspo-creatives --brand-id {id} --status inactive --sort newestLaunchDate --limit 150` for recently killed ads
 6. Runs `motion inspo-context --brand-id {id}` for brand context
-7. Loads baseline from `/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/{slug}.json`
+7. Loads baseline from `/agent/brain/competition/{{WORKSPACE_SLUG}}/baselines/{slug}.json`
 8. Computes survival cohorts, messaging themes, test clusters, and delta vs baseline
 9. Writes the full report and Slack teaser to `./workdir/`
 10. Posts to Slack via `slack send` (teaser to channel, full report as thread reply)
