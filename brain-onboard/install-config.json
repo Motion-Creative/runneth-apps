@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.3.0",
+      "date": "2026-06-03",
+      "type": "minor",
+      "notes": "Six changes: (1) Add Step 1.5 \u2014 explicit install of bundled skills from _skills/. (2) Add fourth install-state case to Step 3.5: _state.json present but content lacks frontmatter triggers upgrade-safe path (surfaced by Printfresh install). (3) Make _changelog.md write requirement explicit in Step 4 with format example. (4) Add Brand domain products/ substructure: per-product spec.md, claims.md, catalogue README with sources from brand-audit, web crawl, HubSpot, Shopify. (5) Add Customers domain substructure: personas/<slug>.md per persona, reviews/by-source/by-product/by-theme/, ad-comments/by-creative/by-theme/ with top-20 sampling and volume management. (6) Add Performance domain aggregations: by-hook-tactic, by-hook-voice, by-visual-format, by-messaging-angle, by-persona, by-awareness-stage using motion ai-glossary tags joined to motion meta/tiktok insights."
+    },
     {
       "version": "1.2.0",
       "date": "2026-06-03",
