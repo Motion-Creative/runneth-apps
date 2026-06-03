@@ -91,7 +91,7 @@ These hold for every install. Apply them whenever the skill runs.
    prompts, not a data-readback. "Here's what you can do now" beats "here's
    what we pulled."
 
-## The 10 brain domains
+## The 10 brain domains + signals layer
 
 1. **Identity** — team roster, roles, working style. Per-person scope at `identity/people/<handle>/`.
 2. **Brand** — positioning, voice, voice rules, products. Structured product catalogue at `brand/products/<product-slug>/spec.md` with materials, price, sizes, claims, photos, status.
@@ -112,6 +112,10 @@ These hold for every install. Apply them whenever the skill runs.
 8. **Library** — brand kit, templates, brief library, asset inventory
 9. **Knowledge** — decisions made, tests run, lessons, terminology
 10. **Preferences** — how the team and individuals want Runneth to behave
+
+Plus a **signals layer** that sits as a sibling to the ten domains:
+
+**`signals/`** — forward-looking intelligence. Cross-domain whitespace, gaps, and opportunities derived from synthesis findings. Read by the briefing chain when the team requests a brief; updated by refresh routines week over week. Eight standard files documented in Step 4.X.
 
 ## Step 1 — Find and stage the package
 
@@ -452,6 +456,183 @@ For domains where the data clearly maps, write durable facts with source pills.
 For domains where the data is thin, write what's there and explicitly note what's
 missing so the welcome card can ask about it.
 
+## Step 4.X — Populate the signals layer
+
+After the ten brain domains synthesize, derive the signals layer at `/agent/brain/signals/`. This is forward-looking intelligence: whitespace, gaps, untested opportunities. The team reads these when requesting briefs; routines update them week over week.
+
+### Where schemas live
+
+**Schemas are canonical and live in the GitHub repo**, not in this skill. Clone them at install time:
+
+```bash
+cd /tmp && rm -rf signal-schemas
+git clone --depth 1 https://x-access-token:$(secret env CUSTOMER_BRAIN_READ_PAT)@github.com/Motion-Creative/customer_brain.git signal-schemas-repo
+cp -r signal-schemas-repo/_signals-schemas /tmp/signal-schemas
+```
+
+The repo holds two layers:
+
+1. **`_signals-schemas/` (canonical)** — eight standard signal types every brand can have. JSON Schemas for shape, `<signal>.population.md` for the rule that derives content.
+2. **`<customer-slug>/_signals-custom/` (per-customer)** — optional extension schemas the CSM added for this specific customer (e.g., material-trend-gaps for an apparel brand, buying-committee-gaps for B2B SaaS). Same schema + population.md format.
+
+Read both. Custom schemas extend canonical; they don't replace.
+
+### Why schemas in repo, populated content local
+
+Schemas are brand-agnostic — same shape for every install. Keeping them in the repo means:
+
+- One source of truth for all customers
+- New canonical signal types ship via PR to the repo, not via brain-onboard upgrade
+- Custom signal types per customer use the same schema discipline
+- Customer Runneths get schema updates automatically on next refresh
+
+Populated signals stay local at `/agent/brain/signals/`. They don't push back to the repo because customer Runneths only have read access. The CSM checks customer signal state by asking Runneth, not by browsing the repo.
+
+The signals/ directory always contains one populated file per schema (canonical + custom). If a signal can't be populated because upstream brain content is too sparse, write the file with `items: []` and `_meta.population_status: empty-needs-upstream-content`.
+
+### Directory layout
+
+```
+brain/signals/
+├── README.md                  # overview, signal counts, last-refreshed dates
+├── format-gaps.json           # product × format whitespace
+├── audience-gaps.json         # untargeted audience segments × product fits
+├── inspo-steals.json          # competitor angles not in own rotation
+├── seasonal-whitespace.json   # upcoming occasions with no creative coverage
+├── review-requests.json       # customer asks from VoC mining
+├── organic-paid-gaps.json     # organic themes absent from paid rotation
+├── hook-vocabulary.json       # competitor language territories not in own copy
+├── graveyard-candidates.json  # paused concepts worth reconsidering
+└── _changelog.md
+```
+
+### Common file frontmatter (`_meta` block on every JSON)
+
+```json
+{
+  "_meta": {
+    "domain": "signals",
+    "ownership": "system",
+    "substance": "patterns",
+    "managed_by": "brain-onboard (initial) / <refresh-routine> (ongoing)",
+    "sources": [{ "layer": "synthesis", "ref": "<brain content read to derive this>" }],
+    "refresh_cadence": "weekly",
+    "last_refreshed": "<iso>",
+    "confidence": "<high | medium | low>",
+    "population_status": "<populated | partial | empty-needs-upstream-content>",
+    "population_status_reason": "<why empty if applicable, e.g. 'no competitors confirmed yet'>"
+  },
+  "items": [ ... ]
+}
+```
+
+### Population rules per file (brand-agnostic logic, brand-specific output)
+
+Each signal file has a deterministic population rule. brain-onboard runs the rule against the brand's actual synthesized content. The rule produces brand-specific items.
+
+**Read the rules from `_signals-schemas/<signal>.population.md` in the repo.** The eight canonical population rules summarized below; see the repo for full detail and any custom rules added per customer.
+
+**1. `format-gaps.json` — product × format whitespace**
+
+- **Reads:** `brand/products/<slug>/spec.md` (all products) + `performance/by-visual-format.md` (proven formats by ROAS/CTR)
+- **Rule:** For each product with spend ≥ $500 in last 90 days, identify proven formats it has never been tested in. A "proven format" is any visual format in `performance/by-visual-format.md` ranked in the top quartile by primary KPI account-wide.
+- **Item shape:** `{ product_slug, product_name, untested_formats: [{ format, account_kpi, account_spend, why_brief_worthy }], priority: high|medium|low }`
+- **Brand-agnostic:** the cross-reference logic is identical for any brand. Printfresh produces prints × formats; an apparel brand produces SKUs × formats; a wellness brand produces products × formats.
+
+**2. `audience-gaps.json` — untargeted audience segments × product fits**
+
+- **Reads:** motion ai-glossary audience taxonomy + `performance/by-persona.md` + `brand/products/`
+- **Rule:** Pull every Intended Audience value from `motion ai-glossary`. Cross-reference against audience tags appearing in active creative (from `motion meta insights` glossary tags). Surface audiences with **zero** active creative in the last 60 days that have a clear product fit (intersection with `brand/products/` keywords).
+- **Item shape:** `{ audience_segment, product_fits: [product_slugs], creative_gap_days, why_brief_worthy }`
+- **Brand-agnostic:** the gap detection logic is identical. Brand-specific audiences emerge from the glossary.
+
+**3. `inspo-steals.json` — competitor angles not in own rotation**
+
+- **Reads:** `competition/<brand-slug>/active-ads.md` (all confirmed competitors) + `performance/by-messaging-angle.md` + `performance/by-hook-tactic.md`
+- **Rule:** For each watched competitor, extract messaging angles and hook tactics from their active ads (using motion ai-glossary tags on inspo creatives). Identify angles or tactics appearing in **2+ competitors** that are absent from own active creative.
+- **Item shape:** `{ angle_or_tactic, used_by_competitors: [brand_slugs], not_in_own_creative_since: iso_or_never, why_brief_worthy }`
+- **Brand-agnostic:** works for any brand with named competitors and inspo creative pulls.
+
+**4. `seasonal-whitespace.json` — upcoming occasions with no creative coverage**
+
+- **Reads:** `calendar/` + `performance/top-creatives.md`
+- **Rule:** For each known upcoming launch, seasonal moment, or operating rhythm in `calendar/` within the next 90 days, check if creative has been briefed (presence in `performance/top-creatives.md` or in active spend within the relevant window). Flag moments with no creative coverage.
+- **Item shape:** `{ occasion, date, days_until, creative_status: "none"|"partial"|"covered", urgency: high|medium|low, suggested_anchor_products: [slugs] }`
+- **Brand-agnostic:** works for any brand with calendar content. Empty if calendar domain is sparse.
+
+**5. `review-requests.json` — customer asks from VoC mining**
+
+- **Reads:** `customers/reviews/raw/<source>.json` (all raw review data)
+- **Rule:** Pattern-match review verbatims for explicit asks. Common patterns: "I wish you had X," "I would buy X if," "please make X," "why don't you have X," "I'm looking for X." Cluster matches into themes. Surface themes with ≥3 mentions.
+- **Item shape:** `{ ask_theme, verbatim_examples: [up to 5], mention_count, related_product_slugs, gap_type: product|silhouette|use-case|seasonal|other }`
+- **Brand-agnostic:** the pattern-matching is identical across brands. Empty if no review source is wired.
+
+**6. `organic-paid-gaps.json` — organic themes absent from paid rotation**
+
+- **Reads:** `_sources/apify/instagram.json` + `_sources/apify/tiktok.json` (organic content) + `performance/by-messaging-angle.md`
+- **Rule:** Tag organic posts with motion ai-glossary messaging angles. For each organic angle with engagement above brand-account median, check if that angle has any active paid creative. Surface angles performing organically but absent from paid.
+- **Item shape:** `{ messaging_angle, organic_engagement_signal, top_organic_examples: [post_urls], paid_status: "no-active-creative", why_brief_worthy }`
+- **Brand-agnostic:** works for any brand with organic content pulled via Apify.
+
+**7. `hook-vocabulary.json` — competitor language territories not in own copy**
+
+- **Reads:** `competition/<brand-slug>/active-ads.md` (competitor ad copy) + `performance/top-creatives.md` (own ad copy)
+- **Rule:** Extract distinctive language patterns from competitor ad copy: nouns repeated across multiple ads of the same competitor, verbs/adjectives used by 2+ competitors, sensory or emotional language territories. Compare against own active creative copy. Surface language territories present in competitors but absent from own.
+- **Item shape:** `{ language_territory, competitor_examples: [{ brand, ad_copy_excerpt }], not_in_own_copy: true, sample_application: "how this could be brief-worthy" }`
+- **Brand-agnostic:** linguistic comparison logic is identical across brands.
+
+**8. `graveyard-candidates.json` — paused concepts worth reconsidering**
+
+- **Reads:** `_sources/motion/creative-cache.json` (historical creatives, including paused) + `performance/top-creatives.md` (current active)
+- **Rule:** From the historical creative cache, identify ads with strong historical performance (top quartile by primary KPI when active) that have been inactive for ≥45 days. For each, infer pause reason (fatigue, seasonal, audience shift, replaced by similar) and suggest resurrection conditions.
+- **Item shape:** `{ creative_id, creative_summary, paused_since, historical_kpi, inferred_pause_reason, resurrection_conditions: "what would have to be true to relaunch" }`
+- **Brand-agnostic:** works for any brand with sufficient performance history.
+
+### Population status semantics
+
+Every signal file declares its population status in `_meta`:
+
+- `populated` — file has items derived from sufficient brain content
+- `partial` — some upstream content available, more would help (e.g., 1 competitor confirmed but the rule expects ≥2 for inspo-steals)
+- `empty-needs-upstream-content` — upstream brain content too sparse to derive signals (e.g., no review source wired, so review-requests can't be populated)
+
+When the team triggers a brief, the briefing chain reads only files with status `populated` or `partial`. Empty files are surfaced in the welcome card and the onboarding checklist as "Connect <source> to unlock <signal>".
+
+### Refresh
+
+Signals/ updates on the same cadence as the underlying brain content:
+
+- Per-routine: if `competitor-intel` runs weekly, `inspo-steals.json` and `hook-vocabulary.json` re-derive at the end of that routine
+- Per-routine: if `weekly-performance-refresh` runs, `format-gaps.json` and `graveyard-candidates.json` re-derive
+- Per-routine: if `review-refresh` runs, `review-requests.json` re-derives
+- On-demand: any team member can ask "refresh signals" and Runneth re-derives all signals (canonical + custom) from current brain content
+
+Every refresh re-clones schemas from `_signals-schemas/` so the customer Runneth picks up new canonical schemas, schema updates, or custom schemas the CSM added since the last refresh.
+
+### `signals/README.md` overview
+
+Written by brain-onboard at install. Lists the eight files with counts, last-refreshed timestamps, and population status. Format:
+
+```markdown
+# Signals overview
+
+Forward-looking intelligence derived from synthesis. Read by the briefing chain.
+
+| File | Items | Status | Last refreshed |
+|---|---|---|---|
+| format-gaps.json | 12 | populated | <iso> |
+| audience-gaps.json | 0 | empty-needs-upstream-content | <iso> |
+| ... |
+
+Connect the missing sources to unlock empty signal files. See `/agent/brain/onboarding-checklist.md`.
+```
+
+### Briefing chain integration
+
+When the team requests a brief (via runneth-classic's briefing chain or any other brief generation flow), Step 1.5 of the briefing chain reads all populated signal files and selects the 1-3 most brief-changing items relevant to the brief target. The brief that comes back reflects what hasn't been tested, what customers are asking for, and what competitors are doing that the team isn't.
+
+This is the architectural shift Rachel codified during the Printfresh pilot: routines write signals, briefs are human-initiated, and Runneth pulls signals as inputs every time. The brain gets smarter every week not because routines write briefs, but because the signal state of the world is current.
+
 ## Step 5 — Update INDEX.md
 
 Append entries to `/agent/INDEX.md` for each domain doc written, so future
@@ -502,6 +683,10 @@ Structure:
    - **Knowledge:** glossary term count, decisions surfaced from conversation
      history
    - **Preferences:** empty on day one — grows as the team gives feedback
+
+   Plus a **Signals** section sitting alongside (not inside) the ten domains:
+
+   - **Signals:** N opportunities surfaced across the eight signal files (format-gaps, audience-gaps, inspo-steals, seasonal-whitespace, review-requests, organic-paid-gaps, hook-vocabulary, graveyard-candidates). Headline: total item count + count of files that are empty pending upstream content. End with `/agent/brain/signals/`.
 
    Each domain section ends with a 1-line link or path so the team knows
    where to look: "Full content at `/agent/brain/<domain>/`".
