@@ -1,6 +1,8 @@
-# add-roles-permissions
+# customize-write-access
 
-Locks the areas of a team's Runneth brain that should only be edited by certain people. Routes blocked-edit requests through an approval channel. Stamps every save with the writer's handle.
+Most teams don't realize this until something gets accidentally changed: out of the box, anyone the team trusts to chat with Runneth can also edit anything Runneth knows. That includes both the context Runneth references in conversations (brand context, customer research, strategy docs) and the rules for how Runneth behaves on every conversation (the team's saved instructions and any other files Runneth automatically reads at the start of every conversation).
+
+This skill lets an admin decide what gets locked down and who is allowed to change each locked area.
 
 The skill is built from six primitives. The install conversation discovers which of them the org actually needs; nothing gets written until the admin confirms the plan in plain language.
 
@@ -103,7 +105,7 @@ Safe to re-run. Specifically:
 
 **v2.x with `workspace-map.json`** (pre-PR-#98): Phase 1 detects the file; Phase 5 renames it to `organization-map.json` and carries entries forward.
 
-**v1** (`user_mode.md` present, flat `/agent/brain/users/<handle>/` structure): identity migration, folder migration (`/agent/brain/users/` → `/agent/brain/members/`), `permissions.md` regenerated. Each step explicit, with admin confirmation.
+**v1** (`user_mode.md` present, flat `/agent/brain/users/<handle>/` structure): identity migration, folder migration (`/agent/brain/users/` → `/agent/brain/team/`), `permissions.md` regenerated. Each step explicit, with admin confirmation.
 
 ---
 
