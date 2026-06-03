@@ -37,11 +37,13 @@ db.exec(`
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     workspace_name  TEXT    NOT NULL,
     contact_email   TEXT    NOT NULL,
+    csm_handle      TEXT    NOT NULL DEFAULT 'unassigned',
     sections_json   TEXT    NOT NULL,
     submitted_at    TEXT    NOT NULL,
     created_at      TEXT    NOT NULL DEFAULT (datetime('now'))
   );
   CREATE INDEX IF NOT EXISTS brain_submissions_created_at_idx ON brain_submissions(created_at);
+  CREATE INDEX IF NOT EXISTS brain_submissions_csm_idx ON brain_submissions(csm_handle);
 
   CREATE TABLE IF NOT EXISTS brain_submission_files (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,12 +59,20 @@ db.exec(`
     ON brain_submission_files(submission_id);
 `)
 
+// Migration: if csm_handle column is missing from an older DB, add it.
+const columns = db.prepare("PRAGMA table_info('brain_submissions')").all() as Array<{ name: string }>
+if (!columns.some((c) => c.name === 'csm_handle')) {
+  db.exec("ALTER TABLE brain_submissions ADD COLUMN csm_handle TEXT NOT NULL DEFAULT 'unassigned'")
+  db.exec('CREATE INDEX IF NOT EXISTS brain_submissions_csm_idx ON brain_submissions(csm_handle)')
+}
+
 export const dbPath = DB_PATH
 
 export type StoredSubmission = Readonly<{
   id: number
   workspace_name: string
   contact_email: string
+  csm_handle: string
   sections: ReadonlyArray<BrainChecklistSection>
   submitted_at: string
   created_at: string
@@ -80,8 +90,8 @@ export type StoredFile = Readonly<{
 }>
 
 const insertSubmission = db.prepare(`
-  INSERT INTO brain_submissions (workspace_name, contact_email, sections_json, submitted_at)
-  VALUES (@workspace_name, @contact_email, @sections_json, @submitted_at)
+  INSERT INTO brain_submissions (workspace_name, contact_email, csm_handle, sections_json, submitted_at)
+  VALUES (@workspace_name, @contact_email, @csm_handle, @sections_json, @submitted_at)
 `)
 
 const insertFile = db.prepare(`
@@ -92,6 +102,7 @@ const insertFile = db.prepare(`
 export const persistSubmission = (input: {
   workspaceName: string
   contactEmail: string
+  csmHandle: string
   sections: ReadonlyArray<BrainChecklistSection>
   files: ReadonlyArray<BrainChecklistFile>
   submittedAt: string
@@ -100,6 +111,7 @@ export const persistSubmission = (input: {
     const info = insertSubmission.run({
       workspace_name: input.workspaceName,
       contact_email: input.contactEmail,
+      csm_handle: input.csmHandle || 'unassigned',
       sections_json: JSON.stringify(input.sections),
       submitted_at: input.submittedAt,
     })
@@ -121,7 +133,7 @@ export const persistSubmission = (input: {
 
 const listSubmissionsStmt = db.prepare(`
   SELECT
-    s.id, s.workspace_name, s.contact_email, s.sections_json, s.submitted_at, s.created_at,
+    s.id, s.workspace_name, s.contact_email, s.csm_handle, s.sections_json, s.submitted_at, s.created_at,
     COALESCE(COUNT(f.id), 0) AS file_count,
     COALESCE(SUM(f.size_bytes), 0) AS total_bytes
   FROM brain_submissions s
@@ -131,32 +143,67 @@ const listSubmissionsStmt = db.prepare(`
   LIMIT ?
 `)
 
-export const listSubmissions = (limit = 200): StoredSubmission[] => {
-  const rows = listSubmissionsStmt.all(limit) as Array<{
-    id: number
-    workspace_name: string
-    contact_email: string
-    sections_json: string
-    submitted_at: string
-    created_at: string
-    file_count: number
-    total_bytes: number
-  }>
-  return rows.map((r) => ({
-    id: r.id,
-    workspace_name: r.workspace_name,
-    contact_email: r.contact_email,
-    sections: JSON.parse(r.sections_json) as BrainChecklistSection[],
-    submitted_at: r.submitted_at,
-    created_at: r.created_at,
-    file_count: r.file_count,
-    total_bytes: r.total_bytes,
-  }))
+const listSubmissionsByCsmStmt = db.prepare(`
+  SELECT
+    s.id, s.workspace_name, s.contact_email, s.csm_handle, s.sections_json, s.submitted_at, s.created_at,
+    COALESCE(COUNT(f.id), 0) AS file_count,
+    COALESCE(SUM(f.size_bytes), 0) AS total_bytes
+  FROM brain_submissions s
+  LEFT JOIN brain_submission_files f ON f.submission_id = s.id
+  WHERE s.csm_handle = ?
+  GROUP BY s.id
+  ORDER BY s.created_at DESC
+  LIMIT ?
+`)
+
+type RowShape = {
+  id: number
+  workspace_name: string
+  contact_email: string
+  csm_handle: string
+  sections_json: string
+  submitted_at: string
+  created_at: string
+  file_count: number
+  total_bytes: number
+}
+
+const rowToStored = (r: RowShape): StoredSubmission => ({
+  id: r.id,
+  workspace_name: r.workspace_name,
+  contact_email: r.contact_email,
+  csm_handle: r.csm_handle,
+  sections: JSON.parse(r.sections_json) as BrainChecklistSection[],
+  submitted_at: r.submitted_at,
+  created_at: r.created_at,
+  file_count: r.file_count,
+  total_bytes: r.total_bytes,
+})
+
+export const listSubmissions = (limit = 200, csmHandle?: string): StoredSubmission[] => {
+  if (csmHandle) {
+    return (listSubmissionsByCsmStmt.all(csmHandle, limit) as RowShape[]).map(rowToStored)
+  }
+  return (listSubmissionsStmt.all(limit) as RowShape[]).map(rowToStored)
+}
+
+// Count submissions per CSM for the dashboard tab badges.
+const countByCsmStmt = db.prepare(`
+  SELECT csm_handle, COUNT(*) AS n
+  FROM brain_submissions
+  GROUP BY csm_handle
+`)
+
+export const countSubmissionsByCsm = (): Record<string, number> => {
+  const rows = countByCsmStmt.all() as Array<{ csm_handle: string; n: number }>
+  const out: Record<string, number> = {}
+  for (const r of rows) out[r.csm_handle] = r.n
+  return out
 }
 
 const listSubmissionsSinceStmt = db.prepare(`
   SELECT
-    s.id, s.workspace_name, s.contact_email, s.sections_json, s.submitted_at, s.created_at,
+    s.id, s.workspace_name, s.contact_email, s.csm_handle, s.sections_json, s.submitted_at, s.created_at,
     COALESCE(COUNT(f.id), 0) AS file_count,
     COALESCE(SUM(f.size_bytes), 0) AS total_bytes
   FROM brain_submissions s
@@ -167,26 +214,7 @@ const listSubmissionsSinceStmt = db.prepare(`
 `)
 
 export const listSubmissionsSince = (sinceIso: string): StoredSubmission[] => {
-  const rows = listSubmissionsSinceStmt.all(sinceIso) as Array<{
-    id: number
-    workspace_name: string
-    contact_email: string
-    sections_json: string
-    submitted_at: string
-    created_at: string
-    file_count: number
-    total_bytes: number
-  }>
-  return rows.map((r) => ({
-    id: r.id,
-    workspace_name: r.workspace_name,
-    contact_email: r.contact_email,
-    sections: JSON.parse(r.sections_json) as BrainChecklistSection[],
-    submitted_at: r.submitted_at,
-    created_at: r.created_at,
-    file_count: r.file_count,
-    total_bytes: r.total_bytes,
-  }))
+  return (listSubmissionsSinceStmt.all(sinceIso) as RowShape[]).map(rowToStored)
 }
 
 const listFilesForSubmissionStmt = db.prepare(`

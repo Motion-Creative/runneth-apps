@@ -53,6 +53,7 @@ import {
   listFilesForSubmission,
   getFileBytes,
   getFilesByIds,
+  countSubmissionsByCsm,
   dbPath as brainSubmissionsDbPath,
 } from './brain-submissions-db.js'
 import { renderDashboard } from './brain-submissions-dashboard.js'
@@ -267,6 +268,7 @@ server.post('/api/brain-checklist', async (req, reply) => {
 
   let workspaceName = ''
   let contactEmail = ''
+  let csmHandle: string = 'unassigned'
   const contextByKey: Record<string, string> = {}
   const filesByKey: Record<string, BrainChecklistFile[]> = {}
   let totalBytes = 0
@@ -279,6 +281,11 @@ server.post('/api/brain-checklist', async (req, reply) => {
         const value = typeof part.value === 'string' ? part.value : ''
         if (name === 'workspace_name') workspaceName = value.trim().slice(0, 200)
         else if (name === 'contact_email') contactEmail = value.trim().slice(0, 200)
+        else if (name === 'csm_handle') {
+          const v = value.trim().toLowerCase().slice(0, 40)
+          if ((CSM_ROSTER as readonly string[]).includes(v)) csmHandle = v
+          else csmHandle = 'unassigned'
+        }
         else if (name.endsWith('_context')) {
           const key = name.slice(0, -'_context'.length)
           if (BRAIN_CHECKLIST_FIELD_KEYS.has(key)) {
@@ -363,11 +370,12 @@ server.post('/api/brain-checklist', async (req, reply) => {
     const subId = persistSubmission({
       workspaceName: submission.workspaceName,
       contactEmail: submission.contactEmail,
+      csmHandle,
       sections: submission.sections,
       files: submission.files,
       submittedAt: submission.submittedAt,
     })
-    server.log.info(`[brain-checklist] persisted submission ${subId}`)
+    server.log.info(`[brain-checklist] persisted submission ${subId} (csm=${csmHandle})`)
   } catch (err) {
     server.log.error({ err }, '[brain-checklist] persist failed')
   }
@@ -396,15 +404,33 @@ server.get('/one-pager/', async (_, reply) => {
   reply.header('cache-control', 'public, max-age=300')
   return ONE_PAGER_HTML
 })
-server.get('/how-to-build-the-brain', async (_, reply) => {
+// CSM roster — used to validate path params on /how-to-build-the-brain/:csm
+// and to render the dashboard tabs. Keep alphabetical.
+const CSM_ROSTER = ['ale', 'aoife', 'carissa', 'josh', 'krishna', 'quinn', 'rabia', 'sophia'] as const
+type CsmHandle = (typeof CSM_ROSTER)[number] | 'unassigned'
+
+const serveBrainGuide = (csm: string | null, reply: { header: (k: string, v: string) => unknown }): string => {
   reply.header('content-type', 'text/html; charset=utf-8')
   reply.header('cache-control', 'public, max-age=300')
-  return HOW_TO_BUILD_THE_BRAIN_HTML
-})
-server.get('/how-to-build-the-brain/', async (_, reply) => {
-  reply.header('content-type', 'text/html; charset=utf-8')
-  reply.header('cache-control', 'public, max-age=300')
-  return HOW_TO_BUILD_THE_BRAIN_HTML
+  if (!csm) return HOW_TO_BUILD_THE_BRAIN_HTML
+  // Inject the resolved CSM handle so the form picks it up via window.__CSM__.
+  // Done as a string replace on a known marker placed in the static HTML.
+  const safe = JSON.stringify(csm)
+  return HOW_TO_BUILD_THE_BRAIN_HTML.replace(
+    '/* __CSM_INJECT__ */',
+    `window.__CSM__ = ${safe};`,
+  )
+}
+
+server.get('/how-to-build-the-brain', async (_, reply) => serveBrainGuide(null, reply))
+server.get('/how-to-build-the-brain/', async (_, reply) => serveBrainGuide(null, reply))
+server.get<{ Params: { csm: string } }>('/how-to-build-the-brain/:csm', async (req, reply) => {
+  const csm = String(req.params.csm).toLowerCase()
+  if (!(CSM_ROSTER as readonly string[]).includes(csm)) {
+    // Unknown CSM → serve the page without a CSM injection so submission lands as unassigned.
+    return serveBrainGuide(null, reply)
+  }
+  return serveBrainGuide(csm, reply)
 })
 
 // Brain submissions dashboard + file download routes.
@@ -433,10 +459,20 @@ server.get('/brain-submissions', async (req, reply) => {
     reply.header('content-type', 'text/html; charset=utf-8')
     return '<html><body style="font-family:sans-serif;padding:40px;color:#171717"><h2>Unauthorized</h2><p>Append <code>?token=YOUR_TOKEN</code> to the URL.</p></body></html>'
   }
-  const submissions = listSubmissions(200)
+  const q = req.query as { csm?: string }
+  const csm = typeof q.csm === 'string' ? q.csm.toLowerCase() : ''
+  const validCsm = csm && ((CSM_ROSTER as readonly string[]).includes(csm) || csm === 'unassigned') ? csm : ''
+  const submissions = listSubmissions(200, validCsm || undefined)
+  const counts = countSubmissionsByCsm()
   reply.header('content-type', 'text/html; charset=utf-8')
   reply.header('cache-control', 'no-store')
-  return renderDashboard(submissions, BRAIN_DASHBOARD_TOKEN)
+  return renderDashboard({
+    submissions,
+    counts,
+    activeCsm: validCsm || 'all',
+    roster: CSM_ROSTER as readonly string[],
+    token: BRAIN_DASHBOARD_TOKEN,
+  })
 })
 
 server.get('/api/brain-submissions', async (req, reply) => {
@@ -444,8 +480,11 @@ server.get('/api/brain-submissions', async (req, reply) => {
     reply.code(401)
     return { error: 'unauthorized' }
   }
-  const since = (req.query as { since?: string }).since
-  const subs = since ? listSubmissionsSince(since) : listSubmissions(200)
+  const q = req.query as { since?: string; csm?: string }
+  const since = q.since
+  const csm = typeof q.csm === 'string' ? q.csm.toLowerCase() : ''
+  const validCsm = csm && ((CSM_ROSTER as readonly string[]).includes(csm) || csm === 'unassigned') ? csm : ''
+  const subs = since ? listSubmissionsSince(since) : listSubmissions(200, validCsm || undefined)
   return { submissions: subs }
 })
 
