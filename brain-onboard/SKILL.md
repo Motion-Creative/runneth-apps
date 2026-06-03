@@ -93,11 +93,20 @@ These hold for every install. Apply them whenever the skill runs.
 
 ## The 10 brain domains
 
-1. **Identity** — team roster, roles, working style
-2. **Brand** — positioning, voice, products, voice rules, what they stand for
-3. **Customers** — personas, pain language, transformation language, VoC verbatims
-4. **Competition** — competitors the team has named, with their active ads
-5. **Performance** — top creatives, account structure, KPIs, benchmarks
+1. **Identity** — team roster, roles, working style. Per-person scope at `identity/people/<handle>/`.
+2. **Brand** — positioning, voice, voice rules, products. Structured product catalogue at `brand/products/<product-slug>/spec.md` with materials, price, sizes, claims, photos, status.
+3. **Customers** — personas, pain language, transformation language, VoC verbatims. Substructure:
+   - `customers/personas/<persona-slug>.md` — per-persona deep dives (pains, desires, objections, language, transformations, vocabulary)
+   - `customers/reviews/by-source/`, `customers/reviews/by-product/`, `customers/reviews/by-theme/` — structured review data from Yotpo, Trustpilot, Amazon, Google, etc.
+   - `customers/ad-comments/by-creative/`, `customers/ad-comments/by-theme/` — per-creative comment sampling and cross-creative theme aggregation
+4. **Competition** — competitors the team has named, with their active ads. Per-brand scope at `competition/<brand-slug>/`.
+5. **Performance** — top creatives, account structure, KPIs, benchmarks. Substructure for pattern recognition:
+   - `performance/by-hook-tactic.md` — aggregated by hook tactic
+   - `performance/by-hook-voice.md` — aggregated by hook voice pattern
+   - `performance/by-visual-format.md` — aggregated by visual format
+   - `performance/by-messaging-angle.md` — aggregated by messaging angle
+   - `performance/by-persona.md` — aggregated by target persona
+   - `performance/by-awareness-stage.md` — aggregated by awareness stage
 6. **Strategy** — OKRs, active bets, channel and budget allocation
 7. **Calendar** — launches, seasonal moments, operating rhythms
 8. **Library** — brand kit, templates, brief library, asset inventory
@@ -127,6 +136,24 @@ package contains material the team gave us directly that we should not skip.
 Read `_manifest.json`. Note which sources were included, which were intentionally
 excluded (so you don't go scrape them anyway), and what the customer-side
 responsibilities are.
+
+## Step 1.5 — Install bundled skills from `_skills/`
+
+The package's `_skills/` directory ships three baseline skills together. Install all three into the customer Runneth's skill directory on first run.
+
+```bash
+for skill in brain-onboard corpus-search team-member-memory; do
+  if [ -d "/agent/brain/_sources/_skills/$skill" ]; then
+    mkdir -p "/agent/.agents/skills/$skill"
+    cp -r "/agent/brain/_sources/_skills/$skill/"* "/agent/.agents/skills/$skill/"
+    chmod +x "/agent/.agents/skills/$skill/"*.sh 2>/dev/null || true
+  fi
+done
+```
+
+After install, verify each skill's `SKILL.md` is present at `/agent/.agents/skills/<skill>/SKILL.md`. Note the installed version of each skill into `_state.json` (Step 7).
+
+If any skill fails to install, surface that on the welcome card and continue with synthesis. The team can re-install later via the use case library, but brain-onboard depends on all three for the full experience.
 
 ## Step 2 — Run live workspace pulls (Layer 3)
 
@@ -260,8 +287,13 @@ Check `/agent/brain/_state.json` and the brain folders together:
 | Condition | Install state | Action |
 |---|---|---|
 | `_state.json` absent AND brain folders empty | **Fresh install** | Proceed to Step 4 normally |
-| `_state.json` present AND `brain_onboard.synthesized_at` recorded | **Refresh** | Proceed to Step 4 with `--mode refresh` semantics |
-| `_state.json` absent AND brain folders have content | **Upgrade from pre-v1.2.x install** | Run the upgrade-safe path below |
+| `_state.json` present AND brain content has frontmatter on every file | **Clean refresh** | Proceed to Step 4 with `--mode refresh` semantics |
+| `_state.json` absent AND brain folders have content | **Legacy upgrade** | Run the upgrade-safe path below |
+| `_state.json` present BUT brain content lacks frontmatter on some files | **Schema upgrade** | Run the upgrade-safe path below (added in v1.3.0 after Printfresh surfaced this case) |
+
+**How to detect "lacks frontmatter on some files":** sample 5 random files from each domain folder. If any file doesn't start with `---\n` (markdown frontmatter) or `_meta` block at the top of the root object (JSON), treat the brain as needing schema upgrade.
+
+Schema upgrade applies the same upgrade-safe walk as legacy upgrade. The team's existing content gets surfaced for preserve/discard confirmation before re-synthesis with the new frontmatter contract.
 
 ### Upgrade-safe path
 
@@ -335,6 +367,55 @@ For each domain, produce a primary markdown doc at `/agent/brain/<domain>/README
 plus structured item files where the domain is list-shaped. Every line carries
 a source pill in the format `{source: <file-or-call>}`.
 
+**Every domain folder gets a `_changelog.md`** appended with one line per synthesis run: timestamp, what got written, source counts. Format:
+
+```markdown
+## 2026-06-03T17:35:00Z
+- brain-onboard: initial synthesis — populated README.md (8 sources) + 12 product specs + 4 persona files
+- brain-onboard: aggregated performance by hook-tactic, hook-voice, visual-format, messaging-angle (24 creatives, 6 tactics found)
+```
+
+Future routines append to the same file. Visible audit trail, no silent updates.
+
+### Substructure synthesis logic
+
+For three domains, synthesis populates structured substructures, not just a flat README:
+
+**Brand domain — `brand/products/`:**
+1. Pull product data from sources in priority order: `brand-audit/<workspace>/product-catalog.md` if it exists, then `_sources/web/products/*` from the brand site crawl, then HubSpot products if synced, then Shopify products if connected.
+2. For each product, slugify the name to get `<product-slug>`.
+3. Write `brand/products/<product-slug>/spec.md` with frontmatter (product_name, sku, category, price_usd, materials, sizes, colors, status, launch_date) and body sections (description, photos, related-product-slugs).
+4. Write `brand/products/<product-slug>/claims.md` if claims data exists (Yotpo claims, brand-audit substantiation).
+5. Write `brand/products/README.md` with a catalogue overview: total count, categories, top SKUs by review volume, status breakdown.
+
+**Customers domain — `customers/personas/`, `customers/reviews/`, `customers/ad-comments/`:**
+1. **Personas:** for each persona identified from brand-context, brand-audit, or Apollo ICP, write `customers/personas/<persona-slug>.md` with frontmatter and sections for pains, desires, objections, language, transformations, vocabulary, demographics.
+2. **Reviews:** pull from wired source (Yotpo first), Apify scrapers second.
+   - Write `customers/reviews/by-source/<source>.md` for each (yotpo, trustpilot, amazon, google).
+   - Write `customers/reviews/by-product/<product-slug>.md` joining reviews to the product catalogue.
+   - Cluster reviews by theme into `customers/reviews/by-theme/{pain,desire,objection,comparison,use-case}.md`.
+   - Save raw review JSON to `customers/reviews/raw/<source>.json` for re-clustering.
+3. **Ad comments:** pull from Meta Graph API and TikTok Business API.
+   - Per creative: write `customers/ad-comments/by-creative/<creative-id>.md` with top 20 comments (sentiment-weighted), reply patterns, sentiment summary.
+   - Cluster across creatives by theme: write `customers/ad-comments/by-theme/{questions,objections,enthusiasm,confusion}.md`.
+   - Volume management: do NOT store every comment. Sample top 20-50 per creative; reference full data in Meta/TikTok for re-fetch on demand.
+
+**Performance domain — aggregations:**
+1. Pull all creatives from `motion meta insights --include-metrics --group-by name` and `motion tiktok insights --grain ads`.
+2. For each creative, pull its glossary tags from `motion ai-glossary` (visual format, messaging angle, hook tactic, hook voice).
+3. Aggregate metrics (spend, ROAS, CTR, CPA, conversions, ROAS-weighted) per tag group.
+4. Write one file per dimension:
+   - `performance/by-hook-tactic.md` — tactic name, # creatives, spend, avg ROAS, top performer, trend
+   - `performance/by-hook-voice.md` — voice pattern, # creatives, spend, avg ROAS, top performer, trend
+   - `performance/by-visual-format.md` — format name, # creatives, spend, avg ROAS, top performer, trend
+   - `performance/by-messaging-angle.md` — angle, # creatives, spend, avg ROAS, top performer, trend
+   - `performance/by-persona.md` — persona, # creatives, spend, avg ROAS, top performer, trend
+   - `performance/by-awareness-stage.md` — stage, # creatives, spend, avg ROAS, top performer, trend
+5. Each aggregation includes period-over-period delta (last 7d vs prior 30d) so trend is visible.
+
+### Primary inputs table
+
+
 | Domain | Primary inputs |
 |---|---|
 | **Identity** | `identity-seed/team.md` from package; do not enrich with LinkedIn or scraped data |
@@ -353,6 +434,13 @@ folder. If files exist in the staging directory but no domain doc cites them,
 the synthesis is PARTIAL. Either merge them into the right domain doc now or
 record the gap in the welcome card so the team isn't surprised. Don't say the
 brain is done when staged sources remain unmerged.
+
+**Additional validation for v1.3.0 substructures:**
+- Brand: every product source row produces a `products/<slug>/spec.md` OR is logged as skipped with reason
+- Customers personas: at least one persona file exists per persona named in brand-context or brand-audit
+- Customers reviews: if a review source is wired but `by-source/<source>.md` is missing, that's a gap
+- Customers ad-comments: if Meta Graph API or TikTok Business API is wired but `by-creative/` is empty, that's a gap
+- Performance aggregations: every creative in `by-creative` should be tagged into at least one aggregation file (creatives without glossary tags get flagged in `_changelog.md`)
 
 For domains where the data clearly maps, write durable facts with source pills.
 For domains where the data is thin, write what's there and explicitly note what's
