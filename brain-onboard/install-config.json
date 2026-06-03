@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.5.0",
+      "date": "2026-06-03",
+      "type": "minor",
+      "notes": "Expand Step 6 (Render the welcome card) with a new per-domain readout section. After the high-level \"knows by heart\" snapshot and before the capability cards, the welcome card now includes one short section per brain domain with a headline number and 2-3 highlights from actual synthesized content. Each domain section ends with the brain path so the team knows where to look. Sparse domains explicitly say what is pending (e.g., Notion/Calendar OAuth). Required per-domain content shape documented: identity (teammates + roles), brand (positioning + voice + products), customers (personas + themes + review counts), competition (confirmed brands + ad counts), performance (creatives + spend + KPI + top performer + best hook + best format + trend), strategy (KPI + windows + bets), calendar/library (pending OAuths), knowledge (glossary + decisions), preferences (empty on day one). Driven by Ankhway pilot: the existing capability-first card was strong but the team had no concrete view into what each domain actually contained."
+    },
     {
       "version": "1.4.0",
       "date": "2026-06-03",
