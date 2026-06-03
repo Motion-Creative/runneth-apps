@@ -4,16 +4,15 @@ Out of the box, anyone the team trusts to chat with Runneth can also edit anythi
 
 This skill lets an admin decide what gets locked down and who is allowed to change each locked area.
 
-The skill is built from six primitives. The install conversation discovers which of them the org actually needs; nothing gets written until the admin confirms the plan in plain language.
+The skill is built from five primitives. The install conversation discovers which of them the org actually needs; nothing gets written until the admin confirms the plan in plain language.
 
 ---
 
-## The six primitives
+## The five primitives
 
 1. **People.** Access registry at `/agent/brain/admin/organization-map.json`. Each person has a handle, name, Slack ID, Motion email, and an `admin` flag.
 2. **Spaces.** Areas of the brain whose editing is restricted. Listed in `/agent/brain/admin/spaces.json`. **Only restricted areas live here.** Folders that exist purely for general organization are not in scope for this skill.
 3. **Writers per space.** Each space has a writer rule: `everyone`, `specific`, or `admins_only`. Default is `everyone`. Anything in `everyone` is implicit and does not need to be listed.
-4. **Attribution.** Every durable save under `/agent/brain/` carries `author: @<handle>`. Always on.
 5. **Approval routing.** Optional Slack channel where blocked-edit requests get posted with the requester's handle, the space they tried to edit, and a short summary. Admins approve or decline in a follow-up message.
 6. **Identity resolution.** Slack ID or Motion email → handle. Neon-only (queries `agent_conversation`). No SQLite fallback.
 
@@ -41,7 +40,7 @@ The install flow shapes these into the org's setup.
     └── (any protected spaces the conversation produced — paths chosen with the admin)
 ```
 
-`spaces.json` is intentionally lean. If a customer has no areas that need restricted editing, this skill is not the right one to install; identity and attribution are still useful but should land via the underlying Runneth runtime (or a future foundation skill).
+`spaces.json` is intentionally lean. If a customer has no areas that need restricted editing, this skill is not the right one to install; identity resolution alone is still useful but should land via the underlying Runneth runtime (or a future foundation skill).
 
 ---
 
@@ -52,7 +51,7 @@ Seven phases. The admin sees a conversation; the agent runs the rest behind the 
 1. **Look around and plan.** The agent silently inspects the VM: existing `permissions.md`, prior-version files, suspicious content in `user.md`, partial installs, Neon-secret availability. Holds the findings in memory.
 2. **Framing the opening.** Composes the opening turn in its own voice, shaped by the admin's triggering message and what Phase 1 surfaced. No canned script.
 3. **The conversation.** Flowing chat. The agent listens for: who's on the team, the work shape, content categories that come up, **areas where only certain people should be editing**, areas that should stay open, and who the first admin is (plus a backup). If protected areas come up, the agent also asks about an approval channel and a backup approver. Brain-organization questions (where to put notes, how to group playbooks) get punted: "I can think about that separately — it's not part of this setup."
-4. **Read it back, then confirm.** Plain-language summary in the admin's words, with writers named per space so wrong attribution is easy to spot. Confirms before any writes.
+4. **Read it back, then confirm.** Plain-language summary in the admin's words, with writers named per space so wrong ownership is easy to spot. Confirms before any writes.
 5. **Deployment.** Scaffolds the home base for every named person, writes `organization-map.json` and `spaces.json`, installs the resolver scripts, generates `permissions.md` from a single template populated by `spaces.json`, prepends a short protocol pointer to `user.md`. Cleans up the team-member-memory v2.0.1 user.md leak if found.
 6. **Verification.** Confirms every file is present and valid.
 7. **Setup complete.** One consistent plain-language message.

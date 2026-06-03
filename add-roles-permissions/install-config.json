@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "add-roles-permissions",
-  "version": "3.1.5",
-  "description": "Most teams don't realize this until something gets accidentally changed: out of the box, anyone the team trusts to chat with Runneth can also edit anything Runneth knows. That includes the context Runneth references in conversations and the rules for how it behaves for everyone on the team. Saved feedback like \"let's not use the word cheap anymore\" can quietly become the rule for everyone, not just the person who said it. This skill lets the admin choose which areas get locked down and who is allowed to change each. A short consultative conversation captures what to protect, then Runneth blocks unauthorized edits and routes change requests through an approval channel. Every save gets stamped with who wrote it. New teammates onboard automatically.",
+  "version": "3.2.0",
+  "description": "Most teams don't realize this until something gets accidentally changed: out of the box, anyone the team trusts to chat with Runneth can also edit anything Runneth knows. That includes the context Runneth references in conversations and the rules for how it behaves for everyone on the team. Saved feedback like \"let's not use the word cheap anymore\" can quietly become the rule for everyone, not just the person who said it. This skill lets the admin choose which areas get locked down and who is allowed to change each. A short consultative conversation captures what to protect, then Runneth blocks unauthorized edits and routes change requests through an approval channel. New teammates onboard automatically.",
   "installs": [
     {
       "file": "SKILL.md",
