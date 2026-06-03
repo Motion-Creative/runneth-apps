@@ -467,12 +467,12 @@ team can see what's actually been synthesized.
 Structure:
 
 1. **Header.** "<Brand> is in Runneth's brain."
-2. **"What it knows by heart" snapshot.** 6–8 high-signal bullets the team
-   will recognize instantly. Always include: primary KPI, top performer by
-   that KPI, brand positioning one-liner, dominant customer voice, headcount
-   + agency partners, dominant hook or format pattern. Keep these scannable.
-3. **"What's in your brain by domain" readout.** One short section per domain,
-   each leading with a headline number and 2–3 highlights. Format per domain:
+2. **"What's in your brain by domain" readout.** One short section per domain,
+   each leading with a headline number and 2–3 highlights. This replaces the
+   old "knows by heart" snapshot — the per-domain readout covers the same
+   high-signal facts (KPI, top performer, headcount, brand positioning,
+   customer voice, dominant hook) but anchored to where they actually live
+   in the brain. Format per domain:
 
    ```markdown
    ### <Domain>
@@ -506,14 +506,14 @@ Structure:
    Each domain section ends with a 1-line link or path so the team knows
    where to look: "Full content at `/agent/brain/<domain>/`".
 
-4. **Capability cards by role.** One card per active teammate or per role,
+3. **Capability cards by role.** One card per active teammate or per role,
    showing what's concretely different now that the brain is built. Each card:
    - Person's name (or role if anonymous)
    - Three or four capability one-liners ("draft a brief that pulls customer
      pains by name," "teardown last week's ad against our persona set," etc.)
    - One or two suggested prompts the person can paste
 
-5. **"What's not in the brain yet."** List pending OAuths and integrations as
+4. **"What's not in the brain yet."** List pending OAuths and integrations as
    explicit asks. ("Connect Notion to fill Calendar and Strategy. Connect Drive
    to fill Library.") If synthesis was PARTIAL because staged sources weren't
    merged into domain docs, flag that here too. Include any Motion gaps
