@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.2.0",
+      "date": "2026-06-03",
+      "type": "minor",
+      "notes": "Two changes: (1) Drop GitHub repo transport from Step 1 (supersedes PR #118). (2) Add Step 3.5 \u2014 upgrade detection and existing-content protection. When brain-onboard installs on a Runneth that already has brain content from an older version, the upgrade-safe path archives existing content, walks for user-saved candidates, surfaces findings on the welcome card for explicit team confirmation, and re-imports approved files with managed_by: user frontmatter before synthesis runs. Prevents silent loss of save-this-to-brain content during version upgrades."
+    },
     {
       "version": "1.0.0",
       "date": "2026-06-02",
