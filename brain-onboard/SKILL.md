@@ -118,13 +118,7 @@ Check these locations in order:
    tar -xzf ./uploads/<file>.tar.gz --strip-components=1 -C /agent/brain/_sources/
    ```
 3. **Loose files in uploads** (README, _manifest.json, identity-seed/, _sources/): copy to `/agent/brain/_sources/`.
-4. **GitHub repo configured**: if `CUSTOMER_BRAIN_READ_PAT` or similar is in this sandbox's secrets and the CSM has shared a repo URL like `Motion-Creative/customer_brain/<slug>/`, clone and copy:
-   ```bash
-   cd /tmp && rm -rf cb
-   git clone https://x-access-token:$(secret env CUSTOMER_BRAIN_READ_PAT)@github.com/Motion-Creative/customer_brain.git cb
-   cp -r cb/<slug>/<latest-ts>/ /agent/brain/_sources/
-   ```
-5. **Drive URL shared in conversation**: use `google url download <url>` to grab the tar.gz, then extract per option 2.
+4. **Drive URL shared in conversation**: use `google url download <url>` to grab the tar.gz, then extract per option 2.
 
 If none of these are present, tell the user the package hasn't arrived yet and
 ask them to upload it. Do not try to build a brain from public web alone — the
@@ -254,6 +248,86 @@ the archive, supplement with live as needed, save under `_sources/<integration>/
 
 If an integration is mentioned in the manifest but credentials are missing,
 flag it in the welcome card as "ready to connect."
+
+## Step 3.5 — Detect upgrade and protect existing content (before synthesis)
+
+Before any synthesis writes to brain domain folders, check what's already there. If the customer has a prior brain from an older brain-onboard version, content can be silently overwritten unless protected explicitly.
+
+### Detect the install state
+
+Check `/agent/brain/_state.json` and the brain folders together:
+
+| Condition | Install state | Action |
+|---|---|---|
+| `_state.json` absent AND brain folders empty | **Fresh install** | Proceed to Step 4 normally |
+| `_state.json` present AND `brain_onboard.synthesized_at` recorded | **Refresh** | Proceed to Step 4 with `--mode refresh` semantics |
+| `_state.json` absent AND brain folders have content | **Upgrade from pre-v1.2.x install** | Run the upgrade-safe path below |
+
+### Upgrade-safe path
+
+When upgrade is detected, do not synthesize directly. Run these in order:
+
+1. **Archive existing brain content.** Copy everything currently under `/agent/brain/<ten-domain>/` plus any sibling brain roots (`/agent/brain/members/`, `/agent/brain/competitor-intel/`) to a dated archive:
+
+   ```bash
+   ARCHIVE_DIR=/agent/brain/_archive/$(date -u +%Y-%m-%d)-pre-v2.2-upgrade
+   mkdir -p "$ARCHIVE_DIR"
+   for dir in identity brand customers competition performance strategy calendar library knowledge preferences members competitor-intel; do
+     if [ -d "/agent/brain/$dir" ]; then
+       cp -r "/agent/brain/$dir" "$ARCHIVE_DIR/"
+     fi
+   done
+   ```
+
+2. **Walk the archive for likely user-saved content.** Identify files that look like things a teammate explicitly saved versus auto-generated synthesis output. Heuristics that strongly signal user-owned content:
+
+   - File path under `preferences/`, `knowledge/`, or `library/` (domains that default to user-managed)
+   - File contains distinctive prose patterns: first-person language ("we", "our", "I"), recent dates in body text, specific names of people on the team
+   - File modification time within the last 30 days AND no `managed_by: brain-onboard` or `managed_by: <routine-name>` in frontmatter
+   - File matches naming conventions from the save-this pattern (`saved-*.md`, `note-*.md`, `*-decision.md`)
+   - File is named in conversation history near phrases like "save this", "remember this", "add to brain"
+
+   Compile candidates into a list with: file path, line count, brief excerpt (first 150 chars), modification time, why it was flagged.
+
+3. **Surface findings on the welcome card before synthesizing.** Add a section to the welcome card:
+
+   > "I found <N> files from your prior brain that look like things your team saved before this upgrade. Before I rebuild the brain from your new package, I'd like to preserve them. Here's what I found:
+   >
+   > - `[path/to/file]` — [first 100 chars] (saved [X days ago])
+   > - `[path/to/file]` — [first 100 chars] (saved [X days ago])
+   > - ...
+   >
+   > Should I preserve these as user-owned content in the new structure? Pick one:
+   > - **Yes, preserve all of them.** I'll re-import with `managed_by: user` frontmatter so future refreshes don't touch them.
+   > - **Preserve some.** Tell me which ones to keep and I'll skip the rest.
+   > - **Discard.** Everything you found is auto-generated; rebuild fresh."
+
+4. **Wait for explicit confirmation before proceeding to Step 4.** Do not synthesize until the team picks one of the three options. The archive at `/agent/brain/_archive/<date>-pre-v2.2-upgrade/` stays available as a recovery option regardless.
+
+5. **Confirmed user-owned content gets re-imported with proper frontmatter.** When the team approves preservation, copy the approved files back into the appropriate domain folder and inject YAML frontmatter at the top:
+
+   ```yaml
+   ---
+   domain: <inferred from original path>
+   ownership: user
+   substance: <facts | beliefs based on content>
+   managed_by: user
+   sources:
+     - { layer: legacy, ref: "preserved from pre-v2.2 brain on upgrade" }
+   refresh_cadence: never
+   last_refreshed: <original modification time>
+   confidence: high
+   preserved_from: <original path under _archive/>
+   ---
+   ```
+
+6. **Re-run skill migration helpers if their old paths existed.** `team-member-memory-migration-helper.sh` for `/agent/brain/members/` → `/agent/brain/identity/people/`. `competitor-intel-migration-helper.sh` for `/agent/brain/competitor-intel/` → `/agent/brain/competition/`. These are idempotent and safe to run after archive.
+
+7. **Proceed to Step 4 (Synthesize)** with the package + live workspace pulls. The preserved user-owned files coexist alongside the freshly synthesized system-owned content because they declare different `managed_by` values.
+
+### Why this matters
+
+A teammate who used the save-this-to-brain pattern during their prior conversations has durable saves in files that may not carry frontmatter. Without this upgrade-safe path, brain-onboard would overwrite those saves silently during re-synthesis. The archive plus user-confirmation flow prevents that without slowing down fresh installs.
 
 ## Step 4 — Synthesize the 10 brain domains
 
