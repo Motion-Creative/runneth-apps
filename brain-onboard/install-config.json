@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2026-06-03",
+      "type": "minor",
+      "notes": "Drop GitHub repo transport from Step 1. Manual upload (via ./uploads/) and Drive URL stay as supported transport options. Removes references to CUSTOMER_BRAIN_READ_PAT and Motion-Creative/customer_brain repo since that path is not in use."
+    },
     {
       "version": "1.0.0",
       "date": "2026-06-02",

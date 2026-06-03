@@ -118,13 +118,7 @@ Check these locations in order:
    tar -xzf ./uploads/<file>.tar.gz --strip-components=1 -C /agent/brain/_sources/
    ```
 3. **Loose files in uploads** (README, _manifest.json, identity-seed/, _sources/): copy to `/agent/brain/_sources/`.
-4. **GitHub repo configured**: if `CUSTOMER_BRAIN_READ_PAT` or similar is in this sandbox's secrets and the CSM has shared a repo URL like `Motion-Creative/customer_brain/<slug>/`, clone and copy:
-   ```bash
-   cd /tmp && rm -rf cb
-   git clone https://x-access-token:$(secret env CUSTOMER_BRAIN_READ_PAT)@github.com/Motion-Creative/customer_brain.git cb
-   cp -r cb/<slug>/<latest-ts>/ /agent/brain/_sources/
-   ```
-5. **Drive URL shared in conversation**: use `google url download <url>` to grab the tar.gz, then extract per option 2.
+4. **Drive URL shared in conversation**: use `google url download <url>` to grab the tar.gz, then extract per option 2.
 
 If none of these are present, tell the user the package hasn't arrived yet and
 ask them to upload it. Do not try to build a brain from public web alone — the
