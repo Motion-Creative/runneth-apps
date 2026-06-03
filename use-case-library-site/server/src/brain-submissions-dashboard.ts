@@ -11,6 +11,38 @@
  */
 import type { StoredSubmission } from './brain-submissions-db.js'
 
+// Per-section recommendation for where each uploaded section should land in
+// the customer's brain. Mirrors the Slack-side helper so the dashboard always
+// shows the same routing guidance the team uses for triage. When sections
+// change, update this map alongside brain-checklist-slack.ts.
+const BRAIN_STRUCTURE_BY_KEY: Record<string, string> = {
+  brand_context: '`/agent/workspaces/<workspaceId>/config/brand-context/brand_context.json` for canonical brand setup. Reference docs (the original PDF, brand book, voice guide) → `/agent/brain/brand-context/<name>.<ext>` with an `/agent/INDEX.md` entry tagged `brand-context, voice, positioning`.',
+  competitor_research: '`/agent/brain/competitors/<competitor-slug>/` per competitor with original files, screenshots, and a short distilled note at `/agent/brain/competitors/_swipe-summary.md` covering category whitespace, recurring hooks, recurring formats, what to avoid. Cross-link both in `/agent/INDEX.md`.',
+  personas: '`/agent/brain/personas/<persona-name>.md` per persona, with frontmatter capturing the persona name, primary pain, awareness stage, channels, anti-persona notes. Index entry tagged `persona, ICP, target audience`.',
+  product_catalog: '`/agent/brain/product-catalog/<source>.<ext>` for the raw catalog and `/agent/brain/product-catalog/_facts.md` for the distilled facts Runneth should never invent or break (SKU list, claims, restrictions). Index entry tagged `product, claims, SKU`.',
+  connected_systems: 'Free-text only. Capture the list in `/agent/brain/customers/<slug>/summary.md` under a `### Systems and integrations` section. For each system note what lives there (briefs, reviews, assets, project tracking). For first-class Runneth integrations or Pipedream-connected apps, open a follow-up to walk the customer through `oauth-connect` on their first session.',
+  winning_briefs: '`/agent/brain/templates/brief-<concept-name>.md` per brief saved as `kind=template-example` in `/agent/INDEX.md` with a short note on why it worked. Helps Runneth pattern-match for similar future asks.',
+  other: 'Route by content type. Competitor research → `/agent/brain/competitors/`. Landing page audits → `/agent/brain/landing-pages/`. Channel strategy → `/agent/brain/paid-strategy/<channel>/<workspace-slug>/`. Call notes → `/agent/brain/meetings/`. Templates → `/agent/brain/templates/` as `kind=template-source`.',
+}
+
+// Render the recommendation with simple inline code support. The text uses
+// backticks for path/keyword highlights; convert them to <code> spans.
+const renderRecHtml = (text: string): string => {
+  const escaped = esc(text)
+  let out = ''
+  let inCode = false
+  for (const ch of escaped) {
+    if (ch === '`') {
+      out += inCode ? '</code>' : '<code>'
+      inCode = !inCode
+    } else {
+      out += ch
+    }
+  }
+  if (inCode) out += '</code>'
+  return out
+}
+
 const fmtBytes = (n: number): string => {
   if (n < 1024) return `${n} B`
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`
@@ -95,11 +127,16 @@ export const renderDashboard = (input: DashboardInput): string => {
               ? sec.files.map((f) => `<span class="file-chip">${esc(f.filename)} <span class="muted">(${fmtBytes(f.sizeBytes)})</span></span>`).join(' ')
               : '<span class="muted">(no files)</span>'
           const ctx = sec.context ? `<div class="ctx">${esc(sec.context)}</div>` : '<div class="ctx muted">(no context)</div>'
+          const rec = BRAIN_STRUCTURE_BY_KEY[sec.key]
+          const recBlock = rec
+            ? `<div class="rec"><div class="rec-label">Recommended brain home</div><div class="rec-body">${renderRecHtml(rec)}</div></div>`
+            : ''
           return `
             <div class="section">
               <div class="section-head">${esc(SECTION_LABELS[sec.key] || sec.key)}</div>
               <div class="section-files">${fileList}</div>
               ${ctx}
+              ${recBlock}
             </div>`
         })
         .join('')
@@ -183,6 +220,10 @@ export const renderDashboard = (input: DashboardInput): string => {
   .section-files{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
   .file-chip{display:inline-flex;align-items:center;gap:6px;background:white;border:1px solid var(--gray-6);border-radius:6px;padding:3px 8px;font-size:12px;color:var(--gray-12)}
   .ctx{font-size:13px;color:var(--gray-12);line-height:1.5;background:white;border:1px solid var(--gray-6);border-radius:6px;padding:10px 12px;white-space:pre-wrap}
+  .rec{margin-top:10px;background:var(--green-soft);border:1px solid rgba(193,241,75,0.5);border-radius:6px;padding:10px 12px}
+  .rec-label{font-size:11px;font-weight:600;color:var(--green-text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+  .rec-body{font-size:13px;color:var(--gray-12);line-height:1.55;word-break:break-word}
+  .rec-body code{background:white;border:1px solid rgba(193,241,75,0.45);border-radius:4px;padding:1px 5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
   details.files-detail{margin-top:16px;border-top:1px solid var(--gray-5);padding-top:12px}
   details.files-detail summary{font-size:13px;font-weight:500;cursor:pointer;color:var(--gray-12);user-select:none}
   details.files-detail summary:hover{color:var(--gray-9)}
