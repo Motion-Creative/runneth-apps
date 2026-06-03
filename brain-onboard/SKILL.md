@@ -434,8 +434,8 @@ For three domains, synthesis populates structured substructures, not just a flat
 | **Competition** | Confirmed competitor set (seed + team additions) + the `_sources/inspo/<slug>.json` files for each |
 | **Performance** | All `_sources/motion/meta-*`, `tiktok-*`, `creative-trends.json`, `creative-cache.json`, `benchmark.json` |
 | **Strategy** | `_sources/motion/workspace-goal.json` + `_sources/motion/spend-threshold.json` + `_sources/motion/custom-conversions.json` |
-| **Calendar** | Leave mostly empty pending Notion/Calendar OAuth; note as "pending integration" |
-| **Library** | `_sources/motion/creative-cache.json` index + pending Drive/Notion OAuth for briefs/assets |
+| **Calendar** | Leave empty until the team confirms which integration owns calendar (Google Calendar, Notion, Asana, or whatever the team actually uses for launches and operating rhythms); note as "pending — confirm with CSM" |
+| **Library** | `_sources/motion/creative-cache.json` index + pending integration for briefs/assets (Drive, Notion, Figma, Frame.io, or whatever the team uses; confirm with CSM) |
 | **Knowledge** | `_sources/motion/glossary.json` + any decisions surfaced from the conversation history during synthesis |
 | **Preferences** | Empty; grows as users give feedback during conversations |
 
@@ -677,9 +677,8 @@ Structure:
      period-over-period trend if available
    - **Strategy:** primary KPI + attribution windows, spend threshold, active
      bets if surfaced from workspace-goal
-   - **Calendar:** known upcoming launches/seasonal moments (or pending
-     Notion/Calendar OAuth)
-   - **Library:** brand-kit/asset inventory (or pending Drive/Notion OAuth)
+   - **Calendar:** known upcoming launches/seasonal moments (or pending — team decides which integration owns calendar)
+   - **Library:** brand-kit/asset inventory (or pending — team decides which integration owns library content)
    - **Knowledge:** glossary term count, decisions surfaced from conversation
      history
    - **Preferences:** empty on day one — grows as the team gives feedback
@@ -699,11 +698,16 @@ Structure:
    - One or two suggested prompts the person can paste
 
 4. **"What's not in the brain yet."** List pending OAuths and integrations as
-   explicit asks. ("Connect Notion to fill Calendar and Strategy. Connect Drive
-   to fill Library.") If synthesis was PARTIAL because staged sources weren't
-   merged into domain docs, flag that here too. Include any Motion gaps
-   surfaced during install (creative cache disabled, TikTok not connected,
-   Apify scrapers blocked, etc.).
+   explicit asks, framed by what the team actually uses for each domain. Pull
+   the pairing from `tools_team_uses_not_yet_in_runneth` in the manifest, not
+   from a default mapping. Never assume a specific tool fills a specific domain —
+   the team might use Google Calendar, Notion, Asana, or nothing for Calendar;
+   they might use Drive, Notion, Figma, or Frame.io for Library. If a domain is
+   sparse and no integration has been named for it, say so plainly: "Calendar —
+   no source identified yet, decide with CSM what to use." If synthesis was
+   PARTIAL because staged sources weren't merged into domain docs, flag that
+   here too. Include any Motion gaps surfaced during install (creative cache
+   disabled, TikTok not connected, Apify scrapers blocked, etc.).
 
    End this section with a one-line link to the full onboarding checklist:
 
@@ -715,8 +719,7 @@ Structure:
   catalog" beats "Brand populated."
 - Use the **brand's actual content** in highlights, not the spec template.
   Quote real customer voice, name real top performers, name real competitors.
-- If a domain is sparse, say so explicitly: "Pending Notion/Calendar OAuth"
-  beats hiding the domain.
+- If a domain is sparse, say so explicitly with what the team would need to fill it, not a default tool name: "Calendar — no source identified yet, decide with CSM" beats "Pending Notion OAuth."
 - Keep each domain section to 3–4 lines max. The team should scan all ten
   in under 30 seconds.
 
