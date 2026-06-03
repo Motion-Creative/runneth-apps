@@ -460,24 +460,96 @@ conversations can find them. Include aliases and a one-line note per entry.
 ## Step 6 — Render the welcome card
 
 The card leads with **what the brain enables for each person on the team**,
-not what data got ingested. Capability frame, not data-readback frame.
+not what data got ingested. Capability frame, not data-readback frame. But
+after the capability frame, the card goes deeper into each domain so the
+team can see what's actually been synthesized.
 
 Structure:
 
-1. **Capability cards by role.** One card per active teammate or per role,
+1. **Header.** "<Brand> is in Runneth's brain."
+2. **"What's in your brain by domain" readout.** One short section per domain,
+   each leading with a headline number and 2–3 highlights. This replaces the
+   old "knows by heart" snapshot — the per-domain readout covers the same
+   high-signal facts (KPI, top performer, headcount, brand positioning,
+   customer voice, dominant hook) but anchored to where they actually live
+   in the brain. Format per domain:
+
+   ```markdown
+   ### <Domain>
+   - <Headline number or fact>
+   - <Highlight 1 from this domain's actual content>
+   - <Highlight 2 from this domain's actual content>
+   - <Pending note if domain is sparse>
+   ```
+
+   Required per domain (skip if empty after synthesis — note as pending):
+
+   - **Identity:** N teammates rostered, named roles, agency partners flagged
+   - **Brand:** positioning one-liner, voice traits (3), product count and top
+     by review volume
+   - **Customers:** N personas, top 3 pain themes, total reviews + comments
+     indexed, sources wired
+   - **Competition:** N competitors confirmed (or pending team confirmation
+     with names), per-brand active-ad counts when known
+   - **Performance:** N active creatives, spend range, primary KPI, top
+     performer by that KPI, best hook tactic and best visual format by KPI,
+     period-over-period trend if available
+   - **Strategy:** primary KPI + attribution windows, spend threshold, active
+     bets if surfaced from workspace-goal
+   - **Calendar:** known upcoming launches/seasonal moments (or pending
+     Notion/Calendar OAuth)
+   - **Library:** brand-kit/asset inventory (or pending Drive/Notion OAuth)
+   - **Knowledge:** glossary term count, decisions surfaced from conversation
+     history
+   - **Preferences:** empty on day one — grows as the team gives feedback
+
+   Each domain section ends with a 1-line link or path so the team knows
+   where to look: "Full content at `/agent/brain/<domain>/`".
+
+3. **Capability cards by role.** One card per active teammate or per role,
    showing what's concretely different now that the brain is built. Each card:
    - Person's name (or role if anonymous)
    - Three or four capability one-liners ("draft a brief that pulls customer
      pains by name," "teardown last week's ad against our persona set," etc.)
    - One or two suggested prompts the person can paste
-2. **A "knows by heart" grid** with the high-signal values the brain holds:
-   primary KPI, top creators or agency partners, named competitors plus other
-   inspo brands, product line summary, anything specific that proves Runneth
-   knows them.
-3. **What's not in the brain yet.** List pending OAuths and integrations as
+
+4. **"What's not in the brain yet."** List pending OAuths and integrations as
    explicit asks. ("Connect Notion to fill Calendar and Strategy. Connect Drive
    to fill Library.") If synthesis was PARTIAL because staged sources weren't
-   merged into domain docs, flag that here too.
+   merged into domain docs, flag that here too. Include any Motion gaps
+   surfaced during install (creative cache disabled, TikTok not connected,
+   Apify scrapers blocked, etc.).
+
+### Domain readout rules
+
+- Lead with a **concrete number**, not "populated/empty." "12 products in
+  catalog" beats "Brand populated."
+- Use the **brand's actual content** in highlights, not the spec template.
+  Quote real customer voice, name real top performers, name real competitors.
+- If a domain is sparse, say so explicitly: "Pending Notion/Calendar OAuth"
+  beats hiding the domain.
+- Keep each domain section to 3–4 lines max. The team should scan all ten
+  in under 30 seconds.
+
+### Below the card
+
+Two minimal asks:
+
+- **Role chip** (creative strategist, brand lead, performance marketing,
+  content, ops, marketing leader)
+- **Optional connections** — read the manifest's `tools_team_uses_not_yet_in_runneth`
+  field. Surface only entries where:
+  1. `in_runneth: false` (they haven't already connected it)
+  2. `recommend_oauth: true` (Runneth has a connector available)
+
+  Before rendering, cross-check `integrations list` to confirm Runneth
+  actually supports each tool. Skip any that aren't supported — don't dangle
+  a connect button for something that won't work.
+
+  This is the team's actual stack (Asana, Klaviyo, Figma, whatever they
+  specifically use) — not a generic Drive + Notion default. If the manifest
+  is missing that field or empty, fall back to Drive + Notion + Slack as a
+  generic default and flag the gap on the card so prep can add it next refresh.
 
 Below the card, two minimal asks:
 - **Role chip** (creative strategist, brand lead, performance marketing, content,
@@ -497,8 +569,8 @@ Below the card, two minimal asks:
   generic default and flag the gap on the card so prep can add it next refresh.
 
 Do not ask for brand confirmation. The workspace already is the brand.
-Do not lead with a list of files we ingested. Lead with what each person can
-do now that they couldn't yesterday.
+The capability-first structure plus the per-domain readout replaces any
+generic "here's what we ingested" framing.
 
 ## Step 7 — Write state and stand by
 
