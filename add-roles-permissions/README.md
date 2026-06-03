@@ -1,6 +1,6 @@
 # customize-write-access
 
-Most teams don't realize this until something gets accidentally changed: out of the box, anyone the team trusts to chat with Runneth can also edit anything Runneth knows. That includes both the context Runneth references in conversations (brand context, customer research, strategy docs) and the rules for how Runneth behaves on every conversation (the team's saved instructions and any other files Runneth automatically reads at the start of every conversation).
+Out of the box, anyone the team trusts to chat with Runneth can also edit anything Runneth knows. That includes both the context Runneth references in conversations (brand context, customer research, strategy docs) and the rules for how Runneth behaves on every conversation (the team's saved instructions and any other files Runneth automatically reads at the start of every conversation).
 
 This skill lets an admin decide what gets locked down and who is allowed to change each locked area.
 
