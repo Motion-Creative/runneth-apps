@@ -5,7 +5,7 @@ Runneth gets to know each person it works with — their goals, preferences, and
 ## What it does
 
 - On every new conversation, resolves the speaker's identity from Slack ID or Motion email.
-- If the person is new, scaffolds their home base at `/agent/brain/members/<handle>/` with:
+- If the person is new, scaffolds their home base at `/agent/brain/identity/people/<handle>/` with:
   - a stub `<handle>.md` profile (from `team-member-template.md`)
   - a `brain/` subfolder for their personal sub-brain
   - a `conversations/` subfolder for per-conversation one-pagers
@@ -23,13 +23,14 @@ Runneth gets to know each person it works with — their goals, preferences, and
     │   ├── slack-whoami.sh                 ← Slack resolver + auto-scaffolding
     │   ├── motion-whoami.sh                ← Motion-web resolver + auto-scaffolding (Neon-first)
     │   └── motion-whoami-neon.py           ← Neon agent_conversation query helper
-    ├── members/
-    │   ├── TEMPLATE.md                     ← team-member template (configurable path)
-    │   └── <handle>/                       ← per-person home base, created on first message
-    │       ├── <handle>.md
-    │       ├── brain/
-    │       └── conversations/
-    │           └── <conversationId>/one-pager.md
+    ├── identity/
+    │   └── people/
+    │       ├── TEMPLATE.md                 ← team-member template (configurable path)
+    │       └── <handle>/                   ← per-person home base, created on first message
+    │           ├── <handle>.md
+    │           ├── brain/
+    │           └── conversations/
+    │               └── <conversationId>/one-pager.md
     └── conversations/
         └── TEMPLATE.md                     ← one-pager template (configurable path)
 ```

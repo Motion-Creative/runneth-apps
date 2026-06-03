@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "team-member-memory",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Runneth gets to know each person it works with \u2014 their goals, preferences, and working style \u2014 and adapts to them over time. Standalone: resolves identity from Slack ID or Motion email and scaffolds each person's home base on first message. No permissions setup required.",
   "requires": {
     "runtime": "any Runneth sandbox; jq must be installed",
@@ -13,7 +13,7 @@
       "token": "{{TEAM_MEMBER_TEMPLATE_PATH}}",
       "description": "Path to the blank template used when creating a new team member file.",
       "required": false,
-      "fallback": "/agent/brain/members/TEMPLATE.md"
+      "fallback": "/agent/brain/identity/people/TEMPLATE.md"
     },
     {
       "token": "{{ONEPAGER_TEMPLATE_PATH}}",
@@ -61,14 +61,26 @@
       "dest": "user-md",
       "insert-after": "## System routines",
       "insert-fallback": "append"
+    },
+    {
+      "file": "migration-helper.sh",
+      "dest": "/agent/brain/admin/team-member-memory-migration-helper.sh",
+      "if-not-exists": true,
+      "chmod": "0755"
     }
   ],
   "changelog": [
     {
+      "version": "3.1.0",
+      "date": "2026-06-02",
+      "type": "minor",
+      "notes": "Path migration. Home base moves from /agent/brain/members/<handle>/ to /agent/brain/identity/people/<handle>/ so per-person scope sits under the Identity domain instead of a sibling root. Aligns with brain-onboard's ten-domain layout. Includes migration-helper.sh that detects /agent/brain/members/ on existing installs, moves contents to /agent/brain/identity/people/ preserving user-edited content, updates organization-map.json home_base entries to the new paths, and leaves stubs at the old paths for 30 days pointing to the new ones. The RUNNETH_MEMBER_TEMPLATE env var still works for backward compatibility; default template fallback path now points to /agent/brain/identity/people/TEMPLATE.md. No other behavior changes."
+    },
+    {
       "version": "3.0.0",
       "date": "2026-06-02",
       "type": "major",
-      "notes": "Standalone rebuild. Drops add-roles-permissions dependency. Ships its own lightweight slack-whoami.sh and a Neon-only motion-whoami.sh resolver (with motion-whoami-neon.py helper) that queries the Neon agent_conversation table for the speaker email. No SQLite fallback \u2014 the local conversations.db is unreliable for brand-new conversations (live DB is a 0-byte placeholder; backups lag 30 min), so on Neon failure the resolver returns status: \"unresolved\" and the behavior-snippet asks the user at write time where the durable note should land (org level or a specific person's folder) instead of guessing a handle. Auto-scaffolds each person's home base on first resolved/provisioned message at /agent/brain/members/<handle>/ with a stub <handle>.md and a brain/ subfolder. Removes the Phase 1 pre-flight from behavior-snippet.md that was leaking the post-install intro quote into user.md (PDEC-7817). If add-roles-permissions is installed later, its stricter resolvers overwrite these and add scope rules on top of the same map file."
+      "notes": "Standalone rebuild. Drops add-roles-permissions dependency. Ships its own lightweight slack-whoami.sh and a Neon-only motion-whoami.sh resolver (with motion-whoami-neon.py helper) that queries the Neon agent_conversation table for the speaker email. No SQLite fallback \u2014 the local conversations.db is unreliable for brand-new conversations (live DB is a 0-byte placeholder; backups lag 30 min), so on Neon failure the resolver returns status: \"unresolved\" and the behavior-snippet asks the user at write time where the durable note should land (org level or a specific person's folder) instead of guessing a handle. Auto-scaffolds each person's home base on first resolved/provisioned message at /agent/brain/identity/people/<handle>/ (path migrated in v3.1.0; original was /agent/brain/members/<handle>/) with a stub <handle>.md and a brain/ subfolder. Removes the Phase 1 pre-flight from behavior-snippet.md that was leaking the post-install intro quote into user.md (PDEC-7817). If add-roles-permissions is installed later, its stricter resolvers overwrite these and add scope rules on top of the same map file."
     },
     {
       "version": "2.0.1",

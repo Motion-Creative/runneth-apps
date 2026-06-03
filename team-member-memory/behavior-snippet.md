@@ -33,7 +33,7 @@ When `status` is `unresolved` and a durable write is about to happen (one-pager 
 - **Do not silently scaffold or guess a handle.** A guessed handle creates a mis-attributed home base that is hard to clean up later.
 - Pause the write and ask the user, in one sentence, where the durable note should land. Two options:
   1. **Org level:** somewhere under `/agent/brain/` outside any specific person's home base (e.g. shared context, decisions, project notes).
-  2. **A specific person's folder:** if so, ask which handle. If the handle does not yet have a folder, scaffold it at `/agent/brain/members/<handle>/` with the same stub structure the resolver would have created.
+  2. **A specific person's folder:** if so, ask which handle. If the handle does not yet have a folder, scaffold it at `/agent/brain/identity/people/<handle>/` with the same stub structure the resolver would have created.
 - Once the user answers, write to the chosen location and continue. Carry the answer for the rest of the session so you do not re-ask for every subsequent write.
 - Read-only turns and ephemeral analysis do not trigger this question — only durable writes do.
 

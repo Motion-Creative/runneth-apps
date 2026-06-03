@@ -74,7 +74,7 @@ if [ -n "$REF" ]; then
   jq -c --arg h "$HANDLE" '
     .members[$h]
     | { handle: .handle,
-        home_base: ("/agent/brain/members/" + .handle + "/"),
+        home_base: ("/agent/brain/identity/people/" + .handle + "/"),
         status: "resolved",
         resolution: "neon" }
   ' "$MAP_FILE"
@@ -87,12 +87,12 @@ NAME_FOR_HANDLE="${DISPLAY_NAME:-$EMAIL_LOCAL}"
 HANDLE=$(echo "$NAME_FOR_HANDLE" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')
 
 # Scaffold home base: <handle>.md stub + brain/ subfolder + conversations/
-HOME_BASE="/agent/brain/members/$HANDLE"
+HOME_BASE="/agent/brain/identity/people/$HANDLE"
 mkdir -p "$HOME_BASE/brain"
 mkdir -p "$HOME_BASE/conversations"
 
 STUB_FILE="$HOME_BASE/$HANDLE.md"
-TEMPLATE="${RUNNETH_MEMBER_TEMPLATE:-/agent/brain/members/TEMPLATE.md}"
+TEMPLATE="${RUNNETH_MEMBER_TEMPLATE:-/agent/brain/identity/people/TEMPLATE.md}"
 DISPLAY_FOR_STUB="${DISPLAY_NAME:-$EMAIL_LOCAL}"
 if [ ! -f "$STUB_FILE" ]; then
   if [ -f "$TEMPLATE" ]; then
