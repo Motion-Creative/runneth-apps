@@ -119,19 +119,19 @@ Plus a **signals layer** that sits as a sibling to the ten domains:
 
 ## Step 1 — Find and stage the package
 
-The CSM pushes the customer-facing package to `Motion-Creative/customer_brain/<customer-slug>/` as a flat directory tree (README.md, _manifest.json, _skills/, _sources/, identity-seed/). Clone it.
+The CSM has typically already delivered the package to this VM via SSH (using runneth-cli from their local machine). Files should be at `/agent/brain/_sources/` waiting for synthesis.
 
 Check these locations in order:
 
-1. **Already staged**: `/agent/brain/_sources/_manifest.json` present? You're set.
-2. **GitHub clone (primary path)**: if `CUSTOMER_BRAIN_READ_PAT` is in this sandbox's secrets and the customer slug is known (from `_state.json`, the prep-customer-brain handoff, or the CSM telling you in conversation), clone the customer's subdirectory:
+1. **Already staged (the common case)**: `/agent/brain/_sources/_manifest.json` present? You're set. The CSM pushed the package to GitHub for canonical storage AND streamed it onto this VM via runneth-cli SSH tunnel. Files are ready; proceed to Step 1.5.
+2. **GitHub clone (fallback)**: if the package isn't staged but `CUSTOMER_BRAIN_READ_PAT` is in this sandbox's secrets and the customer slug is known (from `_state.json`, the prep-customer-brain handoff, or the CSM telling you in conversation), clone the customer's subdirectory from `Motion-Creative/customer_brain`:
    ```bash
    cd /tmp && rm -rf cb
    git clone https://x-access-token:$(secret env CUSTOMER_BRAIN_READ_PAT)@github.com/Motion-Creative/customer_brain.git cb
    mkdir -p /agent/brain/_sources/
    cp -r cb/<customer-slug>/* /agent/brain/_sources/
    ```
-   The customer-slug is the same slug the CSM used when running prep-customer-brain. Verify `/agent/brain/_sources/_manifest.json` exists after the copy.
+   Verify `/agent/brain/_sources/_manifest.json` exists after the copy.
 3. **Tar in uploads (legacy fallback)**: any `./uploads/*runneth-package*.tar.gz`? Extract:
    ```bash
    mkdir -p /agent/brain/_sources/
