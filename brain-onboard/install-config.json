@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.8.0",
+      "date": "2026-06-04",
+      "type": "minor",
+      "notes": "Reorder Step 1 to make \"already staged at /agent/brain/_sources/\" the primary path and reflect the new SSH delivery flow. The CSM uses runneth-cli locally to stream the package from their machine (sourced from Motion-Creative/customer_brain via gh) onto the customer VM. GitHub remains the canonical store and audit layer but is no longer the primary install-time source. GitHub clone path stays as a fallback for cases where SSH delivery didn't happen but CUSTOMER_BRAIN_READ_PAT is wired. Customer Runneths no longer need CUSTOMER_BRAIN_READ_PAT in the common case. Reference: linear SSH guide 83b71b2a92bf. Manual trigger of brain-onboard still required after SSH delivery; auto-trigger on file detection in /agent/brain/_sources/ is future work."
+    },
     {
       "version": "1.7.0",
       "date": "2026-06-03",
