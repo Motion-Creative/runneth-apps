@@ -434,8 +434,8 @@ For three domains, synthesis populates structured substructures, not just a flat
 | **Competition** | Confirmed competitor set (seed + team additions) + the `_sources/inspo/<slug>.json` files for each |
 | **Performance** | All `_sources/motion/meta-*`, `tiktok-*`, `creative-trends.json`, `creative-cache.json`, `benchmark.json` |
 | **Strategy** | `_sources/motion/workspace-goal.json` + `_sources/motion/spend-threshold.json` + `_sources/motion/custom-conversions.json` |
-| **Calendar** | Leave mostly empty pending Notion/Calendar OAuth; note as "pending integration" |
-| **Library** | `_sources/motion/creative-cache.json` index + pending Drive/Notion OAuth for briefs/assets |
+| **Calendar** | Leave empty until the team confirms which integration owns calendar (Google Calendar, Notion, Asana, or whatever the team actually uses for launches and operating rhythms); note as "pending — confirm with CSM" |
+| **Library** | `_sources/motion/creative-cache.json` index + pending integration for briefs/assets (Drive, Notion, Figma, Frame.io, or whatever the team uses; confirm with CSM) |
 | **Knowledge** | `_sources/motion/glossary.json` + any decisions surfaced from the conversation history during synthesis |
 | **Preferences** | Empty; grows as users give feedback during conversations |
 
@@ -677,9 +677,8 @@ Structure:
      period-over-period trend if available
    - **Strategy:** primary KPI + attribution windows, spend threshold, active
      bets if surfaced from workspace-goal
-   - **Calendar:** known upcoming launches/seasonal moments (or pending
-     Notion/Calendar OAuth)
-   - **Library:** brand-kit/asset inventory (or pending Drive/Notion OAuth)
+   - **Calendar:** known upcoming launches/seasonal moments (or pending — team decides which integration owns calendar)
+   - **Library:** brand-kit/asset inventory (or pending — team decides which integration owns library content)
    - **Knowledge:** glossary term count, decisions surfaced from conversation
      history
    - **Preferences:** empty on day one — grows as the team gives feedback
@@ -699,11 +698,20 @@ Structure:
    - One or two suggested prompts the person can paste
 
 4. **"What's not in the brain yet."** List pending OAuths and integrations as
-   explicit asks. ("Connect Notion to fill Calendar and Strategy. Connect Drive
-   to fill Library.") If synthesis was PARTIAL because staged sources weren't
-   merged into domain docs, flag that here too. Include any Motion gaps
-   surfaced during install (creative cache disabled, TikTok not connected,
-   Apify scrapers blocked, etc.).
+   explicit asks, framed by what the team actually uses for each domain. Pull
+   the pairing from `tools_team_uses_not_yet_in_runneth` in the manifest, not
+   from a default mapping. Never assume a specific tool fills a specific domain —
+   the team might use Google Calendar, Notion, Asana, or nothing for Calendar;
+   they might use Drive, Notion, Figma, or Frame.io for Library. If a domain is
+   sparse and no integration has been named for it, say so plainly: "Calendar —
+   no source identified yet, decide with CSM what to use." If synthesis was
+   PARTIAL because staged sources weren't merged into domain docs, flag that
+   here too. Include any Motion gaps surfaced during install (creative cache
+   disabled, TikTok not connected, Apify scrapers blocked, etc.).
+
+   End this section with a one-line link to the full onboarding checklist:
+
+   > Full onboarding checklist at `/agent/brain/onboarding-checklist.md` — work through this with your CSM to get from "brain installed" to Runneth as a member of the team.
 
 ### Domain readout rules
 
@@ -711,8 +719,7 @@ Structure:
   catalog" beats "Brand populated."
 - Use the **brand's actual content** in highlights, not the spec template.
   Quote real customer voice, name real top performers, name real competitors.
-- If a domain is sparse, say so explicitly: "Pending Notion/Calendar OAuth"
-  beats hiding the domain.
+- If a domain is sparse, say so explicitly with what the team would need to fill it, not a default tool name: "Calendar — no source identified yet, decide with CSM" beats "Pending Notion OAuth."
 - Keep each domain section to 3–4 lines max. The team should scan all ten
   in under 30 seconds.
 
@@ -757,6 +764,117 @@ Do not ask for brand confirmation. The workspace already is the brand.
 The capability-first structure plus the per-domain readout replaces any
 generic "here's what we ingested" framing.
 
+## Step 6.5 — Write the onboarding checklist
+
+Right after the welcome card renders, write `/agent/brain/onboarding-checklist.md` — the brand-agnostic continuation checklist for the team and their CSM to accomplish together. This is the document Reza's vision implies: how the team gets from "brain installed" to "Runneth feels like a member of the team."
+
+The checklist file persists in the brain. The team can update progress over time (checking items off). The CSM reads it during weekly check-ins. New teammates onboarding into the customer Runneth read it to learn the patterns.
+
+### File location and frontmatter
+
+```yaml
+---
+domain: onboarding
+ownership: mixed
+substance: facts
+managed_by: brain-onboard (initial) / user (progress tracking)
+sources:
+  - { layer: meta, ref: "synthesis findings from brain-onboard install" }
+refresh_cadence: never
+last_refreshed: <iso>
+confidence: high
+---
+```
+
+Save at `/agent/brain/onboarding-checklist.md`. Surface it on the welcome card under "What's not in the brain yet" as: "Full onboarding checklist at `/agent/brain/onboarding-checklist.md` — work through this with your CSM."
+
+### Checklist structure
+
+Five sections. Some items always present, some pulled from synthesis findings.
+
+```markdown
+# Onboarding checklist
+
+Status: [ ] todo  [/] in progress  [x] done
+
+## 1. Brain enrichment (close the gaps surfaced at install)
+
+### Integrations to connect
+[Pulled from "What's not in the brain yet" — each pending OAuth becomes one item]
+- [ ] Connect <integration> to fill <domain>
+- ...
+
+### Brain content to confirm
+[Pulled from synthesis findings flagged for team review]
+- [ ] Confirm competitor watchlist (current seed: <list>)
+- [ ] Confirm persona names and priorities
+- [ ] Add any internal data the team wants in the brain (decks, notes, transcripts)
+- ...
+
+### Motion gaps to resolve
+[Pulled from Motion-side gaps surfaced during install]
+- [ ] Enable creative cache in Motion settings
+- [ ] Connect TikTok ad account if relevant
+- [ ] Configure Apify API key for organic VoC pulls
+- ...
+
+## 2. Operating habits (set up how Runneth works alongside the team)
+
+### Slack channels
+- [ ] Create #ask-runneth (where anyone on the team asks Runneth anything)
+- [ ] Create #train-runneth (where champion + CSM debug failed answers)
+- [ ] Add Runneth to both channels
+- [ ] Invite teammates
+
+### Roles
+- [ ] Identify the brain champion (one power user who pairs with CSM going forward)
+- [ ] Each teammate selects role chip on first conversation
+
+### Refresh routines
+- [ ] Walk through refresh-config conversation with CSM (Runneth recommends, team confirms)
+- [ ] Wire agreed routines as scheduled scripts
+- [ ] Confirm first weekly refresh fires successfully
+
+## 3. First dopamine moments (Reza's pattern: the team experiences the value)
+
+- [ ] Each teammate asks at least one question in #ask-runneth
+- [ ] Team uses "save this" or "remember this" pattern at least once
+- [ ] First brief generated using the signals layer + persona + product dossier
+- [ ] First failed answer routed through #train-runneth and resolved
+
+## 4. Compound effect (weeks 2-4)
+
+- [ ] Wire routines for the domains the team confirmed should stay current
+- [ ] Connect any pending integrations from section 1
+- [ ] Champion saves at least three things to brain independently
+- [ ] Team references signals files when planning next creative
+
+## 5. Forever loop (ongoing)
+
+- [ ] Weekly: CSM scans #ask-runneth and #train-runneth, fixes failed answers
+- [ ] Monthly: CSM re-runs prep-customer-brain and pushes refresh
+- [ ] Quarterly: full team walk through brain health with CSM
+- [ ] Brain champion identifies anything to flag back to Motion as a feature request
+```
+
+### Per-customer customization
+
+Sections 2, 3, 4, 5 are template — same shape every customer. Sections 1 items are pulled from real synthesis findings:
+
+- **Integrations** — every entry in the welcome card's "What's not in the brain yet" becomes a checklist item with the destination domain noted
+- **Brain content to confirm** — pull from any domain doc that ended with "pending team confirmation" or competitor-seed entries the team hasn't named
+- **Motion gaps** — pull from anything Motion-side surfaced during install: creative cache disabled, TikTok not connected, Apify key missing, attribution windows undefined, etc.
+
+If a section has no items because nothing was flagged, write the section header with "(nothing pending)" instead of dropping it. The structure stays consistent across customers so teams know what to expect.
+
+### Updating progress
+
+The team checks items off by editing the file directly or by telling Runneth "mark X done." brain-onboard never re-overwrites the checklist after the initial write. Routines may APPEND new items if new gaps emerge (a new integration the team mentioned, a new Motion setting that needs tuning), but never remove or re-check existing items. The team owns progress tracking.
+
+### Why this matters
+
+Reza's vision: the CSM and customer are partners for life, with a clear shared playbook. The checklist is that playbook, made concrete for each specific customer. It eliminates the freeforall by giving every install the same shape of follow-up, while still being specific to that team's actual gaps.
+
 ## Step 7 — Write state and stand by
 
 Write `/agent/brain/_state.json` recording what got done:
@@ -769,6 +887,7 @@ Write `/agent/brain/_state.json` recording what got done:
   "synthesized_by": "brain-onboard",
   "domains_populated": ["identity", "brand", "customers", "competition", "performance", "strategy", "knowledge"],
   "domains_partial": ["calendar", "library"],
+  "onboarding_checklist_written_at": "<iso>",
   "domains_empty": ["preferences"],
   "motion_calls_succeeded": ["brand-context", "workspace-goal", "meta insights", ...],
   "motion_calls_failed": [...],

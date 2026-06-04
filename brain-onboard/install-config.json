@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.8.1",
+      "date": "2026-06-04",
+      "type": "patch",
+      "notes": "Add Step 6.5 \u2014 Write the onboarding checklist. After the welcome card renders, brain-onboard writes /agent/brain/onboarding-checklist.md with the brand-agnostic continuation plan for the team and CSM to accomplish together. Five sections: brain enrichment (integrations + content confirmation + Motion gaps, items pulled from synthesis findings), operating habits (Slack channels, brain champion, refresh routines), first dopamine moments (each teammate asks a question, save-this used, first brief via signals, first failed answer routed through train channel), compound effect (weeks 2-4 wiring), forever loop (weekly/monthly/quarterly cadence). Sections 2-5 are template; section 1 items are pulled from real install findings. Team owns progress tracking. Welcome card 'What is not in the brain yet' section gets a one-line link to the full checklist. Also removes hardcoded Notion/Calendar and Drive/Notion/Library associations from Step 4 inputs table, Step 6 welcome card example copy, Step 6 readout rules, and Calendar/Library domain readout descriptions. brain-onboard never assumes a tool fills a specific domain. The team might use Google Calendar, Notion, Asana, or nothing for Calendar; Drive, Notion, Figma, or Frame.io for Library. Source pairings come from tools_team_uses_not_yet_in_runneth in the manifest and the refresh-config conversation, not from defaults. Originally v1.6.0; renumbered to v1.8.1 after v1.7.0 (signals) and v1.8.0 (SSH already-staged) merged first."
+    },
     {
       "version": "1.8.0",
       "date": "2026-06-04",
