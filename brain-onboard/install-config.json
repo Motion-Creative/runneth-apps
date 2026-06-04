@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "1.5.0",
+  "version": "1.7.0",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.7.0",
+      "date": "2026-06-03",
+      "type": "minor",
+      "notes": "Canonicalize the signals/ layer surfaced during the Printfresh pilot. Eight standard files with brand-agnostic schemas and deterministic population rules: format-gaps (product \u00d7 format whitespace), audience-gaps (untargeted segments \u00d7 product fits), inspo-steals (competitor angles not in own rotation), seasonal-whitespace (upcoming occasions with no creative), review-requests (customer asks from VoC), organic-paid-gaps (organic themes absent from paid), hook-vocabulary (competitor language territories), graveyard-candidates (paused concepts to reconsider). Each file populates per install using the same logic against the brand's actual synthesized content. New Step 4.X documents the directory layout, common _meta frontmatter, per-file population rules, status semantics (populated/partial/empty-needs-upstream-content), refresh integration with routines, and briefing-chain integration. Empty signal files surface on the welcome card and in onboarding-checklist as \"connect <source> to unlock <signal>\". Welcome card Step 6 readout adds a Signals section sitting alongside the ten domains. Schemas live in the customer_brain repo at _signals-schemas/, not inlined in this skill. Custom per-customer schemas live at <customer-slug>/_signals-custom/. brain-onboard clones both at install and every refresh. This means new canonical signal types ship via PR to the customer_brain repo without needing a brain-onboard upgrade. Populated signals stay local at /agent/brain/signals/ in the customer Runneth (no push-back to repo since customer Runneths only have read access)."
+    },
     {
       "version": "1.5.0",
       "date": "2026-06-03",
