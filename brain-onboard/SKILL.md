@@ -52,10 +52,11 @@ These hold for every install. Apply them whenever the skill runs.
 
 1. **The package is a seed, not the finished brain.** Synthesis is not done
    when the package files are read. The brain becomes complete only after the
-   live workspace pulls (motion CLI), the live web crawl, the Apify scrapers,
-   and any wired customer integrations are merged in. A brain that hasn't
-   pulled brand context, performance, competitor inspo, web crawl, and the
-   customer's wired review source is partial by definition.
+   live workspace pulls (motion CLI), the live web crawl, and any wired customer
+   integrations are merged in with the package contents (which include CSM-side
+   Apify pulls and external-paid sources). A brain that hasn't pulled brand
+   context, performance, competitor inspo, web crawl, and the customer's wired
+   review source is partial by definition.
 2. **Check `archive/` before any fresh pull.** If a domain's data was archived
    from a prior brain (`/agent/brain/archive/<date>/...`), pull from the archive
    first and supplement with live only if the archive is stale. Re-pulling
@@ -68,7 +69,7 @@ These hold for every install. Apply them whenever the skill runs.
    ├── motion/          workspace performance + saved config (Layer 3)
    ├── inspo/           competitor + inspo brand ad libraries (Layer 3, motion inspo-creatives)
    ├── web/             live web crawl on brand site (Layer 2A)
-   ├── apify/           Reddit, IG, TikTok, etc. (customer-side Apify)
+   ├── apify/           Reddit, IG, TikTok, etc. (CSM-side, delivered in package)
    ├── external-paid/   X, TrustPilot, etc. that the CSM-side prep shipped
    ├── self-identified/ company-facts + team-roster from package (Layer 1 redacted)
    ├── yotpo/           (or stamped/, okendo/) customer-wired review data
@@ -90,6 +91,16 @@ These hold for every install. Apply them whenever the skill runs.
    team, not what data got ingested.** Capability cards per role with suggested
    prompts, not a data-readback. "Here's what you can do now" beats "here's
    what we pulled."
+7. **Brain content vs brain mechanics.** Content the team supplied — their
+   words, their decisions, their progress — lives in the customer-facing brain.
+   Motion's process — extraction logic, customization mappings, sentiment
+   reads, engagement signals, internal interpretations, suggested-next-moves —
+   stays Motion-internal at `customers/<slug>/_internal-context/`. The
+   principle "only what the org put in the world" applies to BOTH content and
+   interpretation: the team's words ship; Motion's read of those words doesn't.
+   When a call analysis produces both structured findings AND Motion's
+   interpretation, split the output into two files (one customer-facing, one
+   internal). Same source call, two destinations.
 
 ## The 10 brain domains + signals layer
 
@@ -113,7 +124,9 @@ These hold for every install. Apply them whenever the skill runs.
 9. **Knowledge** — decisions made, tests run, lessons, terminology
 10. **Preferences** — how the team and individuals want Runneth to behave
 
-Plus a **signals layer** that sits as a sibling to the ten domains:
+Plus two foundational layers sitting as siblings to the ten domains:
+
+**`onboarding/`** — the anchor that grounds everything. Captured during the alignment call, refined during the Runneth Set Up call, maintained during ongoing CSM 1:1s. Contains the why-Motion answer, pain points, goals, success criteria, the onboarding checklist, and per-call analysis logs. **Shapes setup decisions** (which routines run, which integrations get prioritized, which signals populate, which capability cards get weighted). Does NOT shape creative output (briefs are grounded in domain content + signals, not in setup config). Documented in Step 4.W.
 
 **`signals/`** — forward-looking intelligence. Cross-domain whitespace, gaps, and opportunities derived from synthesis findings. Read by the briefing chain when the team requests a brief; updated by refresh routines week over week. Eight standard files documented in Step 4.X.
 
@@ -222,40 +235,39 @@ Plus `WebSearch` queries:
 Save outputs to `_sources/web/` (cleaned text or HTML, your call). Use as input
 to the Brand domain synthesis.
 
-## Step 2B — Run Apify scrapers (customer-side)
+## Step 2B — Read Apify data from the package (CSM-side delivered)
 
-Apify is available to every Runneth customer through the standard `APIFY_API_KEY`
-runtime secret. Run the relevant scrapers asynchronously, save outputs under
-`_sources/apify/`.
+**Apify moved to CSM-side as of v2.0.0.** prep-customer-brain runs the Apify scrapers (Reddit, Instagram, TikTok, Pinterest, YouTube, TrustPilot, Amazon, G2/Capterra, LinkedIn) during package prep with the same skip rules. The data ships in the package at `_sources/apify/`. Customer Runneths no longer need `APIFY_API_KEY` configured.
 
-Use the async actor pattern (sync calls time out at 120s):
+### What this step does
 
-1. POST `/v2/acts/<actor>/runs` with input to kick off
-2. Save the returned `runId`
-3. Poll `/v2/actor-runs/<runId>` every 10-30s until `status` is `SUCCEEDED`
-   or 5min cap is hit
-4. Pull dataset items from `/v2/actor-runs/<runId>/dataset/items`
-5. Save to `_sources/apify/<scraper>.json`
+Read whatever Apify pulls the CSM included in the package:
 
-Apply these skip rules before running each scraper:
+1. Walk `/agent/brain/_sources/apify/`
+2. For each `<scraper>.json` file, note the scraper, the date, and the row count
+3. Carry the data into Step 4 synthesis:
+   - Reddit, Instagram, TikTok output → Customers domain (community VoC) and Brand domain (organic voice samples)
+   - TrustPilot, Amazon → Customers domain (review VoC)
+   - LinkedIn → Brand domain (company positioning) and Identity domain (employee signals)
 
-| Scraper | Skip if |
-|---|---|
-| Apify TrustPilot | Yotpo / Stamped / Okendo wired (their first-party reviews are the primary source) |
-| Apify Amazon | Brand doesn't sell on Amazon (DTC-only via Shopify, etc.) |
-| Apify G2 / Capterra | Brand is DTC, not B2B SaaS |
-| Apify Pinterest | Brand category is not aesthetics-led |
-| Apify YouTube | Brand has no YouTube channel of meaningful size |
+### If Apify data is missing from the package
 
-Default scrapers to run for most brands:
+If `_sources/apify/` is empty or missing entries the team would expect (e.g., brand has Instagram presence but no `instagram.json`), surface the gap on the welcome card under "What's not in the brain yet":
 
-- Apify Reddit (no first-party substitute for community discussion)
-- Apify Instagram on the brand handle
-- Apify TikTok on the brand handle
-- Apify LinkedIn company page
+> "Apify Instagram scrape wasn't run during CSM prep. Tell your CSM and we'll include it next refresh."
 
-Each scraper's output goes into the Customers domain (for review-based VoC) or
-the Brand domain (for organic voice samples) at synthesis time.
+The customer can ask the CSM to re-run prep with the missing scrapers. brain-onboard does NOT attempt to run Apify itself.
+
+### Why CSM-side
+
+- One less integration for customers to configure (no `APIFY_API_KEY` needed)
+- Motion controls the data quality, scraper selection, rate-limit handling
+- Async/timeout complexity stays where it's easier to manage
+- Apify cost runs through Motion's account, predictable and auditable
+
+### Trade-off (data freshness)
+
+CSM-side means Apify data refreshes only on prep-customer-brain runs (typically monthly or on-demand). Reddit conversations, IG/TikTok organic, and TrustPilot reviews don't shift fast enough for daily refresh to be necessary. If a specific customer needs higher-frequency Apify pulls, the CSM can wire a per-customer refresh routine — but this is the exception, not the default.
 
 ## Step 3 — Pull customer-wired integrations
 
@@ -365,6 +377,8 @@ When upgrade is detected, do not synthesize directly. Run these in order:
 
 6. **Re-run skill migration helpers if their old paths existed.** `team-member-memory-migration-helper.sh` for `/agent/brain/members/` → `/agent/brain/identity/people/`. `competitor-intel-migration-helper.sh` for `/agent/brain/competitor-intel/` → `/agent/brain/competition/`. These are idempotent and safe to run after archive.
 
+7. **Onboarding checklist relocation (v1.x → v2.0).** If `/agent/brain/onboarding-checklist.md` (root path from v1.x) exists, move it to `/agent/brain/onboarding/checklist.md`. Create the onboarding/ folder if needed. Leave a 30-day stub at the old path pointing to the new location. Preserve any team edits.
+
 7. **Proceed to Step 4 (Synthesize)** with the package + live workspace pulls. The preserved user-owned files coexist alongside the freshly synthesized system-owned content because they declare different `managed_by` values.
 
 ### Why this matters
@@ -455,6 +469,121 @@ brain is done when staged sources remain unmerged.
 For domains where the data clearly maps, write durable facts with source pills.
 For domains where the data is thin, write what's there and explicitly note what's
 missing so the welcome card can ask about it.
+
+## Step 4.W — Read the anchor
+
+Between the ten-domain synthesis and the signals layer, read the onboarding/ folder to understand WHY this customer is paying for Motion. The anchor shapes how brain-onboard configures Runneth for them — which routines run, which integrations get prioritized, which signals populate, which capability cards get weighted. It does NOT shape creative output later.
+
+### What lives in onboarding/ vs Motion-internal
+
+Per standing rule #7 (brain content vs brain mechanics):
+
+- **onboarding/** holds the team's content: what they said, decided, named, are solving. Their answer to why-Motion, their pain points, their goals, their success criteria, their progress, their words from each call.
+- **Motion-internal** (`customers/<slug>/_internal-context/`) holds Motion's read: sentiment analysis, engagement levels per teammate, red flags, deal-health signals, intervention suggestions, the mapping of pain to setup decisions with full rationale.
+
+Step 4.W reads only from onboarding/. Motion-internal interpretations stay on the CSM side.
+
+### The onboarding/ folder
+
+```
+brain/onboarding/
+├── README.md
+├── why-motion.md                # THE ANCHOR (frontmatter: anchor: true)
+├── pain-points.md               # what they're solving, structured by area
+├── goals.md                     # 6-month vision and longer-term goals
+├── success-criteria.md          # how they'll evaluate Motion was worth it
+├── team-decisions.md            # track choice (AI-native vs Motion-foundation), integration choices
+├── checklist.md                 # operational progress
+├── calls-overview.md            # thin customer-facing explanation of the 5-call sequence
+├── calls/                       # one file per onboarding call — CUSTOMER-FACING content only
+│   ├── alignment-<gong-id>.md   # structured findings (their words, organized) — NO Motion interpretation
+│   ├── runneth-setup-<gong-id>.md
+│   ├── automations-workshop-<gong-id>.md
+│   ├── motion-training-<gong-id>.md
+│   └── csm-1on1-<date>-<gong-id>.md
+└── _changelog.md
+```
+
+**The calls/ split.** Each onboarding call produces two outputs:
+- `onboarding/calls/<call-id>.md` (customer-facing) — structured findings: their words, organized by the call template's sections. Field labels but no Motion interpretation. First names only; no Motion-internal role labels.
+- `customers/<slug>/_internal-context/calls/<call-id>.md` (Motion-internal) — full Gong analysis including sentiment read, per-teammate engagement signal, red flags, deal-health flags, suggested next moves, intervention triggers.
+
+Same source call, two outputs. The customer sees their own conversation back. Motion keeps the analytical lens internal.
+
+### why-motion.md frontmatter contract
+
+```yaml
+---
+domain: onboarding
+ownership: user
+substance: facts
+managed_by: csm (initial) / user (ongoing)
+sources:
+  - { layer: 1, ref: "alignment call <gong-id>" }
+  - { layer: 1, ref: "sales handoff hubspot:<deal-id>" }
+anchor: true               # special marker — read this on every conversation
+shapes:                    # which downstream decisions this file influences
+  - routine-selection
+  - integration-priority
+  - signal-population
+  - capability-weighting
+refresh_cadence: on-customer-confirmation
+last_refreshed: <iso>
+confidence: high
+---
+```
+
+### Population (from prep-customer-brain package)
+
+If `_sources/alignment-findings.json` was included in the package by prep-customer-brain (the CSM pre-extracted the four anchor fields from the Gong alignment-call transcript), use it as the initial draft for why-motion.md, pain-points.md, goals.md, success-criteria.md. Frontmatter status starts as `confirmed_by_team: false`.
+
+If the file is missing (alignment call hasn't happened yet, or pre-extraction didn't run), write stub files with `population_status: empty-needs-alignment-call` and surface that on the welcome card as a pending checklist item.
+
+### Mapping anchor → downstream weights
+
+For each pain point in pain-points.md, identify which downstream items it shapes:
+
+| Pain area | Routines to prioritize | Integrations to prioritize | Signals to prioritize | Capability cards to weight |
+|---|---|---|---|---|
+| Brief production bottleneck | brief-templating, hooks-harvest | Asana, Notion, Drive | review-requests, hook-vocabulary | Copywriter, Creative Strategist |
+| No competitor visibility | competitor-intel | (none typically wired) | inspo-steals, hook-vocabulary | Strategist, Founder |
+| Slow hook iteration | weekly-performance-refresh | (Motion already wired) | format-gaps, audience-gaps | Performance, Strategist |
+| Persona/customer ambiguity | review-refresh, audience-glossary-refresh | Yotpo, Apify | review-requests, audience-gaps | Copywriter, Founder |
+| Reporting/visibility | weekly-performance-deck | (Motion already wired) | (none specific) | Performance, Founder |
+
+This mapping is canonical. Customer-specific pain points that don't match a canonical pattern get logged in onboarding/team-decisions.md for the CSM to flag.
+
+### Output of Step 4.W
+
+A `_state.json` block recording:
+```json
+{
+  "anchor": {
+    "read_at": "<iso>",
+    "why_motion_present": true,
+    "pain_points_count": 3,
+    "confirmed_by_team": false,
+    "shapes_weights": {
+      "prioritized_routines": [...],
+      "prioritized_integrations": [...],
+      "prioritized_signals": [...],
+      "weighted_capabilities": {...}
+    }
+  }
+}
+```
+
+Step 4.X (signals), Step 6 (welcome card), and Step 6.5 (checklist) all read this block.
+
+### If the anchor is missing
+
+If `onboarding/why-motion.md` is absent or empty, run in "uniform" mode:
+- All signals weighted equally
+- All capability cards weighted equally
+- Welcome card surfaces a section: "Schedule the alignment call to anchor your brain"
+- Checklist Section 0 (anchor confirmation) shows all items as todo
+
+The team fills in the anchor during the alignment call → Runneth Set Up sequence, and brain-onboard re-weights on the next refresh.
 
 ## Step 4.X — Populate the signals layer
 
@@ -640,15 +769,20 @@ conversations can find them. Include aliases and a one-line note per entry.
 
 ## Step 6 — Render the welcome card
 
-The card leads with **what the brain enables for each person on the team**,
-not what data got ingested. Capability frame, not data-readback frame. But
-after the capability frame, the card goes deeper into each domain so the
-team can see what's actually been synthesized.
+The card leads with **why the team is here** (the anchor), then **what the brain enables for each person** (capability frame), then **what's in the brain** (per-domain readout). Capability frame stays before data-readback.
 
 Structure:
 
 1. **Header.** "<Brand> is in Runneth's brain."
-2. **"What's in your brain by domain" readout.** One short section per domain,
+2. **Why Motion (the anchor) — NEW.** Above-the-fold dark ink callout block. Reads from `onboarding/why-motion.md`. Includes:
+   - The why-Motion answer (one paragraph the team confirmed)
+   - 2-4 pain points the team is solving (from `onboarding/pain-points.md`)
+   - Optional: success criteria if confirmed
+   This block stays prominent because every conversation, every refresh, every team member walks in seeing why they're here first.
+3. **Onboarding status — NEW.** One line under the anchor:
+   > "8 of 22 onboarding milestones complete · Next: Confirm why-motion with your team (Runneth Set Up call Jun 6)"
+   Links to the full checklist at `onboarding/checklist.md`.
+4. **"What's in your brain by domain" readout.** One short section per domain,
    each leading with a headline number and 2–3 highlights. This replaces the
    old "knows by heart" snapshot — the per-domain readout covers the same
    high-signal facts (KPI, top performer, headcount, brand positioning,
@@ -690,17 +824,23 @@ Structure:
    Each domain section ends with a 1-line link or path so the team knows
    where to look: "Full content at `/agent/brain/<domain>/`".
 
-3. **Capability cards by role.** One card per active teammate or per role,
+5. **Capability cards by role (weighted by anchor — NEW behavior).** Order/emphasize cards based on which pain points each role addresses (from Step 4.W's `weighted_capabilities` block). Example: if the team's top pain is "brief production bottleneck," the Copywriter and Creative Strategist cards lead. If the top pain is "no competitor visibility," the Strategist and Founder cards lead. The card content is unchanged; only the order and visual emphasis adapt.
+
+One card per active teammate or per role,
    showing what's concretely different now that the brain is built. Each card:
    - Person's name (or role if anonymous)
    - Three or four capability one-liners ("draft a brief that pulls customer
      pains by name," "teardown last week's ad against our persona set," etc.)
    - One or two suggested prompts the person can paste
 
-4. **"What's not in the brain yet."** List pending OAuths and integrations as
-   explicit asks, framed by what the team actually uses for each domain. Pull
-   the pairing from `tools_team_uses_not_yet_in_runneth` in the manifest, not
-   from a default mapping. Never assume a specific tool fills a specific domain —
+6. **"What's not in the brain yet."** List pending OAuths and integrations as
+   explicit asks, framed by what the team actually uses for each domain. For
+   each recommended integration, **show why it's recommended** by tying it to
+   a specific pain point from `onboarding/pain-points.md`. Example:
+   > "Connect Asana — addresses your brief production bottleneck pain."
+   This is transparent and shows the team how Motion thinks about their setup.
+   Pull the pairing from `tools_team_uses_not_yet_in_runneth` in the manifest,
+   not from a default mapping. Never assume a specific tool fills a specific domain —
    the team might use Google Calendar, Notion, Asana, or nothing for Calendar;
    they might use Drive, Notion, Figma, or Frame.io for Library. If a domain is
    sparse and no integration has been named for it, say so plainly: "Calendar —
@@ -766,9 +906,20 @@ generic "here's what we ingested" framing.
 
 ## Step 6.5 — Write the onboarding checklist
 
-Right after the welcome card renders, write `/agent/brain/onboarding-checklist.md` — the brand-agnostic continuation checklist for the team and their CSM to accomplish together. This is the document Reza's vision implies: how the team gets from "brain installed" to "Runneth feels like a member of the team."
+Right after the welcome card renders, write `/agent/brain/onboarding/checklist.md` — the brand-agnostic continuation checklist for the team and their CSM to accomplish together. **Location moved in v2.0.0** from `/agent/brain/onboarding-checklist.md` (root) to `/agent/brain/onboarding/checklist.md` (under the onboarding folder) so all anchor-related content sits together.
 
-The checklist file persists in the brain. The team can update progress over time (checking items off). The CSM reads it during weekly check-ins. New teammates onboarding into the customer Runneth read it to learn the patterns.
+This is the document Reza's vision implies: how the team gets from "brain installed" to "Runneth feels like a member of the team."
+
+The checklist file persists in the brain. The team can update progress over time (checking items off). The CSM reads it during weekly check-ins. The onboarding-progress-watcher routine runs **customer-side** (in the customer Runneth) and auto-updates detectable items daily by checking their own Slack channels, integrations, refresh routine state, and brain content. The customer Runneth owns its own progress detection. New teammates onboarding into the customer Runneth read the checklist to learn the patterns.
+
+### v1.x → v2.0 migration
+
+If `/agent/brain/onboarding-checklist.md` (root) exists from a v1.x install:
+1. Move it to `/agent/brain/onboarding/checklist.md`
+2. Leave a 30-day stub at the old path pointing to the new location
+3. Preserve any team edits
+
+If neither path exists, write fresh per the structure below.
 
 ### File location and frontmatter
 
@@ -777,7 +928,7 @@ The checklist file persists in the brain. The team can update progress over time
 domain: onboarding
 ownership: mixed
 substance: facts
-managed_by: brain-onboard (initial) / user (progress tracking)
+managed_by: brain-onboard (initial) / user (progress tracking) / onboarding-progress-watcher (customer-side, auto-detect)
 sources:
   - { layer: meta, ref: "synthesis findings from brain-onboard install" }
 refresh_cadence: never
@@ -786,7 +937,7 @@ confidence: high
 ---
 ```
 
-Save at `/agent/brain/onboarding-checklist.md`. Surface it on the welcome card under "What's not in the brain yet" as: "Full onboarding checklist at `/agent/brain/onboarding-checklist.md` — work through this with your CSM."
+Save at `/agent/brain/onboarding/checklist.md`. Surface it on the welcome card as a one-line status under the anchor (see Step 6 item 3) AND under "What's not in the brain yet" as: "Full onboarding checklist at `/agent/brain/onboarding/checklist.md` — work through this with your CSM."
 
 ### Checklist structure
 
@@ -797,7 +948,24 @@ Five sections. Some items always present, some pulled from synthesis findings.
 
 Status: [ ] todo  [/] in progress  [x] done
 
-## 1. Brain enrichment (close the gaps surfaced at install)
+## 0. Anchor confirmation (Ale's ask — confirm the why-Motion)
+
+[Pulled from `onboarding/why-motion.md`, `onboarding/pain-points.md`, etc.]
+- [ ] why-motion.md drafted from alignment call
+- [ ] Team confirms why-motion captures what they're solving (during Runneth Set Up)
+- [ ] Pain points ranked and confirmed
+- [ ] Success criteria agreed with team
+
+## 1. Calls scheduled and complete
+
+[Pulled from Gong + HubSpot calendar for the new five-call onboarding sequence]
+- [ ] Alignment call completed
+- [ ] Runneth Set Up scheduled
+- [ ] Automations Workshop scheduled
+- [ ] Motion Training scheduled
+- [ ] First CSM 1:1 booked
+
+## 2. Brain enrichment (close the gaps surfaced at install)
 
 ### Integrations to connect
 [Pulled from "What's not in the brain yet" — each pending OAuth becomes one item]
@@ -818,7 +986,7 @@ Status: [ ] todo  [/] in progress  [x] done
 - [ ] Configure Apify API key for organic VoC pulls
 - ...
 
-## 2. Operating habits (set up how Runneth works alongside the team)
+## 3. Operating habits (set up how Runneth works alongside the team)
 
 ### Slack channels
 - [ ] Create #ask-runneth (where anyone on the team asks Runneth anything)
@@ -835,21 +1003,21 @@ Status: [ ] todo  [/] in progress  [x] done
 - [ ] Wire agreed routines as scheduled scripts
 - [ ] Confirm first weekly refresh fires successfully
 
-## 3. First dopamine moments (Reza's pattern: the team experiences the value)
+## 4. First dopamine moments (Reza's pattern: the team experiences the value)
 
 - [ ] Each teammate asks at least one question in #ask-runneth
 - [ ] Team uses "save this" or "remember this" pattern at least once
 - [ ] First brief generated using the signals layer + persona + product dossier
 - [ ] First failed answer routed through #train-runneth and resolved
 
-## 4. Compound effect (weeks 2-4)
+## 5. Compound effect (weeks 2-4)
 
 - [ ] Wire routines for the domains the team confirmed should stay current
 - [ ] Connect any pending integrations from section 1
 - [ ] Champion saves at least three things to brain independently
 - [ ] Team references signals files when planning next creative
 
-## 5. Forever loop (ongoing)
+## 6. Forever loop (ongoing)
 
 - [ ] Weekly: CSM scans #ask-runneth and #train-runneth, fixes failed answers
 - [ ] Monthly: CSM re-runs prep-customer-brain and pushes refresh
@@ -887,7 +1055,10 @@ Write `/agent/brain/_state.json` recording what got done:
   "synthesized_by": "brain-onboard",
   "domains_populated": ["identity", "brand", "customers", "competition", "performance", "strategy", "knowledge"],
   "domains_partial": ["calendar", "library"],
+  "onboarding_folder_populated_at": "<iso>",
   "onboarding_checklist_written_at": "<iso>",
+  "anchor_read_at": "<iso>",
+  "anchor_shapes_applied": true,
   "domains_empty": ["preferences"],
   "motion_calls_succeeded": ["brand-context", "workspace-goal", "meta insights", ...],
   "motion_calls_failed": [...],

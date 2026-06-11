@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "1.8.1",
+  "version": "2.0.0",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2026-06-05",
+      "type": "major",
+      "notes": "Major restructure: add onboarding/ folder as a foundational brain layer alongside the ten domains and signals. The onboarding/ folder holds the anchor (why-motion.md), pain points, goals, success criteria, the checklist (moved from /agent/brain/onboarding-checklist.md root), team decisions, and per-call analysis logs. New Step 4.W reads the anchor and computes weights for downstream steps: which routines run, which integrations get prioritized, which signals populate, which capability cards lead. The anchor shapes SETUP, not creative output (briefs are grounded in domain content + signals). Step 6 welcome card now LEADS with the anchor (Why Motion + pain points in a dark ink callout) and surfaces onboarding-checklist status above the per-domain readout. Capability cards are weighted by which pain points each role addresses. Step 6.5 checklist gets two new sections (0: Anchor confirmation per Ale's ask, 1: Five-call onboarding sequence) and renumbers existing sections; lives at new path under onboarding/. Step 3.5 upgrade-safe path includes a v1.x\u2192v2.0 migration step for the checklist relocation, idempotent and preserving team edits. Step 7 state schema records anchor_read_at and anchor_shapes_applied. Adds standing rule #7 (brain content vs brain mechanics) clarifying that the team's content ships customer-side while Motion's interpretations stay internal. Documents the calls/ split: structured findings ship in onboarding/calls/, full Gong analysis stays in customers/<slug>/_internal-context/calls/. Adds onboarding/calls-overview.md as a thin customer-facing explanation of the 5-call sequence. Step 6 \"What's not in the brain yet\" now shows WHY each recommended integration addresses a specific pain point from pain-points.md. Step 6.5 clarifies onboarding-progress-watcher runs customer-side. Apify moved to CSM-side: prep-customer-brain now runs the Apify scrapers (Reddit, IG, TikTok, Pinterest, YouTube, TrustPilot, Amazon, G2/Capterra, LinkedIn) during package prep with the same skip rules. Data ships in the package at _sources/apify/. Customer Runneths no longer need APIFY_API_KEY configured \u2014 one less integration to set up. Step 2B becomes a package read instead of a live actor pattern. Motion controls data quality, scraper selection, rate-limit handling, and Apify cost runs through Motion's account. Trade-off: Apify data refreshes only on prep runs (monthly typical), which is acceptable for Reddit/IG/TikTok organic and reviews."
+    },
     {
       "version": "1.8.1",
       "date": "2026-06-04",
