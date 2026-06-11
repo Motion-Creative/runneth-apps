@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.9.0",
+      "date": "2026-06-11",
+      "type": "minor",
+      "notes": "Add the operational layer: three registries (integrations/, routines/, apps/) that sit as siblings to the ten brain domains and signals/. Clean mental model — domains = brand knowledge, signals/ = forward-looking intelligence, integrations/ + routines/ + apps/ = what's connected, what runs, what's been built. integrations/ mirrors the internal integration-capabilities-library pattern (one folder per integration + README index) and is seeded at install from the manifest's wired_customer_integrations (connected) and tools_team_uses_not_yet_in_runneth (recommended); each entry records which brain domains it feeds, so data lineage is auditable from the brain side. It's kept current by the oauth_connection automation turn / integration-onboarding, which already writes the capabilities-and-scopes.md shape. routines/ is the routine registry Reza's example tree draws that the brain was missing (one file per routine + README), each entry naming its write target to close the loop on the routines-write-signals architecture; solves the same audit problem as the internal routine-storage-audit. apps/ is the app registry (README index) recording the durable state each app reads so apps stay views-over-state. New Standing rule 7 (operational layer is auditable, not decorative), brain-structure section expanded, new Step 4.Y (synthesis: populate integrations/ from the manifest, scaffold routines/ and apps/ READMEs even when empty, with _meta frontmatter and table shapes for all three), Step 6 welcome card adds one operational-layer readout line ('3 integrations wired, 4 recommended; 0 routines yet; 0 apps'), Step 6.5 onboarding-checklist integration and routine items now point at the registries, Step 7 _state.json adds operational_layer_populated plus registry counts, and the verify-install readout reports operational-layer status. Contained to brain-onboard; prep-customer-brain needs no change since it already ships the integration data in the manifest."
+    },
     {
       "version": "1.8.1",
       "date": "2026-06-04",
