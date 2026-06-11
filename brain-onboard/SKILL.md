@@ -101,8 +101,16 @@ These hold for every install. Apply them whenever the skill runs.
    When a call analysis produces both structured findings AND Motion's
    interpretation, split the output into two files (one customer-facing, one
    internal). Same source call, two destinations.
+8. **The operational layer is auditable, not decorative.** The three registries
+   (`integrations/`, `routines/`, `apps/`) exist so any teammate can see what's
+   connected, what runs, and what's been built without reading the manifest or
+   grepping the filesystem. Populate `integrations/` from the manifest at
+   install; scaffold `routines/` and `apps/` with READMEs even when empty. Each
+   integration entry names the brain domains it feeds; each routine entry names
+   its write target; each app entry names the durable state it reads. These
+   registries are the source of truth for data lineage on the brain side.
 
-## The 10 brain domains + signals layer
+## The 10 brain domains + signals layer + operational layer
 
 1. **Identity** — team roster, roles, working style. Per-person scope at `identity/people/<handle>/`.
 2. **Brand** — positioning, voice, voice rules, products. Structured product catalogue at `brand/products/<product-slug>/spec.md` with materials, price, sizes, claims, photos, status.
@@ -129,6 +137,14 @@ Plus two foundational layers sitting as siblings to the ten domains:
 **`onboarding/`** — the anchor that grounds everything. Captured during the alignment call, refined during the Runneth Set Up call, maintained during ongoing CSM 1:1s. Contains the why-Motion answer, pain points, goals, success criteria, the onboarding checklist, and per-call analysis logs. **Shapes setup decisions** (which routines run, which integrations get prioritized, which signals populate, which capability cards get weighted). Does NOT shape creative output (briefs are grounded in domain content + signals, not in setup config). Documented in Step 4.W.
 
 **`signals/`** — forward-looking intelligence. Cross-domain whitespace, gaps, and opportunities derived from synthesis findings. Read by the briefing chain when the team requests a brief; updated by refresh routines week over week. Eight standard files documented in Step 4.X.
+
+Plus an **operational layer** — three registries that sit as siblings to the ten domains and `signals/`. Where domains are brand knowledge and `signals/` is forward-looking intelligence, the operational layer records what's connected, what runs, and what's been built:
+
+- **`integrations/`** — the connection registry. One folder per connected integration plus a README index. Each entry records which brain domains the integration feeds, so data lineage is auditable from the brain side. Documented in Step 4.Y.
+- **`routines/`** — the routine registry. One file per routine with its full config and write target, so any teammate can see what keeps each domain or signal current. Documented in Step 4.Y.
+- **`apps/`** — the app registry. A README index of built apps and the durable state each one reads, so apps stay views-over-state, not state owners. Documented in Step 4.Y.
+
+The clean mental model: **domains = brand knowledge, `signals/` = forward-looking intelligence, `integrations/` + `routines/` + `apps/` = the operational layer (what's connected, what runs, what's been built).**
 
 ## Step 1 — Find and stage the package
 
@@ -762,6 +778,126 @@ When the team requests a brief (via runneth-classic's briefing chain or any othe
 
 This is the architectural shift Rachel codified during the Printfresh pilot: routines write signals, briefs are human-initiated, and Runneth pulls signals as inputs every time. The brain gets smarter every week not because routines write briefs, but because the signal state of the world is current.
 
+## Step 4.Y — Populate the operational layer
+
+After the signals layer, scaffold the operational layer: three registries at `/agent/brain/integrations/`, `/agent/brain/routines/`, and `/agent/brain/apps/`. They sit as siblings to the ten domains and `signals/`. This is the auditable counterpart to the brain's knowledge — what's connected, what runs, what's been built — so any teammate can read data lineage off the brain instead of the manifest or the filesystem.
+
+All three registries always get a `README.md` at install, even when near-empty, with the table header and a `(none yet)` row where applicable. `integrations/` is seeded immediately from the manifest; `routines/` and `apps/` start sparse and grow as the team wires routines and builds apps. Every README carries the standard `_meta` frontmatter, with `managed_by` reflecting who maintains the registry going forward.
+
+### `integrations/` — the connection registry
+
+Mirrors the internal `integration-capabilities-library` pattern. One folder per connected integration plus a README index.
+
+```
+integrations/
+├── README.md                     # table: integration, status, feeds-which-domains, last verified
+├── <integration>/
+│   └── capabilities-and-scopes.md
+```
+
+- **Populated at install** from the manifest: `wired_customer_integrations` (status `connected`) and `tools_team_uses_not_yet_in_runneth` (status `recommended`, not yet connected). Write one README row per integration in both states.
+- **Each entry records which brain domains it feeds** (e.g. Yotpo → Customers reviews, Shopify → Brand products, Northbeam → Performance), so data lineage is auditable from the brain side, not just the manifest.
+- **Kept current by the `oauth_connection` automation turn / `integration-onboarding`,** which already writes the `capabilities-and-scopes.md` file shape for each integration. Don't duplicate that work here — scaffold the registry, seed the README from the manifest, and let the onboarding flow own per-integration capability files going forward. For integrations already wired at install, write the per-integration folder with whatever capability detail the manifest carries; flag the rest as `pending integration-onboarding`.
+
+`integrations/README.md` frontmatter + table:
+
+```markdown
+---
+domain: integrations
+ownership: system
+substance: facts
+managed_by: brain-onboard (initial) / oauth_connection + integration-onboarding (ongoing)
+refresh_cadence: on-connect
+last_refreshed: <iso>
+confidence: high
+---
+
+# Integrations registry
+
+What's connected to this Runneth and which brain domains each source feeds.
+
+| Integration | Status | Feeds domains | Last verified |
+|---|---|---|---|
+| Yotpo | connected | Customers (reviews) | <iso> |
+| Shopify | recommended | Brand (products) | — |
+| ... |
+```
+
+### `routines/` — the routine registry
+
+The folder Reza's own example tree draws that the brain is otherwise missing. Solves the same audit problem as the internal `routine-storage-audit`: every routine declares what it writes to.
+
+```
+routines/
+├── README.md                     # table: routine, cadence, trigger, writes-to, last run, status
+├── <routine-slug>.md             # one per routine: full config + write target
+```
+
+- **Starts near-empty at install** (few routines wired day one); grows as routines get set up. Write the README with the table header and a `(none yet)` row if nothing is wired.
+- **Each entry names its write target** — which domain doc or `signals/` file it refreshes — closing the loop on the "routines write signals" architecture so any teammate can see what keeps each domain or signal current.
+- When a routine is later created (via the `reminder` CLI or a setup skill), add or update its `<routine-slug>.md` and the README row. The signals refresh routines documented in Step 4.X each get a registry entry naming the signal files they re-derive.
+
+`routines/README.md` frontmatter + table:
+
+```markdown
+---
+domain: routines
+ownership: system
+substance: facts
+managed_by: brain-onboard (initial) / routine setup (ongoing)
+refresh_cadence: on-change
+last_refreshed: <iso>
+confidence: high
+---
+
+# Routines registry
+
+What runs on a schedule and what each routine keeps current.
+
+| Routine | Cadence | Trigger | Writes to | Last run | Status |
+|---|---|---|---|---|---|
+| (none yet) |
+```
+
+### `apps/` — the app registry
+
+```
+apps/
+├── README.md                     # table: app, route, reads-which-state, purpose, created
+```
+
+- **Starts empty;** grows as apps get built. README has the table header and a `(none yet)` row.
+- **Records the durable state each app reads** so apps stay views-over-state, not state owners. When an app is built, add its row naming the brain paths or `data/` files it reads.
+
+`apps/README.md` frontmatter + table:
+
+```markdown
+---
+domain: apps
+ownership: system
+substance: facts
+managed_by: brain-onboard (initial) / app-builder (ongoing)
+refresh_cadence: on-change
+last_refreshed: <iso>
+confidence: high
+---
+
+# Apps registry
+
+What's been built and which durable state each app reads.
+
+| App | Route | Reads state | Purpose | Created |
+|---|---|---|---|---|
+| (none yet) |
+```
+
+### Validation
+
+- All three READMEs exist after this step, each with valid `_meta` frontmatter.
+- `integrations/README.md` has one row per manifest integration (connected + recommended); no wired integration from the manifest is missing.
+- `routines/` and `apps/` READMEs render even when empty (`(none yet)` row).
+- Append a `_changelog.md` line per registry on each synthesis run, same format as the domains.
+
 ## Step 5 — Update INDEX.md
 
 Append entries to `/agent/INDEX.md` for each domain doc written, so future
@@ -820,6 +956,10 @@ Structure:
    Plus a **Signals** section sitting alongside (not inside) the ten domains:
 
    - **Signals:** N opportunities surfaced across the eight signal files (format-gaps, audience-gaps, inspo-steals, seasonal-whitespace, review-requests, organic-paid-gaps, hook-vocabulary, graveyard-candidates). Headline: total item count + count of files that are empty pending upstream content. End with `/agent/brain/signals/`.
+
+   Plus one **Operational layer** line sitting alongside the domains and signals:
+
+   - **Operational layer:** N integrations wired, M recommended (not yet connected); R routines running; A apps built. One line, e.g. "3 integrations wired, 4 recommended; 0 routines yet; 0 apps." End with the three registry paths: `/agent/brain/integrations/`, `/agent/brain/routines/`, `/agent/brain/apps/`.
 
    Each domain section ends with a 1-line link or path so the team knows
    where to look: "Full content at `/agent/brain/<domain>/`".
@@ -1029,9 +1169,10 @@ Status: [ ] todo  [/] in progress  [x] done
 
 Sections 2, 3, 4, 5 are template — same shape every customer. Sections 1 items are pulled from real synthesis findings:
 
-- **Integrations** — every entry in the welcome card's "What's not in the brain yet" becomes a checklist item with the destination domain noted
+- **Integrations** — every entry in the welcome card's "What's not in the brain yet" becomes a checklist item with the destination domain noted. These items mirror the `integrations/` registry written in Step 4.Y (each `recommended` row); point each checklist item at its registry entry so connection status lives in one place.
 - **Brain content to confirm** — pull from any domain doc that ended with "pending team confirmation" or competitor-seed entries the team hasn't named
 - **Motion gaps** — pull from anything Motion-side surfaced during install: creative cache disabled, TikTok not connected, Apify key missing, attribution windows undefined, etc.
+- **Refresh routines** — the section 2 "Refresh routines" items correspond to the `routines/` registry written in Step 4.Y. As each routine is wired, its checklist item is satisfied and a registry row appears naming its write target.
 
 If a section has no items because nothing was flagged, write the section header with "(nothing pending)" instead of dropping it. The structure stays consistent across customers so teams know what to expect.
 
@@ -1060,6 +1201,13 @@ Write `/agent/brain/_state.json` recording what got done:
   "anchor_read_at": "<iso>",
   "anchor_shapes_applied": true,
   "domains_empty": ["preferences"],
+  "operational_layer_populated": true,
+  "operational_layer": {
+    "integrations_registered": 3,
+    "integrations_recommended": 4,
+    "routines_registered": 0,
+    "apps_registered": 0
+  },
   "motion_calls_succeeded": ["brand-context", "workspace-goal", "meta insights", ...],
   "motion_calls_failed": [...],
   "customer_integrations_pulled": ["yotpo"],
@@ -1093,6 +1241,7 @@ populated," or similar, read `/agent/brain/_state.json` and summarize:
 - Which Motion calls succeeded vs failed (and why)
 - Which customer integrations got pulled
 - Which competitors got resolved
+- Whether the operational layer is populated (integrations/routines/apps registries written)
 - What pending OAuths or steps remain
 
 If `_state.json` is missing or stale, the skill hasn't fully completed.
