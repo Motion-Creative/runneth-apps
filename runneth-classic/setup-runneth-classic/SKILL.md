@@ -94,6 +94,7 @@ Synthesize what you have into a working picture. **Inherited brain content has p
 - **What creative is currently running.** Format mix, messaging themes, persona tells from the top 30-day creatives.
 - **What's been tested and abandoned (the inferred graveyard).** From the 365-day creative library: identify patterns that were tested with meaningful spend then dropped to zero, OR formats/tactics that appeared once or twice and never returned. Group by visual format, asset type, hook tactic, and messaging angle using glossary tags. Distinguish two cases: (a) patterns that peaked then died ("tried at scale, killed") and (b) patterns that were tested once and never iterated on ("tried once, abandoned"). Save the synthesis to `/agent/brain/runneth-classic/workspaces/<slug>/graveyard-inference.md` so Turn 5b can present specific findings rather than asking blank-slate.
 - **What's been iterated on heavily (the validated patterns).** From the same 365-day pull: patterns that appear repeatedly across variants, that maintain or grow spend over time, or that show up in multiple campaigns. These are the brand's bench — what the team has signed off on as good.
+- **The naming convention inferred from campaign, ad set, and ad names.** From the 365-day pull, extract the structural pattern in `campaignName`, `adsetName`, and `adName` fields. Look for common separators (`_`, `-`, `|`, ` / `), consistent positional segments, repeated prefixes, and abbreviations. The goal is to decode each segment: market code, objective, product line, audience, hook tactic, format, iteration number, date code, persona, anything else encoded in names. Save to `/agent/brain/runneth-classic/workspaces/<slug>/naming-conventions.md`. This file is what lets the orchestrator turn "the May ads" or "the Q4 launch campaigns" into exact `campaignName` filters without re-running `motion meta filter-reference` on every turn.
 - **Whether brand-audit has already run.** Yes / no based on `/agent/brain/brand-audit/<workspace>/` existence, plus when it last ran (fresh / aging / stale).
 - **Whether prior runneth-classic state exists.** If `workspaces/<slug>/` has prior files, this is a re-invocation. Treat existing files as the starting point and only update what the user changes in Phase 1.
 - **What other use cases have contributed brain content.** Other use cases (brand-kit, paid-strategy-audit, competitor-intel, etc.) may have written useful content. Note their existence; the orchestrator reads them via corpus-search on relevant future turns.
@@ -369,6 +370,58 @@ Last updated: <ISO date>
 ```
 
 When this turn fires, the orchestrator's creative-strategy chains read this file before generating concepts or hooks. The graveyard becomes binding — do not propose patterns marked "confirmed dead."
+
+### Turn 4d — Naming convention (confirm what Phase 0 inferred)
+
+**Only run this turn if Phase 0's `naming-conventions.md` has confident structural patterns to surface.** Skip silently if the 365-day pull was too thin or names looked random.
+
+Surface the inferred decoding as questions. Customer corrects what we got wrong and fills in segments that weren't obvious from data alone.
+
+> "Looking at your campaigns and ads, I think I'm seeing a pattern. Here's my read:
+>
+> - **Campaign names** look like `<MARKET>_<OBJECTIVE>_<PRODUCT>_<DATE>` — e.g., `US_Conv_LipBalm_0526` means US market, conversion campaign, lip balm product, May 2026.
+> - **Ad set names** seem to encode audience: `<INTEREST>_<AGE>_<GENDER>` — e.g., `Wellness_25-34_F` is the wellness-interest ad set targeting women 25-34.
+> - **Ad names** look like `<HOOK_TACTIC>_<FORMAT>_<ITERATION>` — e.g., `Question_UGC_v3` is a question-hook UGC creative, third iteration.
+>
+> Am I reading this right? Anything I'm missing — segments that mean something I haven't decoded, or codes that aren't obvious from the names alone?"
+
+Compose dynamically from `naming-conventions.md`. Use real examples from the workspace's actual data, not generic placeholders. If patterns differ by Meta vs. TikTok, surface both.
+
+Update `naming-conventions.md` based on the response. Save the confirmed convention as binding for future filter construction:
+
+```markdown
+# Naming conventions for <workspace>
+Last updated: <ISO date>
+
+## Campaign names
+Format: `<MARKET>_<OBJECTIVE>_<PRODUCT>_<DATE>`
+Separator: underscore
+Example: `US_Conv_LipBalm_0526`
+
+Segment decoding:
+- Position 1 (`MARKET`): US, CA, UK, AU, DE, intl
+- Position 2 (`OBJECTIVE`): Conv (conversion), Awa (awareness), Trf (traffic)
+- Position 3 (`PRODUCT`): product line shortcode — LipBalm, BodyWash, etc.
+- Position 4 (`DATE`): `MMYY` format — 0526 = May 2026
+
+## Ad set names
+Format: `<INTEREST>_<AGE>_<GENDER>`
+[same shape]
+
+## Ad names
+Format: `<HOOK_TACTIC>_<FORMAT>_<ITERATION>`
+[same shape]
+
+## Special cases / exceptions
+- <anything the user flagged, e.g., "BFCM campaigns drop the DATE segment">
+
+## Codes the user uses that aren't obvious
+- <e.g., "P1/P2/P3 = persona 1/2/3 in our strategy matrix">
+```
+
+When this turn fires, the orchestrator's slice-integrity rule reads this file to interpret user filter phrases. The user saying "the May ads" becomes a `campaignName includes "0526"` filter automatically; "the lip balm launch" becomes `campaignName includes "LipBalm"`; "the question hooks from the UGC test" becomes `adName includes "Question" AND adName includes "UGC"`.
+
+If names don't follow a structured convention (genuinely random or human-readable strings), save that finding to `naming-conventions.md` too so the orchestrator knows to fall back to `motion meta filter-reference` for fuzzy phrases rather than guessing at structure.
 
 ### Turn 4c — Current pressure (what's coming up)
 
