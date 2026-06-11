@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "2.2.0",
+      "date": "2026-06-11",
+      "type": "minor",
+      "notes": "Rewrite Step 1.5 so the three brain-layer skills are grabbed from the public Use Case Library on GitHub (Motion-Creative/runneth-apps) at install time instead of being copied from the package's _skills/ directory. Why: the CSM installs brain-onboard itself from the library link, so it is already current; the old Step 1.5 then copied a (possibly stale) bundled brain-onboard from the package over that fresh link install, and dumped corpus-search and team-member-memory files into the skills folder while ignoring each skill's own install-config placement (corpus-search belongs under /agent/tools/corpus-search/, team-member-memory's whoami scripts under /agent/brain/admin/, plus a behavior-snippet insert). New behavior: brain-onboard never reinstalls or overwrites itself; corpus-search and team-member-memory are fetched from public raw GitHub only if not already present (never clobbering a customized copy) and installed per their own install-config.json installs[] entries, honoring if-not-exists, chmod, and insert-after/insert-fallback; corpus-search's install.sh is run after placement; unresolved install-config tokens or insert targets surface on the welcome card and onboarding checklist instead of being guessed. The repo is public so no token is needed on the customer VM. This removes the bundled-copy staleness and overwrite risk and means library updates reach customers on every fresh install. Companion change still needed in prep-customer-brain (stop generating _skills/ in the package); tracked separately because that skill's source lives outside runneth-apps."
+    },
     {
       "version": "2.1.0",
       "date": "2026-06-11",

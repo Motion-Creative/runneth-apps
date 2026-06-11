@@ -177,23 +177,53 @@ Read `_manifest.json`. Note which sources were included, which were intentionall
 excluded (so you don't go scrape them anyway), and what the customer-side
 responsibilities are.
 
-## Step 1.5 — Install bundled skills from `_skills/`
+## Step 1.5 — Ensure the brain-layer skills are installed from the library (GitHub)
 
-The package's `_skills/` directory ships three baseline skills together. Install all three into the customer Runneth's skill directory on first run.
+The brain-layer skills are **not** shipped in the package. They are distributed through the public Runneth Use Case Library (`Motion-Creative/runneth-apps`, a public repo), so every install pulls the current version straight from GitHub instead of a stale bundled copy that could overwrite a fresh one.
+
+- **`brain-onboard`** — already installed from the library link the CSM used to start this install, so it is current. Do NOT reinstall or overwrite it from anywhere.
+- **`corpus-search`** — grab from the library if not already present.
+- **`team-member-memory`** — grab from the library if not already present.
+
+For corpus-search and team-member-memory, fetch each skill's files from the public repo and install them **per that skill's own `install-config.json` placement**, not by dumping everything into the skills folder (their supporting files belong under `/agent/tools/` and `/agent/brain/admin/`, not the skills directory). The repo is public, so no token is needed on the customer VM.
 
 ```bash
-for skill in brain-onboard corpus-search team-member-memory; do
-  if [ -d "/agent/brain/_sources/_skills/$skill" ]; then
-    mkdir -p "/agent/.agents/skills/$skill"
-    cp -r "/agent/brain/_sources/_skills/$skill/"* "/agent/.agents/skills/$skill/"
-    chmod +x "/agent/.agents/skills/$skill/"*.sh 2>/dev/null || true
+REPO_RAW="https://raw.githubusercontent.com/Motion-Creative/runneth-apps/main"
+REPO_API="https://api.github.com/repos/Motion-Creative/runneth-apps"
+
+for skill in corpus-search team-member-memory; do
+  # Already present (or locally customized)? Leave it alone — never clobber.
+  if [ -f "/agent/.agents/skills/$skill/SKILL.md" ]; then
+    echo "$skill already installed — skipping"
+    continue
   fi
+
+  # Stage the whole skill directory from the public library.
+  stage="/tmp/skill-$skill"; rm -rf "$stage"; mkdir -p "$stage"
+  curl -fsSL "$REPO_API/git/trees/main?recursive=1" \
+    | python3 -c "import json,sys; [print(x['path']) for x in json.load(sys.stdin)['tree'] if x['type']=='blob' and x['path'].startswith('$skill/')]" \
+    | while read -r path; do
+        rel="${path#$skill/}"
+        mkdir -p "$stage/$(dirname "$rel")"
+        curl -fsSL "$REPO_RAW/$path" -o "$stage/$rel"
+      done
+
+  # Place the skill definition itself.
+  mkdir -p "/agent/.agents/skills/$skill"
+  cp "$stage/SKILL.md" "/agent/.agents/skills/$skill/SKILL.md"
 done
 ```
 
-After install, verify each skill's `SKILL.md` is present at `/agent/.agents/skills/<skill>/SKILL.md`. Note the installed version of each skill into `_state.json` (Step 7).
+Then apply each staged skill's `install-config.json` `installs[]` entries to place its supporting files at their real destinations, honoring `if-not-exists`, `chmod`, and any `insert-after` / `insert-fallback` rules:
 
-If any skill fails to install, surface that on the welcome card and continue with synthesis. The team can re-install later via the use case library, but brain-onboard depends on all three for the full experience.
+- **corpus-search** installs its CLI and libs under `/agent/tools/corpus-search/` and ships an `install.sh` that bootstraps sqlite-vec, config, and the schema. Place its files per its install-config, then run `bash /agent/tools/corpus-search/install.sh` and follow the `[TODO]` lines it prints.
+- **team-member-memory** installs its whoami scripts under `/agent/brain/admin/` (chmod 0755) and inserts its behavior snippet into the brain. Honor its `if-not-exists` entries so an existing customized copy is never overwritten.
+
+If an install-config entry uses a token (e.g. `{{TEAM_MEMBER_TEMPLATE_PATH}}`) or an insert target that can't be resolved at runtime, place what you can and surface the unresolved item on the welcome card and onboarding checklist rather than guessing a path.
+
+After install, verify each skill's `SKILL.md` is present at `/agent/.agents/skills/<skill>/SKILL.md`, and record the installed version (read each skill's `install-config.json` `version`) into `_state.json` (Step 7).
+
+If a skill can't be fetched (no network, GitHub unreachable), surface that on the welcome card and continue with synthesis. The team can install it later from the library — but corpus-search powers brain search and team-member-memory powers per-person learning, so flag the gap clearly.
 
 ## Step 2 — Run live workspace pulls (Layer 3)
 
