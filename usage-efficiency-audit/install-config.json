@@ -1,0 +1,72 @@
+{
+  "schema": "1.0",
+  "id": "usage-efficiency-audit",
+  "version": "1.0.0",
+  "description": "Watcher + audit. Daily check on whether a workspace has crossed 80% of its included Runneth plan for the current billing cycle. When it has, runs a personalized efficiency audit on the team's actual conversation history, generates an openable HTML page with concrete recommendations, and posts a friend-voice heads-up to Slack with the link. Fires once per cycle.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": ["slack-connect"]
+  },
+  "depends": [],
+  "customize": [
+    {
+      "token": "WORKSPACE_ID",
+      "description": "The Motion workspace ID for this sandbox. Found in workspace settings or resolved via motion workspace-goal.",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "token": "WORKSPACE_NAME",
+      "description": "Human-readable workspace or brand name. Used to namespace brain files and derive the workspace slug.",
+      "required": true,
+      "fallback": null
+    },
+    {
+      "token": "WORKSPACE_SLUG",
+      "description": "URL-safe version of the workspace name: lowercase, hyphens for spaces. Derived at install time from WORKSPACE_NAME. Used as the file name under /agent/brain/usage-efficiency/.",
+      "required": true,
+      "fallback": null
+    }
+  ],
+  "installs": [
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/usage-efficiency-audit/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Core usage efficiency audit skill. Runs daily on schedule and on explicit trigger."
+    },
+    {
+      "from": "setup-usage-efficiency-audit/SKILL.md",
+      "to": "/agent/.agents/skills/setup-usage-efficiency-audit/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Setup and reconfiguration skill. Runs on first install. Re-invokable any time."
+    }
+  ],
+  "post_install": [
+    {
+      "action": "skill-invoke",
+      "skill": "setup-usage-efficiency-audit",
+      "name": "Configure the audit",
+      "description": "Walks through picking the Slack channel for the heads-up, optional teammates to tag, and the team's billing anniversary day. Schedules the daily watcher.",
+      "manual": false
+    },
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/brain/usage-efficiency/{{WORKSPACE_SLUG}}.json"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-02",
+      "type": "major",
+      "notes": "Initial release. Daily watcher checks cycle-to-date Runneth usage against the team's plan. When the cycle crosses 80%, the audit runs personalized pattern detection across the team's real conversations, builds an openable HTML page with the highest-leverage habit shifts, and posts a friend-voice note to Slack. Fires once per cycle. Setup skill captures Slack channel, optional user tags, and billing anniversary day."
+    }
+  ]
+}
