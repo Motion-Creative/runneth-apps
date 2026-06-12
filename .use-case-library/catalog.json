@@ -1,18 +1,12 @@
 {
   "version": 1,
   "slugs": [
-    "authenticate-apps",
-    "brain-onboard",
     "bootcamp",
-    "plan-mode",
-    "routine-storage-audit",
     "competitor-intel",
     "brand-kit",
     "landing-page-experiments",
     "landing-page-summary",
     "optimize-landing-page",
-    "integration-capabilities-library",
-    "health-alerts",
     "import-from-ai",
     "brand-audit",
     "paid-strategy-audit",
@@ -102,6 +96,30 @@
     {
       "slug": "add-roles-permissions",
       "reason": "Active rework in flight (customer-facing org access framework while the in-app primitive ships). Hide until the work is finished."
+    },
+    {
+      "slug": "authenticate-apps",
+      "reason": "Agent-infrastructure tooling, not a creative-strategy use case. Pulled to keep the public library creative-strategy focused."
+    },
+    {
+      "slug": "brain-onboard",
+      "reason": "Agent-infrastructure tooling, not a creative-strategy use case. Pulled to keep the public library creative-strategy focused."
+    },
+    {
+      "slug": "plan-mode",
+      "reason": "Agent-infrastructure tooling, not a creative-strategy use case. Pulled to keep the public library creative-strategy focused."
+    },
+    {
+      "slug": "routine-storage-audit",
+      "reason": "Agent-infrastructure tooling, not a creative-strategy use case. Pulled to keep the public library creative-strategy focused."
+    },
+    {
+      "slug": "integration-capabilities-library",
+      "reason": "Agent-infrastructure tooling, not a creative-strategy use case. Pulled to keep the public library creative-strategy focused."
+    },
+    {
+      "slug": "health-alerts",
+      "reason": "Agent-infrastructure tooling, not a creative-strategy use case. Pulled to keep the public library creative-strategy focused."
     }
   ]
 }
