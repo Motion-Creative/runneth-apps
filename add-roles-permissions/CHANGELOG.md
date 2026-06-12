@@ -10,6 +10,32 @@ All notable changes to `deploy-security-protocol` are documented here.
 
 ---
 
+## v3.3.0 — 2026-06-12
+
+Remove the Neon dependency from Motion-web identity resolution. Installs no longer require — or ask for — any production database credential.
+
+### Why
+
+On 2026-06-11 a fresh install on a customer VM hit the Phase 1 hard-stop asking for `NEON_DATABASE_URL` — a production Neon connection string. That prompt should never reach a customer install. The runtime change that made Neon unnecessary (a local daemon conversation store at `/daemon/conversation-store/conversations.db` plus a `$CONVERSATION_ID` env var) shipped to the fleet over SSH on June 10–11, but this repo's install path was never updated to match. This release brings the repo in line with the fleet.
+
+Version is 3.3.0 (not 3.2.x) because PR #115 has v3.2.0 claimed for the attribution-layer removal.
+
+### Changed
+
+- **`motion-whoami.sh` resolves locally.** Reads `userEmail` from `/daemon/conversation-store/conversations.db` (via `sqlite3 -readonly -json`) using the runtime-injected `$CONVERSATION_ID`, then resolves against `organization-map.json`. No network, no secrets. The script body matches the resolver proven on ~10 customer VMs in the June 2026 fleet rollout (compatibility variant, SHA `946bfa2a043944075ba0ad415faa35a28d668cca07131fbeea551244e5f85d01`), adapted only to this package's naming: `organization-map.json` / `RUNNETH_ORG_MAP` and `/agent/brain/team/` home bases (the fleet uses `workspace-map.json` / `/agent/brain/members/`).
+- **Fail-loud semantics kept** (decided 6/2): on resolver failure — `$CONVERSATION_ID` unset, daemon DB missing, no email for the conversation — the script exits non-zero with error JSON on stderr, and the permissions layer treats unknown identity as no-writes.
+- **Legacy-map compatibility:** the resolver reads `.motionUserEmails` and falls back to legacy `.motionEmails`, and keeps both in sync on provision, so older installs keep resolving existing users after upgrade.
+- **Phase 1 Look-around 6** no longer checks for a runtime secret and no longer hard-stops fresh installs. It now checks the two things the resolver needs — daemon DB present, `sqlite3` available — both on every current VM by default. If either is missing (outdated image), warn and proceed; Motion-web users resolve as unknown until the runtime is updated.
+- **Prerequisites** (SKILL.md + README): `NEON_DATABASE_URL` dropped; `sqlite3` added.
+
+### Removed
+
+- **`motion-whoami-neon.py`** and its install step. Phase 5 Step 4 now tells the agent to delete a leftover copy if one exists from a prior install.
+
+Refs: incident thread 2026-06-11, PDEC-7817.
+
+---
+
 ## v3.1.5 — 2026-06-03
 
 Slim pass. 73 lines trimmed from SKILL.md (1,137 → 1,064) without dropping a single rule, look-around, phase, or piece of educational content. Pure deduplication and prose tightening.

@@ -21,8 +21,7 @@ Runneth gets to know each person it works with — their goals, preferences, and
     ├── admin/
     │   ├── organization-map.json           ← identity registry — auto-provisioned on first message
     │   ├── slack-whoami.sh                 ← Slack resolver + auto-scaffolding
-    │   ├── motion-whoami.sh                ← Motion-web resolver + auto-scaffolding (Neon-first)
-    │   └── motion-whoami-neon.py           ← Neon agent_conversation query helper
+    │   └── motion-whoami.sh                ← Motion-web resolver + auto-scaffolding (local daemon DB)
     ├── identity/
     │   └── people/
     │       ├── TEMPLATE.md                 ← team-member template (configurable path)
@@ -38,8 +37,8 @@ Runneth gets to know each person it works with — their goals, preferences, and
 ## How identity resolution works
 
 - **Slack:** `slack-whoami.sh <slack_user_id> [<display_name>]` reads `/agent/brain/admin/organization-map.json`. Known IDs resolve. Unknown IDs auto-provision a new entry and home base.
-- **Motion web:** `motion-whoami.sh [<display_name>]` resolves the speaker email via the Neon `agent_conversation` table, invoked through `motion-whoami-neon.py` + `secret run --env DATABASE_URL=NEON_DATABASE_URL`. Authoritative, zero-lag, works for brand-new conversations.
-- **No SQLite fallback.** If Neon fails, the resolver returns `status: "unresolved"`. The behavior-snippet handles unresolved sessions by continuing read-only and, when a durable write is about to happen, asking the user where it should land (org level vs. a specific person's folder) instead of guessing a handle.
+- **Motion web:** `motion-whoami.sh [<display_name>]` reads the speaker email from the local daemon conversation store (`/daemon/conversation-store/conversations.db`) using the runtime-injected `$CONVERSATION_ID`. Fully local, zero-lag, works for brand-new conversations. No runtime secrets required.
+- **Graceful when resolution fails.** If the lookup fails (`$CONVERSATION_ID` not set, daemon DB missing on an older image, no email on the row), the resolver returns `status: "unresolved"`. The behavior-snippet handles unresolved sessions by continuing read-only and, when a durable write is about to happen, asking the user where it should land (org level vs. a specific person's folder) instead of guessing a handle.
 
 Both resolvers return `{ handle, home_base, status }`. Status is `resolved` or `provisioned`.
 
@@ -50,7 +49,7 @@ This package is fully standalone. If an admin later installs `add-roles-permissi
 ## Prerequisites
 
 - Any Runneth sandbox
-- `jq` installed
+- `jq` and `sqlite3` installed
 - A platform identifier (Slack ID or Motion `userEmail`) for the speaker — otherwise the resolvers fall back gracefully and the conversation proceeds without personalized context.
 
 ## Version history

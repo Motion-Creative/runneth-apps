@@ -1,10 +1,10 @@
 {
   "schema": "1.0",
   "id": "team-member-memory",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Runneth gets to know each person it works with \u2014 their goals, preferences, and working style \u2014 and adapts to them over time. Standalone: resolves identity from Slack ID or Motion email and scaffolds each person's home base on first message. No permissions setup required.",
   "requires": {
-    "runtime": "any Runneth sandbox; jq must be installed",
+    "runtime": "any Runneth sandbox; jq and sqlite3 must be installed",
     "preinstalled": [],
     "recommended": []
   },
@@ -45,12 +45,6 @@
       "chmod": "0755"
     },
     {
-      "file": "motion-whoami-neon.py",
-      "dest": "/agent/brain/admin/motion-whoami-neon.py",
-      "if-not-exists": true,
-      "chmod": "0755"
-    },
-    {
       "file": "motion-whoami.sh",
       "dest": "/agent/brain/admin/motion-whoami.sh",
       "if-not-exists": true,
@@ -70,6 +64,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "3.2.0",
+      "date": "2026-06-12",
+      "type": "minor",
+      "notes": "Motion-web identity resolves locally — no runtime secrets. motion-whoami.sh now reads the speaker email from the local daemon conversation store (/daemon/conversation-store/conversations.db, via sqlite3 -readonly -json) using the runtime-injected $CONVERSATION_ID, replacing the Neon agent_conversation query. motion-whoami-neon.py is removed from the package and the install list; NEON_DATABASE_URL is no longer needed. The resolution logic matches the resolver proven on the customer fleet in the June 2026 rollout (compatibility variant: reads .motionUserEmails with legacy .motionEmails fallback, keeps both in sync on provision), adapted to this package's organization-map.json naming and /agent/brain/identity/people/ home bases. Soft failure semantics unchanged: on any lookup failure ($CONVERSATION_ID unset, daemon DB missing on an older image, no userEmail on the row) the resolver returns status \"unresolved\" and the behavior-snippet asks the user at write time where the durable note should land instead of guessing a handle. slack-whoami.sh is unaffected — it never touched Neon. sqlite3 added to runtime requirements. Refs: incident thread 2026-06-11, PDEC-7817."
+    },
     {
       "version": "3.1.0",
       "date": "2026-06-02",

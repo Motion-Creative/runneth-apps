@@ -1,4 +1,4 @@
-<!-- use-case: team-member-memory v3.0.0 -->
+<!-- use-case: team-member-memory v3.2.0 -->
 
 ### On every new conversation — session open
 
@@ -8,12 +8,12 @@ Run silently before answering the first message:
    - **Slack:** `bash /agent/brain/admin/slack-whoami.sh <currentMessage.authorId> [<display_name>]`
    - **Motion web:** `bash /agent/brain/admin/motion-whoami.sh [<display_name>]`
 
-   Both resolve against `/agent/brain/admin/organization-map.json`. Motion web goes to Neon's `agent_conversation` table for the speaker email; there is no SQLite fallback.
+   Both resolve against `/agent/brain/admin/organization-map.json`. Motion web reads the speaker email from the local daemon conversation store (`/daemon/conversation-store/conversations.db`) using the `$CONVERSATION_ID` env var the runtime injects — no network, no secrets.
 
    Returned status values:
    - `resolved` — known person; `handle` and `home_base` returned. Continue normally.
    - `provisioned` — new person; a home base was just scaffolded at `<home_base>` with a stub `<handle>.md` and a `brain/` subfolder. Continue normally — there is no prior context to load.
-   - `unresolved` — Neon could not return an email for this conversation (Neon down, brand-new row not yet replicated, helper missing, etc.). Continue the conversation, but switch to the **unresolved write rule** below for this session.
+   - `unresolved` — the resolver could not return an email for this conversation (`$CONVERSATION_ID` not set in this context, daemon DB missing on an older image, no `userEmail` on the row, etc.). Continue the conversation, but switch to the **unresolved write rule** below for this session.
 
    If `add-roles-permissions` is also installed, the resolver may additionally return a `scope` field and a `collision` status. Handle those per the permissions package — for memory purposes, `resolved` / `provisioned` / `unresolved` are the only statuses that gate the memory steps below.
 
