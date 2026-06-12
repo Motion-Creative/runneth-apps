@@ -1,9 +1,9 @@
 {
   "schema": "1.0",
   "id": "runneth-classic",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "install_notes": "Several bundled skill files in this pack are 12-33 KB. They will be truncated if the install runner uses WebFetch (which caps around 30 KB and often lower). The install runner MUST fetch these files via bash + curl against raw.githubusercontent.com URLs or via the GitHub Contents API (with base64 decode), NOT WebFetch. Specifically the five files in skills/ over 10 KB: creative-strategy-engine.md (33 KB), visual-formats.md (31 KB), hook-tactics.md (18 KB), creative-mechanics.md (15 KB), brand-relevant-keywords.md (13 KB), hook-voice-patterns.md (12 KB), hook-writing.md (11 KB). Example fetch: bash -c 'curl -sL https://raw.githubusercontent.com/Motion-Creative/runneth-apps/main/runneth-classic/skills/visual-formats.md > /agent/.agents/skills/visual-formats/SKILL.md'. If WebFetch is the only option available, fetch each file in multiple passes using offset/limit parameters and concatenate, or escalate to the user.",
-  "description": "The deterministic, opinionated Runneth, packaged as a single installable use case. Eleven upstream dependencies, eleven bundled Alysha craft skills, brain seed with theme classifier and per-theme chains plus Alysha framework supplements and Beta-specific references, an orchestrator that enforces a 12-theme chain and the Synthesis Gate, a 10-step setup that captures surface preference, winner-definition, integrations intent, watched brands, and customer voice before handing off to brand-audit, and a user.md sentinel encoding 11 voice and behavior rules engineered against the six failure modes from the Runneth 1.0 customer feedback dataset.",
+  "description": "The deterministic, opinionated Runneth, packaged as a single installable use case. Nine upstream dependencies, eleven bundled Alysha craft skills, brain seed with theme classifier and per-theme chains plus Alysha framework supplements and Beta-specific references, an orchestrator that enforces a 12-theme chain and the Synthesis Gate, a 10-step setup that captures surface preference, winner-definition, integrations intent, watched brands, and customer voice before handing off to brand-audit, and a user.md sentinel encoding 11 voice and behavior rules engineered against the six failure modes from the Runneth 1.0 customer feedback dataset.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -15,10 +15,8 @@
     "corpus-search",
     "plan-mode",
     "self-iteration-loop",
-    "team-member-memory",
     "competitor-intel",
     "health-alerts",
-    "add-roles-permissions",
     "building-integrations",
     "integration-capabilities-library"
   ],
@@ -208,13 +206,6 @@
   "post_install": [
     {
       "action": "use-case-install",
-      "slug": "add-roles-permissions",
-      "name": "Install add-roles-permissions",
-      "description": "Foundation infra — admins / members scoped before anything else installs so subsequent installs respect permissions.",
-      "manual": false
-    },
-    {
-      "action": "use-case-install",
       "slug": "corpus-search",
       "name": "Install corpus-search",
       "description": "Brain-wide retrieval layer — the orchestrator's Step 0 re-anchor uses it for searches across the brain.",
@@ -232,13 +223,6 @@
       "slug": "self-iteration-loop",
       "name": "Install self-iteration-loop",
       "description": "Grading layer that captures what worked and what didn't, feeds lessons back over time.",
-      "manual": false
-    },
-    {
-      "action": "use-case-install",
-      "slug": "team-member-memory",
-      "name": "Install team-member-memory",
-      "description": "Per-teammate profile that reads before chat and updates after. Nobody starts cold.",
       "manual": false
     },
     {
@@ -312,6 +296,12 @@
     "/agent/brain/runneth-classic/integrations-intent.md"
   ],
   "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2026-06-12",
+      "type": "minor",
+      "notes": "Drop team-member-memory and add-roles-permissions from the pack: removed from upstream_dependencies and their use-case-install actions removed from the post_install cascade (9 dependencies remain). Both use cases are hidden from the library while they're reworked, and the cascade must not install hidden use cases onto customer VMs — this also stops fresh installs from pulling the team-member-memory resolver whose Neon-to-daemon-DB swap is still in flight. Install order is otherwise unchanged; corpus-search now runs first. Teams add either one from the library once it's re-published."
+    },
     {
       "version": "1.0.2",
       "date": "2026-06-01",
