@@ -16,7 +16,7 @@ Remove the Neon dependency from Motion-web identity resolution. Installs no long
 
 ### Why
 
-On 2026-06-11 a fresh install on a customer VM hit the Phase 1 hard-stop asking for `NEON_DATABASE_URL` — a production Neon connection string. That prompt should never reach a customer install. The runtime change that made Neon unnecessary (a local daemon conversation store at `/daemon/conversation-store/conversations.db` plus a `$CONVERSATION_ID` env var) shipped to the fleet over SSH on June 10–11, but this repo's install path was never updated to match. This release brings the repo in line with the fleet.
+The June 2026 runtime change added a local daemon conversation store (`/daemon/conversation-store/conversations.db` plus a `$CONVERSATION_ID` env var), which makes Motion-web identity resolvable locally. The fleet's resolvers were updated to use it in the June 10–11 rollout, but this repo's install path was never updated to match — it still asked for a runtime database secret at install time. A fresh install should never prompt for a database credential. This release brings the repo in line with the fleet.
 
 Version is 3.3.0 (not 3.2.x) because PR #115 has v3.2.0 claimed for the attribution-layer removal.
 
@@ -32,7 +32,7 @@ Version is 3.3.0 (not 3.2.x) because PR #115 has v3.2.0 claimed for the attribut
 
 - **`motion-whoami-neon.py`** and its install step. Phase 5 Step 4 now tells the agent to delete a leftover copy if one exists from a prior install.
 
-Refs: incident thread 2026-06-11, PDEC-7817.
+Refs: PDEC-7817.
 
 ---
 
