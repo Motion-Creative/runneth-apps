@@ -1,30 +1,22 @@
 ---
-hero_headline: "The brand layer. Built once, refreshed weekly, read by everything downstream."
-hero_subhead: "Brand identity, products, voice-of-customer, keywords, competitor read, and the pain × persona × angle matrix — six durable files every concept brief and deep dive reads."
-install_time: "~2 minutes for the first audit, ~30 seconds per workspace after"
-requires: "Brand website URL"
+hero_headline: "Build your brand context once. Everything downstream reads it."
+hero_subhead: "Your Runneth learns who the brand is, what customers actually say, and which messaging angles are validated — then grounds every creative task in that."
+install_time: "~30 seconds to install, ~2 minutes for the first audit"
+requires: "A brand website URL"
+status: "proven"
 ---
 
 ## Super powers this unlocks
 
-- Six durable markdown files capture the strategic brand foundation in a structure the rest of the framework reads automatically.
-- Every creative deep dive's Strategic Layer section reads `strategy.md` — no re-deriving persona × pain × angle for every ad.
-- Every weekly deck cross-checks proposed iteration recommendations against the persona matrix so the team isn't shipping creative for unvalidated personas.
-- Reviews, keywords, and competitor signal stay current. Monday refresh catches what shifted over the weekend before Friday's deck.
-- Every skill inside is independently callable. Refresh just the review-audit after a new VOC export. Run competitor-analysis standalone after a launch announcement.
+- Ask for a concept brief and it's grounded in your real personas, pains, and validated angles — not generic category copy.
+- Pull verbatim customer quotes (pains, desires, objections) into any hook or copy task.
+- See which competitors are active in ads right now and where the messaging gaps are.
+- Refresh on demand after new reviews or a competitor launch, and get a short rundown of what changed.
 
 ## How it works
 
-The audit runs six skills in order: brand-intake → product-catalog → review-audit → brand-relevant-keywords → competitor-analysis → creative-strategy-engine. Each produces its own markdown file in `/agent/brain/brand-audit/<workspace-slug>/`. The final file (`strategy.md`) is the pain × persona × messaging-angle matrix across 5 awareness stages — the file the rest of the framework references on every creative task.
-
-On first run, a single block gets appended to `/agent/user.md` telling Runneth to read the relevant brand-audit files before any creative-strategy work. Narrow reads, not full re-runs. The Monday 8am refresh keeps the bundle current.
-
-Every one of the six underlying skills is also independently callable. If someone asks Runneth to "refresh the competitor read for client X," competitor-analysis runs standalone and updates only its file. The full orchestrator is for the first build and the Monday refresh.
+The first audit asks three questions in chat: your site, where your reviews live, and who you compete with. Runneth then builds six reference files covering brand identity, products, customer voice, keywords, competitors, and a persona-by-pain messaging matrix — and reads them before every creative task. Ask for a refresh any time; the old version is archived and you see what changed.
 
 ## A real example
 
-Justin at Hungryroot installs brand-audit once. Brand-intake reads hungryroot.com. Product-catalog enumerates the 30+ products and their benefits. Review-audit mines Trustpilot, Amazon reviews, and an uploaded NPS export — surfaces the "5pm panic" pain point as the dominant VOC theme. Competitor-analysis pulls active Meta ads from HelloFresh, Blue Apron, Green Chef. Creative-strategy-engine produces the matrix: "Unconfident Home Cook × evening-rush panic × first-delivery framing" is one validated cell; "Health-Conscious Parent × hidden-veggies × cookbook authority" is another.
-
-When Justin asks two weeks later for a deep dive on FUN34166 ("the 5:30 first delivery ad"), creative-deep-dive doesn't re-mine reviews or re-survey competitors — it reads `strategy.md`, finds the "Unconfident Home Cook × evening-rush" cell, and grounds the strategic-layer section of the diagnostic in that pre-validated framing.
-
-When the Monday refresh runs and Trustpilot shows three new reviews complaining about packaging waste, the diff post lands in #growth-team noting "new pain point appearing: packaging concern, 3 mentions in last 7 days." Justin reacts ✅. The strategy matrix updates to add a new cell. By Friday's deck, the team is already considering test variants that address packaging in the messaging.
+Justin runs growth at Hungryroot. He installs brand-audit, answers the three questions (site, Trustpilot plus an NPS export, five competitors), and two minutes later has the full brand context — including the "5pm panic" pain point that dominates his reviews. Two weeks later he asks for a deep dive on a first-delivery ad, and Runneth grounds it in the "Unconfident Home Cook × evening-rush" angle without re-mining a single review. When packaging complaints start showing up, he says "refresh the brand audit" — Runneth re-reads the reviews and reports the diff: packaging waste is a new pain point, now in the matrix.

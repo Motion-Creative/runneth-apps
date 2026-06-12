@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "brand-audit",
-  "version": "1.0.1",
-  "description": "Foundation + strategy layer of the creative-strategy framework. Runs brand-intake, product-catalog, review-audit, brand-relevant-keywords, competitor-analysis, and creative-strategy-engine to produce a durable per-workspace brand bundle that creative-deep-dive and weekly-performance-deck read as upstream context. Refreshes Monday mornings.",
+  "version": "2.0.0",
+  "description": "Foundation + strategy layer of the creative-strategy framework. Runs brand-intake, product-catalog, review-audit, brand-relevant-keywords, competitor-analysis, and creative-strategy-engine to produce a durable per-workspace brand bundle that creative-deep-dive and weekly-performance-deck read as upstream context. On-demand only: the first run asks two or three intake questions inline in chat (brand site, review sources, competitors); re-run any time to refresh — the prior bundle is archived and a short diff lands in chat. No scheduled routine.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -13,49 +13,43 @@
       "from": "SKILL.md",
       "to": "/agent/.agents/skills/brand-audit/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Orchestrator skill \u2014 runs the six skills in order, writes the durable bundle, schedules Monday refresh, installs user.md snippet"
-    },
-    {
-      "from": "setup-brand-audit/SKILL.md",
-      "to": "/agent/.agents/skills/setup-brand-audit/SKILL.md",
-      "on_exists": "overwrite",
-      "purpose": "Setup skill \u2014 asks for brand site URL, review sources, competitors, ping channels, refresh schedule"
+      "purpose": "Orchestrator skill — asks the first-run intake questions inline, runs the six skills in order, writes the durable bundle, installs user.md snippet"
     },
     {
       "from": "skills/brand-intake.md",
       "to": "/agent/.agents/skills/brand-intake/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable \u2014 brand identity, value prop, audience, positioning"
+      "purpose": "Standalone callable — brand identity, value prop, audience, positioning"
     },
     {
       "from": "skills/product-catalog.md",
       "to": "/agent/.agents/skills/product-catalog/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable \u2014 products, benefits, claims, price points"
+      "purpose": "Standalone callable — products, benefits, claims, price points"
     },
     {
       "from": "skills/review-audit.md",
       "to": "/agent/.agents/skills/review-audit/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable \u2014 VOC across pain/desire/objection/comparison/use-case buckets"
+      "purpose": "Standalone callable — VOC across pain/desire/objection/comparison/use-case buckets"
     },
     {
       "from": "skills/brand-relevant-keywords.md",
       "to": "/agent/.agents/skills/brand-relevant-keywords/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable \u2014 search landscape and audience language"
+      "purpose": "Standalone callable — search landscape and audience language"
     },
     {
       "from": "skills/competitor-analysis.md",
       "to": "/agent/.agents/skills/competitor-analysis/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable \u2014 competitor read with active-ad signal from motion inspo-creatives"
+      "purpose": "Standalone callable — competitor read with active-ad signal from motion inspo-creatives"
     },
     {
       "from": "skills/creative-strategy-engine.md",
       "to": "/agent/.agents/skills/creative-strategy-engine/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Standalone callable \u2014 pain \u00d7 persona \u00d7 messaging-angle matrix across 5 awareness stages"
+      "purpose": "Standalone callable — pain × persona × messaging-angle matrix across 5 awareness stages"
     },
     {
       "from": "seed/_index.md",
@@ -72,19 +66,12 @@
   "runtime_installs": [
     {
       "appends_to": "/agent/user.md",
-      "guard": "sentinel 'runneth-apps:brand-audit:read-before-creative v1' already present",
+      "guard": "sentinel 'runneth-apps:brand-audit:read-before-creative v2' already present; removes any older v1 block",
       "trigger": "After the first successful brand-audit for any workspace, idempotent across subsequent runs",
-      "purpose": "Standing instruction so all creative work reads the workspace's brand bundle as upstream context \u2014 narrowly, not as a full re-read"
+      "purpose": "Standing instruction so all creative work reads the workspace's brand bundle as upstream context — narrowly, not as a full re-read"
     }
   ],
   "post_install": [
-    {
-      "action": "skill-invoke",
-      "skill": "setup-brand-audit",
-      "name": "Personalize for this workspace",
-      "description": "Walk the user through brand site URL, review sources, competitor list, and refresh channels",
-      "manual": false
-    },
     {
       "action": "show-intro",
       "name": "Introduce the new capability",
@@ -99,11 +86,16 @@
     "/agent/brain/brand-audit/<workspace-slug>/keywords.md",
     "/agent/brain/brand-audit/<workspace-slug>/competitor-analysis.md",
     "/agent/brain/brand-audit/<workspace-slug>/strategy.md",
-    "/agent/brain/brand-audit/<workspace-slug>/_history/<archived-iso>/",
-    "/agent/brain/brand-audit/_config/<workspace-slug>.json"
+    "/agent/brain/brand-audit/<workspace-slug>/_history/<archived-iso>/ (on re-run)"
   ],
   "upstream_dependencies": [],
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2026-06-12",
+      "type": "major",
+      "notes": "Trimmed to the on-demand core. Cut the auto-invoked setup skill (setup-brand-audit no longer exists; the orchestrator asks the two or three intake questions — brand site, review sources, competitors — inline in chat on first run), the Monday 08:00 refresh routine, the scheduled Slack diff posts with ✅/❌/❓ reaction handling, and the per-workspace _config JSON (intake answers are now recorded inside the bundle files themselves and re-read on refresh). Refresh is on demand: re-running the skill archives the prior bundle to _history/ and shows a short diff in chat; rollback is a manual restore from history. The six standalone skills, the durable six-file bundle, and _history/ archiving are unchanged. user.md snippet bumped to runneth-apps:brand-audit:read-before-creative v2, which removes any older v1 block and points refresh guidance at on-demand re-runs instead of the Monday routine."
+    },
     {
       "version": "1.0.1",
       "date": "2026-05-21",

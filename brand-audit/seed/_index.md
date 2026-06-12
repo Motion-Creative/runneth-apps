@@ -16,7 +16,7 @@ Row format:
   - VOC gap flag: <e.g. "no review sources configured"> (only if relevant)
 ```
 
-Configs live at `/agent/brain/brand-audit/_config/<workspace-slug>.json` — brand site URL, review sources, competitors, ping channels, refresh schedule.
+Input sources are recorded inside the bundle files themselves — brand site URL in `brand-context.md`, review sources in `review-audit.md`, competitor list in `competitor-analysis.md`.
 
 History archives at `/agent/brain/brand-audit/<workspace-slug>/_history/<archived-iso>/`.
 
