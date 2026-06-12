@@ -1,21 +1,22 @@
 ---
-hero_headline: "Weekly competitive intelligence — what changed, not just what exists."
-hero_subhead: "Tracks your competitor brands, runs survival analysis on their full ad portfolios, diffs against last week's baseline, and posts a delta report to Slack every Monday automatically."
-install_time: "~2 minutes"
-requires: "A Motion workspace with competitor brands accessible in the ad library"
+hero_headline: "Know what competitors are running, and what just changed."
+hero_subhead: "One question pulls every tracked competitor's live ads and tells you what's new since your last look."
+install_time: "~1 minute"
+requires: "Competitor brands findable in Motion's ad library"
+status: "experimental"
 ---
 
 ## Super powers this unlocks
 
-- Know when a competitor makes a meaningful creative move before your next planning meeting.
-- See which of their ads are actually working (survival signals) vs which are fresh bets.
-- Spot messaging angles you're missing and feature claims worth countering.
-- Get specific recommendations grounded in what competitors are actually running in market.
+- Ask "what are my competitors running?" and get every tracked brand's live ads, summarized.
+- See what changed since the last scan: new ads, new angles, ads that quietly disappeared.
+- Quote competitors' real hooks in your next brief instead of guessing at their messaging.
+- Get competitor questions answered from memory, because Runneth keeps a record of every scan.
 
 ## How it works
 
-Pick 3–5 competitor brands at setup. Every Monday, your Runneth pulls their full active ad portfolios, runs survival cohort analysis (long-runners, survivors, testing zone, fresh tests), diffs against last week's saved baseline, and posts a delta-first report to your Slack channel. First run establishes baselines. Second run onward delivers the weekly delta — what launched, what survived, and what they stopped doing.
+The first time you ask, your Runneth asks which three to five brands to track. Each scan pulls their live ads from Motion's ad library, tells you what each brand is running and what changed since last time, and saves the summary so later competitor questions start from what you already know.
 
 ## A real example
 
-Alex's team is heading into a big Q3 push. Monday morning, the competitor intel report lands in #creative-strategy: Brand X launched 6 UGC ads targeting the solopreneur burnout angle this week — first new messaging territory in three months. Two of their long-runners (62+ days) are both static. Their video tests keep dying at the 10-day mark. Alex's team had been planning more video. Now they're rethinking the format split before anything goes to production.
+Priya, a creative strategist at a DTC skincare brand, asks what her competitors are running before writing a brief. Runneth scans her three tracked brands: one added four UGC ads on the skin-cycling angle since her last scan, another's long-running statics haven't moved. She quotes two of the new hooks in that afternoon's brief. A week later she asks about pricing claims, and Runneth answers straight from the saved scan.

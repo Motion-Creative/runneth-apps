@@ -1,7 +1,7 @@
 {
   "slug": "competitor-intel",
-  "display_title": "See What Competitors Did This Week",
-  "pitch": "Every Monday: what they launched, what survived, and what they quietly stopped running.",
+  "display_title": "Ask What Competitors Are Running",
+  "pitch": "One question pulls every tracked competitor's live ads and tells you what's new, what's gone, and what changed since your last scan.",
   "status": "experimental",
   "category": "creative-operations",
   "github_path": "competitor-intel"

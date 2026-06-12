@@ -1,14 +1,19 @@
 # competitor-intel
 
-Weekly competitive intelligence scan. Tracks a configured list of competitor brands,
-pulls their full active ad portfolios, runs survival cohort analysis, diffs against last week's
-saved baseline, and delivers a delta-first report to a Slack channel automatically.
+On-demand competitor ad scan. When the user asks what competitors are running, Runneth pulls
+each tracked competitor's active ads from Motion's ad library, summarizes what every brand is
+running and what changed since the last scan, answers in chat, and refreshes one durable
+reference file per workspace.
 
-The value is in the delta. "Brand X launched 6 UGC ads targeting the solopreneur burnout angle this
-week — first new messaging territory in three weeks" is intelligence. A list of their active ads
-is a fact sheet. Every report answers: **what should the team pay attention to this week?**
+The value is in the delta. "Brand X launched four UGC ads on the solopreneur burnout angle since
+the last scan" is intelligence. A list of their active ads is a fact sheet. Every report answers:
+**what should the team pay attention to right now?**
 
-Install time: ~2 minutes. No upstream use cases required.
+No scheduled routine, no Slack delivery, no setup skill, no config files. The first scan asks the
+user in chat which competitors to track. If the user wants a recurring scan, they ask Runneth to
+schedule one themselves — the skill never creates one.
+
+Install time: ~1 minute. No upstream use cases required.
 
 ---
 
@@ -17,135 +22,81 @@ Install time: ~2 minutes. No upstream use cases required.
 | File | Destination | On exists |
 |------|-------------|-----------|
 | `SKILL.md` | `/agent/.agents/skills/competitor-intel/SKILL.md` | Overwrite |
-| `setup-competitor-intel/SKILL.md` | `/agent/.agents/skills/setup-competitor-intel/SKILL.md` | Overwrite |
-| `seed/inspoBrands.json` | `/agent/brain/competition/{{WORKSPACE_SLUG}}/inspoBrands.json` | Skip |
-| `seed/baselines/.gitkeep` | `/agent/brain/competition/{{WORKSPACE_SLUG}}/baselines/.gitkeep` | Skip |
 
-Post-install: the `setup-competitor-intel` skill runs automatically to configure the watchlist,
-Slack channel, and weekly schedule.
+That's the whole install. No seeds, no post-install setup flow.
 
 ---
 
 ## Install in a fresh sandbox
 
 ```bash
-# 1. Copy the skill files
 mkdir -p /agent/.agents/skills/competitor-intel
 cp SKILL.md /agent/.agents/skills/competitor-intel/SKILL.md
-
-mkdir -p /agent/.agents/skills/setup-competitor-intel
-cp setup-competitor-intel/SKILL.md /agent/.agents/skills/setup-competitor-intel/SKILL.md
-
-# 2. Seed the brain directory (replace {{WORKSPACE_SLUG}} with the actual slug)
-WORKSPACE_SLUG="your-workspace-slug"
-mkdir -p /agent/brain/competition/${WORKSPACE_SLUG}/baselines
-[ -f /agent/brain/competition/${WORKSPACE_SLUG}/inspoBrands.json ] || \
-  cp seed/inspoBrands.json /agent/brain/competition/${WORKSPACE_SLUG}/inspoBrands.json
-
-# 3. Post-install: invoke setup
-# Say "set up competitor watch" in chat, or Runneth will prompt you automatically.
 ```
+
+Then say "what are my competitors running?" in chat. The first run asks which brands to track.
 
 ---
 
 ## How it works
 
-**Setup (one time):** The `setup-competitor-intel` skill walks through:
-1. Selecting 3–5 competitor brands by name or domain
-2. Resolving each brand in Motion's ad library (uses `motion search-brands`)
-3. Configuring the Slack channel to deliver to
-4. Setting the weekly schedule (default: Monday 9am workspace timezone)
-
 **Every run:**
-1. Reads the workspace inspo brands file for brand IDs
-2. Pulls each competitor's full active portfolio (two-pass: newest + oldest sort, merged and deduplicated)
-3. Pulls recently killed ads (inactive, paused within last 7 days)
-4. Pulls brand context for each competitor
-5. Runs survival cohort analysis: long-runners (60+ days), survivors (15–59d), testing zone (7–14d), fresh tests (<7d)
-6. Extracts messaging themes, hook types, format mix, test clusters, and feature emphasis
-7. Diffs against last week's saved baseline: what's new, what survived, what stopped
-8. Generates a delta-first report
-9. Posts a teaser message to the Slack channel, with the full report in a thread reply
-10. Writes the new baseline for next week's diff
+1. Resolves the workspace (`motion workspace-goal`) and derives the workspace slug
+2. Reads `/agent/brain/competition/<workspace-slug>/competitor-watch.md` for the tracked list and the previous scan summary (first run: asks the user which 3–5 brands to track and resolves each via `motion search-brands`)
+3. Pulls each brand's active ads: `motion inspo-creatives --brand-id <id> --status active --sort newestLaunchDate --limit 150`
+4. Summarizes per brand: ad count, format mix, recurring angles, verbatim hooks, long-runners
+5. Compares against the previous scan summary in the watch file — what's new, what's gone, what shifted
+6. Replies in chat (never Slack) and overwrites the watch file with the fresh summary and scan date
 
-**First run:** Establishes baselines only. No delta report (nothing to compare against yet).
-Second run onward produces the weekly delta intelligence.
+**First run:** records the baseline summary, no diff. Second run onward reports the delta.
+
+**Adding/removing competitors:** "add [brand] to the competitor watch" or "remove [brand]" updates
+the tracked-competitors table in the watch file. No separate config.
 
 ---
 
 ## What this creates at runtime
 
 ```
-/agent/brain/competition/{{WORKSPACE_SLUG}}/
-  inspoBrands.json                    — saved brands, Slack config, schedule
-  baselines/
-    {brand-slug}.json               — weekly snapshot per competitor (overwritten each run)
+/agent/brain/competition/<workspace-slug>/
+  competitor-watch.md    — tracked competitor list + last-scan summary + scan dates
 ```
 
----
-
-## What to customize
-
-| Token | Description | Required | Fallback |
-|-------|-------------|----------|---------|
-| `WORKSPACE_ID` | Motion workspace ID | Yes | None |
-| `WORKSPACE_NAME` | Human-readable workspace or brand name | Yes | None |
-| `WORKSPACE_SLUG` | URL-safe workspace name (derived at install) | Yes | None |
-
-All tokens are set automatically by the `setup-competitor-intel` skill.
-The watchlist itself (brands, Slack channel, schedule) is configured interactively by that skill.
+After the first successful scan, the skill also appends one sentinel-guarded block to
+`/agent/user.md` (`runneth-apps:competitor-intel:read-before-competitor-questions v2`): when
+anyone asks a competitor question, read the watch file first, and refresh it via the skill if the
+question needs fresher data than the last scan date. Idempotent — re-runs never duplicate it.
 
 ---
 
 ## Triggers
 
-The skill runs automatically on the scheduled reminder. It also fires on explicit request in chat:
+The skill runs only on explicit request in chat:
 
 | Phrase | What happens |
 |--------|-------------|
-| "competitor scan" | Full scan of all watchlisted brands |
-| "competitor watch" | Same |
-| "run competitor watch" | Same |
-| "what are competitors doing" | Same |
-| "competitive intel" | Same |
-| "what changed in the market" | Same |
-| "set up competitor watch" | Invokes `setup-competitor-intel` for add/remove/reconfigure |
-| "add a competitor" | Invokes `setup-competitor-intel` to add one brand |
-| "remove a competitor" | Invokes `setup-competitor-intel` to remove one brand |
-
----
-
-## How Runneth operates this use case
-
-On every scheduled or triggered run, Runneth:
-
-1. Reads `/agent/brain/competition/{{WORKSPACE_SLUG}}/inspoBrands.json` for brand IDs and config
-2. Runs `motion workspace-goal` to resolve workspace context
-3. Runs `motion inspo-creatives --brand-id {id} --status active --sort newestLaunchDate --limit 150` for each brand
-4. Runs the same call with `--sort oldestLaunchDate` and merges by creative ID
-5. Runs `motion inspo-creatives --brand-id {id} --status inactive --sort newestLaunchDate --limit 150` for recently killed ads
-6. Runs `motion inspo-context --brand-id {id}` for brand context
-7. Loads baseline from `/agent/brain/competition/{{WORKSPACE_SLUG}}/baselines/{slug}.json`
-8. Computes survival cohorts, messaging themes, test clusters, and delta vs baseline
-9. Writes the full report and Slack teaser to `./workdir/`
-10. Posts to Slack via `slack send` (teaser to channel, full report as thread reply)
-11. Overwrites baselines with the new weekly snapshot
+| "what are my competitors running" | Full scan of all tracked brands |
+| "competitor scan" / "competitor watch" | Same |
+| "competitive intel" / "what changed in the market" | Same |
+| "what's [brand] been testing lately" | Answered from the watch file, refreshed if stale |
+| "add a competitor" / "remove a competitor" | Updates the tracked list in the watch file |
 
 ---
 
 ## Fallbacks
 
-- **Brand not in Motion's ad library:** Skipped with a note in the report. Suggest trying `motion search-brands` with a different term.
-- **No Slack channel configured:** Full report delivered in the current chat thread.
-- **No previous baseline:** First-run mode — full landscape report, labeled "Baseline established."
+- **Brand not in Motion's ad library:** Skipped with a note. Suggest trying `motion search-brands` with a different term.
 - **Empty portfolio (0 active ads):** Noted in the report, not treated as an error.
-- **Own-brand data unavailable:** Comparison table skipped, noted in the report.
+- **No previous scan:** First-scan mode — baseline summary, labeled as such, no diff.
 
 ---
 
 ## Version history
 
-- **1.0.0** (2026-05-20) — Initial release. Translated from the `competitor-intel` skill in
-  `motion-creative-plugin`. MCP tools replaced with native `motion` CLI. Watchlist and baselines
-  moved from `~/.claude/` to workspace-scoped brain storage. Setup skill handles configuration
-  and scheduling.
+- **2.0.0** (2026-06-12) — Trimmed to a single on-demand skill. Cut the auto-invoked setup skill,
+  the auto-scheduled weekly routine, auto Slack posts, baseline JSON files, inspoBrands.json, and
+  migration-helper.sh. The tracked list and scan record now live in one `competitor-watch.md` per
+  workspace. Added the sentinel-guarded user.md instruction installed after the first scan.
+- **1.1.0** (2026-06-02) — Brain data path moved to `/agent/brain/competition/`.
+- **1.0.0** (2026-05-20) — Initial release, translated from the `competitor-intel` skill in
+  `motion-creative-plugin`. Weekly scheduled scan with setup skill, Slack delivery, and baselines.

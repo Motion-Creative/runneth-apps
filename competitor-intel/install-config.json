@@ -1,91 +1,53 @@
 {
   "schema": "1.0",
   "id": "competitor-intel",
-  "version": "1.1.0",
-  "description": "Weekly competitive intelligence scan. Tracks competitor ad strategies, spots messaging shifts and new bets, diffs against last week's baseline, and posts a delta report to Slack automatically every Monday.",
+  "version": "2.0.0",
+  "description": "On-demand competitor ad scan. When the user asks what competitors are running, Runneth pulls each tracked competitor's active ads via motion inspo-creatives, summarizes what every brand is running and what changed since the last scan, answers in chat, and refreshes one durable reference file per workspace (/agent/brain/competition/<workspace-slug>/competitor-watch.md) holding the tracked competitor list, the latest scan summary, and scan dates. First run asks the user which competitors to track. Installs a user.md instruction (after the first successful scan) that reads the watch file before answering competitor questions. No scheduled routine, no Slack delivery, no config files — re-run any time, and the user can ask Runneth to schedule a recurring scan themselves.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
     "recommended": []
   },
-  "depends": [],
-  "customize": [
-    {
-      "token": "WORKSPACE_ID",
-      "description": "The Motion workspace ID for this sandbox. Found in workspace settings or resolved via motion workspace-goal.",
-      "required": true,
-      "fallback": null
-    },
-    {
-      "token": "WORKSPACE_NAME",
-      "description": "Human-readable workspace or brand name. Used to namespace brain files and derive the workspace slug.",
-      "required": true,
-      "fallback": null
-    },
-    {
-      "token": "WORKSPACE_SLUG",
-      "description": "URL-safe version of the workspace name \u2014 lowercase, hyphens for spaces. Derived at install time from WORKSPACE_NAME. Used as the folder name under /agent/brain/competition/.",
-      "required": true,
-      "fallback": null
-    }
-  ],
   "installs": [
-    {
-      "from": "seed/inspoBrands.json",
-      "to": "/agent/brain/competition/{{WORKSPACE_SLUG}}/inspoBrands.json",
-      "on_exists": "skip",
-      "purpose": "Empty inspoBrands seed. Populated by setup-competitor-intel on first run."
-    },
-    {
-      "from": "seed/baselines/.gitkeep",
-      "to": "/agent/brain/competition/{{WORKSPACE_SLUG}}/baselines/.gitkeep",
-      "on_exists": "skip",
-      "purpose": "Creates the baselines directory. Baseline files are written here by each scan run."
-    },
     {
       "from": "SKILL.md",
       "to": "/agent/.agents/skills/competitor-intel/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Core competitor watch skill. Runs on schedule and on explicit trigger."
-    },
+      "purpose": "The on-demand competitor scan skill — first-run competitor selection in chat, ad pull, diff vs the previous scan recorded in competitor-watch.md, chat report, watch-file refresh, user.md install"
+    }
+  ],
+  "runtime_installs": [
     {
-      "from": "setup-competitor-intel/SKILL.md",
-      "to": "/agent/.agents/skills/setup-competitor-intel/SKILL.md",
-      "on_exists": "overwrite",
-      "purpose": "Setup and reconfiguration skill. Runs on first install; re-invokable any time."
-    },
-    {
-      "file": "migration-helper.sh",
-      "dest": "/agent/brain/admin/competitor-intel-migration-helper.sh",
-      "if-not-exists": true,
-      "chmod": "0755"
+      "appends_to": "/agent/user.md",
+      "guard": "sentinel 'runneth-apps:competitor-intel:read-before-competitor-questions v2' already present",
+      "trigger": "After the first successful scan for any workspace, idempotent across subsequent runs",
+      "purpose": "Standing instruction so competitor questions read the workspace's competitor-watch.md first (tracked list + latest scan summary with dates) and refresh it via the skill when the question needs fresher data"
     }
   ],
   "post_install": [
     {
-      "action": "skill-invoke",
-      "skill": "setup-competitor-intel",
-      "name": "Configure your competitor inspo brands",
-      "description": "Walks through selecting competitors, resolving them in Motion's ad library, configuring Slack delivery, and scheduling the weekly routine.",
-      "manual": false
-    },
-    {
       "action": "show-intro",
       "name": "Introduce the new capability",
       "file": "post-install-intro.md",
-      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
+      "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox."
     }
   ],
   "creates_at_runtime": [
-    "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/inspoBrands.json",
-    "/agent/brain/competitor-intel/{{WORKSPACE_SLUG}}/baselines/{brand-slug}.json"
+    "/agent/brain/competition/<workspace-slug>/competitor-watch.md (tracked competitor list + last-scan summary + scan dates)"
   ],
+  "upstream_dependencies": [],
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2026-06-12",
+      "type": "major",
+      "notes": "Trimmed to a single on-demand skill; cut the auto-invoked setup skill, the auto-scheduled weekly routine, auto Slack posts, and baseline state files. The skill now runs only when asked: it pulls each tracked competitor's active ads, reports in chat what each brand is running and what changed since the previous scan, and refreshes one durable file per workspace (/agent/brain/competition/<workspace-slug>/competitor-watch.md). First run asks the user in chat which competitors to track — the tracked list lives in the watch file, replacing inspoBrands.json and its reminderId/slackChannelId/schedule state. Survival-cohort analysis and per-brand baseline JSONs replaced by a plain new/gone diff against the previous scan summary. migration-helper.sh removed. user.md snippet runneth-apps:competitor-intel:read-before-competitor-questions v2 installed after the first successful scan, idempotent via sentinel. The skill may tip the user that they can ask Runneth for a recurring scan, but never creates one itself."
+    },
     {
       "version": "1.1.0",
       "date": "2026-06-02",
       "type": "minor",
-      "notes": "Path migration. Brain data write path moves from /agent/brain/competitor-intel/<workspace-slug>/ to /agent/brain/competition/<workspace-slug>/ so competitor watch output sits inside the Competition brain domain instead of a sibling root. Aligns with brain-onboard's ten-domain layout. The skill install path stays at /agent/.agents/skills/competitor-intel/ \u2014 only the brain data path moves. Includes migration-helper.sh that detects /agent/brain/competitor-intel/ on existing installs, moves contents to /agent/brain/competition/ preserving accumulated weekly snapshots and baselines, and leaves a 30-day stub at the old path. No behavior changes to the weekly run itself."
+      "notes": "Path migration. Brain data write path moves from /agent/brain/competitor-intel/<workspace-slug>/ to /agent/brain/competition/<workspace-slug>/ so competitor watch output sits inside the Competition brain domain instead of a sibling root. Aligns with brain-onboard's ten-domain layout. The skill install path stays at /agent/.agents/skills/competitor-intel/ — only the brain data path moves. Includes migration-helper.sh that detects /agent/brain/competitor-intel/ on existing installs, moves contents to /agent/brain/competition/ preserving accumulated weekly snapshots and baselines, and leaves a 30-day stub at the old path. No behavior changes to the weekly run itself."
     },
     {
       "version": "1.0.1",
