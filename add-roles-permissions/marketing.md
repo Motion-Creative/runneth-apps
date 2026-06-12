@@ -9,13 +9,12 @@ requires: "Nothing"
 
 - Decide which areas of your team's brain are off-limits to most people. Brand strategy, pricing, client positioning, financial docs — whatever shouldn't get changed casually.
 - Lock each area to the specific people who own it, or to admins only.
-- Every save under your team's brain gets stamped with who wrote it. No more wondering who changed what.
 - Blocked edits get routed to a Slack channel of your choosing, with the original requester named, so an admin can approve or decline.
 - New teammates onboard automatically the first time they message Runneth. No setup work for new hires.
 
 ## How it works
 
-A short conversation, no technical setup. Runneth asks one core question: is there anything in your brain that only certain people should be editing? If yes, you tell it which areas and who owns each. Runneth confirms the plan in plain language, then sets it up. Identity and attribution run for everyone, locked or not.
+A short conversation, no technical setup. Runneth asks one core question: is there anything in your brain that only certain people should be editing? If yes, you tell it which areas and who owns each. Runneth confirms the plan in plain language, then sets it up. Identity resolution runs for everyone, locked or not.
 
 If you ever want to change the rules later — add a new owner, open an area back up, lock something new down — you just say it in your own words ("add Sarah to the Acme strategy team"), and Runneth walks the change with you.
 

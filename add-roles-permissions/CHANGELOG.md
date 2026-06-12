@@ -10,6 +10,28 @@ All notable changes to `deploy-security-protocol` are documented here.
 
 ---
 
+## v3.2.0 — 2026-06-03
+
+Attribution removed entirely. Kyra: "Let's remove everything tied to attribution here. We can tackle it separately."
+
+### Removed
+
+- **Permissions.md §2 Attribution** section removed. Sections 3-8 renumbered to 2-7.
+- **The "Who wrote what" piece** removed from "The pieces you'll be working with" (was item 4 of six; list is now five items).
+- **Phase 2 outcomes attribution bullet** removed ("Every save in the team's brain gets stamped with who wrote it").
+- **Phase 7 setup-complete message** no longer mentions attribution.
+- **Phase 4 readback prose** updated: "wrong attribution easy to spot" → "wrong ownership easy to spot."
+- **README primitive #4** (Attribution) removed; subsequent primitives renumbered. "Six primitives" → "five primitives."
+- **README "identity and attribution still useful"** softened to "identity resolution alone is still useful."
+- **Marketing.md attribution bullet** removed ("Every save under your team's brain gets stamped with who wrote it").
+- **Install-config.json description** no longer says "Every save gets stamped with who wrote it."
+
+Attribution will be designed and shipped separately when ready.
+
+Refs: PDEC-7817.
+
+---
+
 ## v3.1.5 — 2026-06-03
 
 Slim pass. 73 lines trimmed from SKILL.md (1,137 → 1,064) without dropping a single rule, look-around, phase, or piece of educational content. Pure deduplication and prose tightening.
