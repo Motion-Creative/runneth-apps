@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brain-onboard",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Customer-side skill that turns a brain package prepared by a Motion CSM into a populated org brain. Reads the package from ./uploads/ or /agent/brain/_sources/, runs live pulls against the customer's Motion workspace plus customer-wired integrations like Yotpo, runs Apify scrapers for organic web context, and synthesizes ten brain domains with source citations on every line. Triggered by phrases like 'build my brain' or 'run brain-onboard' after the CSM uploads the package.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -25,6 +25,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "2.3.0",
+      "date": "2026-06-12",
+      "type": "minor",
+      "notes": "Step 1.5 no longer installs team-member-memory from the library. That use case is hidden from the public catalog while it's reworked, and onboarding must never pull a hidden use case onto a customer VM. corpus-search is still fetched from the library if absent, exactly as before. Teams that want team-member-memory install it from the library once it's re-published. No other behavior changed."
+    },
     {
       "version": "2.2.0",
       "date": "2026-06-11",

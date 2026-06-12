@@ -183,15 +183,16 @@ The brain-layer skills are **not** shipped in the package. They are distributed 
 
 - **`brain-onboard`** — already installed from the library link the CSM used to start this install, so it is current. Do NOT reinstall or overwrite it from anywhere.
 - **`corpus-search`** — grab from the library if not already present.
-- **`team-member-memory`** — grab from the library if not already present.
 
-For corpus-search and team-member-memory, fetch each skill's files from the public repo and install them **per that skill's own `install-config.json` placement**, not by dumping everything into the skills folder (their supporting files belong under `/agent/tools/` and `/agent/brain/admin/`, not the skills directory). The repo is public, so no token is needed on the customer VM.
+(`team-member-memory` is **not** installed here anymore — it is hidden from the library while it's reworked, and onboarding must never pull a hidden use case onto a customer VM. Teams add it from the library once it's re-published.)
+
+For corpus-search, fetch the skill's files from the public repo and install them **per its own `install-config.json` placement**, not by dumping everything into the skills folder (its supporting files belong under `/agent/tools/`, not the skills directory). The repo is public, so no token is needed on the customer VM.
 
 ```bash
 REPO_RAW="https://raw.githubusercontent.com/Motion-Creative/runneth-apps/main"
 REPO_API="https://api.github.com/repos/Motion-Creative/runneth-apps"
 
-for skill in corpus-search team-member-memory; do
+for skill in corpus-search; do
   # Already present (or locally customized)? Leave it alone — never clobber.
   if [ -f "/agent/.agents/skills/$skill/SKILL.md" ]; then
     echo "$skill already installed — skipping"
@@ -214,16 +215,15 @@ for skill in corpus-search team-member-memory; do
 done
 ```
 
-Then apply each staged skill's `install-config.json` `installs[]` entries to place its supporting files at their real destinations, honoring `if-not-exists`, `chmod`, and any `insert-after` / `insert-fallback` rules:
+Then apply the staged skill's `install-config.json` `installs[]` entries to place its supporting files at their real destinations, honoring `if-not-exists`, `chmod`, and any `insert-after` / `insert-fallback` rules:
 
 - **corpus-search** installs its CLI and libs under `/agent/tools/corpus-search/` and ships an `install.sh` that bootstraps sqlite-vec, config, and the schema. Place its files per its install-config, then run `bash /agent/tools/corpus-search/install.sh` and follow the `[TODO]` lines it prints.
-- **team-member-memory** installs its whoami scripts under `/agent/brain/admin/` (chmod 0755) and inserts its behavior snippet into the brain. Honor its `if-not-exists` entries so an existing customized copy is never overwritten.
 
-If an install-config entry uses a token (e.g. `{{TEAM_MEMBER_TEMPLATE_PATH}}`) or an insert target that can't be resolved at runtime, place what you can and surface the unresolved item on the welcome card and onboarding checklist rather than guessing a path.
+If an install-config entry uses a token or an insert target that can't be resolved at runtime, place what you can and surface the unresolved item on the welcome card and onboarding checklist rather than guessing a path.
 
-After install, verify each skill's `SKILL.md` is present at `/agent/.agents/skills/<skill>/SKILL.md`, and record the installed version (read each skill's `install-config.json` `version`) into `_state.json` (Step 7).
+After install, verify the skill's `SKILL.md` is present at `/agent/.agents/skills/corpus-search/SKILL.md`, and record the installed version (read its `install-config.json` `version`) into `_state.json` (Step 7).
 
-If a skill can't be fetched (no network, GitHub unreachable), surface that on the welcome card and continue with synthesis. The team can install it later from the library — but corpus-search powers brain search and team-member-memory powers per-person learning, so flag the gap clearly.
+If the skill can't be fetched (no network, GitHub unreachable), surface that on the welcome card and continue with synthesis. The team can install it later from the library — but corpus-search powers brain search, so flag the gap clearly.
 
 ## Step 2 — Run live workspace pulls (Layer 3)
 
