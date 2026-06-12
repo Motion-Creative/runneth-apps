@@ -1,11 +1,13 @@
 {
   "version": 1,
   "slugs": [
+    "bootcamp",
     "competitor-intel",
     "brand-kit",
     "landing-page-experiments",
     "landing-page-summary",
     "optimize-landing-page",
+    "import-from-ai",
     "brand-audit",
     "paid-strategy-audit",
     "creative-deep-dive"
@@ -104,10 +106,6 @@
       "reason": "Agent-infrastructure tooling, not a creative-strategy use case. Pulled to keep the public library creative-strategy focused."
     },
     {
-      "slug": "bootcamp",
-      "reason": "Agent-infrastructure tooling, not a creative-strategy use case. Pulled to keep the public library creative-strategy focused."
-    },
-    {
       "slug": "plan-mode",
       "reason": "Agent-infrastructure tooling, not a creative-strategy use case. Pulled to keep the public library creative-strategy focused."
     },
@@ -121,10 +119,6 @@
     },
     {
       "slug": "health-alerts",
-      "reason": "Agent-infrastructure tooling, not a creative-strategy use case. Pulled to keep the public library creative-strategy focused."
-    },
-    {
-      "slug": "import-from-ai",
       "reason": "Agent-infrastructure tooling, not a creative-strategy use case. Pulled to keep the public library creative-strategy focused."
     }
   ]

@@ -18,9 +18,15 @@
     "blurb": "Landing pages, brand systems, conversion audits, and the experiments that follow."
   },
   {
+    "slug": "agent-foundations",
+    "title": "Agent Foundations",
+    "order": 4,
+    "blurb": "Base behaviors every Runneth should have. Memory, planning, integrations, and the routines that make your agent feel like one of the team."
+  },
+  {
     "slug": "analysis",
     "title": "Analysis",
-    "order": 4,
+    "order": 5,
     "blurb": "Brand strategy, paid channel briefs, creative deep dives, and the weekly deck that keeps your performance narrative compounding."
   }
 ]
