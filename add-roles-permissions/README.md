@@ -15,7 +15,7 @@ The skill is built from six primitives. The install conversation discovers which
 3. **Writers per space.** Each space has a writer rule: `everyone`, `specific`, or `admins_only`. Default is `everyone`. Anything in `everyone` is implicit and does not need to be listed.
 4. **Attribution.** Every durable save under `/agent/brain/` carries `author: @<handle>`. Always on.
 5. **Approval routing.** Optional Slack channel where blocked-edit requests get posted with the requester's handle, the space they tried to edit, and a short summary. Admins approve or decline in a follow-up message.
-6. **Identity resolution.** Slack ID or Motion email → handle. Neon-only (queries `agent_conversation`). No SQLite fallback.
+6. **Identity resolution.** Slack ID or Motion email → handle. Motion-web identity reads the local daemon conversation store (`/daemon/conversation-store/conversations.db` via `$CONVERSATION_ID`). No runtime secrets required. Fails loudly: unknown identity means no writes.
 
 The install flow shapes these into the org's setup.
 
@@ -34,8 +34,7 @@ The install flow shapes these into the org's setup.
     │   ├── spaces.json                    ← protected areas + writer rules + approval channel
     │   ├── organization-map.json          ← people registry
     │   ├── slack-whoami.sh                ← Slack resolver + auto-provisioning
-    │   ├── motion-whoami.sh               ← Motion web resolver (Neon-only) + auto-provisioning
-    │   └── motion-whoami-neon.py          ← Neon agent_conversation query helper
+    │   └── motion-whoami.sh               ← Motion web resolver (local daemon DB) + auto-provisioning
     ├── members/                           ← per-person home bases (owner-write only)
     │   └── <handle>/{<handle>.md, brain/, conversations/}
     └── (any protected spaces the conversation produced — paths chosen with the admin)
@@ -49,7 +48,7 @@ The install flow shapes these into the org's setup.
 
 Seven phases. The admin sees a conversation; the agent runs the rest behind the scenes.
 
-1. **Look around and plan.** The agent silently inspects the VM: existing `permissions.md`, prior-version files, suspicious content in `user.md`, partial installs, Neon-secret availability. Holds the findings in memory.
+1. **Look around and plan.** The agent silently inspects the VM: existing `permissions.md`, prior-version files, suspicious content in `user.md`, partial installs, daemon conversation-store availability. Holds the findings in memory.
 2. **Framing the opening.** Composes the opening turn in its own voice, shaped by the admin's triggering message and what Phase 1 surfaced. No canned script.
 3. **The conversation.** Flowing chat. The agent listens for: who's on the team, the work shape, content categories that come up, **areas where only certain people should be editing**, areas that should stay open, and who the first admin is (plus a backup). If protected areas come up, the agent also asks about an approval channel and a backup approver. Brain-organization questions (where to put notes, how to group playbooks) get punted: "I can think about that separately — it's not part of this setup."
 4. **Read it back, then confirm.** Plain-language summary in the admin's words, with writers named per space so wrong attribution is easy to spot. Confirms before any writes.
@@ -81,8 +80,8 @@ The conversational tone, the communication style (no code or JSON in chat unless
 - Admin running the skill (or the instance owner on a fresh sandbox).
 - `/agent/` writable.
 - `/agent/user.md` exists (may be blank).
-- `jq` installed.
-- `NEON_DATABASE_URL` runtime secret configured. Hard-stop on fresh installs without it: Motion-web users would resolve as unknown on every message and writes would be blocked. Existing installs get a soft warn so reconfigures can proceed offline.
+- `jq` and `sqlite3` installed.
+- `/daemon/conversation-store/conversations.db` present (the runtime maintains it on every current VM by default). Motion-web identity resolves locally from it — no runtime secrets required. If it's missing the image is outdated: Motion-web users resolve as unknown (no writes) until the runtime is updated.
 
 ---
 
@@ -93,7 +92,7 @@ Safe to re-run. Specifically:
 - `organization-map.json` merges; identity entries are never deleted.
 - `spaces.json` archives the prior version to `/agent/brain/admin/.archive/` before any reconfigure write, then merges. Spaces not mentioned in a new conversation are preserved as-is; never silently deleted.
 - `permissions.md` is regenerated from `spaces.json`. The old one is archived before overwrite.
-- `slack-whoami.sh` / `motion-whoami.sh` / `motion-whoami-neon.py` are pure scripts and safe to rewrite.
+- `slack-whoami.sh` / `motion-whoami.sh` are pure scripts and safe to rewrite.
 - `user.md` only prepends the protocol pointer if absent; updates in place if the installed version differs (with explicit admin confirmation).
 - Member home bases are never deleted by reconfigure.
 
@@ -111,7 +110,7 @@ Safe to re-run. Specifically:
 
 ## Source
 
-- **Skill version:** 3.0.0
+- **Skill version:** 3.3.0
 - **Source org:** Motion (Creative Analytics)
 - **Predecessor:** `deploy-admin-permissions@2.3.0`
 - **Refs:** PDEC-7817

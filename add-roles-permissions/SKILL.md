@@ -15,7 +15,7 @@ trigger_domains:
   - security-deploy
   - cross-org-deployment
   - bootstrap
-version: "3.1.5"
+version: "3.3.0"
 source_org: "Motion (Creative Analytics)"
 predecessor: "deploy-admin-permissions@3.0.0"
 ---
@@ -84,7 +84,6 @@ You'll touch a small, specific set of files. Nothing else.
 - `/agent/brain/admin/spaces.json` — the list of protected areas and who can edit each.
 - `/agent/brain/admin/organization-map.json` — the people list.
 - `/agent/brain/admin/slack-whoami.sh` and `motion-whoami.sh` — small scripts that figure out who is talking when someone messages on Slack or Motion web.
-- `/agent/brain/admin/motion-whoami-neon.py` — a helper the Motion web script uses to look up who is chatting from a Motion conversation.
 - `/agent/brain/team/<handle>/` — a personal space for each teammate (created if it does not exist yet).
 - The saved-instructions file at the top of the agent's setup — prepends a short pointer to the rulebook so the agent runs the "who is talking" check on every message.
 
@@ -95,8 +94,8 @@ Personal spaces under `/agent/brain/team/<handle>/` can only be edited by the pe
 - You must be running as an admin (or as the instance owner on a fresh sandbox).
 - `/agent/` must be writable.
 - `/agent/user.md` must exist (may be blank).
-- `jq` must be installed.
-- `NEON_DATABASE_URL` runtime secret must be configured for Motion-web identity resolution. If it is not, install still works but Motion-web users resolve as unknown until the secret is added.
+- `jq` and `sqlite3` must be installed.
+- `/daemon/conversation-store/conversations.db` must exist (it is present on every current VM by default — the runtime maintains it). Motion-web identity resolution reads it locally; no runtime secrets are required.
 
 ---
 
@@ -152,22 +151,23 @@ The `let's set up your roles and permissions` pattern catches the v2.0.1 `team-m
 ### Look-around 5 — Which permission files are missing?
 
 ```bash
-for f in permissions.md organization-map.json spaces.json slack-whoami.sh motion-whoami.sh motion-whoami-neon.py; do
+for f in permissions.md organization-map.json spaces.json slack-whoami.sh motion-whoami.sh; do
   [ -f "/agent/brain/admin/$f" ] && echo "PRESENT: $f" || echo "MISSING: $f"
 done
 ```
 
 Report exact state. Phase 5 only writes what is missing or what the admin confirmed should be overwritten.
 
-### Look-around 6 — Is the Neon secret available?
+### Look-around 6 — Can Motion-web identity resolve locally?
+
+Identity for Motion-web messages resolves from the local daemon conversation store. No secrets, no network. Check the two things the resolver needs:
 
 ```bash
-secret run --env DATABASE_URL=NEON_DATABASE_URL -- printenv DATABASE_URL >/dev/null 2>&1 && echo "OK" || echo "MISSING"
+[ -f /daemon/conversation-store/conversations.db ] && echo "DB OK" || echo "DB MISSING"
+command -v sqlite3 >/dev/null 2>&1 && echo "SQLITE3 OK" || echo "SQLITE3 MISSING"
 ```
 
-If MISSING on a fresh install (no existing `permissions.md`): hard stop. Tell the admin you can't set this up without Neon access and ask them to save `NEON_DATABASE_URL` as a runtime secret, then re-run. Do not proceed to Phase 2.
-
-If MISSING but `permissions.md` exists: warn and proceed. Reconfigures still work; Motion-web identity is just blocked until the secret returns.
+Both are present on every current VM by default, so this almost always passes. If either is missing, the VM image is likely outdated: warn the admin in plain language that Motion-web identity won't resolve on this sandbox until the runtime is updated, and suggest they contact support. Slack-side identity and the rest of the setup still work, so proceed — but note that Motion-web users will be treated as unknown (no writes) until the check passes.
 
 ### Look-around 7 — What shape is this org based on its Motion workspaces?
 
@@ -236,7 +236,7 @@ Use these in your own words. Pick one or two that fit the trigger; don't recite 
 - **Reconfigure** (existing config detected): acknowledge what's set up, confirm whether they want a full re-walkthrough or a targeted change. Only ask the team question if full walkthrough was confirmed.
 - **Partial install**: tell them you noticed it, ask whether to finish or start fresh.
 - **TMM v2.0.1 leak detected**: mention casually as something you'll tidy up, do not headline.
-- **Neon secret missing**: say Motion-web identity needs that secret first and offer to walk them through saving it. Do not start the team conversation if Phase 1 hard-stopped.
+- **Daemon conversation store missing**: mention that identity for Motion-web messages won't work on this sandbox until the runtime is updated, and that the rest of the setup still goes through. Don't make it the headline.
 - **Org shape hint from workspaces**: lean the opener in a direction (agency, single brand, dept) without committing to a fully-formed proposal. If unclear, don't invoke it. It's a tilt, not a script.
 - **Session-open routines loading files**: don't mention in the opener. Carry the list into Phase 3 so you can name the specific files when you raise the behavior-shaping question.
 
@@ -518,142 +518,69 @@ If any validation fails, do not write. Surface the failure to the admin in plain
 2. Run the slug-pinning logic from Phase 3 against existing spaces before slugifying any new name.
 3. Merge: spaces named in the new conversation overwrite the corresponding entries; spaces in the old file that were not mentioned this run are preserved as-is. Never delete a space silently — if the admin wants one removed, they say so explicitly.
 
-### Step 4 — Write the Motion-side resolver and its helper
+### Step 4 — Write the Motion-side resolver
 
-Write the helper at `/agent/brain/admin/motion-whoami-neon.py` and the shell wrapper at `/agent/brain/admin/motion-whoami.sh`. The pair queries Neon's `agent_conversation` table to figure out who is messaging from Motion web. No SQLite fallback: on Neon failure the script exits non-zero and writes are refused. `chmod +x` both files.
+Write the resolver at `/agent/brain/admin/motion-whoami.sh`. It reads the messaging user's email from the local daemon conversation store (`/daemon/conversation-store/conversations.db`) using the `$CONVERSATION_ID` env var the runtime injects, then resolves against `organization-map.json`. Fully local: no network, no runtime secrets. It fails loudly — if `$CONVERSATION_ID` is unset, the daemon DB is missing, or no email comes back, the script exits non-zero and writes are refused (the permissions layer treats that as identity-unknown). `chmod +x` the file.
 
-Helper file body, verbatim:
+The script body matches the resolver proven on the customer fleet in the June 2026 rollout (compatibility variant, SHA `946bfa2a043944075ba0ad415faa35a28d668cca07131fbeea551244e5f85d01`), adapted only to this package's file names: it reads `organization-map.json` (env override `RUNNETH_ORG_MAP`) and scaffolds home bases under `/agent/brain/team/`. The legacy `.motionEmails` map is still read (and kept in sync on provision) so upgrades from older installs keep resolving existing users.
 
-```python
-#!/usr/bin/env python3
-"""Resolve user_email from Neon agent_conversation. Read-only.
-
-Usage: secret run --env DATABASE_URL=NEON_DATABASE_URL -- python3 motion-whoami-neon.py <conversation_id>
-Exit: 0 ok, 1 missing args/env, 7 conv not found or empty email, 8 query failed.
-"""
-import os
-import sys
-import json
-
-sys.path.insert(0, "/daemon/cache/python/user-base/lib/python3.11/site-packages")
-try:
-    import psycopg
-except ImportError as e:
-    print(json.dumps({"error": f"psycopg not available: {e}"}), file=sys.stderr)
-    sys.exit(1)
-
-if len(sys.argv) < 2:
-    print(json.dumps({"error": "conversation_id required"}), file=sys.stderr)
-    sys.exit(1)
-conv_id = sys.argv[1].strip()
-
-if not os.environ.get("DATABASE_URL"):
-    print(
-        json.dumps({
-            "error": "DATABASE_URL not in env",
-            "hint": "invoke via: secret run --env DATABASE_URL=NEON_DATABASE_URL -- python3 motion-whoami-neon.py <conversation_id>",
-        }),
-        file=sys.stderr,
-    )
-    sys.exit(1)
-
-try:
-    with psycopg.connect(os.environ["DATABASE_URL"], connect_timeout=3) as conn, conn.cursor() as cur:
-        cur.execute(
-            "SELECT user_email, workspace_id, organization_id, mondrian_user_id "
-            "FROM agent_conversation WHERE id = %s",
-            (conv_id,),
-        )
-        row = cur.fetchone()
-except Exception as e:
-    print(json.dumps({"error": f"Neon query failed: {e}"}), file=sys.stderr)
-    sys.exit(8)
-
-if not row:
-    sys.exit(7)
-
-user_email, ws_id, org_id, mondrian_user_id = row
-if not user_email:
-    sys.exit(7)
-
-print(json.dumps({
-    "user_email": user_email,
-    "workspace_id": ws_id,
-    "organization_id": org_id,
-    "mondrian_user_id": mondrian_user_id,
-}))
-```
-
-```bash
-chmod +x /agent/brain/admin/motion-whoami-neon.py
-```
-
-Then write `/agent/brain/admin/motion-whoami.sh` verbatim, and `chmod +x`:
+Write verbatim, then `chmod +x`:
 
 ```bash
 #!/usr/bin/env bash
-# motion-whoami.sh — Motion-side identity resolver. Neon-only.
+# motion-whoami.sh — Motion-side identity resolver. Local daemon DB.
 # Resolves the messaging user's email against organization-map.json.
 # Returns JSON { scope, handle, home_base, status } where status is
-# resolved | provisioned | collision. Non-zero exit on Neon failure;
+# resolved | provisioned | collision. Non-zero exit on resolver failure;
 # the permissions layer treats that as identity-unknown.
-# Accepts CONVERSATION_ID from env, falls back to cwd basename.
+# Reads userEmail from /daemon/conversation-store/conversations.db
+# using $CONVERSATION_ID (injected by the runtime). No network, no secrets.
 # Usage: motion-whoami.sh [<display_name>]
 
 set -euo pipefail
 
 MAP_FILE="${RUNNETH_ORG_MAP:-/agent/brain/admin/organization-map.json}"
-NEON_HELPER="${RUNNETH_MOTION_WHOAMI_NEON:-/agent/brain/admin/motion-whoami-neon.py}"
-CONV_DIR="/agent/conversations"
+CONV_DB="/daemon/conversation-store/conversations.db"
 DISPLAY_NAME="${1:-}"
 
-# Resolve conversation_id: env first (runtime sets it), then cwd basename.
-if [[ -n "${CONVERSATION_ID:-}" ]]; then
-  CONV_ID="$CONVERSATION_ID"
-else
-  CWD="$(pwd -P)"
-  if [[ "$CWD" != "$CONV_DIR/"* ]]; then
-    echo '{"error":"no CONVERSATION_ID in env and not in a conversation directory","cwd":"'"$CWD"'"}' >&2
-    exit 1
-  fi
-  CONV_ID="$(basename "$CWD")"
+if [[ -z "${CONVERSATION_ID:-}" ]]; then
+  echo '{"error":"CONVERSATION_ID env var is not set"}' >&2
+  exit 1
 fi
 
-if [[ ! -f "$NEON_HELPER" ]]; then
-  echo '{"error":"motion-whoami-neon.py helper missing","path":"'"$NEON_HELPER"'","conversation_id":"'"$CONV_ID"'"}' >&2
-  exit 2
+if [ ! -f "$CONV_DB" ]; then
+  echo '{"error":"conversations.db not found","path":"'"$CONV_DB"'"}' >&2
+  exit 1
 fi
 
-NEON_OUT=$(timeout 6 secret run --env DATABASE_URL=NEON_DATABASE_URL -- \
-  python3 "$NEON_HELPER" "$CONV_ID" 2>/dev/null)
-NEON_RC=$?
+RAW=$(sqlite3 -readonly -json "$CONV_DB" \
+  -cmd ".timeout 3000" \
+  "SELECT json_extract(conversation_json,'\$.userEmail') as userEmail FROM conversations WHERE conversation_id='$CONVERSATION_ID' LIMIT 1" \
+  2>/dev/null)
 
-if [[ $NEON_RC -ne 0 || -z "$NEON_OUT" ]]; then
-  echo '{"error":"Neon agent_conversation lookup failed","helper_exit_code":'"$NEON_RC"',"conversation_id":"'"$CONV_ID"'"}' >&2
-  exit 3
-fi
+USER_EMAIL=$(echo "$RAW" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d[0]['userEmail'] if d and d[0]['userEmail'] else '')" 2>/dev/null)
 
-USER_EMAIL=$(echo "$NEON_OUT" | jq -r '.user_email // empty' 2>/dev/null)
 if [[ -z "$USER_EMAIL" ]]; then
-  echo '{"error":"Neon returned no user_email for this conversation","conversation_id":"'"$CONV_ID"'"}' >&2
-  exit 4
+  echo '{"error":"userEmail not found for conversation","conversation_id":"'"$CONVERSATION_ID"'"}' >&2
+  exit 1
 fi
 
 if [ ! -f "$MAP_FILE" ]; then
-  echo '{"error":"organization-map.json missing","path":"'"$MAP_FILE"'"}' >&2
-  exit 5
+  echo '{"error":"organization-map.json not found","path":"'"$MAP_FILE"'"}' >&2
+  exit 1
 fi
 
-REF=$(jq -r --arg email "$USER_EMAIL" '.motionUserEmails[$email] // empty' "$MAP_FILE")
+REF=$(jq -r --arg email "$USER_EMAIL" '(.motionUserEmails[$email] // .motionEmails[$email] // empty)' "$MAP_FILE")
 
 if [ -n "$REF" ]; then
   HANDLE="${REF#member:}"
   jq -c --arg h "$HANDLE" '
-    .members[$h]
-    | { scope: .scope, handle: .handle,
-        home_base: ("/agent/brain/team/" + .handle + "/"),
-        status: "resolved",
-        resolution: "neon" }
+    .members[$h] | {
+      scope: .scope,
+      handle: .handle,
+      home_base: ("/agent/brain/team/" + .handle + "/"),
+      status: "resolved"
+    }
   ' "$MAP_FILE"
   exit 0
 fi
@@ -665,30 +592,40 @@ HANDLE=$(echo "$NAME_FOR_HANDLE" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0
 
 # Collision check
 COLLISION=$(jq -c --arg name "$DISPLAY_NAME" --arg email "$USER_EMAIL" '
-  [ (.members | to_entries[] | select((.value.name != null and $name != "" and .value.name == $name) or .value.email == $email)
-     | { source: "members", handle: .key, entry: .value }) ]
-  | .[0] // empty
+  [ (.members | to_entries[] |
+    select((.value.name != null and $name != "" and .value.name == $name) or .value.email == $email) |
+    { source: "members", handle: .key, entry: .value }) ] | .[0] // empty
 ' "$MAP_FILE")
 
 if [ -n "$COLLISION" ] && [ "$COLLISION" != "null" ]; then
-  echo "{\"status\": \"collision\", \"candidate\": $COLLISION, \"proposed_handle\": \"$HANDLE\", \"display_name\": \"$DISPLAY_NAME\", \"email\": \"$USER_EMAIL\", \"resolution\": \"neon\"}"
+  echo "{\"status\": \"collision\", \"candidate\": $COLLISION, \"proposed_handle\": \"$HANDLE\", \"display_name\": \"$DISPLAY_NAME\", \"email\": \"$USER_EMAIL\"}"
   exit 0
 fi
 
 # No collision. Provision new member entry.
 mkdir -p "/agent/brain/team/$HANDLE"
+
 tmp=$(mktemp)
 jq --arg email "$USER_EMAIL" --arg h "$HANDLE" --arg name "${DISPLAY_NAME:-$EMAIL_LOCAL}" '
-  .motionUserEmails[$email] = ("member:" + $h)
-  | .members[$h] = { "name": $name, "scope": "member", "handle": $h, "email": $email }
+  .motionUserEmails = (.motionUserEmails // {}) |
+  .motionUserEmails[$email] = ("member:" + $h) |
+  (if has("motionEmails") then .motionEmails[$email] = ("member:" + $h) else . end) |
+  .members[$h] = {
+    "name": $name,
+    "scope": "member",
+    "handle": $h,
+    "email": $email
+  }
 ' "$MAP_FILE" > "$tmp" && mv "$tmp" "$MAP_FILE"
 
-echo "{\"scope\": \"member\", \"handle\": \"$HANDLE\", \"home_base\": \"/agent/brain/team/$HANDLE/\", \"status\": \"provisioned\", \"resolution\": \"neon\"}"
+echo "{\"scope\": \"member\", \"handle\": \"$HANDLE\", \"home_base\": \"/agent/brain/team/$HANDLE/\", \"status\": \"provisioned\"}"
 ```
 
 ```bash
 chmod +x /agent/brain/admin/motion-whoami.sh
 ```
+
+If a leftover `/agent/brain/admin/motion-whoami-neon.py` exists from a prior install, remove it — nothing references it anymore.
 
 ---
 
@@ -978,7 +915,7 @@ Leave all other content untouched.
 ## PHASE 6 — POST-DEPLOYMENT VERIFICATION
 
 ```bash
-for f in permissions.md organization-map.json spaces.json slack-whoami.sh motion-whoami.sh motion-whoami-neon.py; do
+for f in permissions.md organization-map.json spaces.json slack-whoami.sh motion-whoami.sh; do
   [ -f "/agent/brain/admin/$f" ] && echo "OK admin/$f" || echo "MISSING: admin/$f"
 done
 
