@@ -68,7 +68,8 @@ For demographic breakdown when relevant: `motion age-gender-breakdown`.
 
 ## Validation notes
 
-- `motion workspace-goal` and `motion spend-threshold` are platform settings. Do not use them as the validated-metric source. Validated metric comes from campaign/ad-set names and custom-conversion-metrics, not from workspace config.
+- `motion workspace-goal` defaults to ROAS. Read it as a hint, not the KPI: if it's been changed off ROAS, that's a deliberate signal of what the team values. The per-slice primary KPI still comes from campaign/ad-set names and custom-conversion-metrics.
+- `motion spend-threshold` is Motion's account-size-based minimum spend for judging a creative. Confirm it with the user — it's often too low or too high — and always combine spend with the KPI: a creative below threshold is "not enough data," not a winner or a loser.
 - Ad set names can override campaign-level optimization events. Always check for `optim:` tokens (or vocabulary words) at the ad-set layer.
 - Creator-led ads often have rich ad names; in-house production often has sparse ad names. Detective parser must work for both.
 - ROAS is meaningless for lead-gen accounts. Validate the actual KPI per funnel step.

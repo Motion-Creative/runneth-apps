@@ -1,7 +1,7 @@
 {
   "slug": "paid-strategy-audit",
-  "display_title": "Build a Brief for Every Ad Platform",
-  "pitch": "Every performance question gets answered through your actual strategy, not generic defaults. Drift check every Friday.",
+  "display_title": "Map Your KPIs, Decode Your Naming",
+  "pitch": "A KPI map and a naming key per ad platform, so Runneth grades each slice on your real metric (and spend threshold) and reads your campaign names the way you do.",
   "status": "proven",
   "category": "analysis",
   "github_path": "paid-strategy-audit"

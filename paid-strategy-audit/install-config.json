@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "paid-strategy-audit",
-  "version": "1.0.2",
-  "description": "Channel-agnostic paid-strategy audit. Detects every connected ad platform, researches unknown ones, produces a per-channel strategy brief plus alignment-check visualization, optionally synthesizes a cross-channel overall brief, installs a user.md instruction that reads briefs before answering performance questions, and schedules a Friday drift+ping routine.",
+  "version": "2.0.0",
+  "description": "Channel-agnostic paid-strategy audit. Detects every connected ad platform, researches unknown ones, and produces two durable reference files per channel: a KPI map (primary KPI per strategy/slice, plus the confirmed spend threshold) and a naming key (decoder for the account's campaign/ad-set/ad names), plus an alignment-check visualization. Reads workspace-goal and spend-threshold as signals (goal defaults to ROAS; spend threshold is confirmed with the user) so every creative verdict combines spend + KPI. Installs a user.md instruction that reads both files before answering performance questions. Re-run any time to refresh — no scheduled routine.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -13,13 +13,7 @@
       "from": "SKILL.md",
       "to": "/agent/.agents/skills/paid-strategy-audit/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Main audit skill \u2014 channel detection, detective parsing, per-channel brief, alignment visualization, overall synthesis, drift routine, user.md install"
-    },
-    {
-      "from": "setup-paid-strategy-audit/SKILL.md",
-      "to": "/agent/.agents/skills/setup-paid-strategy-audit/SKILL.md",
-      "on_exists": "overwrite",
-      "purpose": "Setup skill that asks for ping channels, user tags, and excluded campaigns"
+      "purpose": "Main audit skill \u2014 channel detection, name decoding, per-channel KPI map + naming key, alignment visualization, user.md install"
     },
     {
       "type": "folder-copy",
@@ -32,7 +26,7 @@
       "from": "seed/_index.md",
       "to": "/agent/brain/paid-strategy/_index.md",
       "on_exists": "skip",
-      "purpose": "Local routing index for saved briefs"
+      "purpose": "Local routing index for saved KPI maps and naming keys"
     },
     {
       "appends_to": "/agent/INDEX.md",
@@ -43,19 +37,12 @@
   "runtime_installs": [
     {
       "appends_to": "/agent/user.md",
-      "guard": "sentinel 'runneth-apps:paid-strategy:read-before-performance v1' already present",
+      "guard": "sentinel 'runneth-apps:paid-strategy:read-before-performance v2' already present; removes any older v1 block",
       "trigger": "After the first successful audit for any workspace, idempotent across subsequent runs",
-      "purpose": "Standing instruction so future performance questions auto-read the channel-specific brief and use its validated-metric mapping \u2014 overriding workspace-goal and spend-threshold from the system prompt"
+      "purpose": "Standing instruction so future performance questions auto-read the channel's KPI map (grading each slice on its primary KPI combined with the confirmed spend threshold, overriding the workspace-goal default from the system prompt) and naming key (interpreting names the way the team does)"
     }
   ],
   "post_install": [
-    {
-      "action": "skill-invoke",
-      "skill": "setup-paid-strategy-audit",
-      "name": "Personalize for this workspace",
-      "description": "Walk the user through ping-channel, user-tag, and excluded-campaign setup",
-      "manual": false
-    },
     {
       "action": "show-intro",
       "name": "Introduce the new capability",
@@ -64,15 +51,20 @@
     }
   ],
   "creates_at_runtime": [
-    "/agent/brain/paid-strategy/<channel>/<workspace-slug>/<channel>-strategy.md",
+    "/agent/brain/paid-strategy/<channel>/<workspace-slug>/<channel>-strategy.md (the KPI map)",
+    "/agent/brain/paid-strategy/<channel>/<workspace-slug>/naming-key.md",
     "/agent/brain/paid-strategy/<channel>/<workspace-slug>/funnel-map.html",
-    "/agent/brain/paid-strategy/<channel>/<workspace-slug>/_history/<archived-iso>.md",
-    "/agent/brain/paid-strategy/overall-strategy.md (only when 2+ channels)",
-    "/agent/brain/paid-strategy/_config/<workspace-slug>.json",
+    "/agent/brain/paid-strategy/<channel>/<workspace-slug>/_history/<archived-iso>--<file> (on re-run)",
     "/agent/brain/paid-strategy/_channels/<channel>.md (when a new channel is auto-researched)"
   ],
   "upstream_dependencies": [],
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2026-06-05",
+      "type": "major",
+      "notes": "Trimmed to a single focused job: find the right KPIs, spend threshold, and naming breakdowns. Produces two durable reference files: a KPI map (primary KPI per strategy/slice, plus a confirmed spend threshold) and a new durable naming key (decoder for the account's campaign/ad-set/ad names). Cut testing-methodology decode, conviction-vs-experiments analysis, and the cross-channel overall-strategy.md synthesis. Cut the Friday drift+ping routine, the dedicated setup-paid-strategy-audit skill, and the per-workspace _config file (a general setup skill handles ping/config now; re-run the audit to refresh). Funnel decoding reduced to light slice grouping. Workspace-goal and spend-threshold are now read as signals (goal defaults to ROAS, so a non-ROAS value is a deliberate user signal; spend threshold is Motion's account-size default that gets confirmed with the user) instead of ignored, and every creative verdict combines spend + KPI. The KPI map keeps the filename <channel>-strategy.md for downstream continuity. user.md snippet bumped to runneth-apps:paid-strategy:read-before-performance v2, now pointing at both files with the spend-threshold rule and removing any older v1 block."
+    },
     {
       "version": "1.0.2",
       "date": "2026-05-21",
