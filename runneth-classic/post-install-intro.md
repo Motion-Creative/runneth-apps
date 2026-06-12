@@ -13,4 +13,3 @@ I'm now set up as your dedicated creative strategist. Brand foundation is built.
 - `brand-audit` (already installed) — refresh your brand foundation any Monday with `refresh brand-audit`
 - `performance-bundle` (already installed) — say `build me a paid strategy brief` or `build the weekly deck` whenever you want them
 - `competitor-intel` (already installed) — say `run a competitor scan` against your watched brands any time
-- `team-member-memory` (already installed) — I'm building a profile of you as we work. Nobody on your team will have to introduce themselves twice.

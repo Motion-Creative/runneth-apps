@@ -35,15 +35,13 @@ performance-bundle  (cascades to brand-audit, paid-strategy-audit, creative-deep
 corpus-search
 plan-mode
 self-iteration-loop
-team-member-memory
 competitor-intel
 health-alerts
-add-roles-permissions
 building-integrations
 integration-capabilities-library
 ```
 
-About fifteen use cases land in the customer's sandbox by the time `runneth-classic` itself installs.
+About a dozen use cases land in the customer's sandbox by the time `runneth-classic` itself installs. (`team-member-memory` and `add-roles-permissions` are no longer part of the cascade — both are hidden from the library while they're reworked; install them from the library once they're re-published.)
 
 ## Recurring routines are opt-in
 
