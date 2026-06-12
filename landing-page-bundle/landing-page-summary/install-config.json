@@ -1,8 +1,8 @@
 {
   "name": "landing-page-summary",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "kind": "skill",
-  "description": "Recreation-quality landing page summarizer. Headless Playwright browser, 17-section markdown spec, in-system changelog, always re-fetches by default.",
+  "description": "Recreation-quality landing page summarizer. Headless Playwright browser, 17-section markdown spec, in-system changelog, always re-fetches by default. Re-run any time to refresh — no scheduled routine.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -34,29 +34,18 @@
     "/agent/brain/landing-pages/<slug>--<domain>.md",
     "/agent/brain/landing-pages/_history/<slug>--<domain>/<fetched-ts>.md"
   ],
-  "routines": [
-    {
-      "title": "LP library weekly refresh",
-      "default_schedule": "weekly Monday 09:00",
-      "trigger": "Offered after the first successful landing-page-summary run in a conversation. Sentinel-guarded by reminder title so it is offered at most once per conversation. User can decline or change cadence.",
-      "purpose": "Self-closing maintenance loop for the LP library and its indexes. Adds new pages, refreshes known pages, diffs against prior archive, prunes redundant history, retires dead URLs, syncs _index.md and /agent/INDEX.md with actual files, flags drift on dependent brand kits and CRO audits.",
-      "phases": [
-        "A. Discover and fetch (new + existing URLs)",
-        "B. Material-change diff (hero headline, primary CTA, pricing, forms, intent)",
-        "C. History pruning (keep material + origin + 4 most recent, drop noise)",
-        "D. Retire dead URLs (move to _retired/, stop fetching)",
-        "E. Index hygiene (sync _index.md and /agent/INDEX.md with actual files)",
-        "F. Cross-skill drift flags (brand kits, CRO audits, and experiment backlogs flagged when sources change)",
-        "G. Report (compact block with footprint visible)"
-      ]
-    }
-  ],
   "data_contract": "DATA-CONTRACT.md",
   "downstream_consumers": [
     "brand-kit",
     "optimize-landing-page"
   ],
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2026-06-12",
+      "type": "major",
+      "notes": "Removed the weekly refresh routine offer (the 'LP library weekly refresh' reminder with its discover/diff/prune/retire/hygiene/flag/report phases) and the routines declaration. Refresh is on-demand: re-run the skill on a known URL and it re-fetches, archives the prior version to _history/, and notes material changes. The extraction pipeline, the 17-section output spec, the H2 anchors in DATA-CONTRACT.md, and the archive-before-overwrite changelog are unchanged."
+    },
     {
       "version": "1.0.1",
       "date": "2026-05-21",

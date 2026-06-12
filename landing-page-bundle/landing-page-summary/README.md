@@ -70,50 +70,9 @@ Stale landing page summaries silently corrupt downstream brand kits and CRO audi
 - **Archive-before-overwrite:** every re-fetch moves the prior summary to `_history/<slug>--<domain>/<fetched-iso>.md` before writing the new one. That folder is the in-system changelog for each page.
 - **Downstream consumers (brand-kit, optimize-landing-page):** must call this skill rather than reading saved files directly. That guarantees they never operate on a stale summary.
 
-## Self-maintaining library (weekly routine, self-closing loop)
+## Refreshing the library
 
-After the first successful summary in a conversation, the skill offers to install a weekly routine. The routine is a closed loop: it adds, refreshes, prunes, reindexes, flags downstream drift, and reports its own footprint.
-
-The seven phases run in order:
-
-1. **Phase A. Discover and fetch.** Scan Motion creative-insights for ad destination URLs. Probe each existing URL for liveness. Summarize new URLs; re-fetch live ones; mark dead ones for retirement.
-2. **Phase B. Material-change diff.** Compare each refreshed summary to the most recent archive. A change is MATERIAL only if it affects hero headline, primary CTA, pricing, form fields, or page intent. Everything else is NOISE.
-3. **Phase C. History pruning.** Keep every MATERIAL-flagged archive, the oldest archive (origin), and the 4 most recent regardless. Delete the rest. Bounded by meaningful events, not elapsed time.
-4. **Phase D. Retire dead URLs.** Move 404/dead pages and their history to `_retired/`. Stop re-fetching them. Preserve the historical record.
-5. **Phase E. Index hygiene.** Sync `_index.md` and `/agent/INDEX.md` with the actual files. Remove stale entries, add missing ones, dedupe.
-6. **Phase F. Cross-skill drift flags.** Flag brand kits whose source pages changed (rebuild may be needed). Flag CRO audits whose audited page changed (may be obsolete). Does not auto-trigger rebuilds.
-7. **Phase G. Report.** One compact block listing new pages, refreshed pages, material changes, retired pages, hygiene operations, and cross-skill flags.
-
-### Why this design
-
-A routine that only adds and refreshes is a one-way pipe: over a year of weekly fetches you'd accumulate ~52 archives per page, orphan entries in `_index.md`, duplicate `/agent/INDEX.md` rows, silent staleness in brand-kit and CRO data. The phases above make the routine close on itself so the library and the indexes stay coherent without manual cleanup.
-
-### What counts as a MATERIAL change
-
-Only these:
-
-- H1 hero headline text changed
-- Primary CTA button text changed
-- A pricing tier price number changed
-- Visible form field count changed by 1+
-- A form was added or removed
-- Page intent classification changed (e.g. lead-magnet -> demo)
-
-Microcopy tweaks, link reorders, non-hero image swaps, and timestamp differences are NOISE and are not flagged.
-
-### Sentinel and offer behaviour
-
-The offer is sentinel-guarded by the reminder title `LP library weekly refresh`. The skill asks at most once per conversation. The user can decline; the offer reappears in any new conversation that hasn't already installed the routine.
-
-Default schedule: `weekly Monday 09:00` in the user's saved timezone (`/agent/.runtime/timezone`). The user can change the cadence when accepting the offer.
-
-### Self-containment
-
-The routine body is fully self-contained in the reminder. When the weekly reminder fires, Runneth executes it verbatim without needing to re-read this skill. The body lives inside the skill's Phase 6 instructions and includes every phase, every threshold, every invariant.
-
-### Failure handling
-
-A single failed fetch (timeout, network error) is transient. The routine retires a URL only after 2 consecutive weekly runs both fail, or a definitive 404/410 status. This prevents a flaky run from accidentally retiring an active page.
+There is no scheduled routine. Re-running the skill on a known URL is the refresh: it re-fetches the page, archives the prior version to `_history/<slug>--<domain>/`, and notes material changes against the newest archived version (hero headline, primary CTA, pricing, form fields, page intent). Users who want a standing weekly refresh can ask Runneth to set one up themselves.
 
 ## File layout after install
 

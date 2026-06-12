@@ -1,6 +1,6 @@
 # Landing Page Experiments — Local Index
 
-This is the local routing index for experiment backlogs saved under `/agent/brain/experiments/`. The `landing-page-summary` weekly refresh routine appends drift WARN flags here when a page changes materially since the most recent backlog was generated.
+This is the local routing index for experiment backlogs saved under `/agent/brain/experiments/`. To check whether a page changed materially since its most recent backlog, re-run `landing-page-summary` on that page.
 
 Sort: most-recently-generated backlog first.
 

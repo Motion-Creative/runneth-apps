@@ -65,7 +65,7 @@ Use them together:
 
 The skill always invokes `landing-page-summary` fresh. Never reads saved summaries directly. Stale page state corrupts test ideation just like it corrupts audits and brand kits.
 
-The `landing-page-summary` weekly refresh routine flags experiment backlogs whose pages changed materially (in Phase F, cross-skill drift flags). When you see a `WARN: page changed since backlog generated` flag on a row in `/agent/brain/experiments/_index.md`, regenerate that backlog.
+To check whether a page changed since its backlog was generated, re-run `landing-page-summary` on the page. If it reports a material change (hero headline, primary CTA, pricing, form fields, page intent), regenerate that backlog.
 
 ## File layout after install + a few backlogs
 
@@ -82,7 +82,7 @@ The `landing-page-summary` weekly refresh routine flags experiment backlogs whos
 
 ## No routine
 
-This skill intentionally has no recurring routine. Experiment ideation is event-driven (after audit, after win, after loss, sprint planning), not time-driven. The `landing-page-summary` weekly routine surfaces drift flags so you know when a backlog needs refreshing.
+This skill intentionally has no recurring routine. Experiment ideation is event-driven (after audit, after win, after loss, sprint planning), not time-driven. Re-run `landing-page-summary` on a page when you want to know whether a backlog needs refreshing.
 
 ## Fallbacks
 

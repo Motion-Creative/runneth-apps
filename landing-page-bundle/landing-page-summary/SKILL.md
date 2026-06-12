@@ -807,133 +807,13 @@ After saving, return exactly 6 lines:
 
 ---
 
-## Phase 6 — Offer Routine Setup (Once Per Conversation)
+## Refreshing The Library
 
-A landing page library that doesn't maintain itself goes stale. After a successful summary,
-offer to set up the weekly refresh routine. Sentinel-guarded so the offer happens at most
-once per conversation.
-
-**Check if the routine is already installed:**
-
-```bash
-reminder list 2>/dev/null | grep -F "LP library weekly refresh" >/dev/null && echo "already-installed" || echo "needs-offer"
-```
-
-**If `needs-offer`**, ask the user in chat. Single short sentence, one yes/no question:
-
-> Want me to set up a weekly routine that scans for new ad destination URLs, re-fetches
-> every known landing page, and flags any with material changes? Updates the library
-> automatically so summaries never go stale.
-
-Wait for an answer. Do not assume.
-
-**If the user agrees**, create the routine with the `reminder` CLI. Use exactly this title
-so the install check is reliable across future skill runs:
-
-```bash
-reminder add \
-  --title "LP library weekly refresh" \
-  --schedule "weekly Monday 09:00" \
-  --body "$(cat <<'ROUTINE_BODY'
-Weekly landing page library refresh. Self-closing loop: fetch, diff, prune, reindex, flag, report.
-
-## Phase A: Discover and fetch
-
-1. Read /agent/brain/landing-pages/_index.md for the current list of known pages and their URLs.
-2. Pull recent ad destination URLs via `motion creative-insights` for last_30d. Extract unique destination URLs from the response. Identify URLs not yet in the library.
-3. For each new URL: invoke landing-page-summary at depth standard. Add to library.
-4. For each existing URL in the library: probe with `curl -sI -o /dev/null -w "%{http_code} %{url_effective}" --max-time 10 "<URL>"` to check liveness BEFORE re-fetching.
-   - If 2xx and final URL still on the same registered domain: invoke landing-page-summary at depth standard. Archive-before-overwrite preserves the prior version under _history/<slug>--<domain>/.
-   - If 404, 410, DNS fail, or redirects to a different registered domain: mark for retirement (Phase D).
-
-## Phase B: Material-change diff
-
-For each refreshed page, compare the new summary to the most recent archived version (newest file under _history/<slug>--<domain>/). A change is MATERIAL when any of:
-  - H1 hero headline text changed
-  - Primary CTA button text changed
-  - A pricing tier price number changed
-  - Visible form field count changed by 1 or more
-  - A form was added or removed
-  - Page intent classification changed (e.g. lead-magnet -> demo)
-
-Everything else (microcopy tweaks, link reorders, non-hero image swaps, timestamp differences) is NOISE. Do not flag.
-
-Record the verdict per page as MATERIAL or NOISE.
-
-## Phase C: History pruning
-
-For each page's _history/<slug>--<domain>/ folder, keep:
-  - The oldest archive (origin point)
-  - Every archive flagged MATERIAL across any prior run
-  - The 4 most recent archives regardless of verdict (rolling verification window)
-
-Delete every other archive. Use the most recent run's diff result plus a sidecar marker file (`<archive-ts>.material` next to each MATERIAL archive) so future runs can identify which archives to preserve without re-diffing the entire history. Create the marker file immediately after a MATERIAL verdict in Phase B.
-
-## Phase D: Retire dead URLs
-
-For pages marked for retirement in Phase A:
-  - Move /agent/brain/landing-pages/<slug>--<domain>.md to /agent/brain/landing-pages/_retired/<slug>--<domain>.md
-  - Move /agent/brain/landing-pages/_history/<slug>--<domain>/ to /agent/brain/landing-pages/_retired/_history/<slug>--<domain>/
-  - Remove the page's row from _index.md
-  - Remove its entry from /agent/INDEX.md
-  - Add a one-line retirement note to /agent/brain/landing-pages/_retired/_log.md with the date and the last-known HTTP status
-
-Retired pages are not re-fetched on future runs. Their history is preserved for reference.
-
-## Phase E: Index hygiene
-
-1. Walk _index.md rows. For each row, verify the referenced file exists at /agent/brain/landing-pages/<slug>--<domain>.md. If missing, remove the row.
-2. Walk the /agent/brain/landing-pages/ folder. For each top-level .md file (excluding _index.md), verify a row exists in _index.md. If missing, add a minimal row from the file's header.
-3. Walk /agent/INDEX.md entries whose path starts with /agent/brain/landing-pages/. For each entry, verify the path exists. Remove stale entries. Dedupe entries with identical paths (keep the most recent updated; merge aliases). Add a folder-level entry for /agent/brain/landing-pages/ if missing.
-
-## Phase F: Cross-skill drift flags
-
-1. Read /agent/brain/brand-kit/_index.md. For each brand kit row, check whether any of its `Source:` pages were flagged MATERIAL this run. If yes, append `WARN: source pages changed YYYY-MM-DD - consider rebuild via brand-kit` to that row (idempotent: replace prior WARN line if present).
-2. Read /agent/brain/cro-audits/_index.md (if present). For each audit row, check whether the audited page was flagged MATERIAL this run. If yes, append `WARN: page changed since audit - may be obsolete` to that row.
-3. Read /agent/brain/experiments/_index.md (if present). For each backlog row, check whether the page was flagged MATERIAL this run. If yes, append `WARN: page changed since backlog generated - backlog may be stale` to that row.
-
-These flags do NOT auto-trigger re-builds, re-audits, or backlog regenerations (those are expensive). They surface the work for human decision.
-
-## Phase G: Report
-
-Return one compact report block:
-
-```
-LP library weekly refresh - {{date}}
-  New pages summarized: N (list)
-  Existing pages refreshed: M
-  Material changes detected: K (one-line diff per page)
-  Pages retired (URL no longer resolves): R (list with last status)
-  Hygiene:
-    - Archives pruned: A boring snapshots dropped, 0 material-change archives touched
-    - _index.md rows added: X, removed: Y, updated: Z
-    - /agent/INDEX.md: P entries added, Q removed, D duplicates merged
-  Cross-skill flags:
-    {{list of brand kits and CRO audits flagged}}
-```
-
-If the report shows nothing happened (no new pages, no material changes, no hygiene work), say so in one line and stop. Don't pad.
-
-## Invariants
-
-- Always re-fetch. Never honour --use-cached for this routine.
-- Never delete a MATERIAL-flagged archive.
-- Never modify /agent/user.md from this routine.
-- Treat failed fetches (timeout, network error) as transient: do not retire on a single failure. Retire only after 2 consecutive weekly runs both fail OR a definitive 404/410.
-ROUTINE_BODY
-)"
-```
-
-The routine is conversation-scoped (per the `reminder` CLI). It fires in the conversation
-where it was created.
-
-**If the user declines or asks to defer**, do not create the reminder. Do not re-ask in
-the same conversation. Mention that they can run `landing-page-summary` again later and
-the offer will reappear in any new conversation that hasn't already installed the routine.
-
-**Schedule adjustments.** The default `weekly Monday 09:00` is timezone-aware via
-`/agent/.runtime/timezone`. If the user wants a different cadence (e.g. daily, biweekly,
-specific day/time), accept their choice and pass it through to `--schedule` instead.
+There is no scheduled routine. Re-running this skill on a known URL is the refresh: it
+re-fetches the page, archives the prior version to
+`/agent/brain/landing-pages/_history/<slug>--<domain>/`, and notes material changes against
+the newest archived version (hero headline, primary CTA, pricing, form fields, page intent).
+Users who want a standing weekly refresh can ask Runneth to set one up themselves.
 
 ---
 
@@ -977,9 +857,5 @@ specific day/time), accept their choice and pass it through to `--schedule` inst
 - **Section 12 colors are unreliable.** State that explicitly in § 12. Brand-kit and any
   visual-system consumer must re-extract via computed DOM. This is the single most expensive
   mistake to silently propagate.
-- **Offer the routine after the first successful summary.** Sentinel-guarded by
-  `reminder list | grep "LP library weekly refresh"`. Ask once per conversation. Do not
-  nag.
-- **Routine bodies are self-contained.** When the weekly reminder fires, Runneth executes
-  the body verbatim. Do not assume future Runneth will re-read this skill to interpret the
-  reminder. Keep the routine body complete on its own.
+- **No scheduled routine.** Refresh is on-demand: re-run the skill on a known URL. Do not
+  offer to create reminders or recurring routines from this skill.

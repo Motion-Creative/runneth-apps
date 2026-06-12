@@ -296,4 +296,4 @@ Hand off the artifact file via `file` link widget.
 
 ## No Routine
 
-This skill does not install a routine. Experiment ideation runs when the user wants it. The LP weekly refresh routine (from `landing-page-summary`) flags experiment backlogs whose pages changed materially, prompting the user to regenerate when relevant.
+This skill does not install a routine. Experiment ideation runs when the user wants it. To check whether a page changed since its backlog was generated, re-run `landing-page-summary` on the page; if it reports a material change, regenerate the backlog.

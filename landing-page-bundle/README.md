@@ -12,7 +12,7 @@ Four Runneth skills that work together to give any client a complete, self-updat
 ## How they connect
 
 ```
-landing-page-summary  (upstream evidence layer, weekly self-closing refresh routine)
+landing-page-summary  (upstream evidence layer, refresh by re-running)
       │
       ├────► brand-kit               ─► branded outputs auto-consult the kit
       │                                (via saved-preferences instruction installed
@@ -31,7 +31,7 @@ They never read a saved summary directly.
 
 After the first brand-kit build, the brand-kit skill installs a standing instruction in the saved-preferences file so future branded outputs (HTML pages, landing pages, decks, social posts, emails, ad concepts, briefs, experiment variant copy) auto-consult the brand-kit library and feel native to the target brand. Brand kits become an active primitive, not an inert reference.
 
-After the first landing-page-summary run, the skill offers a weekly refresh routine that scans Motion creative-insights for new ad destination URLs, re-fetches every known landing page, and flags material changes (hero headline, primary CTA, pricing, form fields, page intent). The routine is a self-closing loop: it adds, refreshes, prunes redundant history, retires dead URLs, syncs indexes, and flags downstream drift on brand kits, CRO audits, and experiment backlogs whose sources changed. Sentinel-guarded by the reminder title so the offer happens at most once per conversation. Default cadence is weekly Monday 09:00 in the user's saved timezone; the user can change it when accepting.
+There is no scheduled routine in the bundle. Refreshing a landing page summary is on-demand: re-run `landing-page-summary` on a known URL and it re-fetches, archives the prior version to `_history/`, and notes material changes (hero headline, primary CTA, pricing, form fields, page intent). Users who want a standing weekly refresh can ask Runneth to set one up themselves.
 
 ## Recommended install order
 
@@ -138,7 +138,7 @@ runneth-apps/
 - **Two indexes, always updated together.** Every durable save updates the local topic `_index.md` (human-friendly per-area routing) and the global `/agent/INDEX.md` (Runneth's routing surface). On every save. Without exception.
 - **Single-line `|`-separated INDEX format.** Per Runneth's index rules. Multi-line YAML entries break the convention. Skills themselves are intentionally NOT indexed (auto-discovery handles that).
 - **Brand kits are active, not inert.** Once a brand kit exists, the saved-preferences usage instruction makes Runneth consult it on every future branded output without the user having to ask. Experiment variant copy obeys the kit automatically.
-- **Routines are self-closing loops.** The single weekly routine doesn't just add and refresh — it diffs, prunes redundant history, retires dead URLs, syncs indexes, and flags downstream drift. Adds and removes meaningful state in the same run.
+- **No scheduled routines.** Nothing in the bundle installs reminders or recurring jobs. Refresh is on-demand: re-run `landing-page-summary` on a known URL and the archive-before-overwrite history shows what changed.
 
 ## Versioning
 
