@@ -1,8 +1,0 @@
-{
-  "_meta": {
-    "note": "Baseline registry of known routines. Created on first health check run from reminder list. Used to detect silent drops — if a shortId disappears from reminder list but exists here, it dropped silently and an alert fires.",
-    "created": null,
-    "last_updated": null
-  },
-  "routines": {}
-}

@@ -1,18 +1,17 @@
-# Health alerts
+# Integration health check
 
 ## What just opened up
-Runneth now watches every connected integration and every active routine in this sandbox. When an integration breaks, a token expires, a routine goes overdue, an execution fails, or a dependency chain snaps, it sends a single alert to your configured Slack channel. One follow-up after your silence window if unresolved. A confirmation when things recover.
+You can now ask Runneth whether your connected tools actually work, any time. It tests each connection with one real call, saves a status file it can compare against next time, and gives you a plain answer in chat. After your first check, Runneth also speaks up whenever a broken integration gets in the way of a task, instead of working around it quietly.
 
 ## Try this now
-1. **See the current health state**: `What's the current health state of all my integrations and routines?`
-   _You'll get back:_ a summary covering every integration (5-layer check) and every routine (overdue, execution, dependency), grouped by status.
-2. **Trigger a manual health check**: `Run a health check right now.`
-   _You'll get back:_ the routine fires on demand, results written to `/agent/brain/integration-health/health-state.json`, and a summary in chat.
-3. **Investigate a degraded routine**: `Why is [routine name] showing as degraded?`
-   _You'll get back:_ the specific failure mode (overdue, execution record missing, dependency broken), the last known good run, and the recommended fix.
-4. **Adjust the silence window**: `Change the alert silence window to [hours].`
-   _You'll get back:_ the config updated, the next alert cycle reflects the new window.
+1. **Run your first check** — `Check my integrations.`
+   _You'll get back:_ a status for every connected tool, saved to `/agent/brain/integration-health/health-status.md`, with a fix suggested for anything broken.
+2. **Ask about one tool** — `Is Slack still connected?`
+   _You'll get back:_ a yes or no backed by a real call, not a guess.
+3. **See what changed** — `Run a health check. What's different from last time?`
+   _You'll get back:_ the current status plus a short list of what broke or recovered since the previous check.
+
+Tip: if you want this to run on a schedule, just ask. For example: `Run the integration health check every Monday morning and tell me the result.` Runneth sets that up only when you ask for it.
 
 ## Compounds with
-- **building-integrations:** Newly connected integrations get auto-added to the health check.
-- **integration-capabilities-library:** If a sync fails or scopes get revoked, both surfaces catch it.
+- **building-integrations:** new integrations you build show up in the next health check automatically.

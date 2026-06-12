@@ -1,28 +1,22 @@
 ---
-hero_headline: "Know when something breaks before your team does."
-hero_subhead: "Runneth watches your connected tools and automated routines — and alerts you in Slack the moment something goes off track."
-install_time: "~2 minutes"
-requires: "Slack connected, at least one integration or routine active"
+hero_headline: "Find out fast when a connected tool stops working."
+hero_subhead: "Ask Runneth to check your integrations any time and get a straight status, plus a heads-up whenever a broken connection blocks real work."
+install_time: "~1 minute"
+requires: "At least one connected integration"
+status: "experimental"
 ---
 
-## What this enables
+## Super powers this unlocks
 
-- Get a Slack alert the first time a connected tool stops working or a routine goes off track
-- One follow-up after 24 hours if it's still not resolved (configurable)
-- A confirmation when everything is back to normal
-- Catch routines that were requested but never actually set up — Runneth finds them in your conversations and either creates them or asks for the missing details
+- Ask "is everything connected?" and get a clear answer for every tool.
+- See which connection broke, why, and the one step that fixes it.
+- Hear about a broken integration the moment it blocks a task. Runneth names it instead of quietly working around it.
+- Know what broke (or recovered) since your last check.
 
 ## How it works
 
-Once installed, Runneth checks every connected tool and scheduled task every 30 minutes. When something looks off, it sends one alert to your admin channel — no noise, no spam. If Runneth spots that a routine was mentioned in a conversation but never created, it either sets it up quietly or follows up in the original thread.
+Runneth makes one small read call to each connected tool to prove it really works, and saves the results so the next check shows what changed. From then on, if a dead connection blocks any task, Runneth says so and points you to the fix.
 
 ## A real example
 
-A creative team has a daily performance report routine they rely on every morning. The Slack integration silently disconnects over the weekend. Without Health Alerts, no one notices until Monday morning when the report doesn't show up. With it, an alert fires within 30 minutes — and the team has it fixed before anyone starts their day.
-
-## What gets set up
-
-- 30-minute health checks on all connected tools and active routines
-- A dedicated alert channel in Slack
-- Admin tagging so the right people see every alert
-- Daily scan for routines that were asked for but never created
+Dana, a performance marketing lead at a DTC skincare brand, asks "check my integrations" before pulling Monday's numbers. Runneth reports Meta's connection expired over the weekend and suggests reconnecting; two minutes later the report runs clean. The next week, a teammate hits the same kind of error mid-task. Runneth names the broken connection right away instead of returning half an answer.

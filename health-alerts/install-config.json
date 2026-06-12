@@ -1,86 +1,30 @@
 {
   "schema": "1.0",
   "id": "health-alerts",
-  "version": "2.2.1",
-  "description": "Monitors all connected integrations and all active routines. Sends Slack alerts to the admin channel when integrations break, routines go overdue, dependency chains fail, or skill execution can't be confirmed. Configurable silence window, self-healing routine, and inline skill fix from alert replies.",
+  "version": "3.0.0",
+  "description": "On-demand integration health check. Ask 'check my integrations' any time and Runneth runs one cheap read call per connected integration to confirm auth works, writes one durable status file (per-integration status, last-checked date, action needed), and reports in chat. The markdown file is the state — each run compares against the previous one and notes changes. A sentinel-guarded user.md instruction, installed after the first successful check, makes Runneth surface any integration error it hits mid-task instead of working around it silently. No scheduled routine, no Slack posting, no JSON state.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": []
+  },
   "installs": [
     {
-      "file": "brain-seeds/health-config.json",
-      "dest": "/agent/brain/integration-health/health-config.json",
-      "if-not-exists": true,
-      "description": "Org settings: silence window, check interval, optional alert channel override"
-    },
-    {
-      "file": "brain-seeds/health-state.json",
-      "dest": "/agent/brain/integration-health/health-state.json",
-      "if-not-exists": true,
-      "description": "Integration health state file. Written after every check run."
-    },
-    {
-      "file": "brain-seeds/routine-health-state.json",
-      "dest": "/agent/brain/integration-health/routine-health-state.json",
-      "if-not-exists": true,
-      "description": "Routine health state file. Written after every check run."
-    },
-    {
-      "file": "brain-seeds/known-routines-registry.json",
-      "dest": "/agent/brain/integration-health/known-routines-registry.json",
-      "if-not-exists": true,
-      "description": "Baseline registry of known routines. Populated on first health check run. Used to detect silent reminder drops."
-    },
-    {
-      "file": "integration-health-check/SKILL.md",
-      "dest": "/agent/.agents/skills/integration-health-check/SKILL.md",
-      "if-not-exists": false,
-      "description": "Core health check skill. Covers integrations (5-layer checks) and routines (overdue, execution records, dependency chains). Sends Slack alerts with configurable silence window."
-    },
-    {
-      "file": "integration-onboarding/SKILL.md",
-      "dest": "/agent/.agents/skills/health-alerts-onboarding-patch/SKILL.md",
-      "if-not-exists": false,
-      "description": "Patch spec for integration-onboarding skill. Adds admin channel notification on every integration connection."
-    },
-    {
-      "file": "setup-health-alerts/SKILL.md",
-      "dest": "/agent/.agents/skills/setup-health-alerts/SKILL.md",
-      "if-not-exists": false,
-      "description": "Setup skill. Configures admin channel, silence window, timezone, GitHub repo. Audits installed skills for execution record support. Can be re-invoked any time."
+      "from": "integration-health-check/SKILL.md",
+      "to": "/agent/.agents/skills/integration-health-check/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "The single on-demand skill — discovers connected integrations, verifies each with one cheap read call, writes /agent/brain/integration-health/health-status.md, reports in chat"
     }
   ],
-  "customize": [
+  "runtime_installs": [
     {
-      "token": "{{SILENCE_HOURS}}",
-      "description": "Hours to wait before sending a repeat alert for the same unresolved issue",
-      "required": false,
-      "default": "24"
-    },
-    {
-      "token": "{{CHECK_INTERVAL_MINUTES}}",
-      "description": "How often the health check routine runs, in minutes",
-      "required": false,
-      "default": "30"
-    },
-    {
-      "token": "{{TIMEZONE}}",
-      "description": "IANA timezone for the health check routine schedule. Collected from admin during setup.",
-      "required": false,
-      "default": "UTC"
-    },
-    {
-      "token": "{{GITHUB_REPO}}",
-      "description": "GitHub repo for L4/L5 health checks (owner/repo). Null skips repo-level checks.",
-      "required": false,
-      "default": "null"
+      "appends_to": "/agent/user.md",
+      "guard": "sentinel 'runneth-apps:health-alerts:surface-integration-issues v2' already present",
+      "trigger": "After the first successful health check, idempotent across subsequent runs",
+      "purpose": "Standing instruction: if an integration auth/connection error gets in the way during any task, tell the user in that reply and suggest running the health check — never work around it silently. Points Runneth at the status file for already-recorded issues."
     }
   ],
-  "post-install": [
-    {
-      "action": "skill-invoke",
-      "skill": "setup-health-alerts",
-      "name": "Configure health alerts",
-      "description": "Configures admin channel, silence window, timezone. Audits all installed skills for execution record support and offers to update missing ones. Starts the health check routine.",
-      "manual": false
-    },
+  "post_install": [
     {
       "action": "show-intro",
       "name": "Introduce the new capability",
@@ -88,7 +32,17 @@
       "description": "Read post-install-intro.md from this use case folder. After all prior install and post-install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed in the sandbox. Resolve any {{TOKEN}} placeholders using the same customize map applied during install."
     }
   ],
+  "creates_at_runtime": [
+    "/agent/brain/integration-health/health-status.md (overwritten on every check)"
+  ],
+  "upstream_dependencies": [],
   "changelog": [
+    {
+      "version": "3.0.0",
+      "date": "2026-06-12",
+      "type": "major",
+      "notes": "Rebuilt as a single on-demand health check. Collapsed three skills (integration-health-check, setup-health-alerts, integration-onboarding patch) into one: ask 'check my integrations' and Runneth verifies each connected integration with one cheap read call, writes /agent/brain/integration-health/health-status.md, and reports in chat. Cut the auto-invoked setup skill, the 30-minute recurring routine and its self-healing logic, automatic Slack alerts to an admin channel, secret scanning of runtime tokens, routine health monitoring, the conversation intent scan, and all four JSON config/state seed files — the markdown status file is now the only state, with changes noted inline run over run. Added a sentinel-guarded user.md instruction (runneth-apps:health-alerts:surface-integration-issues v2), installed after the first successful check, so Runneth mentions any integration error it hits mid-task and suggests the health check instead of failing silently. Users who want a recurring check can ask Runneth to schedule one themselves; the skill never creates it."
+    },
     {
       "version": "2.2.1",
       "date": "2026-05-22",

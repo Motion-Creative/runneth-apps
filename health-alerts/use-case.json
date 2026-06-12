@@ -1,7 +1,7 @@
 {
   "slug": "health-alerts",
-  "display_title": "Health Alerts",
-  "pitch": "Alerts you the moment a tool or routine stops working",
+  "display_title": "Integration Health Check",
+  "pitch": "Ask any time whether your connected tools still work and get a straight status. Runneth also tells you the moment a broken integration gets in the way of real work.",
   "status": "experimental",
   "category": "agent-foundations",
   "github_path": "health-alerts"
