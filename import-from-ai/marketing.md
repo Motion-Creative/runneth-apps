@@ -2,7 +2,7 @@
 hero_headline: "Move two years of AI memory in one paste."
 hero_subhead: "ChatGPT, Claude, or Gemini already knows you. Hand that over to Runneth in 15 minutes."
 install_time: "~5 minutes"
-requires: "add-roles-permissions skill"
+requires: "Nothing"
 ---
 
 ## Super powers this unlocks
