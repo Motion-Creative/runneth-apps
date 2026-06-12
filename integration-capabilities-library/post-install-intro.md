@@ -1,7 +1,7 @@
 # Integration capabilities library
 
 ## What just opened up
-Runneth always has an accurate, sourced reference for what every connected integration can do and what permissions it needs. When someone asks what Slack can post, what GitHub scopes are needed, or whether Notion supports file uploads, the answer comes from a live document, not from memory. New integrations get a capabilities file created automatically. Every night, all files re-check against the official docs and patch what changed.
+Runneth always has an accurate, sourced reference for what every connected integration can do and what permissions it needs. When someone asks what Slack can post, what GitHub scopes are needed, or whether Notion supports file uploads, the answer comes from a live document, not from memory. New integrations get a capabilities file created automatically, and you can ask for a refresh on any file whenever a tool changes.
 
 ## Try this now
 1. **Ask about a connected integration's capabilities**: `What can my Slack integration actually do right now? What scopes does it have?`

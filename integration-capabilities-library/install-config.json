@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "integration-capabilities-library",
-  "version": "1.0.1",
-  "description": "The agent always has an accurate, sourced reference for what every connected integration can do and what permissions it needs \u2014 updated automatically every night.",
+  "version": "2.0.0",
+  "description": "The agent always has an accurate, sourced reference for what every connected integration can do and what permissions it needs \u2014 created the moment a new integration appears, refreshed whenever the user asks. No scheduled routine.",
   "customize": [
     {
       "token": "{{INTEGRATIONS_DIR}}",
@@ -30,6 +30,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "2.0.0",
+      "date": "2026-06-12",
+      "type": "major",
+      "notes": "Removed the nightly maintenance routine; sync is on-demand and event-driven via the user.md snippet. The skill now runs only when a new integration appears (behavior snippet) or when the user asks ('document my integrations', 'sync the capabilities file for X'). Cut the Nightly Routine Content Template from the skill and the post-install reminder-add cron step from the README. The skill never creates a scheduled routine; users who want a periodic refresh can ask Runneth to schedule one themselves."
+    },
     {
       "version": "1.0.1",
       "date": "2026-05-21",

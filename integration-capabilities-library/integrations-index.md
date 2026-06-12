@@ -1,8 +1,8 @@
 # Integration Capabilities Index
 
-This directory is the canonical source of truth for what each connected integration can do and what permissions it needs. Every file is sourced directly from official API documentation and auto-reviewed nightly.
+This directory is the single source of truth for what each connected integration can do and what permissions it needs. Every file is sourced directly from official API documentation.
 
-**Do not hand-edit these files.** They are maintained by the `integration-capabilities-sync` skill. If something looks stale, run the skill manually or wait for the next nightly pass.
+**Do not hand-edit these files.** They are maintained by the `integration-capabilities-sync` skill. If something looks stale, ask the agent to run the skill for that integration.
 
 ---
 
@@ -36,9 +36,9 @@ To trigger manually: tell the agent a new integration was connected, or ask it t
 
 ---
 
-## Nightly Review
+## Refreshing a File
 
-The nightly routine re-fetches official API docs and scopes docs for each integration, diffs against the current file, patches anything that changed, updates the Last reviewed date, and logs material changes to the brain changelog.
+Ask the agent to refresh one integration ("sync the capabilities file for GitHub") or all of them ("document my integrations"). The skill re-fetches the official API docs and scopes docs, diffs against the current file, patches anything that changed, updates the Last reviewed date, and logs material changes to the brain changelog.
 
 ---
 

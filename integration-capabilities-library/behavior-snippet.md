@@ -1,4 +1,4 @@
-<!-- use-case: integration-capabilities-library v1.0.0 -->
+<!-- use-case: integration-capabilities-library v2.0.0 -->
 
 ### Integration capabilities library
 

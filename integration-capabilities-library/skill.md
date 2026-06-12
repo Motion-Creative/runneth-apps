@@ -1,6 +1,6 @@
 # Skill: integration-capabilities-sync
 
-**Purpose:** Create or update capability one-pager files for every connected integration. Sources content directly from official API documentation. Runs on two triggers: (1) new integration detected, (2) nightly 3am ET maintenance pass.
+**Purpose:** Create or update capability one-pager files for every connected integration. Sources content directly from official API documentation. Runs on demand: when a new integration is detected, or when the user asks.
 
 **Output files:** `/agent/brain/integrations/<name>/capabilities-and-scopes.md` per integration  
 **Index file:** `/agent/brain/integrations/README.md`  
@@ -10,8 +10,10 @@
 
 ## When To Run This Skill
 
-1. **New integration connected** — when a user says a new integration was connected, or when the routine detects an integration in the health state with no matching capabilities.md
-2. **Nightly 3am ET maintenance** — re-review all existing capability files against live API docs and update anything that has changed
+1. **New integration connected** — when a user says a new integration was connected, or when an integration appears in the health state with no matching capabilities.md
+2. **User asks** — "document my integrations", "what can my integrations do", "sync the capabilities file for X", or any request to refresh one or all capability files against live API docs
+
+This skill never creates a scheduled routine. If the user wants a periodic refresh, they can ask Runneth to schedule one themselves.
 
 ---
 
@@ -32,8 +34,8 @@ ls /agent/brain/integrations/
 - Any integration present in health state with no matching capabilities directory = new integration, needs a fresh file
 - If the user explicitly names an integration, create or update that one
 
-**For the nightly trigger:**
-- Process all integrations present in health state, regardless of whether a capabilities.md exists
+**For a user-requested refresh:**
+- Process the integrations the user named, or all integrations present in health state if they asked for a full refresh
 - For integrations with an existing capabilities.md, this is an update pass — diff and patch only what changed
 
 ---
@@ -156,7 +158,7 @@ Create `/agent/brain/integrations/<name>/capabilities-and-scopes.md` using this 
 
 ---
 
-*Auto-reviewed nightly at 3am ET.*
+*Maintained by the `integration-capabilities-sync` skill. Ask Runneth to refresh it any time.*
 ```
 
 ### 4b — Update pass (file already exists)
@@ -238,22 +240,3 @@ Keep the reply concise. Lead with changes, not a full enumeration of what stayed
 | Health state file missing or unreadable | Fall back to listing `/agent/brain/integrations/` subdirectories as the integration list |
 | Integration status is "broken" | Still document capabilities as normal. Health state is not written into capabilities.md. |
 | capabilities.md already accurate / no changes | Skip changelog entry, still update `Last reviewed` date |
-
----
-
-## Nightly Routine Content Template
-
-When this skill is called by the nightly reminder, use this as the instruction content:
-
-> Run the integration-capabilities-sync skill. Full procedure: `/agent/.agents/skills/integration-capabilities-sync/SKILL.md`. 
-> 
-> This is the nightly maintenance pass. For every integration in the health state:
-> 1. Fetch the official API documentation (use known URLs from the skill's Step 2 table, or WebSearch if unknown)
-> 2. Compare against the existing capabilities.md
-> 3. Update only changed sections
-> 4. Update the Last reviewed date
-> 5. Log material changes to changelog
-> 6. Update the Last Reviewed column in the README index
-> 7. Update /agent/INDEX.md for any new files created this run
-> 
-> Also check: are there any integrations in health state with no capabilities.md? If yes, create new files for them. Report what changed.
