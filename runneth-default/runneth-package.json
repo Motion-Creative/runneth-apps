@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "runneth-default",
   "name": "Runneth Default",
-  "version": "0.1.0",
-  "description": "Installs the baseline Runneth creative strategy skills that moved out of the protected Runneth volume.",
+  "version": "0.4.0",
+  "description": "Installs baseline Runneth creative strategy skills and customer-owned setup templates.",
   "updatePolicy": "auto",
   "resources": [
     {
@@ -40,6 +40,196 @@
       "id": "core-creative-skills",
       "type": "package_instruction",
       "sourcePath": "instructions/core-creative-skills.md"
+    },
+    {
+      "id": "integration-setup",
+      "type": "package_instruction",
+      "sourcePath": "instructions/integration-setup.md"
+    },
+    {
+      "id": "customer-glossary",
+      "type": "package_instruction",
+      "sourcePath": "instructions/customer-glossary.md"
+    },
+    {
+      "id": "customer-glossary-index",
+      "type": "seed_file",
+      "sourcePath": "brain/glossary/index.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "glossary/index.md"
+      }
+    },
+    {
+      "id": "primary-kpi-template",
+      "type": "seed_file",
+      "sourcePath": "brain/glossary/_templates/primary-kpi.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "glossary/_templates/primary-kpi.md"
+      }
+    },
+    {
+      "id": "attribution-template",
+      "type": "seed_file",
+      "sourcePath": "brain/glossary/_templates/attribution.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "glossary/_templates/attribution.md"
+      }
+    },
+    {
+      "id": "winner-definition-template",
+      "type": "seed_file",
+      "sourcePath": "brain/glossary/_templates/winner-definition.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "glossary/_templates/winner-definition.md"
+      }
+    },
+    {
+      "id": "ad-states-template",
+      "type": "seed_file",
+      "sourcePath": "brain/glossary/_templates/ad-states.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "glossary/_templates/ad-states.md"
+      }
+    },
+    {
+      "id": "naming-conventions-template",
+      "type": "seed_file",
+      "sourcePath": "brain/glossary/_templates/naming-conventions.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "glossary/_templates/naming-conventions.md"
+      }
+    },
+    {
+      "id": "funnel-stages-template",
+      "type": "seed_file",
+      "sourcePath": "brain/glossary/_templates/funnel-stages.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "glossary/_templates/funnel-stages.md"
+      }
+    },
+    {
+      "id": "voice-rules-template",
+      "type": "seed_file",
+      "sourcePath": "brain/glossary/_templates/voice-rules.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "glossary/_templates/voice-rules.md"
+      }
+    },
+    {
+      "id": "channel-roles-template",
+      "type": "seed_file",
+      "sourcePath": "brain/glossary/_templates/channel-roles.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "glossary/_templates/channel-roles.md"
+      }
+    },
+    {
+      "id": "integration-notes-index",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/index.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/index.md"
+      }
+    },
+    {
+      "id": "integration-map-template",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_templates/integration-map.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_templates/integration-map.md"
+      }
+    },
+    {
+      "id": "integration-capabilities-template",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_templates/capabilities-and-scopes.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_templates/capabilities-and-scopes.md"
+      }
+    },
+    {
+      "id": "integration-activation-template",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_templates/activation-plan.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_templates/activation-plan.md"
+      }
+    },
+    {
+      "id": "integration-practical-guide-template",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_templates/practical-guide.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_templates/practical-guide.md"
+      }
+    },
+    {
+      "id": "integration-quirks-template",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_templates/quirks.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_templates/quirks.md"
+      }
+    },
+    {
+      "id": "integration-usage-patterns-template",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_templates/usage-patterns.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_templates/usage-patterns.md"
+      }
+    },
+    {
+      "id": "integration-types-protocol",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_protocols/integration-types.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_protocols/integration-types.md"
+      }
+    },
+    {
+      "id": "integration-quirks-protocol",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_protocols/quirks.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_protocols/quirks.md"
+      }
+    },
+    {
+      "id": "integration-usage-feedback-protocol",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_protocols/usage-feedback.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_protocols/usage-feedback.md"
+      }
+    },
+    {
+      "id": "slack-integration-map",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/slack/index.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/slack/index.md"
+      }
     }
   ]
 }

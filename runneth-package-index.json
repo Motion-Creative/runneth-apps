@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "runneth-default-0.1.0",
+  "indexRevision": "runneth-default-0.4.0",
   "packages": [
     {
       "id": "runneth-default",
       "name": "Runneth Default",
-      "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
-      "version": "0.1.0",
+      "description": "Baseline Runneth creative strategy skills and customer-owned setup templates.",
+      "version": "0.4.0",
       "packageManagerVersion": 1,
       "categories": [
         "baseline"
