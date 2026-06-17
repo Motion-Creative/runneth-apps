@@ -47,7 +47,7 @@ Then proceed to Phase 2.
 
 ## PHASE 2: RESEARCH
 
-Using the brand name and URL provided, conduct web research to fill out the full brand context document. Use the `web_search` and `web_fetch` tools.
+Using the brand name and URL provided, conduct web research to fill out the full brand context document. Use web search and page fetching to gather what you need.
 
 ### Research Checklist
 
@@ -216,7 +216,7 @@ Key signals: [Pain points, lifestyle, language patterns, what they care about]
 After building the document:
 
 1. **Save** it as `brand-context-[brandname].md`
-2. **Present** it to the user using `present_files`
+2. **Present** the finished document to the user
 3. **Flag gaps** — call out anything you couldn't verify or are inferring vs. confirming
 4. **Ask one closing question:**
 

@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "id": "brand-audit",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Foundation + strategy layer of the creative-strategy framework. Runs brand-intake, product-catalog, review-audit, brand-relevant-keywords, competitor-analysis, and creative-strategy-engine to produce a durable per-workspace brand bundle that creative-deep-dive and weekly-performance-deck read as upstream context. Refreshes Monday mornings.",
   "requires": {
     "runtime": "any Runneth sandbox",
@@ -104,6 +104,12 @@
   ],
   "upstream_dependencies": [],
   "changelog": [
+    {
+      "version": "1.0.2",
+      "date": "2026-06-17",
+      "type": "patch",
+      "notes": "Synced foundation skill bodies from the upstream source of truth (Motion-Creative/alyshas-skills). Removed environment-specific tool names (web_search, web_fetch, present_files) from brand-intake, product-catalog, brand-relevant-keywords, and competitor-analysis so each skill runs standalone in any org, not only when driven by the orchestrator. No behavior or output-format change."
+    },
     {
       "version": "1.0.1",
       "date": "2026-05-21",

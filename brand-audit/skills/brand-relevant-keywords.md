@@ -286,7 +286,7 @@ None of these keywords include the brand name, product name, or competitor names
 ## PHASE 4: DELIVER & CONFIRM
 
 1. **Save** the keyword document as `keywords-[brandname]-[product or "brand"].md`
-2. **Present** it using `present_files`
+2. **Present** the finished document to the user
 3. **Flag gaps** — call out any category where coverage feels thin, or any obvious audience segment (e.g., a secondary persona) that would benefit from its own keyword set
 4. **Ask one closing question:**
 

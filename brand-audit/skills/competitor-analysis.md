@@ -76,7 +76,7 @@ Then confirm with yourself: does this list reflect the full range of what the cu
 
 ## PHASE 2: DEEP COMPETITOR PROFILING
 
-For each competitor identified, research and profile them across the following dimensions. Use `web_search` and `web_fetch` heavily. Where possible, fetch the Meta Ad Library for each brand.
+For each competitor identified, research and profile them across the following dimensions. Use web search and page fetching heavily. Where possible, pull the Meta Ad Library for each brand.
 
 ### Profile Structure (repeat for each competitor)
 
@@ -221,7 +221,7 @@ Compile all research into a structured markdown document.
 ## PHASE 6: DELIVER & CONFIRM
 
 1. **Save** the document as `competitor-analysis-[brandname].md`
-2. **Present** it using `present_files`
+2. **Present** the finished document to the user
 3. **Flag gaps** — call out any competitor where research was thin, ad data was unavailable, or positioning was hard to verify
 4. **Ask one closing question:**
 
