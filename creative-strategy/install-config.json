@@ -1,0 +1,145 @@
+{
+  "schema": "1.0",
+  "id": "creative-strategy",
+  "version": "1.0.0",
+  "description": "The full creative-strategy framework as one self-contained, installable stack. An orchestrator plus 15 independently callable skills across three layers: foundation (brand intake, product catalog, review audit, keywords, competitors), strategy (the creative strategy engine), and execution (hooks, mechanics, formats, analysis, copy standards). Takes a brand from understanding to strategically mapped ads. Self-contained: does not depend on any other package.",
+  "requires": {
+    "runtime": "any Runneth sandbox",
+    "preinstalled": [],
+    "recommended": []
+  },
+  "installs": [
+    {
+      "from": "SKILL.md",
+      "to": "/agent/.agents/skills/creative-strategy/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Orchestrator: routes the 15-skill framework across foundation, strategy, and execution layers"
+    },
+    {
+      "from": "skills/brand-intake.md",
+      "to": "/agent/.agents/skills/brand-intake/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: brand identity, value prop, audience, positioning"
+    },
+    {
+      "from": "skills/product-catalog.md",
+      "to": "/agent/.agents/skills/product-catalog/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: facts-only product data"
+    },
+    {
+      "from": "skills/review-audit.md",
+      "to": "/agent/.agents/skills/review-audit/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: voice of customer across pain/desire/objection/comparison/use-case"
+    },
+    {
+      "from": "skills/brand-relevant-keywords.md",
+      "to": "/agent/.agents/skills/brand-relevant-keywords/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: audience search and pain language"
+    },
+    {
+      "from": "skills/competitor-analysis.md",
+      "to": "/agent/.agents/skills/competitor-analysis/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: competitive landscape and gaps"
+    },
+    {
+      "from": "skills/creative-strategy-engine.md",
+      "to": "/agent/.agents/skills/creative-strategy-engine/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: persona x pain micropersona, offer, funnel stage, messaging lens (the strategy spine)"
+    },
+    {
+      "from": "skills/creative-analysis.md",
+      "to": "/agent/.agents/skills/creative-analysis/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: reverse-engineer any existing ad"
+    },
+    {
+      "from": "skills/creative-mechanics.md",
+      "to": "/agent/.agents/skills/creative-mechanics/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: library of cognitive mechanisms"
+    },
+    {
+      "from": "skills/hook-analysis.md",
+      "to": "/agent/.agents/skills/hook-analysis/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: three-channel hook diagnostic"
+    },
+    {
+      "from": "skills/hook-evaluator.md",
+      "to": "/agent/.agents/skills/hook-evaluator/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: 10-point hook scoring from text inputs"
+    },
+    {
+      "from": "skills/hook-tactics.md",
+      "to": "/agent/.agents/skills/hook-tactics/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: 35+ hook tactic definitions"
+    },
+    {
+      "from": "skills/hook-voice-patterns.md",
+      "to": "/agent/.agents/skills/hook-voice-patterns/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: native-feeling hook template swipe file"
+    },
+    {
+      "from": "skills/hook-writing.md",
+      "to": "/agent/.agents/skills/hook-writing/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: hook writing with psychological triggers"
+    },
+    {
+      "from": "skills/visual-formats.md",
+      "to": "/agent/.agents/skills/visual-formats/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: format selection with funnel fit"
+    },
+    {
+      "from": "skills/voice-copy-standards.md",
+      "to": "/agent/.agents/skills/voice-copy-standards/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Standalone callable: always-on human-copy rules"
+    },
+    {
+      "from": "seed/_index.md",
+      "to": "/agent/brain/creative-strategy/_index.md",
+      "on_exists": "skip",
+      "purpose": "Local routing index for saved creative-strategy bundles"
+    },
+    {
+      "appends_to": "/agent/INDEX.md",
+      "guard": "path '/agent/brain/creative-strategy/' already present",
+      "purpose": "Global INDEX.md routing entry for the creative-strategy bundle"
+    }
+  ],
+  "creates_at_runtime": [
+    "/agent/brain/creative-strategy/<workspace-slug>/brand-context.md",
+    "/agent/brain/creative-strategy/<workspace-slug>/product-catalog.md",
+    "/agent/brain/creative-strategy/<workspace-slug>/review-audit.md",
+    "/agent/brain/creative-strategy/<workspace-slug>/keywords.md",
+    "/agent/brain/creative-strategy/<workspace-slug>/competitor-analysis.md",
+    "/agent/brain/creative-strategy/<workspace-slug>/messaging-angles.md"
+  ],
+  "upstream_dependencies": [],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-17",
+      "type": "major",
+      "notes": "Initial release of the consolidated creative-strategy stack: one orchestrator plus 15 independently callable skills across foundation, strategy, and execution layers. Self-contained and installable in any org. Skill bodies are harness-neutral (no environment-specific tool names). Ships the updated creative-strategy-engine framework."
+    }
+  ],
+  "post-install": [
+    {
+      "action": "show-intro",
+      "name": "Introduce the new capability",
+      "file": "post-install-intro.md",
+      "description": "Read post-install-intro.md from this package folder. After all prior install steps complete, surface the file's sections to the user in chat as the closing message of the install turn: '## What just opened up' as prose, '## Try this now' as a numbered prompt list, '## Compounds with' only when present and at least one named use case is installed."
+    }
+  ]
+}
