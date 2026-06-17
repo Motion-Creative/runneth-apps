@@ -13,24 +13,24 @@ This file is for how this organization wants Runneth to use Slack.
 
 ## What Slack Is Used For Here
 
-- TBD
+- Add the confirmed Slack context this organization wants Runneth to use.
 
 ## Channels And Context
 
-- Important channels:
-- Channels Runneth should ask to join when relevant:
-- Channels that should stay out of scope:
+- Important channels.
+- Channels Runneth should ask to join when relevant.
+- Channels that should stay out of scope.
 
 ## Reporting And Delivery Preferences
 
-- Where readouts should be posted:
-- Thread vs channel-root preferences:
-- People or teams to tag:
+- Where readouts should be posted.
+- Thread vs channel-root preferences.
+- People or teams to tag.
 
 ## Standing Instructions
 
-- TBD
+- Add durable Slack instructions the team has confirmed.
 
-## Gotchas
+## Gotchas And Open Questions
 
-- TBD
+- Add known Slack context gaps, delivery constraints, or questions to confirm.

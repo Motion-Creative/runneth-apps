@@ -5,7 +5,7 @@
     {
       "id": "runneth-default",
       "name": "Runneth Default",
-      "description": "Baseline Runneth creative strategy skills and editable starter notes for customer-specific integration setup.",
+      "description": "Baseline Runneth creative strategy skills and a small customer-owned integration setup surface.",
       "version": "0.2.0",
       "packageManagerVersion": 1,
       "categories": [
