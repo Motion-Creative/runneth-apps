@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "runneth-default-0.2.0",
+  "indexRevision": "runneth-default-0.3.0",
   "packages": [
     {
       "id": "runneth-default",
       "name": "Runneth Default",
-      "description": "Baseline Runneth creative strategy skills and a small customer-owned integration setup surface.",
-      "version": "0.2.0",
+      "description": "Baseline Runneth creative strategy skills and customer-owned integration setup templates.",
+      "version": "0.3.0",
       "packageManagerVersion": 1,
       "categories": [
         "baseline"

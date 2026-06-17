@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "runneth-default",
   "name": "Runneth Default",
-  "version": "0.2.0",
-  "description": "Installs baseline Runneth creative strategy skills and a small customer-owned integration setup surface.",
+  "version": "0.3.0",
+  "description": "Installs baseline Runneth creative strategy skills and customer-owned integration setup templates.",
   "updatePolicy": "auto",
   "resources": [
     {
@@ -65,12 +65,84 @@
       }
     },
     {
-      "id": "slack-integration-notes",
+      "id": "integration-capabilities-template",
       "type": "seed_file",
-      "sourcePath": "brain/integrations/slack.md",
+      "sourcePath": "brain/integrations/_templates/capabilities-and-scopes.md",
       "target": {
         "root": "agent_brain",
-        "path": "integrations/slack.md"
+        "path": "integrations/_templates/capabilities-and-scopes.md"
+      }
+    },
+    {
+      "id": "integration-activation-template",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_templates/activation-plan.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_templates/activation-plan.md"
+      }
+    },
+    {
+      "id": "integration-practical-guide-template",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_templates/practical-guide.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_templates/practical-guide.md"
+      }
+    },
+    {
+      "id": "integration-quirks-template",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_templates/quirks.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_templates/quirks.md"
+      }
+    },
+    {
+      "id": "integration-usage-patterns-template",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_templates/usage-patterns.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_templates/usage-patterns.md"
+      }
+    },
+    {
+      "id": "integration-types-protocol",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_protocols/integration-types.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_protocols/integration-types.md"
+      }
+    },
+    {
+      "id": "integration-quirks-protocol",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_protocols/quirks.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_protocols/quirks.md"
+      }
+    },
+    {
+      "id": "integration-usage-feedback-protocol",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/_protocols/usage-feedback.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/_protocols/usage-feedback.md"
+      }
+    },
+    {
+      "id": "slack-integration-map",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/slack/index.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/slack/index.md"
       }
     }
   ]
