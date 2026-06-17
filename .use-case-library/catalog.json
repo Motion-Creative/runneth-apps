@@ -14,6 +14,10 @@
   ],
   "excluded": [
     {
+      "slug": "runneth-classic",
+      "reason": "Meta-pack that cascade-installs many use cases that are currently excluded or under rework (performance-bundle, building-integrations, self-iteration-loop, team-member-memory, add-roles-permissions, health-alerts). Hide until its upstream dependencies are stable and the public library is no longer creative-strategy focused."
+    },
+    {
       "slug": "ugc-creator-programme",
       "reason": "Extracted to a directory; still excluded \u2014 SQLite-backed, like the other stateful apps. Promote when ready."
     },
