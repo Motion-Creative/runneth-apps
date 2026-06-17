@@ -18,5 +18,49 @@
       "description": "Invokes the skill, which walks the admin through the install conversation, deploys the result, and surfaces a plain-language setup-complete message at the end.",
       "manual": false
     }
+  ],
+  "changelog": [
+    {
+      "version": "3.3.0",
+      "date": "2026-06-12",
+      "type": "minor",
+      "notes": "Swap the Neon-only identity resolver for a local daemon-DB resolver. Motion-web identity now resolves from /daemon/conversation-store/conversations.db via the runtime-injected CONVERSATION_ID, so no NEON_DATABASE_URL or production credentials are needed at install time. Resolution logic matches the compatibility resolver proven on the customer fleet in the June 10-11 rollout. Fail-loud semantics for permissions are unchanged. Refs: 2026-06-11 NEON_DATABASE_URL incident, PDEC-7817."
+    },
+    {
+      "version": "3.1.5",
+      "date": "2026-06-03",
+      "type": "patch",
+      "notes": "Customize Write Access refresh on top of v3.0.0. Same six primitives and seven-phase install, with layered-in education, voice, and trim: renamed display title to \"Decide who can change Runneth,\" SKILL heading renamed to \"Customize Write Access,\" new stage-setting intro, and a behavior-protection layer added to the install phases."
+    },
+    {
+      "version": "3.1.0",
+      "date": "2026-06-02",
+      "type": "minor",
+      "notes": "Reframe and behavior-protection layer (later refined in 3.1.5). Renamed the skill to Customize Write Access and extended Phase 2/3 outcomes to cover protecting how Runneth behaves, not just what it knows."
+    },
+    {
+      "version": "3.0.0",
+      "date": "2026-06-02",
+      "type": "major",
+      "notes": "Standalone v3 rebuild. Six primitives (people, spaces, writers per space, attribution, approval routing, identity resolution), no mode toggle, seven-phase consultative install. Bundled to land on main as one coherent unit."
+    },
+    {
+      "version": "2.0.0",
+      "date": "2026-06-02",
+      "type": "major",
+      "notes": "Neon-first identity. motion-whoami.sh resolves the speaker email via the Neon agent_conversation table with no SQLite fallback, exiting non-zero on lookup failure so strict permissions never silently fall back to stale data. Renamed workspace-map.json to organization-map.json."
+    },
+    {
+      "version": "1.0.1",
+      "date": "2026-05-22",
+      "type": "patch",
+      "notes": "Added a post-install intro so the install ends with a short \"what just opened up + try this now\" message instead of completing silently."
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-05-19",
+      "type": "major",
+      "notes": "Initial release under the add-roles-permissions name (renamed from deploy-security-protocol / add-permissions). Admin chooses which areas to lock down and who may change each; unauthorized edits are blocked and routed through an approval channel, every save is attributed, and new teammates onboard automatically."
+    }
   ]
 }
