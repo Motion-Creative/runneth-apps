@@ -107,6 +107,12 @@ const assertPackageResource = (resource, label) => {
     return
   }
 
+  if (resource.type === 'seed_file') {
+    assertKeys(resource, ['id', 'sourcePath', 'target', 'type'], label)
+    assertTarget(resource.target, `${label}.target`)
+    return
+  }
+
   if (resource.type === 'directory') {
     assertKeys(resource, ['executablePaths', 'id', 'sourcePath', 'target', 'type'], label)
     assert.ok(Array.isArray(resource.executablePaths), `${label}.executablePaths: must be array`)
@@ -122,7 +128,7 @@ const assertPackageResource = (resource, label) => {
     return
   }
 
-  assert.fail(`${label}.type: must be file, directory, or package_instruction`)
+  assert.fail(`${label}.type: must be file, seed_file, directory, or package_instruction`)
 }
 
 const assertPackageManifest = (manifest, label) => {

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "runneth-default",
   "name": "Runneth Default",
-  "version": "0.1.0",
-  "description": "Installs the baseline Runneth creative strategy skills that moved out of the protected Runneth volume.",
+  "version": "0.2.0",
+  "description": "Installs baseline Runneth creative strategy skills and editable starter notes for customer-specific integration setup.",
   "updatePolicy": "auto",
   "resources": [
     {
@@ -40,6 +40,101 @@
       "id": "core-creative-skills",
       "type": "package_instruction",
       "sourcePath": "instructions/core-creative-skills.md"
+    },
+    {
+      "id": "integration-setup",
+      "type": "package_instruction",
+      "sourcePath": "instructions/integration-setup.md"
+    },
+    {
+      "id": "integration-notes-index",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/README.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/README.md"
+      }
+    },
+    {
+      "id": "slack-integration-notes",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/slack.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/slack.md"
+      }
+    },
+    {
+      "id": "google-drive-integration-notes",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/google-drive.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/google-drive.md"
+      }
+    },
+    {
+      "id": "notion-integration-notes",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/notion.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/notion.md"
+      }
+    },
+    {
+      "id": "shopify-integration-notes",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/shopify.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/shopify.md"
+      }
+    },
+    {
+      "id": "klaviyo-integration-notes",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/klaviyo.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/klaviyo.md"
+      }
+    },
+    {
+      "id": "hubspot-integration-notes",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/hubspot.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/hubspot.md"
+      }
+    },
+    {
+      "id": "northbeam-integration-notes",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/northbeam.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/northbeam.md"
+      }
+    },
+    {
+      "id": "triple-whale-integration-notes",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/triple-whale.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/triple-whale.md"
+      }
+    },
+    {
+      "id": "reviews-integration-notes",
+      "type": "seed_file",
+      "sourcePath": "brain/integrations/reviews.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "integrations/reviews.md"
+      }
     }
   ]
 }
