@@ -127,9 +127,10 @@ Read narrowly — pull only the file(s) the current task needs. The bundle is du
 ### Step 9 — Schedule the Monday refresh (first run only)
 
 ```bash
-reminder add --title "Weekly brand-audit refresh" \
-  --description "Re-run brand-audit for workspace <workspace-id>. Refresh review-audit and competitor-analysis (most volatile), re-derive strategy matrix on any material shift, ping configured channels for confirmation on material changes." \
-  --schedule "every monday at 08:00 <timezone>"
+routine add --name "Weekly brand-audit refresh" \
+  --delivery "No user-visible output unless material changes — ping configured channels via Slack or web conversation." \
+  --prompt "Re-run brand-audit for workspace <workspace-id>. Refresh review-audit and competitor-analysis (most volatile), re-derive strategy matrix on any material shift, ping configured channels for confirmation on material changes." \
+  --cron "0 8 * * 1" --timezone "<timezone>"
 ```
 
 Monday morning is intentional — the refresh lands before the Friday deck, so the deck can reference the latest brand context.
