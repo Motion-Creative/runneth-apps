@@ -459,9 +459,10 @@ Create the workspace config at `/agent/brain/paid-strategy/_config/<workspace-sl
 Schedule the reminder:
 
 ```bash
-reminder add --title "Weekly paid-strategy drift check" \
-  --description "Re-run paid-strategy-audit drift flow for workspace <workspace-id>. Diff current data against existing briefs, ping configured channels on material changes, rewrite briefs only on confirmation." \
-  --schedule "every friday at 09:00 <timezone>"
+routine add --name "Weekly paid-strategy drift check" \
+  --delivery "No user-visible output unless material changes — ping configured channels via Slack or web conversation." \
+  --prompt "Re-run paid-strategy-audit drift flow for workspace <workspace-id>. Diff current data against existing briefs, ping configured channels on material changes, rewrite briefs only on confirmation." \
+  --cron "0 9 * * 5" --timezone "<timezone>"
 ```
 
 If the setup skill has already collected ping channels in the same session, write them into the config now. Otherwise leave `ping_channels` empty and route the setup skill to run as the install's final post-step.
