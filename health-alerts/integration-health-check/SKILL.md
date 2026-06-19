@@ -81,7 +81,7 @@ user-invocable: true
 ### Step 0 — Self-healing
 
 ```bash
-reminder list
+routine list
 ```
 
 If "Integration health check" routine not found, recreate it (see Routine Content Template). Post to admin channel. If duplicates found, delete all but the most recent.
@@ -117,23 +117,23 @@ Full per-integration check procedures are unchanged from v1.0.0 (Motion workspac
 
 ## Part B — Routine Health
 
-### Step B1 — Read all active reminders
+### Step B1 — Read all active routines
 
 ```bash
-reminder list
+routine list
 ```
 
-Build a map of all reminders: `{ shortId, name, content, trigger.expression, trigger.timezone, nextDueDate, processedDate, active }`.
+Build a map of all routines: `{ shortId, name, content, trigger.expression, trigger.timezone, nextDueDate, processedDate, active }`.
 
 ### Step B1b — Known routines registry: detect silent drops
 
-The reminder system can silently drop reminders. This step detects that.
+The routine system can silently drop routines. This step detects that.
 
 ```bash
 cat /agent/brain/integration-health/known-routines-registry.json 2>/dev/null
 ```
 
-**If the registry does not exist:** create it now from the current `reminder list` output. Write every active reminder as a registry entry. This is the baseline. No drop detection on first run — that is expected.
+**If the registry does not exist:** create it now from the current `routine list` output. Write every active routine as a registry entry. This is the baseline. No drop detection on first run — that is expected.
 
 ```json
 {
@@ -144,21 +144,21 @@ cat /agent/brain/integration-health/known-routines-registry.json 2>/dev/null
 }
 ```
 
-**If the registry exists:** compare current `reminder list` against registry entries:
+**If the registry exists:** compare current `routine list` against registry entries:
 
-1. For every shortId in the registry: if it is NOT in the current `reminder list` — it silently dropped.
+1. For every shortId in the registry: if it is NOT in the current `routine list` — it silently dropped.
    - Set that routine's status to `broken`
-   - Set `statusReason: "Reminder dropped — no longer in active list. Was last seen <last_seen>."`
+   - Set `statusReason: "Routine dropped — no longer in active list. Was last seen <last_seen>."`
    - Add to the alert queue (treated same as any `broken` routine in Step B6)
    - Keep the entry in the registry with `active: false` and `dropped_at: <RUN_AT>`
 
-2. For every shortId in the current `reminder list` not yet in the registry: add it as a new entry with `first_seen: <RUN_AT>`.
+2. For every shortId in the current `routine list` not yet in the registry: add it as a new entry with `first_seen: <RUN_AT>`.
 
 3. Update `last_seen` for all routines still active in the current list.
 
 4. Write updated registry back to `/agent/brain/integration-health/known-routines-registry.json`.
 
-**The registry is the source of truth for what should exist.** The current `reminder list` is what does exist. The diff between them is what to alert on.
+**The registry is the source of truth for what should exist.** The current `routine list` is what does exist. The diff between them is what to alert on.
 
 ### Step B2 — Load prior routine health state
 
@@ -170,7 +170,7 @@ Carry forward `alertState` per routine from prior run. Include dropped routines 
 
 ### Step B3 — Detect dependency chains
 
-For each reminder, parse the `content` field for references to other reminder names or shortIds. A routine that calls, feeds, or triggers another is a dependency. Build a directed graph:
+For each routine, parse the `content` field for references to other routine names or shortIds. A routine that calls, feeds, or triggers another is a dependency. Build a directed graph:
 - `dependencies`: routines this one depends on (upstream)
 - `downstreamImpact`: routines that depend on this one (downstream)
 
@@ -178,7 +178,7 @@ Simple heuristic: if routine A's content mentions routine B's name or shortId, A
 
 ### Step B4 — Check each routine
 
-For each active reminder:
+For each active routine:
 
 **Overdue check:**
 Parse `trigger.expression` (cron) to compute expected interval in seconds.
@@ -332,7 +332,7 @@ Write `/agent/brain/org/routine-executions/<skill-name>/last-run.json`:
   "last_successful_run_at": "<RUN_AT>",
   "last_run_status": "ok",
   "last_run_error": null,
-  "routine_short_id": "<shortId of the reminder that invoked this skill>"
+  "routine_short_id": "<shortId of the routine that invoked this skill>"
 }
 ```
 
@@ -376,11 +376,11 @@ ORDER BY updated_at_ms DESC
 For each conversation, read recent messages looking for routine intent signals:
 - "remind me", "every day/week/month", "set up a routine", "schedule this", "I want Runneth to automatically", "can you do this daily/weekly", "going forward", "from now on"
 
-### Step D2 — Assess confidence and match against active reminders
+### Step D2 — Assess confidence and match against active routines
 
 For each intent signal found:
 
-1. Does a matching reminder already exist in `reminder list`? If yes, skip — already handled.
+1. Does a matching routine already exist in `routine list`? If yes, skip — already handled.
 
 2. Assess confidence tier:
 
@@ -399,7 +399,7 @@ For each intent signal found:
 ### Step D3 — Act on findings
 
 **Tier 1 (create silently):**
-1. Create the routine via `reminder add` with the inferred parameters
+1. Create the routine via `routine add` with the inferred parameters
 2. Notify the person in their original context:
 
    **If Slack conversation:** reply in the original thread:
