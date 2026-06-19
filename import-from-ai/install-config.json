@@ -1,15 +1,13 @@
 {
   "schema": "1.0",
   "id": "import-from-ai",
-  "version": "1.0.2",
-  "description": "Pull saved memories, custom instructions, projects, and recurring preferences out of ChatGPT, Claude, or Gemini in one paste. Behavioral preferences (tone, voice, format) append to the user's profile so they load every session. Contextual content (projects, memories, decisions) lands in imports and surfaces via INDEX when relevant. Raises to org or user.md are explicit, never automatic.",
-  "requires": [
-    "add-roles-permissions"
-  ],
+  "version": "1.1.0",
+  "description": "Pull saved memories, custom instructions, projects, and recurring preferences out of ChatGPT, Claude, or Gemini in one paste. Behavioral preferences (tone, voice, format) append to the user's profile so they load every session. Contextual content (projects, memories, decisions) lands in imports and surfaces via INDEX when relevant. Raises to org or user.md are explicit, never automatic. Standalone — resolves the user's handle from the conversation surface; no other package required.",
+  "requires": [],
   "customize": [
     {
       "token": "{{IMPORTS_ROOT}}",
-      "description": "Where imported context lands by default. Resolved per-user under the permissions home base unless overridden.",
+      "description": "Where imported context lands by default. Resolved per-user under the user's brain folder unless overridden.",
       "required": false,
       "fallback": "/agent/brain/users/<handle>/imports"
     }
@@ -58,6 +56,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.1.0",
+      "date": "2026-06-12",
+      "type": "minor",
+      "notes": "Standalone identity: drop the add-roles-permissions prerequisite and the team-member-memory whoami-resolver dependency. Both of those use cases are hidden from the library while they're reworked, so nothing shown may require or route users to them. The skill now derives the handle from the conversation surface itself (Slack profile email or Motion userEmail, local part slugified; asks once if no email is available), files under /agent/brain/users/<handle>/, states the handle and path in the Phase 4 restate-and-gate so the user can correct it before the first write, and stops rather than writing into a folder that clearly belongs to someone else. If add-roles-permissions is installed later, its stricter resolvers govern — handles derived the same way stay compatible."
+    },
     {
       "version": "1.0.2",
       "date": "2026-05-26",

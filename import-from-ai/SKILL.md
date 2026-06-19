@@ -7,24 +7,20 @@ description: Import saved memories, custom instructions, projects, and recurring
 
 A four-phase flow: **hand over**, **parse**, **review**, **write**.
 
-## Prerequisites — check before anything else
-
-```bash
-[ -f /agent/brain/admin/workspace-map.json ] && echo "OK" || echo "MISSING"
-```
-
-If MISSING, stop and route the user through `add-roles-permissions` first. This skill writes to `/agent/brain/users/<handle>/imports/` and needs identity resolution working.
-
 ## Resolve identity
 
-Use the same surface-aware resolver pattern as `team-member-memory`:
+This skill is standalone — it resolves who's importing from the conversation surface itself, with no other package required:
 
-- **Slack:** `bash /agent/brain/admin/slack-whoami.sh <currentMessage.authorId>`
-- **Motion web:** read `userEmail` from the conversations DB, then `bash /agent/brain/admin/motion-whoami.sh <userEmail>`
+- **Slack:** take the message author's profile email.
+- **Motion web:** read `userEmail` from the conversation context.
+- **No email available:** ask once — "What handle should I file your imports under? First name works."
 
-Both return `{ scope, handle, home_base, status }`. Use `home_base` as the import root.
+Derive the handle from the email's local part: lowercase, dots and spaces become hyphens (`kyra.richards@…` → `kyra-richards`). The import root (`home_base`) is `/agent/brain/users/<handle>/`.
 
-If `status: "collision"`, stop and follow the permissions collision flow. Do not proceed with the import.
+Two guards:
+
+1. **Confirm before the first write.** The Phase 4 restate-and-gate message states the handle and path ("filing under `/agent/brain/users/kyra-richards/imports/`") so the user can correct it before anything lands.
+2. **Never write into someone else's folder.** If `<home_base><handle>.md` already exists and its contents clearly belong to a different person, stop and ask which handle to use instead.
 
 ---
 
