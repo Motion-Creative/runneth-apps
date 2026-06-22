@@ -261,6 +261,28 @@ export const getFilesByIds = (
   }>
 }
 
+// Map submission ids to their customer (workspace) name. Used by the zip
+// download routes so every export is labelled with the customer it came from
+// instead of an anonymous submission id.
+const submissionNamesByIdsStmt = db.prepare(`
+  SELECT id, workspace_name
+  FROM brain_submissions
+  WHERE id IN (SELECT value FROM json_each(?))
+`)
+
+export const getSubmissionNamesByIds = (ids: number[]): Record<number, string> => {
+  if (ids.length === 0) return {}
+  const rows = submissionNamesByIdsStmt.all(JSON.stringify(ids)) as Array<{ id: number; workspace_name: string }>
+  const out: Record<number, string> = {}
+  for (const r of rows) out[r.id] = r.workspace_name
+  return out
+}
+
+export const getSubmissionNameById = (id: number): string | null => {
+  const names = getSubmissionNamesByIds([id])
+  return names[id] ?? null
+}
+
 
 // Wipe everything. Returns counts. Used by the admin wipe endpoint only.
 export const wipeAllSubmissions = (): { submissions: number; files: number } => {

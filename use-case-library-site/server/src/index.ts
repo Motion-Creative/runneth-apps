@@ -53,6 +53,8 @@ import {
   listFilesForSubmission,
   getFileBytes,
   getFilesByIds,
+  getSubmissionNamesByIds,
+  getSubmissionNameById,
   countSubmissionsByCsm,
   wipeAllSubmissions,
   dbPath as brainSubmissionsDbPath,
@@ -62,6 +64,28 @@ import { resolveCsmFromHubSpot } from './brain-csm-resolver.js'
 import { SLUG_RE, hashIp, validateFlag, validateReview } from './reviews.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+
+// Turn a customer / workspace name into a safe, readable label for download
+// filenames and zip folder entries. Keeps letters, numbers, spaces, dot, dash
+// and underscore; collapses everything else so the name can never break a
+// content-disposition header or a zip path.
+const customerLabel = (name: string | null | undefined): string => {
+  const cleaned = (name || '')
+    .replace(/[\\/]+/g, ' ')
+    .replace(/[^\w.\- ]+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return cleaned || 'customer'
+}
+
+// ASCII-safe slug for the downloaded .zip filename itself.
+const customerFileSlug = (name: string | null | undefined): string => {
+  const slug = customerLabel(name)
+    .replace(/[^\w.\-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+  return slug || 'customer'
+}
 const PUBLIC_DIR = resolve(__dirname, '..', 'public')
 
 // Standalone marketing pages bundled with the server (copied from src/ on build).
@@ -584,17 +608,21 @@ server.get<{ Params: { id: string } }>('/api/brain-submissions/:id/zip', async (
     return { error: 'no_files' }
   }
   const fullFiles = getFilesByIds(files.map((f) => f.id))
+  const customerName = getSubmissionNameById(id)
+  const folder = customerLabel(customerName)
+  const fileSlug = customerFileSlug(customerName)
   reply.header('content-type', 'application/zip')
-  reply.header('content-disposition', `attachment; filename="brain-submission-${id}.zip"`)
+  reply.header('content-disposition', `attachment; filename="${fileSlug}-brain-submission-${id}.zip"`)
   reply.header('cache-control', 'no-store')
   const archive = archiver('zip', { zlib: { level: 6 } })
   archive.on('warning', (err) => server.log.warn({ err }, 'zip warning'))
   archive.on('error', (err) => server.log.error({ err }, 'zip error'))
   for (const f of fullFiles) {
-    archive.append(f.data, { name: `${f.section_key}/${f.filename}` })
+    archive.append(f.data, { name: `${folder}/${f.section_key}/${f.filename}` })
   }
+  reply.send(archive)
   archive.finalize()
-  return reply.send(archive)
+  return reply
 })
 
 // POST form variant for the dashboard "Download selected (.zip)" button.
@@ -615,17 +643,33 @@ server.post('/api/brain-submissions/zip-form', async (req, reply) => {
     reply.code(404)
     return { error: 'not_found' }
   }
+  // Label every file's folder with the customer it came from. Selected files
+  // can span multiple customers, so build a submissionId -> name map up front.
+  const names = getSubmissionNamesByIds(
+    Array.from(new Set(fullFiles.map((f) => f.submission_id))),
+  )
+  const uniqueCustomers = Array.from(
+    new Set(fullFiles.map((f) => customerLabel(names[f.submission_id]))),
+  )
+  // If everything came from one customer, name the zip after them; otherwise
+  // keep a dated multi-customer name.
+  const zipName =
+    uniqueCustomers.length === 1
+      ? `${customerFileSlug(names[fullFiles[0].submission_id])}-brain-files.zip`
+      : `brain-files-${Date.now()}.zip`
   reply.header('content-type', 'application/zip')
-  reply.header('content-disposition', `attachment; filename="brain-files-${Date.now()}.zip"`)
+  reply.header('content-disposition', `attachment; filename="${zipName}"`)
   reply.header('cache-control', 'no-store')
   const archive = archiver('zip', { zlib: { level: 6 } })
   archive.on('warning', (err) => server.log.warn({ err }, 'zip warning'))
   archive.on('error', (err) => server.log.error({ err }, 'zip error'))
   for (const f of fullFiles) {
-    archive.append(f.data, { name: `sub-${f.submission_id}/${f.section_key}/${f.filename}` })
+    const folder = customerLabel(names[f.submission_id])
+    archive.append(f.data, { name: `${folder}/${f.section_key}/${f.filename}` })
   }
+  reply.send(archive)
   archive.finalize()
-  return reply.send(archive)
+  return reply
 })
 
 // Static frontend.
