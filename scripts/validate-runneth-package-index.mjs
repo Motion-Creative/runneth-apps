@@ -2,7 +2,7 @@
  * Runneth package index contract tests.
  *
  * This validates only the new package-manager surface:
- * - runneth-package-index.json
+ * - package-index.json
  * - package manifests referenced by that index
  *
  * Existing use-case-library folders are intentionally ignored unless the index
@@ -16,7 +16,7 @@ import { resolve } from 'node:path'
 import { test } from 'node:test'
 
 const ROOT = resolve(import.meta.dirname, '..')
-const INDEX_PATH = 'runneth-package-index.json'
+const INDEX_PATH = 'package-index.json'
 const FLEET_APPROVAL_LABEL = 'runneth-fleet-change-approved'
 const PACKAGE_SOURCE_OWNER = 'Motion-Creative'
 const PACKAGE_SOURCE_REPO = 'runneth-apps'
@@ -360,7 +360,7 @@ const fleetImpactMessages = (baseIndex, nextIndex) => {
   return messages
 }
 
-test('runneth-package-index.json matches the package index contract', () => {
+test('package-index.json matches the package index contract', () => {
   validatePackageIndex(readJSON(INDEX_PATH))
 })
 
