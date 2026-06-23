@@ -29,6 +29,18 @@ jobs:
       - name: Validate the use-case catalog
         run: node --test scripts/validate-catalog.mjs
 
+  validate-package-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate the Runneth package index
+        run: node --test scripts/validate-runneth-package-index.mjs
+
   build-site:
     # Typecheck + build the site so broken site code can't merge either.
     runs-on: ubuntu-latest
