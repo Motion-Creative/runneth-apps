@@ -3,7 +3,7 @@
   "id": "runneth-default",
   "name": "Runneth Default",
   "version": "0.1.0",
-  "description": "Installs the baseline Runneth creative strategy skills that moved out of the protected Runneth volume.",
+  "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
   "updatePolicy": "manual",
   "uninstallPolicy": "allowed",
   "resources": [
