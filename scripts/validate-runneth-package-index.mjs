@@ -11,13 +11,16 @@
  */
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, lstatSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { test } from 'node:test'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const INDEX_PATH = 'package-index.json'
 const FLEET_APPROVAL_LABEL = 'runneth-fleet-change-approved'
+const PACKAGE_SOURCE_OWNER = 'Motion-Creative'
+const PACKAGE_SOURCE_REPO = 'runneth-apps'
+const PACKAGE_SOURCE_REF = 'main'
 const PACKAGE_ID = /^[a-z0-9][a-z0-9-]*$/
 const SEMVER = /^\d+\.\d+\.\d+$/
 const GITHUB_OWNER = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?$/
@@ -75,18 +78,14 @@ const assertSource = (source, label) => {
     assertKeys(source, ['owner', 'path', 'ref', 'repo', 'type'], label)
     assert.ok(GITHUB_OWNER.test(source.owner), `${label}.owner: invalid GitHub owner`)
     assert.ok(GITHUB_REPO.test(source.repo), `${label}.repo: invalid GitHub repo`)
-    assertRelativePath(source.path, `${label}.path`)
-    assertNonEmptyString(source.ref, `${label}.ref`)
-    return
-  }
-
-  if (source.type === 'local') {
-    assertKeys(source, ['path', 'type'], label)
+    assert.equal(source.owner, PACKAGE_SOURCE_OWNER, `${label}.owner: must be ${PACKAGE_SOURCE_OWNER}`)
+    assert.equal(source.repo, PACKAGE_SOURCE_REPO, `${label}.repo: must be ${PACKAGE_SOURCE_REPO}`)
+    assert.equal(source.ref, PACKAGE_SOURCE_REF, `${label}.ref: must be ${PACKAGE_SOURCE_REF}`)
     assertRelativePath(source.path, `${label}.path`)
     return
   }
 
-  assert.fail(`${label}.type: must be github or local`)
+  assert.fail(`${label}.type: must be github`)
 }
 
 const assertTarget = (target, label) => {
@@ -206,19 +205,74 @@ const validatePackageIndex = (index) => {
 }
 
 const localManifestPathForSource = (source) => {
-  if (source.type === 'local') {
-    return `${source.path}/package.json`
-  }
+  return `${source.path}/runneth-package.json`
+}
 
-  if (
-    source.type === 'github' &&
-    source.owner === 'Motion-Creative' &&
-    source.repo === 'runneth-apps'
-  ) {
-    return `${source.path}/package.json`
+const assertPathHasNoSymlinkSegments = (relativePath, label) => {
+  const segments = relativePath.split('/')
+  let currentPath = ROOT
+  for (const segment of segments) {
+    currentPath = resolve(currentPath, segment)
+    const stats = lstatSync(currentPath)
+    assert.ok(!stats.isSymbolicLink(), `${label}: must not contain symlinks`)
   }
+}
 
-  return null
+const assertExistingFile = (relativePath, label) => {
+  assertPathHasNoSymlinkSegments(relativePath, label)
+  const stats = lstatSync(abs(relativePath))
+  assert.ok(stats.isFile(), `${label}: must be a file`)
+}
+
+const assertExistingDirectory = (relativePath, label) => {
+  assertPathHasNoSymlinkSegments(relativePath, label)
+  const stats = lstatSync(abs(relativePath))
+  assert.ok(stats.isDirectory(), `${label}: must be a directory`)
+}
+
+const assertManifestResourceFilesExist = (manifest, manifestRootPath) => {
+  for (const [index, resource] of manifest.resources.entries()) {
+    const label = `${manifest.id}: resources[${index}] ${resource.id}`
+    const sourcePath = `${manifestRootPath}/${resource.sourcePath}`
+    if (resource.type === 'directory') {
+      assertExistingDirectory(sourcePath, `${label}.sourcePath`)
+      for (const [executableIndex, executablePath] of resource.executablePaths.entries()) {
+        assertExistingFile(
+          `${sourcePath}/${executablePath}`,
+          `${label}.executablePaths[${executableIndex}]`,
+        )
+      }
+      continue
+    }
+
+    assertExistingFile(sourcePath, `${label}.sourcePath`)
+  }
+}
+
+const assertManifestMatchesIndexEntry = (entry, manifest, manifestPath) => {
+  assert.equal(manifest.id, entry.id, `${entry.id}: manifest id does not match index id`)
+  assert.equal(
+    manifest.version,
+    entry.version,
+    `${entry.id}: manifest version does not match index version`,
+  )
+  assert.equal(manifest.name, entry.name, `${entry.id}: manifest name does not match index name`)
+  assert.equal(
+    manifest.description,
+    entry.description,
+    `${entry.id}: manifest description does not match index description`,
+  )
+  assert.equal(
+    manifest.updatePolicy,
+    entry.updatePolicy,
+    `${entry.id}: manifest updatePolicy does not match index updatePolicy`,
+  )
+  assert.equal(
+    manifest.uninstallPolicy,
+    entry.uninstallPolicy,
+    `${entry.id}: manifest uninstallPolicy does not match index uninstallPolicy`,
+  )
+  assertManifestResourceFilesExist(manifest, manifestPath.replace(/\/runneth-package\.json$/, ''))
 }
 
 const getIndexedPackageById = (index) =>
@@ -310,19 +364,15 @@ test('package-index.json matches the package index contract', () => {
   validatePackageIndex(readJSON(INDEX_PATH))
 })
 
-test('indexed local packages match their package.json manifests', () => {
+test('indexed packages match their runneth-package.json manifests', () => {
   const index = readJSON(INDEX_PATH)
   for (const entry of index.packages) {
     const manifestPath = localManifestPathForSource(entry.source)
-    if (manifestPath === null) {
-      continue
-    }
 
     assert.ok(existsSync(abs(manifestPath)), `${entry.id}: missing ${manifestPath}`)
     const manifest = readJSON(manifestPath)
     assertPackageManifest(manifest, manifestPath)
-    assert.equal(manifest.id, entry.id, `${entry.id}: manifest id does not match index id`)
-    assert.equal(manifest.version, entry.version, `${entry.id}: manifest version does not match index version`)
+    assertManifestMatchesIndexEntry(entry, manifest, manifestPath)
   }
 })
 
