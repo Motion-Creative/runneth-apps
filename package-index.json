@@ -1,5 +1,25 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "initial-empty",
-  "packages": []
+  "indexRevision": "runneth-default-0.1.0",
+  "packages": [
+    {
+      "id": "runneth-default",
+      "name": "Runneth Default",
+      "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
+      "version": "0.1.0",
+      "packageManagerVersion": 1,
+      "categories": [
+        "baseline"
+      ],
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "runneth-default",
+        "ref": "main"
+      },
+      "updatePolicy": "manual",
+      "uninstallPolicy": "allowed"
+    }
+  ]
 }

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "runneth-default",
+  "name": "Runneth Default",
+  "version": "0.1.0",
+  "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
+  "updatePolicy": "manual",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "analyzing",
+      "type": "directory",
+      "sourcePath": "skills/analyzing",
+      "target": {
+        "root": "agent_skills",
+        "path": "analyzing"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "briefing",
+      "type": "directory",
+      "sourcePath": "skills/briefing",
+      "target": {
+        "root": "agent_skills",
+        "path": "briefing"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "creative-generation",
+      "type": "directory",
+      "sourcePath": "skills/creative-generation",
+      "target": {
+        "root": "agent_skills",
+        "path": "creative-generation"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "core-creative-skills",
+      "type": "package_instruction",
+      "sourcePath": "instructions/core-creative-skills.md"
+    }
+  ]
+}
