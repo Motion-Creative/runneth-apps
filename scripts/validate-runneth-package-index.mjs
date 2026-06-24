@@ -2,7 +2,7 @@
  * Runneth package index contract tests.
  *
  * This validates only the new package-manager surface:
- * - runneth-package-index.json
+ * - package-index.json
  * - package manifests referenced by that index
  *
  * Existing use-case-library folders are intentionally ignored unless the index
@@ -16,7 +16,7 @@ import { resolve } from 'node:path'
 import { test } from 'node:test'
 
 const ROOT = resolve(import.meta.dirname, '..')
-const INDEX_PATH = 'runneth-package-index.json'
+const INDEX_PATH = 'package-index.json'
 const FLEET_APPROVAL_LABEL = 'runneth-fleet-change-approved'
 const PACKAGE_ID = /^[a-z0-9][a-z0-9-]*$/
 const SEMVER = /^\d+\.\d+\.\d+$/
@@ -30,6 +30,7 @@ const RESOURCE_TARGET_ROOTS = new Set([
   'agent_tools',
 ])
 const UPDATE_POLICIES = new Set(['auto', 'manual'])
+const UNINSTALL_POLICIES = new Set(['allowed', 'protected'])
 
 const abs = (path) => resolve(ROOT, path)
 const readJSON = (path) => JSON.parse(readFileSync(abs(path), 'utf8'))
@@ -129,7 +130,16 @@ const assertPackageManifest = (manifest, label) => {
   assert.ok(isRecord(manifest), `${label}: must be an object`)
   assertKeys(
     manifest,
-    ['description', 'id', 'name', 'resources', 'schemaVersion', 'updatePolicy', 'version'],
+    [
+      'description',
+      'id',
+      'name',
+      'resources',
+      'schemaVersion',
+      'uninstallPolicy',
+      'updatePolicy',
+      'version',
+    ],
     label,
   )
   assert.equal(manifest.schemaVersion, 1, `${label}.schemaVersion: must be 1`)
@@ -138,6 +148,10 @@ const assertPackageManifest = (manifest, label) => {
   assertNonEmptyString(manifest.description, `${label}.description`)
   assertSemver(manifest.version, `${label}.version`)
   assert.ok(UPDATE_POLICIES.has(manifest.updatePolicy), `${label}.updatePolicy: invalid`)
+  assert.ok(
+    UNINSTALL_POLICIES.has(manifest.uninstallPolicy),
+    `${label}.uninstallPolicy: invalid`,
+  )
   assert.ok(Array.isArray(manifest.resources), `${label}.resources: must be array`)
   manifest.resources.forEach((resource, index) => {
     assertPackageResource(resource, `${label}.resources[${index}]`)
@@ -155,6 +169,7 @@ const assertIndexEntry = (entry, label) => {
       'name',
       'packageManagerVersion',
       'source',
+      'uninstallPolicy',
       'updatePolicy',
       'version',
     ],
@@ -166,6 +181,7 @@ const assertIndexEntry = (entry, label) => {
   assertNonEmptyString(entry.description, `${label}.description`)
   assertSemver(entry.version, `${label}.version`)
   assert.ok(UPDATE_POLICIES.has(entry.updatePolicy), `${label}.updatePolicy: invalid`)
+  assert.ok(UNINSTALL_POLICIES.has(entry.uninstallPolicy), `${label}.uninstallPolicy: invalid`)
   assert.ok(Array.isArray(entry.categories), `${label}.categories: must be array`)
   assert.ok(entry.categories.length > 0, `${label}.categories: must not be empty`)
   entry.categories.forEach((category, index) =>
@@ -191,7 +207,7 @@ const validatePackageIndex = (index) => {
 
 const localManifestPathForSource = (source) => {
   if (source.type === 'local') {
-    return `${source.path}/runneth-package.json`
+    return `${source.path}/package.json`
   }
 
   if (
@@ -199,7 +215,7 @@ const localManifestPathForSource = (source) => {
     source.owner === 'Motion-Creative' &&
     source.repo === 'runneth-apps'
   ) {
-    return `${source.path}/runneth-package.json`
+    return `${source.path}/package.json`
   }
 
   return null
@@ -246,6 +262,7 @@ const sourceFingerprint = (entry) =>
   JSON.stringify({
     categories: [...entry.categories].sort(),
     source: entry.source,
+    uninstallPolicy: entry.uninstallPolicy,
     updatePolicy: entry.updatePolicy,
     version: entry.version,
   })
@@ -289,11 +306,11 @@ const fleetImpactMessages = (baseIndex, nextIndex) => {
   return messages
 }
 
-test('runneth-package-index.json matches the package index contract', () => {
+test('package-index.json matches the package index contract', () => {
   validatePackageIndex(readJSON(INDEX_PATH))
 })
 
-test('indexed local packages match their runneth-package.json manifests', () => {
+test('indexed local packages match their package.json manifests', () => {
   const index = readJSON(INDEX_PATH)
   for (const entry of index.packages) {
     const manifestPath = localManifestPathForSource(entry.source)

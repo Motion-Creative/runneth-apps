@@ -18,7 +18,8 @@
         "path": "runneth-default",
         "ref": "main"
       },
-      "updatePolicy": "auto"
+      "updatePolicy": "manual",
+      "uninstallPolicy": "allowed"
     }
   ]
 }
