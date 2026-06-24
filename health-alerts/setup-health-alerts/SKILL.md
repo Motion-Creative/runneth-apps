@@ -211,21 +211,20 @@ Note count of updated skills for the closing summary only.
 ## After questions — Start the routine and confirm it works
 
 ```bash
-reminder list
+routine list
 ```
 
 If no "Integration health check" reminder found:
 ```bash
-reminder add \
-  --name "Integration health check" \
-  --cron "*/30 * * * *" \
-  --timezone "{{TIMEZONE}}" \
-  --content "Run the integration-health-check skill at /agent/.agents/skills/integration-health-check/SKILL.md. Check all connected tools and all active routines. Write results to /agent/brain/integration-health/health-state.json and /agent/brain/integration-health/routine-health-state.json. Send Slack alerts per the alert logic in the skill. Silent run — no user-visible output unless alerting."
+routine add --name "Integration health check" \
+  --delivery "Silent run — no user-visible output unless alerting via Slack per skill logic." \
+  --prompt "Run the integration-health-check skill at /agent/.agents/skills/integration-health-check/SKILL.md. Check all connected tools and all active routines. Write results to /agent/brain/integration-health/health-state.json and /agent/brain/integration-health/routine-health-state.json. Send Slack alerts per the alert logic in the skill." \
+  --cron "*/30 * * * *" --timezone "{{TIMEZONE}}"
 ```
 
 **Verify creation succeeded:**
 ```bash
-reminder list
+routine list
 ```
 Confirm the new shortId appears in the list. If not found, try creating again once. If still missing, tell the admin: "I had trouble starting the check routine — reply 'set up health alerts' to try again."
 
