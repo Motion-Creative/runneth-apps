@@ -205,7 +205,7 @@ const validatePackageIndex = (index) => {
 }
 
 const localManifestPathForSource = (source) => {
-  return `${source.path}/runneth-package.json`
+  return `${source.path}/package.json`
 }
 
 const assertPathHasNoSymlinkSegments = (relativePath, label) => {
@@ -272,7 +272,7 @@ const assertManifestMatchesIndexEntry = (entry, manifest, manifestPath) => {
     entry.uninstallPolicy,
     `${entry.id}: manifest uninstallPolicy does not match index uninstallPolicy`,
   )
-  assertManifestResourceFilesExist(manifest, manifestPath.replace(/\/runneth-package\.json$/, ''))
+  assertManifestResourceFilesExist(manifest, manifestPath.replace(/\/package\.json$/, ''))
 }
 
 const getIndexedPackageById = (index) =>
@@ -364,7 +364,7 @@ test('package-index.json matches the package index contract', () => {
   validatePackageIndex(readJSON(INDEX_PATH))
 })
 
-test('indexed packages match their runneth-package.json manifests', () => {
+test('indexed packages match their package.json manifests', () => {
   const index = readJSON(INDEX_PATH)
   for (const entry of index.packages) {
     const manifestPath = localManifestPathForSource(entry.source)

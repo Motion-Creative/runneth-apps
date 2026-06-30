@@ -1,5 +1,23 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "initial-empty",
-  "packages": []
+  "indexRevision": "account-setup-0.1.0",
+  "packages": [
+    {
+      "id": "account-setup",
+      "name": "Account Setup",
+      "description": "Visible Account Setup instructions for customer-owned Runneth configuration.",
+      "version": "0.1.0",
+      "packageManagerVersion": 1,
+      "categories": ["baseline"],
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "account-setup",
+        "ref": "main"
+      },
+      "updatePolicy": "manual",
+      "uninstallPolicy": "allowed"
+    }
+  ]
 }
