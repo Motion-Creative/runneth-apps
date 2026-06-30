@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "account-setup",
+  "name": "Account Setup",
+  "version": "0.1.0",
+  "description": "Visible Account Setup instructions for customer-owned Runneth configuration.",
+  "updatePolicy": "manual",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "account-setup-readme",
+      "type": "file",
+      "sourcePath": "brain/account-setup/README.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "account-setup/README.md"
+      },
+      "executable": false
+    },
+    {
+      "id": "account-setup-instructions",
+      "type": "package_instruction",
+      "sourcePath": "instructions/account-setup.md"
+    }
+  ]
+}
