@@ -152,8 +152,14 @@ const assertPackageManifest = (manifest, label) => {
     `${label}.uninstallPolicy: invalid`,
   )
   assert.ok(Array.isArray(manifest.resources), `${label}.resources: must be array`)
+  const resourceIds = new Set()
   manifest.resources.forEach((resource, index) => {
     assertPackageResource(resource, `${label}.resources[${index}]`)
+    assert.ok(
+      !resourceIds.has(resource.id),
+      `${label}.resources: duplicate resource id ${resource.id}`,
+    )
+    resourceIds.add(resource.id)
   })
 }
 
