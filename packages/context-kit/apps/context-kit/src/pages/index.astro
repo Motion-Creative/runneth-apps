@@ -1,0 +1,117 @@
+---
+import state from "../../data/context-kit-state.json";
+const items = state.items;
+const total = items.length;
+const confirmed = items.filter((i) => i.status === "confirmed").length;
+const pct = Math.round((confirmed / total) * 100);
+const buckets = [
+  { key: "A", title: "From Motion — just confirm", sub: "Runneth already pulled these from your Motion setup." },
+  { key: "B", title: "Runneth can research these", sub: "We'll draft it, you correct anything that's off." },
+  { key: "C", title: "Only you can answer these", sub: "The few things no data source knows." },
+];
+const statusLabel = { confirmed: "Confirmed", inferred: "Confirm this", drafted: "Review draft", imported: "Imported", missing: "Not yet" };
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Runneth | Context Kit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root{--bg:#fff7d6;--surface:#fff;--surface2:#f6f6f6;--ink:#1c180e;--muted:#6b6757;--lime:#ceff5b;--limeS:#f5ffd9;--limeB:#e1f5a8;--butter:#ffe99a;--sky:#aee1ed;--green:#3fb55c;--greenD:#1f7a3a;--border:#ededed;--r:10px;}
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:"Inter",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+      .wrap{max-width:960px;margin:0 auto;padding:44px 24px 90px}
+      .kicker{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--lime);padding:5px 10px;border-radius:4px;margin-bottom:16px}
+      h1{font-size:clamp(30px,4.5vw,44px);font-weight:800;letter-spacing:-.025em;margin-bottom:10px}
+      .lede{font-size:16px;color:var(--muted);max-width:620px}
+      .levels{display:flex;gap:10px;margin:30px 0 22px}
+      @media(max-width:640px){.levels{flex-direction:column}}
+      .lvl{flex:1;border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;background:var(--surface);position:relative}
+      .lvl.passed{background:var(--surface2)}
+      .lvl.current{border-color:var(--limeB);background:var(--limeS);box-shadow:0 0 0 2px var(--lime) inset}
+      .lvl.locked{opacity:.6}
+      .lnum{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+      .lname{font-weight:700;font-size:14.5px;margin-top:3px}
+      .lstate{position:absolute;top:12px;right:14px;font-size:13px}
+      .lvl.current .lstate{font-size:10px;font-weight:700;background:var(--lime);padding:3px 7px;border-radius:4px;text-transform:uppercase}
+      .meter{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--ink);color:#f3efe0;border-radius:14px;padding:20px 24px;margin-bottom:28px}
+      .big{font-size:30px;font-weight:800;color:#fff}
+      .big .l{color:var(--lime)}
+      .mtxt{flex:1;min-width:220px}
+      .mtxt .t{font-weight:700;color:#fff}
+      .mtxt .s{font-size:13px;color:#cfcabb;margin-top:2px}
+      .bar{height:9px;background:#3a352a;border-radius:6px;overflow:hidden;max-width:300px;margin-top:10px}
+      .bar>span{display:block;height:100%;background:var(--lime);border-radius:6px}
+      .group{margin-bottom:26px}
+      .gh{font-size:16px;font-weight:800;margin-bottom:2px}
+      .gs{font-size:13px;color:var(--muted);margin-bottom:14px}
+      .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+      @media(max-width:640px){.grid{grid-template-columns:1fr}}
+      .card{border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;background:var(--surface)}
+      .card.confirmed{background:var(--limeS);border-color:var(--limeB)}
+      .card.inferred{background:#eef7fb;border-color:var(--sky)}
+      .card.missing{background:var(--surface)}
+      .cname{font-weight:700;font-size:15px}
+      .cwhy{font-size:13px;color:var(--muted);margin:6px 0 12px;min-height:34px}
+      .foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+      .st{font-size:12px;font-weight:700;padding:4px 9px;border-radius:4px}
+      .st.confirmed{background:var(--green);color:#fff}
+      .st.inferred{background:var(--sky);color:#0b4a59}
+      .st.missing{background:var(--butter);color:#6e5500}
+      .card.imported{background:var(--limeS);border-color:var(--limeB)}
+      .st.imported{background:var(--greenD);color:#fff}
+      .foot .cta{font-size:13px;font-weight:700;color:var(--ink)}
+      .note{margin-top:26px;font-size:13px;color:var(--muted);border-top:1px solid var(--border);padding-top:16px}
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <span class="kicker">Onboarding</span>
+      <h1>Your Context Kit</h1>
+      <p class="lede">The more it knows about your brand, the better every output. Confirm what we pulled, react to what we drafted, add the few things only you know.</p>
+
+      <div class="levels">
+        {state.levels.map((l) => (
+          <div class={"lvl " + l.state}>
+            <span class="lstate">{l.state === "passed" ? "✓" : l.state === "current" ? "You're here" : "🔒"}</span>
+            <div class="lnum">Level {l.id.replace("L", "")}</div>
+            <div class="lname">{l.name}</div>
+          </div>
+        ))}
+      </div>
+
+      <div class="meter">
+        <div class="big"><span class="l">{confirmed}</span>/{total}</div>
+        <div class="mtxt">
+          <div class="t">{confirmed === total ? "Full context unlocked." : `${total - confirmed} items left to unlock full context.`}</div>
+          <div class="s">Confirm the blue ones, react to drafts, fill the rest. Say "build my Context Kit" in chat.</div>
+          <div class="bar"><span style={`width:${pct}%`}></span></div>
+        </div>
+      </div>
+
+      {buckets.map((b) => (
+        <div class="group">
+          <div class="gh">{b.title}</div>
+          <div class="gs">{b.sub}</div>
+          <div class="grid">
+            {items.filter((i) => i.bucket === b.key).map((i) => (
+              <div class={"card " + i.status}>
+                <div class="cname">{i.label}</div>
+                <div class="cwhy">{i.why}</div>
+                <div class="foot">
+                  <span class={"st " + i.status}>{statusLabel[i.status]}</span>
+                  <span class="cta">{i.status === "confirmed" ? "Update" : i.status === "inferred" ? "Review & confirm" : "Add / drop file"}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <p class="note">This board mirrors your brain. Runneth updates it as you fill things in through chat. It doesn't store anything itself.</p>
+    </div>
+  </body>
+</html>

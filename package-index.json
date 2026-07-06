@@ -1,5 +1,23 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "initial-empty",
-  "packages": []
+  "indexRevision": "context-kit-0.1.0",
+  "packages": [
+    {
+      "id": "context-kit",
+      "name": "Context Kit",
+      "description": "Builds the institutional knowledge that makes every Runneth answer sharper. Seeds a brain skeleton, a Context Kit board app, and the Context Kit skill that confirms what Motion knows, imports what already lives in Drive/Notion, researches what it can, and collects the rest.",
+      "version": "0.1.0",
+      "categories": ["baseline"],
+      "packageManagerVersion": 1,
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "ref": "main",
+        "path": "packages/context-kit"
+      },
+      "updatePolicy": "manual",
+      "uninstallPolicy": "allowed"
+    }
+  ]
 }
