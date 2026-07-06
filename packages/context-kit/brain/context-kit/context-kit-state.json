@@ -6,17 +6,17 @@
     { "id": "L3", "name": "Runs with full context", "state": "locked" }
   ],
   "items": [
-    { "id": "brand-context", "label": "Brand context", "bucket": "A", "status": "inferred", "source": "motion brand-context", "path": "workspace-config/brand-context", "why": "Keeps every output unmistakably on-brand." },
-    { "id": "kpis-goal", "label": "KPIs & goal", "bucket": "A", "status": "inferred", "source": "motion workspace-goal", "path": "workspace-config/workspace-goal", "why": "Every readout leads with the metric you care about." },
-    { "id": "spend-threshold", "label": "Spend threshold", "bucket": "A", "status": "inferred", "source": "motion spend-threshold", "path": "workspace-config/spend-threshold", "why": "Separates a proven winner from early noise." },
-    { "id": "competitors", "label": "Competitors", "bucket": "B", "status": "missing", "source": "inspo + competitor-analysis", "path": "brand-audit/<slug>/competitor-analysis.md", "why": "Angles to attack the gaps rivals leave open." },
-    { "id": "products", "label": "Products & SKUs", "bucket": "B", "status": "missing", "source": "product-catalog", "path": "brand-audit/<slug>/product-catalog.md", "why": "Grounds every ad in real product facts." },
-    { "id": "positioning", "label": "Positioning & personas", "bucket": "B", "status": "missing", "source": "brand-audit strategy", "path": "brand-audit/<slug>/strategy.md", "why": "Right audience, right angle, not spray-and-pray." },
-    { "id": "voice", "label": "Voice & tone", "bucket": "B", "status": "missing", "source": "brand-audit", "path": "brand-audit/<slug>/brand-context.md", "why": "Copy that sounds like you wrote it." },
-    { "id": "voc", "label": "Voice-of-customer", "bucket": "B", "status": "missing", "source": "review-audit", "path": "brand-audit/<slug>/review-audit.md", "why": "Real customer language for hooks." },
-    { "id": "legal", "label": "Legal & compliance", "bucket": "C", "status": "missing", "source": "customer", "path": "onboarding/legal-compliance.md", "why": "Clears review on the first pass." },
-    { "id": "briefing-template", "label": "Briefing template", "bucket": "C", "status": "missing", "source": "customer", "path": "templates/briefing-template.md", "why": "Briefs come back in your exact format." },
-    { "id": "source-of-truth", "label": "Source of truth", "bucket": "C", "status": "missing", "source": "customer", "path": "onboarding/source-of-truth.md", "why": "Reports never fight your dashboard." },
-    { "id": "guardrails", "label": "Guardrails", "bucket": "C", "status": "missing", "source": "customer", "path": "onboarding/guardrails.md", "why": "Always/never rules for creative." }
+    { "id": "brand-context", "label": "Brand context", "bucket": "A", "status": "inferred", "why": "Keeps every output unmistakably on-brand.", "preview": "" },
+    { "id": "kpis-goal", "label": "KPIs & goal", "bucket": "A", "status": "inferred", "why": "Every readout leads with the metric you care about.", "preview": "" },
+    { "id": "spend-threshold", "label": "Spend threshold", "bucket": "A", "status": "inferred", "why": "Separates a proven winner from early noise.", "preview": "" },
+    { "id": "competitors", "label": "Competitors", "bucket": "B", "status": "missing", "why": "Angles to attack the gaps rivals leave open.", "file": "competitors.md" },
+    { "id": "products", "label": "Products & SKUs", "bucket": "B", "status": "missing", "why": "Grounds every ad in real product facts.", "file": "products.md" },
+    { "id": "positioning", "label": "Positioning & personas", "bucket": "B", "status": "missing", "why": "Right audience, right angle.", "file": "positioning.md" },
+    { "id": "voice", "label": "Voice & tone", "bucket": "B", "status": "missing", "why": "Copy that sounds like you wrote it.", "file": "voice.md" },
+    { "id": "voc", "label": "Voice-of-customer", "bucket": "B", "status": "missing", "why": "Real customer language for hooks.", "file": "voc.md" },
+    { "id": "legal", "label": "Legal & compliance", "bucket": "C", "status": "missing", "why": "Clears review on the first pass." },
+    { "id": "briefing-template", "label": "Briefing template", "bucket": "C", "status": "missing", "why": "Briefs come back in your exact format." },
+    { "id": "source-of-truth", "label": "Source of truth", "bucket": "C", "status": "missing", "why": "Reports never fight your dashboard." },
+    { "id": "guardrails", "label": "Guardrails", "bucket": "C", "status": "missing", "why": "Always/never rules for creative." }
   ]
 }

@@ -15,42 +15,50 @@ retype it.
 2. Run `motion brand-context --data-query "summary"`, `motion workspace-goal`, `motion spend-threshold`
    to hydrate the three Bucket A items with live values.
 3. Check which context sources are connected (Google Drive, Notion) so import is offered when available.
-4. Compute completeness and resolve the workspace slug for brand-audit paths.
+4. Resolve the workspace slug for brand-audit paths.
 
-## Step 1 — Open the board
-- If the app is not built yet, run `app build context-kit`, then `app list` for the verified URL.
-- Hand the URL back. Never invent it.
+## Step 1 — Build and open the board (first run only)
+Package sync stages files but does NOT build the app. On first run:
+1. Fill the bundled manifest: in `/agent/apps/context-kit/buildeth.app.json`, replace `__CONVERSATION_ID__`
+   with the current conversation id and `__WORKSPACE_ID__` with the current workspace id. The rest of the
+   v3 manifest (oauthEnabled, data dir, static dist/index) and `astro.config.mjs` (base `/context-kit`)
+   ship in the package, so no trial-and-error is needed.
+2. Run `app build context-kit`, then `app list` for the verified URL. Hand the URL back. Never invent it.
+3. After the first build, the board reads `data/` at runtime (client-side fetch), so later state/content
+   updates show on refresh with NO rebuild. Only rebuild if you change the app source itself.
 
-## Step 2 — Bucket A: confirm (fast)
-For brand-context, kpis-goal, spend-threshold: show the live value plainly and ask for a one-tap
-confirm. On confirm, set the item `confirmed`. Do not re-collect what Motion already holds.
+## Step 2 — Bucket A: confirm (fast) + write the full working doc
+For brand-context, kpis-goal, spend-threshold: show the live value plainly and ask a one-tap confirm.
+On confirm: set the item `confirmed`, set its `preview` string in the state index (short human summary
+for the card), and write the full working document. `brand-context.md` (#10) is the *foundation only*:
+brand name, story, positioning statement, product description, proof points, and a 2-sentence tone/audience
+summary. Do NOT concatenate the Bucket B detail into it. Do not re-collect what Motion already holds.
 
-## Step 3 — Import mode (try this before drafting or asking, for every remaining item)
-Before researching or asking a customer to type, ask: "Do you already have this written down in
-Google Drive or Notion?"
-- If Drive or Notion is connected, search it for the relevant doc (brand guidelines, legal/claims,
-  brief template, positioning, competitor list), show what you found, confirm it's the right one,
-  and import it into the correct brain path. Mark the item `imported` then `confirmed`.
-- If not connected, offer the native connect flow first. Only fall through to draft/write-in if they
-  decline or don't have it.
-- Lean on the existing context-sweep / integration skills to do the search + pull rather than
-  reinventing retrieval.
+## Step 3 — Import mode (try before drafting or asking, for every remaining item)
+Ask: "Do you already have this in Google Drive or Notion?" If connected, search for the relevant doc,
+confirm it, import into the correct brain path, set `imported` then `confirmed`. If not connected, offer
+the native connect flow first. Only fall through to draft/write-in if they decline or don't have it. Lean
+on existing context-sweep / integration skills for the search + pull.
 
-## Step 4 — Bucket B: draft, then confirm
-For competitors, products, positioning, voice, voice-of-customer not covered by an import: run the
-matching skill (product-catalog, competitor-analysis, brand-audit strategy/review passes, Inspo
-followed brands + boards for competitors). Show the draft, invite corrections, write into the
-existing `/agent/brain/brand-audit/<slug>/` bundle, mark `confirmed`. No parallel files.
+## Step 4 — Bucket B: draft rich, then confirm, then mirror to the board
+For competitors, products, positioning, voice, voice-of-customer: run the matching skill (product-catalog,
+competitor-analysis, brand-audit strategy/review passes, Inspo followed brands + boards for competitors).
+Write FULL working documents into `/agent/brain/brand-audit/<slug>/` (#9): competitor tone/audience/
+positioning breakdowns, complete product feature lists, full personas with motivations and objections, all
+voice-of-customer quotes and patterns. Thin summaries fail here. Then:
+- set status `drafted` (customer reviews) then `confirmed` on accept.
+- MIRROR each file into `/agent/apps/context-kit/data/<file>.md` (competitors.md, products.md,
+  positioning.md, voice.md, voc.md) so the board's click-to-expand can fetch it at runtime.
 
-## Step 5 — Bucket C: collect (only what import/research can't cover)
-For legal, briefing-template, source-of-truth, guardrails still unfilled: pick the lightest mode.
-File drop when they have the doc, thought starters when stuck (scaffolds carry these), one quick
-prompt when short. Write into the scaffold file, replace the `_(empty)_` block, mark `confirmed`.
+## Step 5 — Bucket C: collect with depth
+For legal, briefing-template, source-of-truth, guardrails: file drop when they have the doc, thought
+starters when stuck, one prompt when short. Prompt for the COMPLETE rule set, not a one-liner (#9). Write
+into the scaffold file, fully populating the `## Your answers` section. Mark `confirmed`.
 
 ## Step 6 — Keep the map correct
 - After each item is filled with real content, add or refresh its `/agent/INDEX.md` entry.
-- Update `context-kit-state.json` after every change so the board stays honest.
-- Re-run `app build context-kit` (or refresh its data copy) so the meter reflects new state.
+- Update `/agent/brain/context-kit/context-kit-state.json` AND the app's `data/context-kit-state.json`
+  after every change (the board reads the app copy). No rebuild needed for data-only changes.
 
 ## Rules
 - Never touch `user.md`.
