@@ -1,122 +1,23 @@
 {
   "version": 1,
+  "brandName": "",
   "levels": [
-    {
-      "id": "L1",
-      "name": "Answers questions",
-      "state": "passed"
-    },
-    {
-      "id": "L2",
-      "name": "On-brand outputs",
-      "state": "current"
-    },
-    {
-      "id": "L3",
-      "name": "Runs with full context",
-      "state": "locked"
-    }
+    { "id": "L1", "name": "Answers questions", "state": "passed" },
+    { "id": "L2", "name": "On-brand outputs", "state": "current" },
+    { "id": "L3", "name": "Runs with full context", "state": "locked" }
   ],
   "items": [
-    {
-      "id": "brand-context",
-      "label": "Brand context",
-      "bucket": "A",
-      "status": "inferred",
-      "why": "Keeps every output unmistakably on-brand.",
-      "preview": "",
-      "dataFile": "brand-context.md"
-    },
-    {
-      "id": "kpis-goal",
-      "label": "KPIs & goal",
-      "bucket": "A",
-      "status": "inferred",
-      "why": "Every readout leads with the metric you care about.",
-      "preview": "",
-      "dataFile": "kpis-goal.md"
-    },
-    {
-      "id": "spend-threshold",
-      "label": "Spend threshold",
-      "bucket": "A",
-      "status": "inferred",
-      "why": "Separates a proven winner from early noise.",
-      "preview": "",
-      "dataFile": "spend-threshold.md"
-    },
-    {
-      "id": "competitors",
-      "label": "Competitors",
-      "bucket": "B",
-      "status": "missing",
-      "why": "Angles to attack the gaps rivals leave open.",
-      "dataFile": "competitors.md"
-    },
-    {
-      "id": "products",
-      "label": "Products & SKUs",
-      "bucket": "B",
-      "status": "missing",
-      "why": "Grounds every ad in real product facts.",
-      "dataFile": "products.md"
-    },
-    {
-      "id": "positioning",
-      "label": "Positioning & personas",
-      "bucket": "B",
-      "status": "missing",
-      "why": "Right audience, right angle.",
-      "dataFile": "positioning.md"
-    },
-    {
-      "id": "voice",
-      "label": "Voice & tone",
-      "bucket": "B",
-      "status": "missing",
-      "why": "Copy that sounds like you wrote it.",
-      "dataFile": "voice.md"
-    },
-    {
-      "id": "voc",
-      "label": "Voice-of-customer",
-      "bucket": "B",
-      "status": "missing",
-      "why": "How your customers actually talk about the problem.",
-      "dataFile": "voc.md",
-      "enrich": "Enrich this by connecting your reviews platform (Yotpo, Okendo, Trustpilot) in chat. Real reviews are the richest source of customer language."
-    },
-    {
-      "id": "legal",
-      "label": "Legal & compliance",
-      "bucket": "C",
-      "status": "missing",
-      "why": "Clears review on the first pass.",
-      "dataFile": "legal-compliance.md"
-    },
-    {
-      "id": "briefing-template",
-      "label": "Briefing template",
-      "bucket": "C",
-      "status": "missing",
-      "why": "Briefs come back in your exact format.",
-      "dataFile": "briefing-template.md"
-    },
-    {
-      "id": "source-of-truth",
-      "label": "Source of truth",
-      "bucket": "C",
-      "status": "missing",
-      "why": "Reports never fight your dashboard.",
-      "dataFile": "source-of-truth.md"
-    },
-    {
-      "id": "guardrails",
-      "label": "Guardrails",
-      "bucket": "C",
-      "status": "missing",
-      "why": "Always/never rules for creative.",
-      "dataFile": "guardrails.md"
-    }
+    { "id": "brand-context", "label": "Brand context", "bucket": "A", "status": "inferred", "why": "Keeps every output unmistakably on-brand.", "preview": "", "dataFile": "brand-context.md" },
+    { "id": "kpis-goal", "label": "KPIs & goal", "bucket": "A", "status": "inferred", "why": "Every readout leads with the metric you care about.", "preview": "", "dataFile": "kpis-goal.md" },
+    { "id": "spend-threshold", "label": "Spend threshold", "bucket": "A", "status": "inferred", "why": "Separates a proven winner from early noise.", "preview": "", "dataFile": "spend-threshold.md" },
+    { "id": "competitors", "label": "Competitors", "bucket": "B", "status": "missing", "why": "Angles to attack the gaps rivals leave open.", "dataFile": "competitors.md", "enrich": "Follow brands in Motion Inspo so Runneth can research their live ads and creative angles automatically." },
+    { "id": "products", "label": "Products & SKUs", "bucket": "B", "status": "missing", "why": "Grounds every ad in real product facts.", "dataFile": "products.md", "enrich": "Connect your Shopify store for live product data, pricing, and bestseller rankings." },
+    { "id": "positioning", "label": "Positioning & personas", "bucket": "B", "status": "missing", "why": "Right audience, right angle.", "dataFile": "positioning.md" },
+    { "id": "voice", "label": "Voice & tone", "bucket": "B", "status": "missing", "why": "Copy that sounds like you wrote it.", "dataFile": "voice.md" },
+    { "id": "voc", "label": "Voice-of-customer", "bucket": "B", "status": "missing", "why": "How your customers actually talk about the problem.", "dataFile": "voc.md", "enrich": "Connect your reviews platform (Yotpo, Okendo, Trustpilot) for real customer language, the richest VoC source available." },
+    { "id": "legal", "label": "Legal & compliance", "bucket": "C", "status": "missing", "why": "Clears review on the first pass.", "dataFile": "legal-compliance.md", "thoughtStarters": ["Any claims you legally can't make? (clinically proven, #1, cures, guaranteed)", "Required disclaimers or fine print on specific claims?", "Regulated categories that apply? (health, finance, beauty, supplements, kids)", "Words or comparisons legal has flagged before?"] },
+    { "id": "briefing-template", "label": "Briefing template", "bucket": "C", "status": "missing", "why": "Briefs come back in your exact format.", "dataFile": "briefing-template.md", "thoughtStarters": ["Do you have an existing brief format you want matched? Drop it in chat.", "What sections does every brief need? (hook, angle, format, CTA)", "Who reads the brief, and what do they need from it?"] },
+    { "id": "source-of-truth", "label": "Source of truth", "bucket": "C", "status": "missing", "why": "Reports never fight your dashboard.", "dataFile": "source-of-truth.md", "enrich": "Connect your attribution platform (Northbeam, Triple Whale, or similar) so Runneth always reports from your preferred source.", "thoughtStarters": ["When the ad platform and your attribution tool disagree, which wins?", "What's your primary success metric and attribution window?", "Any metric you explicitly don't trust or want ignored?", "Which dashboard does your team review in meetings?"] },
+    { "id": "guardrails", "label": "Guardrails", "bucket": "C", "status": "missing", "why": "Always/never rules for creative.", "dataFile": "guardrails.md", "thoughtStarters": ["What should Runneth NEVER suggest in a creative concept?", "Any visual styles or creative directions that are always off-limits?", "Non-negotiables for claims, tone, or offers?", "Any past ad types or messages to avoid repeating?"] }
   ]
 }

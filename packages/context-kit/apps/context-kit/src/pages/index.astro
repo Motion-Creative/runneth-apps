@@ -10,43 +10,48 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style is:global>
-      :root{--gray-0:#ffffff;--page-bg:#ffffff;--surface:#f6f6f6;--ink:#1c180e;--muted:#6b6757;--lime:#ceff5b;--limeS:#f5ffd9;--limeB:#e1f5a8;--butter:#ffe99a;--sky:#aee1ed;--green:#3fb55c;--greenD:#1f7a3a;--border:#ededed;--r:10px;}
+      :root{--gray-0:#ffffff;--page-bg:#ffffff;--surface:#f6f6f6;--ink:#1c180e;--muted:#6b6757;--lime:#ceff5b;--limeS:#f5ffd9;--limeB:#e1f5a8;--butter:#fff3c4;--butterB:#e8b840;--sky:#aee1ed;--green:#3fb55c;--greenD:#1f7a3a;--border:#ededed;--r:10px;}
       *{box-sizing:border-box;margin:0;padding:0}
       body{font-family:"Inter",system-ui,sans-serif;background:var(--page-bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
       .wrap{max-width:960px;margin:0 auto;padding:44px 24px 90px}
-      .kicker{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--lime);padding:5px 10px;border-radius:4px;margin-bottom:16px}
-      h1{font-size:clamp(30px,4.5vw,44px);font-weight:800;letter-spacing:-.025em;margin-bottom:10px}
-      .lede{font-size:16px;color:var(--muted);max-width:640px}
-      .integration-nudge{font-size:13.5px;color:var(--muted);margin-top:12px;max-width:640px}
-      .integration-nudge strong{color:var(--ink)}
-      .levels{display:flex;gap:10px;margin:30px 0 22px}
-      @media(max-width:640px){.levels{flex-direction:column}}
-      .lvl{flex:1;border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;background:var(--gray-0);position:relative}
-      .lvl.passed{background:var(--surface)}
-      .lvl.current{border-color:var(--limeB);background:var(--limeS);box-shadow:0 0 0 2px var(--lime) inset}
-      .lvl.locked{opacity:.6}
-      .lnum{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-      .lname{font-weight:700;font-size:14.5px;margin-top:3px}
-      .lstate{position:absolute;top:12px;right:14px;font-size:13px}
-      .lvl.current .lstate{font-size:10px;font-weight:700;background:var(--lime);padding:3px 7px;border-radius:4px;text-transform:uppercase}
-      .meter{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--ink);color:#f3efe0;border-radius:14px;padding:20px 24px;margin-bottom:28px}
-      .big{font-size:30px;font-weight:800;color:#fff}
-      .big .l{color:var(--lime)}
-      .mtxt{flex:1;min-width:220px}
-      .mtxt .t{font-weight:700;color:#fff}
-      .mtxt .s{font-size:13px;color:#cfcabb;margin-top:2px}
-      .bar{height:9px;background:#3a352a;border-radius:6px;overflow:hidden;max-width:300px;margin-top:10px}
-      .bar>span{display:block;height:100%;background:var(--lime);border-radius:6px;transition:width .3s}
-      .group{margin-bottom:26px}
-      .gh{font-size:16px;font-weight:800;margin-bottom:2px}
-      .gs{font-size:13px;color:var(--muted);margin-bottom:14px}
+      h1{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-.025em;margin-bottom:10px}
+      .lede{font-size:15.5px;color:var(--muted);max-width:640px}
+      /* compact integration nudge */
+      .int-nudge{display:flex;align-items:center;gap:13px;margin-top:18px;padding:12px 16px;background:var(--gray-0);border:1px solid var(--border);border-radius:var(--r);max-width:540px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+      .nudge-icon{width:34px;height:34px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+      .nudge-head{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
+      .nudge-sub{font-size:12px;color:var(--muted);line-height:1.45}
+      /* progress path */
+      .path{display:flex;align-items:flex-start;gap:0;margin:28px 0 0}
+      .step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative}
+      .step .line{position:absolute;top:15px;left:-50%;width:100%;height:2px;background:var(--border);z-index:0}
+      .step.passed .line,.step.current .line{background:var(--lime)}
+      .step:first-child .line{display:none}
+      .circ{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;background:var(--surface);border:2px solid var(--border);color:var(--muted);position:relative;z-index:1}
+      .step.passed .circ{background:var(--lime);border-color:var(--lime);color:var(--ink)}
+      .step.current .circ{background:#fff;border-color:var(--lime);color:var(--ink);box-shadow:0 0 0 3px var(--limeS)}
+      .step .badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:8px}
+      .step.current .badge{color:var(--ink)}
+      .step .sname{font-size:12.5px;font-weight:600;color:var(--ink);margin-top:2px;max-width:130px}
+      .step.locked{opacity:.55}
+      /* pips */
+      .prog-row{display:flex;align-items:center;gap:10px;margin-top:18px}
+      .pips{display:flex;gap:3px;flex-wrap:wrap}
+      .pip{width:18px;height:8px;border-radius:3px;background:var(--border)}
+      .pip.on{background:var(--lime)}
+      .prog-label{font-size:13.5px;color:var(--muted);font-weight:500;white-space:nowrap}
+      .prog-label strong{color:var(--ink);font-weight:700}
+      /* groups + cards */
+      .group{margin-top:28px}
+      .gh{font-size:15px;font-weight:800;display:flex;align-items:center;gap:7px}
+      .gs{font-size:12.5px;color:var(--muted);margin:2px 0 14px}
       .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
       @media(max-width:640px){.grid{grid-template-columns:1fr}}
       .card{border:1px solid var(--border);border-radius:var(--r);background:var(--gray-0);cursor:pointer;transition:.12s}
       .card:hover{border-color:var(--ink)}
       .card.confirmed,.card.imported{background:var(--limeS);border-color:var(--limeB)}
       .card.inferred{background:#eef7fb;border-color:var(--sky)}
-      .card.drafted{background:var(--butter);border-color:var(--butter)}
+      .card.drafted{background:var(--butter);border-color:var(--butterB)}
       .card-main{padding:16px 18px}
       .cname{font-weight:700;font-size:15px}
       .cwhy{font-size:13px;color:var(--muted);margin:6px 0 12px;min-height:34px}
@@ -54,26 +59,44 @@
       .st{font-size:12px;font-weight:700;padding:4px 9px;border-radius:4px}
       .st.confirmed,.st.imported{background:var(--green);color:#fff}
       .st.inferred{background:var(--sky);color:#0b4a59}
-      .st.drafted{background:var(--greenD);color:#fff}
+      .st.drafted{background:var(--butterB);color:#4a3600}
       .st.missing{background:var(--butter);color:#6e5500}
       .foot .cta{font-size:13px;font-weight:700;color:var(--ink)}
-      .card-panel{display:none;border-top:1px solid var(--border);padding:16px 18px;font-size:13.5px;color:var(--ink);background:rgba(255,255,255,.55);max-height:420px;overflow:auto}
+      .card-panel{display:none;border-top:1px solid var(--border);padding:16px 18px;font-size:13.5px;color:var(--ink);background:rgba(255,255,255,.55);max-height:460px;overflow:auto}
       .card.open .card-panel{display:block}
-      .card-panel h1,.card-panel h2,.card-panel h3{font-size:14px;margin:10px 0 4px}
+      .card-panel h2,.card-panel h3{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:12px 0 5px;padding-bottom:3px;border-bottom:1px solid var(--border);font-weight:700}
       .card-panel p{margin:6px 0}
+      .card-panel ul,.card-panel ol{margin:5px 0 5px 16px}
+      .card-panel li{margin:3px 0;line-height:1.6}
+      .card-panel blockquote{margin:8px 0;padding:8px 12px;background:var(--surface);border-left:3px solid var(--border);border-radius:0 6px 6px 0;color:var(--muted);font-size:12.5px;font-style:italic}
+      .card-panel table{border-collapse:collapse;width:100%;margin:10px 0;font-size:12.5px}
+      .card-panel th{background:var(--surface);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px 10px;border:1px solid var(--border);text-align:left}
+      .card-panel td{padding:6px 10px;border:1px solid var(--border);vertical-align:top}
+      .card-panel td:first-child{font-weight:600}
+      .card-panel hr{border:0;border-top:1px solid var(--border);margin:10px 0}
       .card-panel .empty{color:var(--muted);font-style:italic}
-      .card-panel .enrich{display:block;margin-top:10px;padding:9px 12px;border:1px dashed var(--sky);border-radius:8px;background:#eef7fb;color:#0b4a59;font-size:12.5px}
-      .card-panel .enrich strong{color:#0b4a59}
+      .source-note{font-size:11.5px;color:var(--muted);font-style:italic;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--border);line-height:1.55}
+      .enrich{display:block;margin-top:12px;padding:9px 12px;border:1px dashed var(--sky);border-radius:8px;background:#eef7fb;color:#0b4a59;font-size:12.5px}
+      .thought-starters{margin-top:13px;padding-top:13px;border-top:1px solid var(--border)}
+      .ts-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+      .ts-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:5px;margin:0}
+      .ts-list li{font-size:13px;padding:7px 10px 7px 28px;position:relative;background:var(--surface);border-radius:7px;border:1px solid var(--border);line-height:1.5}
+      .ts-list li::before{content:"\2192";position:absolute;left:10px;top:8px;color:var(--muted);font-size:12px}
       .help-banner{display:flex;align-items:flex-start;gap:12px;margin-top:32px;padding:16px 20px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);font-size:14px;color:var(--ink);line-height:1.55}
       .help-banner .icon{font-size:18px;flex-shrink:0;margin-top:1px}
     </style>
   </head>
   <body>
     <div class="wrap">
-      <span class="kicker">Context Kit</span>
-      <h1>Your Context Kit</h1>
-      <p class="lede">The more Runneth knows about your brand, the sharper every answer. Confirm what we pulled, review what we drafted, add the few things only you know. Click any card to see what's saved.</p>
-      <p class="integration-nudge" id="nudge">📄 Already have brand docs in Google Drive or Notion? <strong>Connect them in chat</strong> and Runneth can pull from them directly.</p>
+      <h1 id="page-title">Context Kit</h1>
+      <p class="lede">The more Runneth knows about your brand, the sharper every answer. Confirm what we pulled, review what we drafted, add the few things only you know.</p>
+      <div class="int-nudge" id="nudge">
+        <div class="nudge-icon">🔗</div>
+        <div>
+          <div class="nudge-head">Import from Google Drive or Notion</div>
+          <div class="nudge-sub">Connect them in chat and Runneth can pull your brand docs directly.</div>
+        </div>
+      </div>
       <div id="board"></div>
       <div class="help-banner">
         <span class="icon">💡</span>
@@ -83,30 +106,52 @@
 
     <script is:inline type="text/javascript">
       const BASE = "/context-kit";
-      const statusLabel = { confirmed:"Confirmed", imported:"Imported", inferred:"Confirm this", drafted:"Review draft", missing:"Not yet" };
-      const ctaLabel = { confirmed:"View", imported:"View", inferred:"Review & confirm", drafted:"Review draft", missing:"Add / drop file" };
-      const buckets = [
-        { key:"A", title:"From Motion — just confirm", sub:"Runneth already pulled these from your Motion setup." },
-        { key:"B", title:"Runneth drafts these from your data", sub:"We build a draft from your Motion creative, you correct anything off." },
-        { key:"C", title:"Only you can answer these", sub:"The few things no data source knows." },
+      const statusLabel = { confirmed:"Confirmed", imported:"Imported", inferred:"Needs confirm", drafted:"Review draft", missing:"Not yet" };
+      const BUCKETS = [
+        { key:"A", icon:"⚡", title:"From Motion — just confirm", sub:"Pulled from your Motion setup. One tap to lock in." },
+        { key:"B", icon:"✏️", title:"Runneth drafted these", sub:"Built from your data. Review and correct anything off." },
+        { key:"C", icon:"🔑", title:"Only you know these", sub:"Runneth will walk you through each one in chat." },
       ];
       function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-      function mdToHtml(md){
-        return esc(md)
-          .replace(/^### (.*)$/gm,"<h3>$1</h3>")
-          .replace(/^## (.*)$/gm,"<h2>$1</h2>")
-          .replace(/^# (.*)$/gm,"<h1>$1</h1>")
-          .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
-          .replace(/\n{2,}/g,"</p><p>")
-          .replace(/\n/g,"<br>");
+      function inline(s){return esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/(^|[^*])\*(?!\*)(.+?)\*(?!\*)/g,"$1<em>$2</em>");}
+      // full line-by-line markdown renderer
+      function md(src){
+        const lines=(src||"").replace(/\r/g,"").split("\n");
+        let html="",list=null,tbl=null;
+        const closeList=()=>{ if(list){ html+="</"+list+">"; list=null; } };
+        const closeTbl=()=>{ if(tbl){ html+="</tbody></table>"; tbl=null; } };
+        const closeAll=()=>{ closeList(); closeTbl(); };
+        for(let raw of lines){
+          const line=raw.replace(/\s+$/,"");
+          if(!line.trim()){ closeAll(); continue; }
+          const trow=line.trim();
+          if(/^\|(.+)\|$/.test(trow)){
+            const cells=trow.slice(1,-1).split("|").map(c=>c.trim());
+            if(cells.every(c=>/^:?-{2,}:?$/.test(c))) continue; // separator
+            if(!tbl){ closeList(); tbl="th"; html+="<table><thead><tr>"+cells.map(c=>"<th>"+inline(c)+"</th>").join("")+"</tr></thead><tbody>"; continue; }
+            html+="<tr>"+cells.map(c=>"<td>"+inline(c)+"</td>").join("")+"</tr>"; continue;
+          } else closeTbl();
+          if(/^#{2,3}\s+/.test(line)){ closeAll(); const lvl=line.startsWith("### ")?3:2; html+="<h"+lvl+">"+inline(line.replace(/^#{2,3}\s+/,""))+"</h"+lvl+">"; continue; }
+          if(/^#\s+/.test(line)){ closeAll(); html+="<h2>"+inline(line.replace(/^#\s+/,""))+"</h2>"; continue; }
+          if(/^---+$/.test(line.trim())){ closeAll(); html+="<hr>"; continue; }
+          if(/^>\s?/.test(line)){ closeList(); html+="<blockquote>"+inline(line.replace(/^>\s?/,""))+"</blockquote>"; continue; }
+          let m;
+          if((m=line.match(/^\s*[-*]\s+(.*)$/))){ if(list!=="ul"){ closeList(); list="ul"; html+="<ul>"; } html+="<li>"+inline(m[1])+"</li>"; continue; }
+          if((m=line.match(/^\s*\d+\.\s+(.*)$/))){ if(list!=="ol"){ closeList(); list="ol"; html+="<ol>"; } html+="<li>"+inline(m[1])+"</li>"; continue; }
+          closeList(); html+="<p>"+inline(line)+"</p>";
+        }
+        closeAll(); return html;
       }
       function emptyMsg(item){
         if(item.bucket==="A") return "Not confirmed yet. Tell Runneth \"confirm my "+esc(item.label)+"\" in chat to lock it in.";
         if(item.bucket==="B") return "Runneth hasn't researched this yet. Say \"build my Context Kit\" in chat and Runneth will draft it for you.";
         return "Only you can answer this one. Say \"fill in my "+esc(item.label)+"\" in chat and Runneth will walk you through it.";
       }
-      function enrichHtml(item){
-        return item.enrich ? "<div class='enrich'>\u2728 <strong>Tip:</strong> "+esc(item.enrich)+"</div>" : "";
+      function enrichHtml(item){ return item.enrich ? "<div class='enrich'>\u2728 <strong>Tip:</strong> "+esc(item.enrich)+"</div>" : ""; }
+      function sourceNoteHtml(item){ return item.sourceNote ? "<div class='source-note'>"+esc(item.sourceNote)+"</div>" : ""; }
+      function thoughtHtml(item){
+        if(!(item.thoughtStarters && item.thoughtStarters.length)) return "";
+        return "<div class='thought-starters'><div class='ts-label'>Think through</div><ul class='ts-list'>"+item.thoughtStarters.map(t=>"<li>"+esc(t)+"</li>").join("")+"</ul></div>";
       }
       async function loadPanel(item, panel){
         const filled = ["confirmed","imported","drafted"].includes(item.status);
@@ -116,15 +161,14 @@
           try{
             const r = await fetch(BASE+"/data/"+file,{cache:"no-store"});
             if(!r.ok) throw 0;
-            const t = await r.text();
-            content = "<p>"+mdToHtml(t)+"</p>";
+            content = sourceNoteHtml(item) + md(await r.text());
           }catch(e){
             content = "<p class='empty'>"+ (item.bucket==="B" ? "This file hasn't been saved yet. Say \"build my Context Kit\" in chat and Runneth will fill it in." : emptyMsg(item)) +"</p>";
           }
         } else if(item.bucket==="A" && item.preview){
           content = "<p>"+esc(item.preview)+"</p><p class='empty'>"+emptyMsg(item)+"</p>";
         } else {
-          content = "<p class='empty'>"+emptyMsg(item)+"</p>";
+          content = "<p class='empty'>"+emptyMsg(item)+"</p>" + thoughtHtml(item);
         }
         panel.innerHTML = content + enrichHtml(item);
       }
@@ -132,31 +176,37 @@
         const items = state.items || [];
         const total = items.length;
         const confirmed = items.filter(i=>["confirmed","imported"].includes(i.status)).length;
-        const pct = total? Math.round(confirmed/total*100):0;
-        // hide the Drive/Notion nudge once everything is confirmed
+        const title = document.getElementById("page-title");
+        title.textContent = (state.brandName && state.brandName.trim()) ? state.brandName.trim()+"'s Context Kit" : "Context Kit";
         const nudge = document.getElementById("nudge");
-        if(nudge) nudge.style.display = (confirmed===total) ? "none" : "block";
+        if(nudge) nudge.style.display = (confirmed===total) ? "none" : "flex";
         const board = document.getElementById("board");
         board.innerHTML = "";
-        const lv = document.createElement("div"); lv.className="levels";
-        (state.levels||[]).forEach(l=>{
-          const d=document.createElement("div"); d.className="lvl "+l.state;
-          d.innerHTML="<span class='lstate'>"+(l.state==="passed"?"\u2713":l.state==="current"?"You're here":"\uD83D\uDD12")+"</span><div class='lnum'>Level "+l.id.replace("L","")+"</div><div class='lname'>"+esc(l.name)+"</div>";
-          lv.appendChild(d);
+        // progress path
+        const path=document.createElement("div"); path.className="path";
+        (state.levels||[]).forEach((l,idx)=>{
+          const badge = l.state==="passed"?"Done":l.state==="current"?"You're here":"Locked";
+          const mark = l.state==="passed"?"\u2713":l.state==="locked"?"\uD83D\uDD12":String(idx+1);
+          const s=document.createElement("div"); s.className="step "+l.state;
+          s.innerHTML="<div class='line'></div><div class='circ'>"+mark+"</div><div class='badge'>"+badge+"</div><div class='sname'>"+esc(l.name)+"</div>";
+          path.appendChild(s);
         });
-        board.appendChild(lv);
-        const m=document.createElement("div"); m.className="meter";
-        m.innerHTML="<div class='big'><span class='l'>"+confirmed+"</span>/"+total+"</div><div class='mtxt'><div class='t'>"+(confirmed===total?"Full context unlocked.":(total-confirmed)+" items left to unlock full context.")+"</div><div class='s'>Confirm the blue ones, review drafts, fill the rest. Say \"build my Context Kit\" in chat.</div><div class='bar'><span style='width:"+pct+"%'></span></div></div>";
-        board.appendChild(m);
-        buckets.forEach(b=>{
+        board.appendChild(path);
+        // pips row
+        const pr=document.createElement("div"); pr.className="prog-row";
+        let pips=""; items.forEach(i=>{ pips+="<span class='pip"+(["confirmed","imported"].includes(i.status)?" on":"")+"'></span>"; });
+        pr.innerHTML="<div class='pips'>"+pips+"</div><div class='prog-label'><strong>"+confirmed+" of "+total+"</strong> confirmed</div>";
+        board.appendChild(pr);
+        // groups
+        BUCKETS.forEach(b=>{
           const list = items.filter(i=>i.bucket===b.key);
           if(!list.length) return;
           const g=document.createElement("div"); g.className="group";
-          g.innerHTML="<div class='gh'>"+b.title+"</div><div class='gs'>"+b.sub+"</div>";
+          g.innerHTML="<div class='gh'>"+b.icon+" "+b.title+"</div><div class='gs'>"+b.sub+"</div>";
           const grid=document.createElement("div"); grid.className="grid";
           list.forEach(item=>{
             const card=document.createElement("div"); card.className="card "+item.status;
-            card.innerHTML="<div class='card-main'><div class='cname'>"+esc(item.label)+"</div><div class='cwhy'>"+esc(item.why||"")+"</div><div class='foot'><span class='st "+item.status+"'>"+(statusLabel[item.status]||item.status)+"</span><span class='cta'>"+(ctaLabel[item.status]||"View")+"</span></div></div><div class='card-panel'>Loading...</div>";
+            card.innerHTML="<div class='card-main'><div class='cname'>"+esc(item.label)+"</div><div class='cwhy'>"+esc(item.why||"")+"</div><div class='foot'><span class='st "+item.status+"'>"+(statusLabel[item.status]||item.status)+"</span><span class='cta'>View \u2192</span></div></div><div class='card-panel'>Loading...</div>";
             const panel=card.querySelector(".card-panel");
             let loaded=false;
             card.querySelector(".card-main").addEventListener("click",()=>{
