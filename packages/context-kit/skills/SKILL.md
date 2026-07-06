@@ -1,6 +1,6 @@
 ---
 name: context-kit
-description: Builds a customer's Context Kit, the institutional knowledge that makes every Runneth answer sharper. Reads the Context Kit state index, confirms what Motion knows, drafts brand-context and every Bucket B item from Motion creative data before asking anything, imports what already lives in Google Drive or Notion, and collects what only the customer knows, filling each into the brain and moving the completeness meter. Triggers on "build my context kit", "set up my context kit", "context kit", "build my brain", "sharpen Runneth", "what makes my answers better", "what do you still need from me", "what does Runneth know about us".
+description: Builds a customer's Context Kit, the institutional knowledge that makes every Runneth answer sharper. Reads the Context Kit state index, confirms what Motion knows, drafts brand-context and every Bucket B item from Motion creative data before asking anything, imports what already lives in Google Drive or Notion, researches real customer language for voice-of-customer, and collects what only the customer knows, filling each into the brain and moving the completeness meter. Triggers on "build my context kit", "set up my context kit", "context kit", "build my brain", "sharpen Runneth", "what makes my answers better", "what do you still need from me", "what does Runneth know about us".
 ---
 
 # Context Kit skill
@@ -19,7 +19,7 @@ guardrails.
 ## Step 0 — Load state
 1. Read `/agent/brain/context-kit/context-kit-state.json`.
 2. Run `motion brand-context --data-query "summary"`, `motion workspace-goal`, `motion spend-threshold`.
-3. Note which context sources are connected (Google Drive, Notion).
+3. Note which context sources are connected (Google Drive, Notion, and any reviews platform).
 
 ## Step 1 — Build and open the board (first run only)
 Sync stages files but does not build apps. Fill `/agent/apps/context-kit/buildeth.app.json` (replace
@@ -30,55 +30,61 @@ at runtime, so later content/state changes need NO rebuild.
 ## Step 2 — Bucket A: confirm, and auto-draft brand-context
 - **kpis-goal, spend-threshold:** show the live Motion value, one-tap confirm, write the full doc, set the
   `preview` string in state, mark `confirmed`.
-- **brand-context (auto-draft, never ask from scratch):**
-  1. If `motion brand-context` returns content, show it and ask to confirm.
-  2. If empty, say: "I don't have brand context saved yet, I'll draft it from your top-performing ad creative now."
-  3. Pull top spend creative: `motion meta insights --date-range last_30d --sort topSpend --include-metrics`
-     (+ TikTok if connected). Read hooks, primary text, headlines, summaries.
-  4. Draft `brand-context.md` as the FOUNDATION only: brand name, origin story, positioning statement,
-     product description, proof points, a 2-sentence tone summary, a 2-sentence audience summary. Do not
-     duplicate the full voice/VoC/competitor detail (those are their own files).
-  5. Present the draft, ask to confirm, then write `/agent/brain/context-kit/brand-context.md`, save to
-     workspace config, mirror to `data/brand-context.md`, mark `confirmed`.
+- **brand-context (auto-draft, never ask from scratch):** if `motion brand-context` returns content, show it
+  and confirm; if empty, say you'll draft it from top-performing creative, pull
+  `motion meta insights --date-range last_30d --sort topSpend --include-metrics` (+ TikTok if connected),
+  and draft the FOUNDATION only (brand name, origin story, positioning statement, product description, proof
+  points, 2-sentence tone summary, 2-sentence audience summary). Present, confirm, write, save to workspace
+  config, mirror to `data/`, mark `confirmed`. Do not duplicate the voice/voc/competitor detail here.
 
-## Step 3 — Proactive import offer
-After state load, if any Bucket B/C item is missing AND Google Drive or Notion is connected, proactively
-say: "I can see you have [Drive/Notion] connected, want me to search there first before drafting from
-scratch?" If they say yes, search, confirm the doc, import into `/agent/brain/context-kit/<id>.md`, mirror
-to `data/`, mark `imported`. Lean on existing context-sweep / integration skills for the pull.
+## Step 3 — Proactive import + connect offers
+After state load, if any Bucket B/C item is missing:
+- If Google Drive or Notion is connected: "I can see you have [Drive/Notion] connected, want me to search
+  there first before drafting from scratch?"
+- If NO reviews platform is connected: proactively suggest it, because it powers the best voice-of-customer:
+  "Connecting your reviews platform (Yotpo, Okendo, Trustpilot, Amazon) gives me your real customer language,
+  the single richest input for hooks and angles. Want to connect it?"
+Import confirmed docs into `/agent/brain/context-kit/<id>.md`, mirror to `data/`, mark `imported`. Lean on
+existing context-sweep / integration skills for the pull.
 
-## Step 4 — Bucket B: draft from Motion creative data first, then correct
-For each item, attempt a Motion-backed draft BEFORE import or manual collection. A rough draft the user can
-react to beats a blank prompt. Write full working docs to `/agent/brain/context-kit/<id>.md`, mirror to
-`data/<id>.md`, set `drafted` (then `confirmed` on accept), and tell the user
-"I drafted [item] from your Motion data, click the card to review or tell me what to change."
+## Step 4 — Bucket B: draft from real data first, then correct
+For each item, attempt a data-backed draft BEFORE asking. Write full working docs to
+`/agent/brain/context-kit/<id>.md`, mirror to `data/<id>.md`, set `drafted` (then `confirmed` on accept), and
+tell the user "I drafted [item], click the card to review or tell me what to change."
 
 - **competitors:** `motion inspo brands` (followed brands), then `motion inspo unique-creatives --brand-id
-  <id> --sort-by impressionRank` per brand. Summarize who they are, what angles they run, what they
-  emphasize. Ask the user to add anyone missing.
-- **products:** top spend creative via `motion meta insights` with summaries + glossary tags. Compile the
-  product list from repeated hero claims / SKU callouts / bundles, note claims per product. Ask the user to
-  add pricing, SKU codes, and anything not in copy.
+  <id> --sort-by impressionRank` per brand. Who they are, what angles they run, what they emphasize.
+- **products:** top spend creative via `motion meta insights` with summaries + glossary tags. Product list
+  from repeated hero claims / SKU callouts / bundles. Ask user for pricing/SKU codes not in copy.
 - **positioning:** `motion meta insights --include-glossary`. Read intended-audience, messaging-angle, and
-  hook-tactic tag distribution; combine with hook language to draft positioning + personas. Flag assumptions.
-- **voice:** hooks, primary text, and summaries of the top 20-30 by spend. Synthesize 4-6 named voice
-  characteristics, each with a "sounds like / doesn't sound like" pair. Should feel recognizable to a brand writer.
-- **voc:** top spend VIDEO creative with `--include-transcript`. Extract the most repeated real customer
-  phrases, emotional beats, outcome language; supplement with static hooks. Group by problem language,
-  outcome language, objections, social proof.
-- If a pull returns too little (no followed brands, no transcripts), say what was missing and fall through to
-  import or manual for that item only. Never silently skip.
+  hook-tactic tag distribution + hook language to draft positioning + personas. Flag assumptions.
+- **voice (the BRAND's voice, not the customer's):** hooks, primary text, and summaries of the top 20-30 by
+  spend. Synthesize 4-6 named voice characteristics, each with a "sounds like / doesn't sound like" pair.
+  This is how the brand should write.
+- **voc (voice-of-customer = how the CUSTOMER sounds, NOT the brand):** real, unfiltered customer language.
+  Ad transcripts are the WEAKEST source (they are the brand's scripted version of the customer), so do not
+  rely on them. Draft it this way:
+  1. If a reviews platform is connected, run the `review-audit` skill over the real reviews.
+  2. Generate customer-language search terms with the `brand-relevant-keywords` skill (search the customer's
+     problem, not the brand name), then web-research Reddit, review sites, and social comments for real quotes.
+  3. Use Motion video transcripts (`--include-transcript`) only as a supplement, labeled as ad-mediated
+     (best for UGC/testimonial phrasing).
+  Layer in the lived-context frame (Sarah Levinger): which generation, what shaped their trust, and 5-10
+  trigger moments (specific everyday situations where the problem fires) with the emotion attached to each.
+  Output a swipe file in 7 categories, near-verbatim: pain points, emotional language, desire statements,
+  before/after arcs, objections, competitor complaints, trigger events. If no reviews platform is connected,
+  say so and suggest connecting one, then proceed with web research and transcripts.
+- If a pull returns too little, say what was missing and fall through to import or manual for that item only.
 
 ## Step 5 — Bucket C: collect with depth
 legal, briefing-template, source-of-truth, guardrails: file drop when they have it, thought starters when
-stuck, one prompt when short. Prompt for the COMPLETE rule set, not a one-liner. Write to
-`/agent/brain/context-kit/<id>.md` (legal -> legal-compliance.md), mirror to `data/`, mark `confirmed`.
+stuck, one prompt when short. Prompt for the COMPLETE rule set. Write to `/agent/brain/context-kit/<id>.md`
+(legal -> legal-compliance.md), mirror to `data/`, mark `confirmed`.
 
 ## Step 6 — Keep the map correct
-- Refresh `/agent/INDEX.md` entries pointing to `/agent/brain/context-kit/` as the canonical home for all
-  Context Kit files. No separate entries for scattered originals.
+- Refresh `/agent/INDEX.md` entries pointing to `/agent/brain/context-kit/` as the canonical home.
 - After every change update BOTH `/agent/brain/context-kit/context-kit-state.json` and the app's
-  `data/context-kit-state.json` (the board reads the app copy). No rebuild needed for data-only changes.
+  `data/context-kit-state.json`. No rebuild needed for data-only changes.
 
 ## Rules
 - Never touch `user.md`. Never overwrite an already-filled file (create-if-absent, edit-in-place on confirm).

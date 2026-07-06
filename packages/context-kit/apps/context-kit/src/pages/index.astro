@@ -62,6 +62,8 @@
       .card-panel h1,.card-panel h2,.card-panel h3{font-size:14px;margin:10px 0 4px}
       .card-panel p{margin:6px 0}
       .card-panel .empty{color:var(--muted);font-style:italic}
+      .card-panel .enrich{display:block;margin-top:10px;padding:9px 12px;border:1px dashed var(--sky);border-radius:8px;background:#eef7fb;color:#0b4a59;font-size:12.5px}
+      .card-panel .enrich strong{color:#0b4a59}
       .help-banner{display:flex;align-items:flex-start;gap:12px;margin-top:32px;padding:16px 20px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);font-size:14px;color:var(--ink);line-height:1.55}
       .help-banner .icon{font-size:18px;flex-shrink:0;margin-top:1px}
     </style>
@@ -103,25 +105,28 @@
         if(item.bucket==="B") return "Runneth hasn't researched this yet. Say \"build my Context Kit\" in chat and Runneth will draft it for you.";
         return "Only you can answer this one. Say \"fill in my "+esc(item.label)+"\" in chat and Runneth will walk you through it.";
       }
+      function enrichHtml(item){
+        return item.enrich ? "<div class='enrich'>\u2728 <strong>Tip:</strong> "+esc(item.enrich)+"</div>" : "";
+      }
       async function loadPanel(item, panel){
         const filled = ["confirmed","imported","drafted"].includes(item.status);
         const file = item.dataFile || (item.id+".md");
+        let content;
         if(filled){
           try{
             const r = await fetch(BASE+"/data/"+file,{cache:"no-store"});
             if(!r.ok) throw 0;
             const t = await r.text();
-            panel.innerHTML = "<p>"+mdToHtml(t)+"</p>";
+            content = "<p>"+mdToHtml(t)+"</p>";
           }catch(e){
-            panel.innerHTML = "<p class='empty'>"+ (item.bucket==="B" ? "This file hasn't been saved yet. Say \"build my Context Kit\" in chat and Runneth will fill it in." : emptyMsg(item)) +"</p>";
+            content = "<p class='empty'>"+ (item.bucket==="B" ? "This file hasn't been saved yet. Say \"build my Context Kit\" in chat and Runneth will fill it in." : emptyMsg(item)) +"</p>";
           }
-          return;
+        } else if(item.bucket==="A" && item.preview){
+          content = "<p>"+esc(item.preview)+"</p><p class='empty'>"+emptyMsg(item)+"</p>";
+        } else {
+          content = "<p class='empty'>"+emptyMsg(item)+"</p>";
         }
-        if(item.bucket==="A" && item.preview){
-          panel.innerHTML = "<p>"+esc(item.preview)+"</p><p class='empty'>"+emptyMsg(item)+"</p>";
-          return;
-        }
-        panel.innerHTML = "<p class='empty'>"+emptyMsg(item)+"</p>";
+        panel.innerHTML = content + enrichHtml(item);
       }
       function render(state){
         const items = state.items || [];
