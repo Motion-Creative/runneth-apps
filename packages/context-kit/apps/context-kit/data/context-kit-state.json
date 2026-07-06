@@ -6,17 +6,17 @@
     { "id": "L3", "name": "Runs with full context", "state": "locked" }
   ],
   "items": [
-    { "id": "brand-context", "label": "Brand context", "bucket": "A", "status": "inferred", "why": "Keeps every output unmistakably on-brand.", "preview": "" },
-    { "id": "kpis-goal", "label": "KPIs & goal", "bucket": "A", "status": "inferred", "why": "Every readout leads with the metric you care about.", "preview": "" },
-    { "id": "spend-threshold", "label": "Spend threshold", "bucket": "A", "status": "inferred", "why": "Separates a proven winner from early noise.", "preview": "" },
-    { "id": "competitors", "label": "Competitors", "bucket": "B", "status": "missing", "why": "Angles to attack the gaps rivals leave open.", "file": "competitors.md" },
-    { "id": "products", "label": "Products & SKUs", "bucket": "B", "status": "missing", "why": "Grounds every ad in real product facts.", "file": "products.md" },
-    { "id": "positioning", "label": "Positioning & personas", "bucket": "B", "status": "missing", "why": "Right audience, right angle.", "file": "positioning.md" },
-    { "id": "voice", "label": "Voice & tone", "bucket": "B", "status": "missing", "why": "Copy that sounds like you wrote it.", "file": "voice.md" },
-    { "id": "voc", "label": "Voice-of-customer", "bucket": "B", "status": "missing", "why": "Real customer language for hooks.", "file": "voc.md" },
-    { "id": "legal", "label": "Legal & compliance", "bucket": "C", "status": "missing", "why": "Clears review on the first pass." },
-    { "id": "briefing-template", "label": "Briefing template", "bucket": "C", "status": "missing", "why": "Briefs come back in your exact format." },
-    { "id": "source-of-truth", "label": "Source of truth", "bucket": "C", "status": "missing", "why": "Reports never fight your dashboard." },
-    { "id": "guardrails", "label": "Guardrails", "bucket": "C", "status": "missing", "why": "Always/never rules for creative." }
+    { "id": "brand-context", "label": "Brand context", "bucket": "A", "status": "inferred", "why": "Keeps every output unmistakably on-brand.", "preview": "", "dataFile": "brand-context.md" },
+    { "id": "kpis-goal", "label": "KPIs & goal", "bucket": "A", "status": "inferred", "why": "Every readout leads with the metric you care about.", "preview": "", "dataFile": "kpis-goal.md" },
+    { "id": "spend-threshold", "label": "Spend threshold", "bucket": "A", "status": "inferred", "why": "Separates a proven winner from early noise.", "preview": "", "dataFile": "spend-threshold.md" },
+    { "id": "competitors", "label": "Competitors", "bucket": "B", "status": "missing", "why": "Angles to attack the gaps rivals leave open.", "dataFile": "competitors.md" },
+    { "id": "products", "label": "Products & SKUs", "bucket": "B", "status": "missing", "why": "Grounds every ad in real product facts.", "dataFile": "products.md" },
+    { "id": "positioning", "label": "Positioning & personas", "bucket": "B", "status": "missing", "why": "Right audience, right angle.", "dataFile": "positioning.md" },
+    { "id": "voice", "label": "Voice & tone", "bucket": "B", "status": "missing", "why": "Copy that sounds like you wrote it.", "dataFile": "voice.md" },
+    { "id": "voc", "label": "Voice-of-customer", "bucket": "B", "status": "missing", "why": "Real customer language for hooks.", "dataFile": "voc.md" },
+    { "id": "legal", "label": "Legal & compliance", "bucket": "C", "status": "missing", "why": "Clears review on the first pass.", "dataFile": "legal-compliance.md" },
+    { "id": "briefing-template", "label": "Briefing template", "bucket": "C", "status": "missing", "why": "Briefs come back in your exact format.", "dataFile": "briefing-template.md" },
+    { "id": "source-of-truth", "label": "Source of truth", "bucket": "C", "status": "missing", "why": "Reports never fight your dashboard.", "dataFile": "source-of-truth.md" },
+    { "id": "guardrails", "label": "Guardrails", "bucket": "C", "status": "missing", "why": "Always/never rules for creative.", "dataFile": "guardrails.md" }
   ]
 }

@@ -1,67 +1,86 @@
 ---
 name: context-kit
-description: Builds a customer's Context Kit, the institutional knowledge that makes every Runneth answer sharper. Reads the Context Kit state index, confirms what Motion already knows, imports what already lives in Google Drive or Notion, drafts what Runneth can research, and collects what only the customer knows, filling each into the brain and moving the completeness meter. Triggers on "build my context kit", "set up my context kit", "context kit", "build my brain", "sharpen Runneth", "what makes my answers better", "what do you still need from me", "what does Runneth know about us".
+description: Builds a customer's Context Kit, the institutional knowledge that makes every Runneth answer sharper. Reads the Context Kit state index, confirms what Motion knows, drafts brand-context and every Bucket B item from Motion creative data before asking anything, imports what already lives in Google Drive or Notion, and collects what only the customer knows, filling each into the brain and moving the completeness meter. Triggers on "build my context kit", "set up my context kit", "context kit", "build my brain", "sharpen Runneth", "what makes my answers better", "what do you still need from me", "what does Runneth know about us".
 ---
 
 # Context Kit skill
 
-Turn a fresh brain into a filled one, without the manual sales/CS back-and-forth. The Context Kit
-board app is the mirror; this skill is the doer. Never write to `user.md`. Fill happens as deliberate
-in-conversation brain writes. Always prefer importing what already exists over asking the customer to
-retype it.
+Turn a fresh brain into a filled one, without the manual sales/CS back-and-forth. The board app is the
+mirror; this skill is the doer. Draft from Motion data first, then offer import, then collect. Never write
+to `user.md`. Fill happens as deliberate in-conversation brain writes.
+
+## Single source of truth
+Every one of the 12 files lives in `/agent/brain/context-kit/<item-id>.md` and is mirrored to
+`/agent/apps/context-kit/data/<item-id>.md` so the board can fetch it. Do NOT scatter files into
+`brand-audit/` or `templates/`. Item ids: brand-context, kpis-goal, spend-threshold, competitors,
+products, positioning, voice, voc, legal (file legal-compliance.md), briefing-template, source-of-truth,
+guardrails.
 
 ## Step 0 — Load state
 1. Read `/agent/brain/context-kit/context-kit-state.json`.
-2. Run `motion brand-context --data-query "summary"`, `motion workspace-goal`, `motion spend-threshold`
-   to hydrate the three Bucket A items with live values.
-3. Check which context sources are connected (Google Drive, Notion) so import is offered when available.
-4. Resolve the workspace slug for brand-audit paths.
+2. Run `motion brand-context --data-query "summary"`, `motion workspace-goal`, `motion spend-threshold`.
+3. Note which context sources are connected (Google Drive, Notion).
 
 ## Step 1 — Build and open the board (first run only)
-Package sync stages files but does NOT build the app. On first run:
-1. Fill the bundled manifest: in `/agent/apps/context-kit/buildeth.app.json`, replace `__CONVERSATION_ID__`
-   with the current conversation id and `__WORKSPACE_ID__` with the current workspace id. The rest of the
-   v3 manifest (oauthEnabled, data dir, static dist/index) and `astro.config.mjs` (base `/context-kit`)
-   ship in the package, so no trial-and-error is needed.
-2. Run `app build context-kit`, then `app list` for the verified URL. Hand the URL back. Never invent it.
-3. After the first build, the board reads `data/` at runtime (client-side fetch), so later state/content
-   updates show on refresh with NO rebuild. Only rebuild if you change the app source itself.
+Sync stages files but does not build apps. Fill `/agent/apps/context-kit/buildeth.app.json` (replace
+`__CONVERSATION_ID__` and `__WORKSPACE_ID__` with current context), run `app build context-kit`, then
+`app list` for the URL. `astro.config.mjs` ships in the package. After first build the board reads `data/`
+at runtime, so later content/state changes need NO rebuild.
 
-## Step 2 — Bucket A: confirm (fast) + write the full working doc
-For brand-context, kpis-goal, spend-threshold: show the live value plainly and ask a one-tap confirm.
-On confirm: set the item `confirmed`, set its `preview` string in the state index (short human summary
-for the card), and write the full working document. `brand-context.md` (#10) is the *foundation only*:
-brand name, story, positioning statement, product description, proof points, and a 2-sentence tone/audience
-summary. Do NOT concatenate the Bucket B detail into it. Do not re-collect what Motion already holds.
+## Step 2 — Bucket A: confirm, and auto-draft brand-context
+- **kpis-goal, spend-threshold:** show the live Motion value, one-tap confirm, write the full doc, set the
+  `preview` string in state, mark `confirmed`.
+- **brand-context (auto-draft, never ask from scratch):**
+  1. If `motion brand-context` returns content, show it and ask to confirm.
+  2. If empty, say: "I don't have brand context saved yet, I'll draft it from your top-performing ad creative now."
+  3. Pull top spend creative: `motion meta insights --date-range last_30d --sort topSpend --include-metrics`
+     (+ TikTok if connected). Read hooks, primary text, headlines, summaries.
+  4. Draft `brand-context.md` as the FOUNDATION only: brand name, origin story, positioning statement,
+     product description, proof points, a 2-sentence tone summary, a 2-sentence audience summary. Do not
+     duplicate the full voice/VoC/competitor detail (those are their own files).
+  5. Present the draft, ask to confirm, then write `/agent/brain/context-kit/brand-context.md`, save to
+     workspace config, mirror to `data/brand-context.md`, mark `confirmed`.
 
-## Step 3 — Import mode (try before drafting or asking, for every remaining item)
-Ask: "Do you already have this in Google Drive or Notion?" If connected, search for the relevant doc,
-confirm it, import into the correct brain path, set `imported` then `confirmed`. If not connected, offer
-the native connect flow first. Only fall through to draft/write-in if they decline or don't have it. Lean
-on existing context-sweep / integration skills for the search + pull.
+## Step 3 — Proactive import offer
+After state load, if any Bucket B/C item is missing AND Google Drive or Notion is connected, proactively
+say: "I can see you have [Drive/Notion] connected, want me to search there first before drafting from
+scratch?" If they say yes, search, confirm the doc, import into `/agent/brain/context-kit/<id>.md`, mirror
+to `data/`, mark `imported`. Lean on existing context-sweep / integration skills for the pull.
 
-## Step 4 — Bucket B: draft rich, then confirm, then mirror to the board
-For competitors, products, positioning, voice, voice-of-customer: run the matching skill (product-catalog,
-competitor-analysis, brand-audit strategy/review passes, Inspo followed brands + boards for competitors).
-Write FULL working documents into `/agent/brain/brand-audit/<slug>/` (#9): competitor tone/audience/
-positioning breakdowns, complete product feature lists, full personas with motivations and objections, all
-voice-of-customer quotes and patterns. Thin summaries fail here. Then:
-- set status `drafted` (customer reviews) then `confirmed` on accept.
-- MIRROR each file into `/agent/apps/context-kit/data/<file>.md` (competitors.md, products.md,
-  positioning.md, voice.md, voc.md) so the board's click-to-expand can fetch it at runtime.
+## Step 4 — Bucket B: draft from Motion creative data first, then correct
+For each item, attempt a Motion-backed draft BEFORE import or manual collection. A rough draft the user can
+react to beats a blank prompt. Write full working docs to `/agent/brain/context-kit/<id>.md`, mirror to
+`data/<id>.md`, set `drafted` (then `confirmed` on accept), and tell the user
+"I drafted [item] from your Motion data, click the card to review or tell me what to change."
+
+- **competitors:** `motion inspo brands` (followed brands), then `motion inspo unique-creatives --brand-id
+  <id> --sort-by impressionRank` per brand. Summarize who they are, what angles they run, what they
+  emphasize. Ask the user to add anyone missing.
+- **products:** top spend creative via `motion meta insights` with summaries + glossary tags. Compile the
+  product list from repeated hero claims / SKU callouts / bundles, note claims per product. Ask the user to
+  add pricing, SKU codes, and anything not in copy.
+- **positioning:** `motion meta insights --include-glossary`. Read intended-audience, messaging-angle, and
+  hook-tactic tag distribution; combine with hook language to draft positioning + personas. Flag assumptions.
+- **voice:** hooks, primary text, and summaries of the top 20-30 by spend. Synthesize 4-6 named voice
+  characteristics, each with a "sounds like / doesn't sound like" pair. Should feel recognizable to a brand writer.
+- **voc:** top spend VIDEO creative with `--include-transcript`. Extract the most repeated real customer
+  phrases, emotional beats, outcome language; supplement with static hooks. Group by problem language,
+  outcome language, objections, social proof.
+- If a pull returns too little (no followed brands, no transcripts), say what was missing and fall through to
+  import or manual for that item only. Never silently skip.
 
 ## Step 5 — Bucket C: collect with depth
-For legal, briefing-template, source-of-truth, guardrails: file drop when they have the doc, thought
-starters when stuck, one prompt when short. Prompt for the COMPLETE rule set, not a one-liner (#9). Write
-into the scaffold file, fully populating the `## Your answers` section. Mark `confirmed`.
+legal, briefing-template, source-of-truth, guardrails: file drop when they have it, thought starters when
+stuck, one prompt when short. Prompt for the COMPLETE rule set, not a one-liner. Write to
+`/agent/brain/context-kit/<id>.md` (legal -> legal-compliance.md), mirror to `data/`, mark `confirmed`.
 
 ## Step 6 — Keep the map correct
-- After each item is filled with real content, add or refresh its `/agent/INDEX.md` entry.
-- Update `/agent/brain/context-kit/context-kit-state.json` AND the app's `data/context-kit-state.json`
-  after every change (the board reads the app copy). No rebuild needed for data-only changes.
+- Refresh `/agent/INDEX.md` entries pointing to `/agent/brain/context-kit/` as the canonical home for all
+  Context Kit files. No separate entries for scattered originals.
+- After every change update BOTH `/agent/brain/context-kit/context-kit-state.json` and the app's
+  `data/context-kit-state.json` (the board reads the app copy). No rebuild needed for data-only changes.
 
 ## Rules
-- Never touch `user.md`.
-- Never overwrite an already-filled file (create-if-absent, edit-in-place only on confirm).
+- Never touch `user.md`. Never overwrite an already-filled file (create-if-absent, edit-in-place on confirm).
 - Plain, non-technical language with the customer. No file paths or JSON in chat.
 - One item at a time; celebrate the Level 3 unlock when the meter completes.

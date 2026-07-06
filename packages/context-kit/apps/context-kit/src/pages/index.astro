@@ -17,6 +17,8 @@
       .kicker{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--lime);padding:5px 10px;border-radius:4px;margin-bottom:16px}
       h1{font-size:clamp(30px,4.5vw,44px);font-weight:800;letter-spacing:-.025em;margin-bottom:10px}
       .lede{font-size:16px;color:var(--muted);max-width:640px}
+      .integration-nudge{font-size:13.5px;color:var(--muted);margin-top:12px;max-width:640px}
+      .integration-nudge strong{color:var(--ink)}
       .levels{display:flex;gap:10px;margin:30px 0 22px}
       @media(max-width:640px){.levels{flex-direction:column}}
       .lvl{flex:1;border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;background:var(--gray-0);position:relative}
@@ -60,7 +62,8 @@
       .card-panel h1,.card-panel h2,.card-panel h3{font-size:14px;margin:10px 0 4px}
       .card-panel p{margin:6px 0}
       .card-panel .empty{color:var(--muted);font-style:italic}
-      .note{margin-top:26px;font-size:13px;color:var(--muted);border-top:1px solid var(--border);padding-top:16px}
+      .help-banner{display:flex;align-items:flex-start;gap:12px;margin-top:32px;padding:16px 20px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);font-size:14px;color:var(--ink);line-height:1.55}
+      .help-banner .icon{font-size:18px;flex-shrink:0;margin-top:1px}
     </style>
   </head>
   <body>
@@ -68,8 +71,12 @@
       <span class="kicker">Context Kit</span>
       <h1>Your Context Kit</h1>
       <p class="lede">The more Runneth knows about your brand, the sharper every answer. Confirm what we pulled, review what we drafted, add the few things only you know. Click any card to see what's saved.</p>
+      <p class="integration-nudge" id="nudge">📄 Already have brand docs in Google Drive or Notion? <strong>Connect them in chat</strong> and Runneth can pull from them directly.</p>
       <div id="board"></div>
-      <p class="note">This board mirrors your brain in real time. Runneth updates it as you fill things in through chat. It reads state on every load, so a refresh always shows the latest.</p>
+      <div class="help-banner">
+        <span class="icon">💡</span>
+        <span><strong>This board mirrors your brain.</strong> Click any card to review what Runneth has saved. Tell Runneth in chat to update anything, or ask it to pull up any file anytime. Refresh after a chat update to see the latest.</span>
+      </div>
     </div>
 
     <script is:inline type="text/javascript">
@@ -78,11 +85,10 @@
       const ctaLabel = { confirmed:"View", imported:"View", inferred:"Review & confirm", drafted:"Review draft", missing:"Add / drop file" };
       const buckets = [
         { key:"A", title:"From Motion — just confirm", sub:"Runneth already pulled these from your Motion setup." },
-        { key:"B", title:"Runneth can research these", sub:"We drafted it, you correct anything that's off." },
+        { key:"B", title:"Runneth drafts these from your data", sub:"We build a draft from your Motion creative, you correct anything off." },
         { key:"C", title:"Only you can answer these", sub:"The few things no data source knows." },
       ];
       function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-      // minimal markdown: headers, bold, line breaks
       function mdToHtml(md){
         return esc(md)
           .replace(/^### (.*)$/gm,"<h3>$1</h3>")
@@ -92,31 +98,41 @@
           .replace(/\n{2,}/g,"</p><p>")
           .replace(/\n/g,"<br>");
       }
+      function emptyMsg(item){
+        if(item.bucket==="A") return "Not confirmed yet. Tell Runneth \"confirm my "+esc(item.label)+"\" in chat to lock it in.";
+        if(item.bucket==="B") return "Runneth hasn't researched this yet. Say \"build my Context Kit\" in chat and Runneth will draft it for you.";
+        return "Only you can answer this one. Say \"fill in my "+esc(item.label)+"\" in chat and Runneth will walk you through it.";
+      }
       async function loadPanel(item, panel){
-        if(item.bucket==="A"){
-          panel.innerHTML = item.preview ? "<p>"+esc(item.preview)+"</p>" : "<p class='empty'>Pulled from Motion. Confirm it in chat to lock it in.</p>";
-          return;
-        }
-        if(item.bucket==="B" && item.file){
+        const filled = ["confirmed","imported","drafted"].includes(item.status);
+        const file = item.dataFile || (item.id+".md");
+        if(filled){
           try{
-            const r = await fetch(BASE+"/data/"+item.file, {cache:"no-store"});
+            const r = await fetch(BASE+"/data/"+file,{cache:"no-store"});
+            if(!r.ok) throw 0;
             const t = await r.text();
             panel.innerHTML = "<p>"+mdToHtml(t)+"</p>";
-          }catch(e){ panel.innerHTML = "<p class='empty'>Could not load this file yet.</p>"; }
+          }catch(e){
+            panel.innerHTML = "<p class='empty'>"+ (item.bucket==="B" ? "This file hasn't been saved yet. Say \"build my Context Kit\" in chat and Runneth will fill it in." : emptyMsg(item)) +"</p>";
+          }
           return;
         }
-        panel.innerHTML = item.status==="missing"
-          ? "<p class='empty'>Not filled in yet. Say \"build my Context Kit\" and Runneth will help you add it.</p>"
-          : "<p>Saved. Ask Runneth to show the details.</p>";
+        if(item.bucket==="A" && item.preview){
+          panel.innerHTML = "<p>"+esc(item.preview)+"</p><p class='empty'>"+emptyMsg(item)+"</p>";
+          return;
+        }
+        panel.innerHTML = "<p class='empty'>"+emptyMsg(item)+"</p>";
       }
       function render(state){
         const items = state.items || [];
         const total = items.length;
-        const confirmed = items.filter(i=>i.status==="confirmed"||i.status==="imported").length;
+        const confirmed = items.filter(i=>["confirmed","imported"].includes(i.status)).length;
         const pct = total? Math.round(confirmed/total*100):0;
+        // hide the Drive/Notion nudge once everything is confirmed
+        const nudge = document.getElementById("nudge");
+        if(nudge) nudge.style.display = (confirmed===total) ? "none" : "block";
         const board = document.getElementById("board");
         board.innerHTML = "";
-        // levels
         const lv = document.createElement("div"); lv.className="levels";
         (state.levels||[]).forEach(l=>{
           const d=document.createElement("div"); d.className="lvl "+l.state;
@@ -124,11 +140,9 @@
           lv.appendChild(d);
         });
         board.appendChild(lv);
-        // meter
         const m=document.createElement("div"); m.className="meter";
         m.innerHTML="<div class='big'><span class='l'>"+confirmed+"</span>/"+total+"</div><div class='mtxt'><div class='t'>"+(confirmed===total?"Full context unlocked.":(total-confirmed)+" items left to unlock full context.")+"</div><div class='s'>Confirm the blue ones, review drafts, fill the rest. Say \"build my Context Kit\" in chat.</div><div class='bar'><span style='width:"+pct+"%'></span></div></div>";
         board.appendChild(m);
-        // groups
         buckets.forEach(b=>{
           const list = items.filter(i=>i.bucket===b.key);
           if(!list.length) return;
@@ -155,7 +169,7 @@
           const r = await fetch(BASE+"/data/context-kit-state.json",{cache:"no-store"});
           render(await r.json());
         }catch(e){
-          document.getElementById("board").innerHTML="<p class='note'>Could not load your Context Kit state yet.</p>";
+          document.getElementById("board").innerHTML="<p class='empty'>Could not load your Context Kit state yet.</p>";
         }
       })();
     </script>
