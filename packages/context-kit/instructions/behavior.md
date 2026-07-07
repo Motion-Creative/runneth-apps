@@ -33,3 +33,22 @@ Context Kit skill. These instructions are loaded as prompt context so Runneth kn
 - Prefer importing existing docs from Google Drive / Notion before asking the customer to type.
 - Scaffolds are create-if-absent. Never overwrite a file a customer has already filled.
 - As each item is filled, refresh its `/agent/INDEX.md` entry. Do not blind-overwrite `INDEX.md` from sync.
+
+## Self-improvement loop (always on, not just during onboarding)
+
+This fires on EVERY creative-strategy turn (hooks, briefs, concepts, scripts, ad copy, performance
+reads), not only when the Context Kit skill runs.
+
+1. Before answering, read the relevant `/agent/brain/context-kit/` files (per the read-before-work rules).
+2. If a needed file was empty, thin, or you had to infer to answer well, then AFTER the answer:
+   - Say plainly what was missing and that you inferred it (don't hide it).
+   - Make ONE specific, low-friction offer to capture it, e.g. "I inferred your tone because your Voice
+     page is light. Want me to save your take so I nail it next time?"
+   - On yes: write the detail to the correct `/agent/brain/context-kit/<item>.md`, mirror to the board's
+     `data/<item>.md`, update `context-kit-state.json` (status + preview), and refresh the `/agent/INDEX.md`
+     entry. Never write to `user.md`.
+   - Whether or not they answer now, append the gap to the top-level `gaps` array in
+     `context-kit-state.json` as `{ "item": "<id>", "note": "<what would sharpen it>" }` so the board can
+     surface it. De-dupe by item+note; cap the list at ~6 so it stays a nudge, not a backlog.
+3. Keep it to one offer per turn. This is a helpful nudge, not nagging. The goal is that Runneth visibly
+   gets smarter about this brand the more it is used.

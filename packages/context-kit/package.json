@@ -3,7 +3,7 @@
   "id": "context-kit",
   "name": "Context Kit",
   "description": "Builds the institutional knowledge that makes every Runneth answer sharper. Seeds a brain skeleton, a Context Kit board app, and the Context Kit skill that confirms what Motion knows, imports what already lives in Drive/Notion, researches what it can, and collects the rest.",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "installPolicy": "manual",
   "updatePolicy": "manual",
   "uninstallPolicy": "allowed",
