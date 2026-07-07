@@ -47,8 +47,5 @@ reads), not only when the Context Kit skill runs.
    - On yes: write the detail to the correct `/agent/brain/context-kit/<item>.md`, mirror to the board's
      `data/<item>.md`, update `context-kit-state.json` (status + preview), and refresh the `/agent/INDEX.md`
      entry. Never write to `user.md`.
-   - Whether or not they answer now, append the gap to the top-level `gaps` array in
-     `context-kit-state.json` as `{ "item": "<id>", "note": "<what would sharpen it>" }` so the board can
-     surface it. De-dupe by item+note; cap the list at ~6 so it stays a nudge, not a backlog.
 3. Keep it to one offer per turn. This is a helpful nudge, not nagging. The goal is that Runneth visibly
    gets smarter about this brand the more it is used.

@@ -84,12 +84,6 @@
       .ts-list li::before{content:"\2192";position:absolute;left:10px;top:8px;color:var(--muted);font-size:12px}
       .help-banner{display:flex;align-items:flex-start;gap:12px;margin-top:32px;padding:16px 20px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);font-size:14px;color:var(--ink);line-height:1.55}
       .help-banner .icon{font-size:18px;flex-shrink:0;margin-top:1px}
-      .gaps{margin-top:18px;padding:14px 16px;border:1px dashed var(--butterB);border-radius:var(--r);background:#fffaf0}
-      .gaps-head{font-size:12px;font-weight:800;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-      .gaps ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
-      .gaps li{font-size:12.5px;color:var(--ink);padding-left:16px;position:relative;line-height:1.5}
-      .gaps li::before{content:"\2022";position:absolute;left:3px;color:var(--butterB)}
-      .gaps .lbl{font-weight:700}
     </style>
   </head>
   <body>
@@ -203,15 +197,6 @@
         let pips=""; items.forEach(i=>{ pips+="<span class='pip"+(["confirmed","imported"].includes(i.status)?" on":"")+"'></span>"; });
         pr.innerHTML="<div class='pips'>"+pips+"</div><div class='prog-label'><strong>"+confirmed+" of "+total+"</strong> confirmed</div>";
         board.appendChild(pr);
-        // self-improvement nudges Runneth has flagged
-        const gaps=(state.gaps||[]);
-        if(gaps.length){
-          const labelOf={}; items.forEach(i=>labelOf[i.id]=i.label);
-          const gd=document.createElement("div"); gd.className="gaps";
-          gd.innerHTML="<div class='gaps-head'>\u2728 Runneth wants to sharpen these</div><ul>"+
-            gaps.slice(0,6).map(g=>"<li><span class='lbl'>"+esc(labelOf[g.item]||g.item||"")+":</span> "+esc(g.note||"")+"</li>").join("")+"</ul>";
-          board.appendChild(gd);
-        }
         // groups
         BUCKETS.forEach(b=>{
           const list = items.filter(i=>i.bucket===b.key);

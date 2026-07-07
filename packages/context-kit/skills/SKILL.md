@@ -97,4 +97,4 @@ thoughtStarters when stuck, one prompt when short. Prompt for the COMPLETE rule 
 - Reserve `drafted` for real Motion-data content; use `inferred` + a `sourceNote` for general-knowledge drafts.
 - Plain, non-technical language with the customer. No file paths or JSON in chat.
 - One item at a time; celebrate the Level 3 unlock when the meter completes.
-- The self-improvement loop is ALWAYS ON (see the package instruction): on any creative-strategy turn, if a context-kit file was thin and you inferred, offer once to capture it, save to the right file, and append the gap to `context-kit-state.json` `gaps` so the board surfaces it.
+- The self-improvement loop is ALWAYS ON (see the package instruction): on any creative-strategy turn, if a context-kit file was thin and you inferred, say so and offer once to capture the detail, then save it to the right file. Keep it to one in-chat offer, no persistent queue.
