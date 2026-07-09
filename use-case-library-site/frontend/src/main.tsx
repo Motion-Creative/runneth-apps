@@ -6,9 +6,15 @@ import { fetchCatalog } from './api'
 import { Modal } from './Modal'
 import { Home } from './pages/Home'
 import { All } from './pages/All'
+import { Revamp } from './pages/Revamp'
 import { colors } from './theme'
 import type { Catalog } from './types'
 import './style.css'
+
+// Revamp mode is ON by default while the library is rebuilt into packages.
+// Set VITE_REVAMP_MODE=false to restore the full catalog site (only works while
+// .use-case-library/catalog.json still exists in the repo).
+const REVAMP_MODE = import.meta.env.VITE_REVAMP_MODE !== 'false'
 
 const App = (): JSX.Element => (
   <BrowserRouter>
@@ -17,6 +23,11 @@ const App = (): JSX.Element => (
 )
 
 const AppShell = (): JSX.Element => {
+  if (REVAMP_MODE) return <Revamp />
+  return <CatalogApp />
+}
+
+const CatalogApp = (): JSX.Element => {
   const [catalog, setCatalog] = useState<Catalog | null>(null)
   const [error, setError] = useState<string | null>(null)
 
