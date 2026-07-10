@@ -10,7 +10,8 @@
     "import-from-ai",
     "brand-audit",
     "paid-strategy-audit",
-    "creative-deep-dive"
+    "creative-deep-dive",
+    "usage-efficiency-audit"
   ],
   "excluded": [
     {

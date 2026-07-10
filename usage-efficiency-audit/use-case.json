@@ -1,0 +1,8 @@
+{
+  "slug": "usage-efficiency-audit",
+  "display_title": "Get More Out of Every Conversation",
+  "pitch": "When usage hits 80% of plan, Runneth sends a friendly read on how the team could be working faster.",
+  "status": "experimental",
+  "category": "agent-foundations",
+  "github_path": "usage-efficiency-audit"
+}
