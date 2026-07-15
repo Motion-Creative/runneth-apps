@@ -32,8 +32,11 @@ const RESOURCE_TARGET_ROOTS = new Set([
   'agent_skills',
   'agent_tools',
 ])
+const INSTALL_POLICIES = new Set(['auto', 'manual'])
+const PACKAGE_MANAGER_VERSIONS = new Set([1, 2])
 const UPDATE_POLICIES = new Set(['auto', 'manual'])
 const UNINSTALL_POLICIES = new Set(['allowed', 'protected'])
+const MAX_TASK_TIMEOUT_MS = 2_147_483_647
 
 const abs = (path) => resolve(ROOT, path)
 const readJSON = (path) => JSON.parse(readFileSync(abs(path), 'utf8'))
@@ -55,6 +58,11 @@ const assertNonEmptyString = (value, label) => {
   assert.ok(value.trim().length > 0, `${label}: must not be empty`)
 }
 
+const assertTaskName = (value, label) => {
+  assertNonEmptyString(value, label)
+  assert.ok(value.trim().length <= 200, `${label}: must be at most 200 characters`)
+}
+
 const assertPackageId = (value, label) => {
   assertNonEmptyString(value, label)
   assert.ok(PACKAGE_ID.test(value), `${label}: must be kebab-case package id`)
@@ -70,11 +78,31 @@ const assertSemver = (value, label) => {
   assert.ok(SEMVER.test(value), `${label}: must be semver X.Y.Z`)
 }
 
+const assertOptionalNonEmptyString = (object, key, label) => {
+  if (!(key in object)) {
+    return
+  }
+  assertNonEmptyString(object[key], `${label}.${key}`)
+}
+
+const assertOptionalJsonValue = (object, key, label) => {
+  if (!(key in object)) {
+    return
+  }
+
+  assert.notEqual(object[key], undefined, `${label}.${key}: must be JSON`)
+}
+
+const assertRequiredJsonValue = (object, key, label) => {
+  assert.ok(key in object, `${label}.${key}: is required`)
+  assert.notEqual(object[key], undefined, `${label}.${key}: must be JSON`)
+}
+
 const assertSource = (source, label) => {
   assert.ok(isRecord(source), `${label}: must be an object`)
   assert.equal(typeof source.type, 'string', `${label}.type: must be a string`)
 
-  if (source.type === 'github') {
+  if (source.type === 'github' || source.type === 'backend-github') {
     assertKeys(source, ['owner', 'path', 'ref', 'repo', 'type'], label)
     assert.ok(GITHUB_OWNER.test(source.owner), `${label}.owner: invalid GitHub owner`)
     assert.ok(GITHUB_REPO.test(source.repo), `${label}.repo: invalid GitHub repo`)
@@ -85,7 +113,7 @@ const assertSource = (source, label) => {
     return
   }
 
-  assert.fail(`${label}.type: must be github`)
+  assert.fail(`${label}.type: must be github or backend-github`)
 }
 
 const assertTarget = (target, label) => {
@@ -125,13 +153,103 @@ const assertPackageResource = (resource, label) => {
   assert.fail(`${label}.type: must be file, directory, or package_instruction`)
 }
 
-const assertPackageManifest = (manifest, label) => {
+const assertTaskSpec = (spec, label) => {
+  assert.ok(isRecord(spec), `${label}: must be an object`)
+  assert.equal(typeof spec.kind, 'string', `${label}.kind: must be a string`)
+
+  if (spec.kind === 'agent') {
+    const expectedKeys = ['kind', 'prompt']
+    if ('name' in spec) {
+      expectedKeys.push('name')
+    }
+    if ('outputSchema' in spec) {
+      expectedKeys.push('outputSchema')
+    }
+    assertKeys(spec, expectedKeys, label)
+    assertNonEmptyString(spec.prompt, `${label}.prompt`)
+    if ('name' in spec) {
+      assertTaskName(spec.name, `${label}.name`)
+    }
+    assertOptionalJsonValue(spec, 'outputSchema', label)
+    return
+  }
+
+  if (spec.kind === 'bash') {
+    const expectedKeys = ['kind', 'script']
+    if ('cwd' in spec) {
+      expectedKeys.push('cwd')
+    }
+    if ('env' in spec) {
+      expectedKeys.push('env')
+    }
+    if ('timeoutMs' in spec) {
+      expectedKeys.push('timeoutMs')
+    }
+    assertKeys(spec, expectedKeys, label)
+    assertNonEmptyString(spec.script, `${label}.script`)
+    assertOptionalNonEmptyString(spec, 'cwd', label)
+    if ('env' in spec) {
+      assert.ok(isRecord(spec.env), `${label}.env: must be an object`)
+      for (const [key, value] of Object.entries(spec.env)) {
+        assert.equal(typeof value, 'string', `${label}.env.${key}: must be a string`)
+      }
+    }
+    if ('timeoutMs' in spec) {
+      assert.equal(Number.isInteger(spec.timeoutMs), true, `${label}.timeoutMs: must be an integer`)
+      assert.ok(spec.timeoutMs > 0, `${label}.timeoutMs: must be positive`)
+      assert.ok(
+        spec.timeoutMs <= MAX_TASK_TIMEOUT_MS,
+        `${label}.timeoutMs: must be at most ${MAX_TASK_TIMEOUT_MS}`,
+      )
+    }
+    return
+  }
+
+  if (spec.kind === 'workflow') {
+    assertKeys(spec, ['input', 'kind', 'workflow'], label)
+    assertRequiredJsonValue(spec, 'input', label)
+    assertTaskName(spec.workflow, `${label}.workflow`)
+    return
+  }
+
+  assert.fail(`${label}.kind: must be agent, bash, or workflow`)
+}
+
+const assertPackageTask = (task, label) => {
+  assert.ok(isRecord(task), `${label}: must be an object`)
+  assertKeys(task, ['name', 'spec'], label)
+  assertTaskName(task.name, `${label}.name`)
+  assertTaskSpec(task.spec, `${label}.spec`)
+}
+
+const assertPackageWorkflow = (workflow, label) => {
+  assert.ok(isRecord(workflow), `${label}: must be an object`)
+  const expectedKeys = ['name', 'sourcePath']
+  if ('entry' in workflow) {
+    expectedKeys.push('entry')
+  }
+  if ('inputSchema' in workflow) {
+    expectedKeys.push('inputSchema')
+  }
+  if ('outputSchema' in workflow) {
+    expectedKeys.push('outputSchema')
+  }
+  assertKeys(workflow, expectedKeys, label)
+  assertTaskName(workflow.name, `${label}.name`)
+  assertRelativePath(workflow.sourcePath, `${label}.sourcePath`)
+  assertOptionalNonEmptyString(workflow, 'entry', label)
+  assertOptionalJsonValue(workflow, 'inputSchema', label)
+  assertOptionalJsonValue(workflow, 'outputSchema', label)
+}
+
+const assertPackageManifestV1 = (manifest, label) => {
   assert.ok(isRecord(manifest), `${label}: must be an object`)
   assertKeys(
     manifest,
     [
       'description',
       'id',
+      'installPolicy',
       'name',
       'resources',
       'schemaVersion',
@@ -146,6 +264,7 @@ const assertPackageManifest = (manifest, label) => {
   assertNonEmptyString(manifest.name, `${label}.name`)
   assertNonEmptyString(manifest.description, `${label}.description`)
   assertSemver(manifest.version, `${label}.version`)
+  assert.ok(INSTALL_POLICIES.has(manifest.installPolicy), `${label}.installPolicy: invalid`)
   assert.ok(UPDATE_POLICIES.has(manifest.updatePolicy), `${label}.updatePolicy: invalid`)
   assert.ok(
     UNINSTALL_POLICIES.has(manifest.uninstallPolicy),
@@ -157,6 +276,71 @@ const assertPackageManifest = (manifest, label) => {
   })
 }
 
+const assertPackageManifestV2 = (manifest, label) => {
+  assert.ok(isRecord(manifest), `${label}: must be an object`)
+  const expectedKeys = [
+    'description',
+    'id',
+    'installPolicy',
+    'name',
+    'resources',
+    'schemaVersion',
+    'uninstallPolicy',
+    'updatePolicy',
+    'version',
+  ]
+  if ('tasks' in manifest) {
+    expectedKeys.push('tasks')
+  }
+  if ('workflows' in manifest) {
+    expectedKeys.push('workflows')
+  }
+  assertKeys(manifest, expectedKeys, label)
+  assert.equal(manifest.schemaVersion, 2, `${label}.schemaVersion: must be 2`)
+  assertPackageId(manifest.id, `${label}.id`)
+  assertNonEmptyString(manifest.name, `${label}.name`)
+  assertNonEmptyString(manifest.description, `${label}.description`)
+  assertNonEmptyString(manifest.version, `${label}.version`)
+  assert.ok(INSTALL_POLICIES.has(manifest.installPolicy), `${label}.installPolicy: invalid`)
+  assert.ok(UPDATE_POLICIES.has(manifest.updatePolicy), `${label}.updatePolicy: invalid`)
+  assert.ok(
+    UNINSTALL_POLICIES.has(manifest.uninstallPolicy),
+    `${label}.uninstallPolicy: invalid`,
+  )
+  assert.ok(Array.isArray(manifest.resources), `${label}.resources: must be array`)
+  manifest.resources.forEach((resource, index) => {
+    assertPackageResource(resource, `${label}.resources[${index}]`)
+  })
+  if ('tasks' in manifest) {
+    assert.ok(Array.isArray(manifest.tasks), `${label}.tasks: must be array`)
+    manifest.tasks.forEach((task, index) => {
+      assertPackageTask(task, `${label}.tasks[${index}]`)
+    })
+  }
+  if ('workflows' in manifest) {
+    assert.ok(Array.isArray(manifest.workflows), `${label}.workflows: must be array`)
+    manifest.workflows.forEach((workflow, index) => {
+      assertPackageWorkflow(workflow, `${label}.workflows[${index}]`)
+    })
+  }
+}
+
+const assertPackageManifest = (manifest, label) => {
+  assert.ok(isRecord(manifest), `${label}: must be an object`)
+
+  if (manifest.schemaVersion === 1) {
+    assertPackageManifestV1(manifest, label)
+    return
+  }
+
+  if (manifest.schemaVersion === 2) {
+    assertPackageManifestV2(manifest, label)
+    return
+  }
+
+  assert.fail(`${label}.schemaVersion: must be 1 or 2`)
+}
+
 const assertIndexEntry = (entry, label) => {
   assert.ok(isRecord(entry), `${label}: must be an object`)
   assertKeys(
@@ -165,6 +349,7 @@ const assertIndexEntry = (entry, label) => {
       'categories',
       'description',
       'id',
+      'installPolicy',
       'name',
       'packageManagerVersion',
       'source',
@@ -174,11 +359,15 @@ const assertIndexEntry = (entry, label) => {
     ],
     label,
   )
-  assert.equal(entry.packageManagerVersion, 1, `${label}.packageManagerVersion: must be 1`)
+  assert.ok(
+    PACKAGE_MANAGER_VERSIONS.has(entry.packageManagerVersion),
+    `${label}.packageManagerVersion: must be 1 or 2`,
+  )
   assertPackageId(entry.id, `${label}.id`)
   assertNonEmptyString(entry.name, `${label}.name`)
   assertNonEmptyString(entry.description, `${label}.description`)
   assertSemver(entry.version, `${label}.version`)
+  assert.ok(INSTALL_POLICIES.has(entry.installPolicy), `${label}.installPolicy: invalid`)
   assert.ok(UPDATE_POLICIES.has(entry.updatePolicy), `${label}.updatePolicy: invalid`)
   assert.ok(UNINSTALL_POLICIES.has(entry.uninstallPolicy), `${label}.uninstallPolicy: invalid`)
   assert.ok(Array.isArray(entry.categories), `${label}.categories: must be array`)
@@ -205,7 +394,7 @@ const validatePackageIndex = (index) => {
 }
 
 const localManifestPathForSource = (source) => {
-  return `${source.path}/runneth-package.json`
+  return `${source.path}/package.json`
 }
 
 const assertPathHasNoSymlinkSegments = (relativePath, label) => {
@@ -256,11 +445,21 @@ const assertManifestMatchesIndexEntry = (entry, manifest, manifestPath) => {
     entry.version,
     `${entry.id}: manifest version does not match index version`,
   )
+  assert.equal(
+    manifest.schemaVersion,
+    entry.packageManagerVersion,
+    `${entry.id}: manifest schemaVersion does not match index packageManagerVersion`,
+  )
   assert.equal(manifest.name, entry.name, `${entry.id}: manifest name does not match index name`)
   assert.equal(
     manifest.description,
     entry.description,
     `${entry.id}: manifest description does not match index description`,
+  )
+  assert.equal(
+    manifest.installPolicy,
+    entry.installPolicy,
+    `${entry.id}: manifest installPolicy does not match index installPolicy`,
   )
   assert.equal(
     manifest.updatePolicy,
@@ -272,7 +471,22 @@ const assertManifestMatchesIndexEntry = (entry, manifest, manifestPath) => {
     entry.uninstallPolicy,
     `${entry.id}: manifest uninstallPolicy does not match index uninstallPolicy`,
   )
-  assertManifestResourceFilesExist(manifest, manifestPath.replace(/\/runneth-package\.json$/, ''))
+  const manifestRootPath = manifestPath.replace(/\/package\.json$/, '')
+  assertManifestResourceFilesExist(manifest, manifestRootPath)
+  assertManifestAssetFilesExist(manifest, manifestRootPath)
+}
+
+const assertManifestAssetFilesExist = (manifest, manifestRootPath) => {
+  if (manifest.schemaVersion !== 2 || !Array.isArray(manifest.workflows)) {
+    return
+  }
+
+  for (const [index, workflow] of manifest.workflows.entries()) {
+    assertExistingFile(
+      `${manifestRootPath}/${workflow.sourcePath}`,
+      `${manifest.id}: workflows[${index}] ${workflow.name}.sourcePath`,
+    )
+  }
 }
 
 const getIndexedPackageById = (index) =>
@@ -310,11 +524,13 @@ const readPullRequestLabels = () => {
   return event.pull_request?.labels?.map((label) => label.name).filter(Boolean) ?? []
 }
 
-const isAutoInstallable = (entry) => entry.updatePolicy === 'auto'
+const affectsManagedSync = (entry) =>
+  entry.installPolicy === 'auto' || entry.updatePolicy === 'auto'
 
 const sourceFingerprint = (entry) =>
   JSON.stringify({
     categories: [...entry.categories].sort(),
+    installPolicy: entry.installPolicy,
     source: entry.source,
     uninstallPolicy: entry.uninstallPolicy,
     updatePolicy: entry.updatePolicy,
@@ -324,8 +540,8 @@ const sourceFingerprint = (entry) =>
 const fleetImpactMessages = (baseIndex, nextIndex) => {
   if (baseIndex === null) {
     return nextIndex.packages
-      .filter(isAutoInstallable)
-      .map((entry) => `${entry.id}: new auto package`)
+      .filter(affectsManagedSync)
+      .map((entry) => `${entry.id}: new managed-sync package`)
   }
 
   const baseById = getIndexedPackageById(baseIndex)
@@ -335,25 +551,25 @@ const fleetImpactMessages = (baseIndex, nextIndex) => {
   for (const nextEntry of nextIndex.packages) {
     const baseEntry = baseById.get(nextEntry.id)
     if (!baseEntry) {
-      if (isAutoInstallable(nextEntry)) {
-        messages.push(`${nextEntry.id}: new auto package`)
+      if (affectsManagedSync(nextEntry)) {
+        messages.push(`${nextEntry.id}: new managed-sync package`)
       }
       continue
     }
 
-    if (!isAutoInstallable(baseEntry) && isAutoInstallable(nextEntry)) {
-      messages.push(`${nextEntry.id}: changed to auto package`)
+    if (!affectsManagedSync(baseEntry) && affectsManagedSync(nextEntry)) {
+      messages.push(`${nextEntry.id}: changed to managed-sync package`)
       continue
     }
 
-    if (isAutoInstallable(baseEntry) && sourceFingerprint(baseEntry) !== sourceFingerprint(nextEntry)) {
-      messages.push(`${nextEntry.id}: changed auto package version, source, policy, or categories`)
+    if (affectsManagedSync(baseEntry) && sourceFingerprint(baseEntry) !== sourceFingerprint(nextEntry)) {
+      messages.push(`${nextEntry.id}: changed managed-sync package version, source, policy, or categories`)
     }
   }
 
   for (const baseEntry of baseIndex.packages) {
-    if (isAutoInstallable(baseEntry) && !nextById.has(baseEntry.id)) {
-      messages.push(`${baseEntry.id}: removed auto package`)
+    if (affectsManagedSync(baseEntry) && !nextById.has(baseEntry.id)) {
+      messages.push(`${baseEntry.id}: removed managed-sync package`)
     }
   }
 
@@ -364,7 +580,143 @@ test('package-index.json matches the package index contract', () => {
   validatePackageIndex(readJSON(INDEX_PATH))
 })
 
-test('indexed packages match their runneth-package.json manifests', () => {
+test('package index contract accepts package manager v2 entries', () => {
+  validatePackageIndex({
+    indexRevision: 'test',
+    packages: [
+      {
+        categories: ['analytics'],
+        description: 'Analytics utilities',
+        id: 'analytics',
+        installPolicy: 'manual',
+        name: 'Analytics',
+        packageManagerVersion: 2,
+        source: {
+          owner: PACKAGE_SOURCE_OWNER,
+          path: 'analytics',
+          ref: PACKAGE_SOURCE_REF,
+          repo: PACKAGE_SOURCE_REPO,
+          type: 'backend-github',
+        },
+        uninstallPolicy: 'allowed',
+        updatePolicy: 'auto',
+        version: '1.0.0',
+      },
+    ],
+    schemaVersion: 1,
+  })
+})
+
+test('package manifest contract accepts v2 tasks and workflows', () => {
+  assertPackageManifest(
+    {
+      description: 'Analytics utilities',
+      id: 'analytics',
+      installPolicy: 'manual',
+      name: 'Analytics',
+      resources: [
+        {
+          executable: true,
+          id: 'cli',
+          sourcePath: 'bin/analytics',
+          target: {
+            path: 'analytics',
+            root: 'agent_tools',
+          },
+          type: 'file',
+        },
+        {
+          executablePaths: ['scripts/run'],
+          id: 'scripts',
+          sourcePath: 'scripts',
+          target: {
+            path: 'analytics/scripts',
+            root: 'agent_tools',
+          },
+          type: 'directory',
+        },
+        {
+          id: 'instructions',
+          sourcePath: 'instructions.md',
+          type: 'package_instruction',
+        },
+      ],
+      schemaVersion: 2,
+      tasks: [
+        {
+          name: 'Classify creative',
+          spec: {
+            kind: 'agent',
+            name: 'creative-classifier',
+            outputSchema: {
+              type: 'object',
+            },
+            prompt: 'Classify this creative.',
+          },
+        },
+        {
+          name: 'Normalize rows',
+          spec: {
+            cwd: './scripts',
+            env: {
+              MODE: 'strict',
+            },
+            kind: 'bash',
+            script: 'node normalize.js',
+            timeoutMs: 30_000,
+          },
+        },
+        {
+          name: 'Summarize rows',
+          spec: {
+            input: {
+              limit: 10,
+            },
+            kind: 'workflow',
+            workflow: 'summarize-rows',
+          },
+        },
+      ],
+      uninstallPolicy: 'allowed',
+      updatePolicy: 'auto',
+      version: '1.0.0',
+      workflows: [
+        {
+          entry: 'wf',
+          inputSchema: {
+            type: 'object',
+          },
+          name: 'summarize-rows',
+          outputSchema: null,
+          sourcePath: 'workflows/summarize.ts',
+        },
+      ],
+    },
+    'package.json',
+  )
+})
+
+test('package manifest contract keeps tasks and workflows out of v1', () => {
+  assert.throws(() => {
+    assertPackageManifest(
+      {
+        description: 'Analytics utilities',
+        id: 'analytics',
+        installPolicy: 'manual',
+        name: 'Analytics',
+        resources: [],
+        schemaVersion: 1,
+        tasks: [],
+        uninstallPolicy: 'allowed',
+        updatePolicy: 'auto',
+        version: '1.0.0',
+      },
+      'package.json',
+    )
+  })
+})
+
+test('indexed packages match their package.json manifests', () => {
   const index = readJSON(INDEX_PATH)
   for (const entry of index.packages) {
     const manifestPath = localManifestPathForSource(entry.source)
@@ -376,7 +728,7 @@ test('indexed packages match their runneth-package.json manifests', () => {
   }
 })
 
-test('auto package changes require explicit fleet approval', () => {
+test('managed-sync package changes require explicit fleet approval', () => {
   const nextIndex = readJSON(INDEX_PATH)
   const messages = fleetImpactMessages(readBaseIndex(), nextIndex)
   if (messages.length === 0) {
@@ -387,7 +739,7 @@ test('auto package changes require explicit fleet approval', () => {
   assert.ok(
     labels.includes(FLEET_APPROVAL_LABEL),
     [
-      'This PR changes auto-installable Runneth packages.',
+      'This PR changes managed-sync Runneth packages.',
       'These changes may sync to matching VMs after merge.',
       `Add the ${FLEET_APPROVAL_LABEL} label after core engineering approval.`,
       '',
