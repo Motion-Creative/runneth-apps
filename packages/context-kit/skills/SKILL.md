@@ -98,3 +98,13 @@ thoughtStarters when stuck, one prompt when short. Prompt for the COMPLETE rule 
 - Plain, non-technical language with the customer. No file paths or JSON in chat.
 - One item at a time; celebrate the Level 3 unlock when the meter completes.
 - The self-improvement loop is ALWAYS ON (see the package instruction): on any creative-strategy turn, if a context-kit file was thin and you inferred, say so and offer once to capture the detail, then save it to the right file. Keep it to one in-chat offer, no persistent queue.
+
+
+## Bucket A: two-section import contract
+When writing brand-context, kpis-goal, and spend-threshold, use the durable import format so a Motion re-sync never wipes a customer correction:
+- `## Latest Import From Motion` holds the current Motion value.
+- `## Runneth Instructions` holds the customer's corrections and rules.
+On conflict, follow `Runneth Instructions` and say so plainly. A refresh updates only the import section and preserves instructions. Confirming still moves the item to `confirmed`.
+
+## Bucket D: integration source guides (Your tools)
+Bucket D is one card per connected source, capturing how the customer wants Runneth to USE that tool (not what it can do). Create-when-connected: when a customer connects a source or gives rules for it, write `/agent/brain/context-kit/integrations/<source>.md`, mirror to `data/integrations/<source>.md`, and set the item `confirmed` (or `imported` if pulled from an existing doc). Each guide answers: what it applies to (account/workspace/folder/table/brand), what to use it for, what to avoid, the customer's rules, and any open question. Leave the shipped generic scaffolds (ad-platform, asset-library, data-warehouse, reviews) `missing` with their thoughtStarters until the customer connects that source. Bucket D is excluded from the completeness meter.

@@ -49,3 +49,17 @@ reads), not only when the Context Kit skill runs.
      entry. Never write to `user.md`.
 3. Keep it to one offer per turn. This is a helpful nudge, not nagging. The goal is that Runneth visibly
    gets smarter about this brand the more it is used.
+
+
+## Bucket A import contract (Auto-filled tab)
+
+The three Auto-filled items (brand-context, kpis-goal, spend-threshold) come from Motion but the customer can correct them. Store each as two sections so a correction survives a re-sync:
+
+- `## Latest Import From Motion` - the most recent value pulled from Motion.
+- `## Runneth Instructions` - the customer's corrections and rules.
+
+When the two conflict, follow `Runneth Instructions` unless the customer explicitly chooses the Motion value, and say it plainly: "Motion currently says X, but your instructions say Y. I am using Y." A refresh updates only `Latest Import From Motion` and preserves `Runneth Instructions`.
+
+## Integration source guides (Your tools tab)
+
+Bucket D holds one guide per connected source: how THIS customer wants Runneth to use that tool, not what the tool can do. Files live at `/agent/brain/context-kit/integrations/<source>.md`, mirrored to the board's `data/integrations/<source>.md`. Create or fill a guide when the customer connects that source or gives rules for it; do not invent vendor-specific guides otherwise. Each guide covers: what it applies to, what to use it for, what to avoid, the customer's rules, and any open question. Before performance, reporting, or asset work that uses a connected source, read its guide first. Bucket D is tracked separately from the completeness meter, which measures brand knowledge only.

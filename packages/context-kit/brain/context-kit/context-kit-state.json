@@ -144,6 +144,62 @@
         "Non-negotiables for claims, tone, or offers?",
         "Any past ad types or messages to avoid repeating?"
       ]
+    },
+    {
+      "id": "integration-ad-platform",
+      "label": "Ad platform",
+      "bucket": "D",
+      "status": "missing",
+      "why": "How you want Runneth to read your ad data.",
+      "dataFile": "integrations/ad-platform.md",
+      "enrich": "Connect your ad platform (Meta, TikTok) so Runneth can draft this from your live account.",
+      "thoughtStarters": [
+        "Which metric should Runneth grade on?",
+        "Any spend floor before a result counts?",
+        "Campaigns that are always-on and shouldn't be flagged as new?"
+      ]
+    },
+    {
+      "id": "integration-asset-library",
+      "label": "Asset library",
+      "bucket": "D",
+      "status": "missing",
+      "why": "Which assets Runneth can safely use.",
+      "dataFile": "integrations/asset-library.md",
+      "enrich": "Connect your asset library (Google Drive, a DAM) so Runneth pulls only approved, brand-safe assets.",
+      "thoughtStarters": [
+        "Which folder holds cleared, approved assets?",
+        "What's off-limits (WIP, legal review)?",
+        "How do you mark a final, shippable version?"
+      ]
+    },
+    {
+      "id": "integration-data-warehouse",
+      "label": "Data warehouse",
+      "bucket": "D",
+      "status": "missing",
+      "why": "How Runneth should read your warehouse.",
+      "dataFile": "integrations/data-warehouse.md",
+      "enrich": "Connect your warehouse (Snowflake, BigQuery) for blended reporting Runneth can reconcile against.",
+      "thoughtStarters": [
+        "Which table is the source of truth for revenue?",
+        "Net or gross of fees?",
+        "What should Runneth NOT pull from here?"
+      ]
+    },
+    {
+      "id": "integration-reviews",
+      "label": "Reviews platform",
+      "bucket": "D",
+      "status": "missing",
+      "why": "How Runneth should use your reviews.",
+      "dataFile": "integrations/reviews.md",
+      "enrich": "Connect your reviews platform (Yotpo, Okendo, Trustpilot) so Runneth mines real customer language.",
+      "thoughtStarters": [
+        "Which products' reviews matter most?",
+        "Any themes you already know customers repeat?",
+        "Anything to exclude (spam, off-topic)?"
+      ]
     }
   ]
 }
