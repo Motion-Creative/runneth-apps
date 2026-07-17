@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "id": "creative-strategy-skills",
+  "name": "Creative Strategy Skills",
+  "version": "1.0.0",
+  "description": "Alysha's creative-strategy framework as a skills-only package: 15 independently callable skills across foundation, strategy, and execution that take a brand from understanding to strategically mapped ads.",
+  "updatePolicy": "manual",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "package-behavior",
+      "type": "package_instruction",
+      "sourcePath": "instructions/behavior.md"
+    },
+    {
+      "id": "skill-brand-intake",
+      "type": "directory",
+      "sourcePath": "skills/brand-intake",
+      "target": {
+        "root": "agent_skills",
+        "path": "brand-intake"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-product-catalog",
+      "type": "directory",
+      "sourcePath": "skills/product-catalog",
+      "target": {
+        "root": "agent_skills",
+        "path": "product-catalog"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-review-audit",
+      "type": "directory",
+      "sourcePath": "skills/review-audit",
+      "target": {
+        "root": "agent_skills",
+        "path": "review-audit"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-brand-relevant-keywords",
+      "type": "directory",
+      "sourcePath": "skills/brand-relevant-keywords",
+      "target": {
+        "root": "agent_skills",
+        "path": "brand-relevant-keywords"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-competitor-analysis",
+      "type": "directory",
+      "sourcePath": "skills/competitor-analysis",
+      "target": {
+        "root": "agent_skills",
+        "path": "competitor-analysis"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-creative-strategy-engine",
+      "type": "directory",
+      "sourcePath": "skills/creative-strategy-engine",
+      "target": {
+        "root": "agent_skills",
+        "path": "creative-strategy-engine"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-hook-writing",
+      "type": "directory",
+      "sourcePath": "skills/hook-writing",
+      "target": {
+        "root": "agent_skills",
+        "path": "hook-writing"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-hook-analysis",
+      "type": "directory",
+      "sourcePath": "skills/hook-analysis",
+      "target": {
+        "root": "agent_skills",
+        "path": "hook-analysis"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-hook-evaluator",
+      "type": "directory",
+      "sourcePath": "skills/hook-evaluator",
+      "target": {
+        "root": "agent_skills",
+        "path": "hook-evaluator"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-hook-tactics",
+      "type": "directory",
+      "sourcePath": "skills/hook-tactics",
+      "target": {
+        "root": "agent_skills",
+        "path": "hook-tactics"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-hook-voice-patterns",
+      "type": "directory",
+      "sourcePath": "skills/hook-voice-patterns",
+      "target": {
+        "root": "agent_skills",
+        "path": "hook-voice-patterns"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-creative-mechanics",
+      "type": "directory",
+      "sourcePath": "skills/creative-mechanics",
+      "target": {
+        "root": "agent_skills",
+        "path": "creative-mechanics"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-visual-formats",
+      "type": "directory",
+      "sourcePath": "skills/visual-formats",
+      "target": {
+        "root": "agent_skills",
+        "path": "visual-formats"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-creative-analysis",
+      "type": "directory",
+      "sourcePath": "skills/creative-analysis",
+      "target": {
+        "root": "agent_skills",
+        "path": "creative-analysis"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "skill-voice-copy-standards",
+      "type": "directory",
+      "sourcePath": "skills/voice-copy-standards",
+      "target": {
+        "root": "agent_skills",
+        "path": "voice-copy-standards"
+      },
+      "executablePaths": []
+    }
+  ]
+}

@@ -1,5 +1,25 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "initial-empty",
-  "packages": []
+  "indexRevision": "creative-strategy-skills-1.0.0",
+  "packages": [
+    {
+      "id": "creative-strategy-skills",
+      "name": "Creative Strategy Skills",
+      "description": "Alysha's creative-strategy framework as a skills-only package: 15 independently callable skills across foundation, strategy, and execution that take a brand from understanding to strategically mapped ads.",
+      "version": "1.0.0",
+      "categories": [
+        "creative-strategy"
+      ],
+      "packageManagerVersion": 1,
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "packages/creative-strategy-skills",
+        "ref": "main"
+      },
+      "updatePolicy": "manual",
+      "uninstallPolicy": "allowed"
+    }
+  ]
 }
