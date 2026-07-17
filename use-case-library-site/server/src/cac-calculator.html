@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Find the ad spend that hits peak cohort profit, based on Abir Syed's Profit Last framework." />
+<link rel="icon" href="https://runt-media.motionapp.com/webeth/runneth_favicon-99062.ico" />
+<title>CAC Scaling Target Calculator | Runneth</title>
+<style>
+  :root{
+    --rn-bg:#fff;--rn-surface:#f6f6f6;--rn-surface-warm:#fff6d9;--rn-surface-lime:#f5ffd9;
+    --rn-bg-highlight:#ffe99a;--rn-bg-cream:#fff7d6;--rn-ink:#1c180e;--rn-text-muted:#6b6757;
+    --rn-ink-on-dark:#f3efe0;--rn-lime:#ceff5b;--rn-lime-light:#e1f5a8;--rn-success:#3fb55c;
+    --rn-success-dark:#1f7a3a;--rn-error:#b3261e;--rn-border:#ecebe0;--rn-border-warm:#ffe99a;
+    --rn-border-lime:#e1f5a8;--rn-border-strong:#1c180e;
+    --rn-font-sans:"GT Standard",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --rn-font-mono:"FKT Sinvoll Sans Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --rn-radius-card:14px;--rn-radius-compact:10px;--rn-radius-pill:4px;
+  }
+  *{box-sizing:border-box}html{overflow-x:hidden}
+  body{margin:0;min-height:100vh;overflow-x:hidden;background:var(--rn-bg);color:var(--rn-ink);
+    font-family:var(--rn-font-sans);font-size:17px;-webkit-font-smoothing:antialiased;line-height:1.55}
+  a{color:inherit}
+  .nav{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+    gap:16px;padding:15px clamp(16px,5vw,40px);background:#ffffffeb;backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--rn-border)}
+  .nav .brand{display:flex;align-items:center;font-weight:800;font-size:23px;letter-spacing:-.02em}
+  .nav-actions{display:flex;align-items:center;gap:10px}
+  .btn{display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:15px;text-decoration:none;
+    padding:11px 18px;border-radius:var(--rn-radius-pill);border:1px solid var(--rn-border-strong);cursor:pointer;
+    transition:transform .08s ease,background .15s ease}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--rn-lime);color:var(--rn-ink);border-color:var(--rn-ink)}
+  .btn-primary:hover{background:#d7ff77}
+  .btn-ghost{background:transparent;color:var(--rn-ink)}.btn-ghost:hover{background:var(--rn-surface)}
+  .btn-ink{background:var(--rn-ink);color:var(--rn-ink-on-dark);border-color:var(--rn-ink)}.btn-ink:hover{background:#2a2413}
+  .nav-actions .btn-ghost{display:none}
+  @media(min-width:720px){.nav-actions .btn-ghost{display:inline-flex}}
+  .wrap{max-width:940px;margin:0 auto;padding:0 clamp(16px,5vw,40px)}
+  .section{margin:clamp(48px,8vw,80px) 0}
+  h1.title{font-size:clamp(44px,6.4vw,80px);font-weight:800;letter-spacing:-.028em;line-height:1.02;margin:0 0 22px}
+  h1.title .u{display:inline-block;position:relative}
+  h1.title .u::after{content:"";position:absolute;left:-2px;right:-2px;bottom:8px;height:16px;background:var(--rn-lime);z-index:-1;border-radius:2px}
+  h2.sec{font-size:clamp(28px,3.6vw,38px);font-weight:800;letter-spacing:-.02em;margin:0 0 10px}
+  .card-title{font-size:22px;font-weight:800;letter-spacing:-.01em;margin:0 0 6px}
+  .lede{font-size:clamp(18px,2.2vw,22px);color:var(--rn-text-muted);max-width:640px;margin:0 0 8px}
+  .credit{font-size:15px;color:var(--rn-text-muted);margin-top:24px}.credit b{color:var(--rn-ink)}
+  .sec-sub{color:var(--rn-text-muted);font-size:17px;margin:0 0 26px;max-width:660px}
+  .hero{padding-top:clamp(44px,7vw,76px)}
+  .eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:13px;font-weight:700;color:var(--rn-text-muted);margin:0 0 20px}
+  .eyebrow .accent{background:var(--rn-lime);color:var(--rn-ink);padding:2px 7px;border-radius:3px}
+  .card{background:var(--rn-surface);border:1px solid var(--rn-border);border-radius:var(--rn-radius-card);padding:24px 26px}
+  .card.ink{background:var(--rn-ink);color:var(--rn-ink-on-dark);border-color:var(--rn-ink)}
+  .out-card{background:var(--rn-bg-cream);border-color:var(--rn-border-warm)}
+  .out-card>.kicker{margin-bottom:16px}
+  .kicker{display:inline-block;font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+    padding:5px 11px;border-radius:var(--rn-radius-pill);background:var(--rn-ink);color:var(--rn-ink-on-dark);margin-bottom:15px}
+  .kicker.lime{background:var(--rn-lime);color:var(--rn-ink)}.kicker.warm{background:var(--rn-bg-highlight);color:var(--rn-ink)}
+  .flaws{display:grid;grid-template-columns:1fr;gap:14px}
+  @media(min-width:760px){.flaws{grid-template-columns:repeat(3,1fr)}}
+  .flaw h3{font-size:18px;margin:0 0 7px;font-weight:800}.flaw p{font-size:15px;color:var(--rn-text-muted);margin:0}
+  .flaw .num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;
+    background:var(--rn-ink);color:var(--rn-ink-on-dark);font-size:14px;font-weight:800;margin-bottom:13px}
+  .flaw.hot .num{background:var(--rn-lime);color:var(--rn-ink)}
+  .calc{display:grid;grid-template-columns:1fr;gap:18px}
+  @media(min-width:900px){.calc{grid-template-columns:1fr 1fr;align-items:start}}
+  .step-label{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--rn-text-muted);margin:0 0 14px}
+  .field{margin-bottom:16px}.field:last-child{margin-bottom:0}
+  .field label{display:block;font-size:15px;font-weight:700;margin-bottom:6px}
+  .field .hint{font-size:14px;color:var(--rn-text-muted);font-weight:400;margin-top:4px}
+  .input-money,.input-plain{position:relative}
+  .input-money::before{content:"$";position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--rn-text-muted);font-weight:600;z-index:1;pointer-events:none}
+  .input-pct::after{content:"%";position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--rn-text-muted);font-weight:600;z-index:1;pointer-events:none}
+  .field input[type=number]{width:100%;font-family:var(--rn-font-mono);font-size:17px;font-weight:600;
+    padding:12px 13px;border:1px solid var(--rn-border);border-radius:var(--rn-radius-compact);background:#fff;color:var(--rn-ink);-moz-appearance:textfield}
+  .input-money input[type=number]{padding-left:34px}.input-pct input[type=number]{padding-right:34px}
+  .field input[type=number]:focus{outline:none;border-color:var(--rn-ink);box-shadow:0 0 0 3px var(--rn-lime-light)}
+  .anchor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .results{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+  .stat{background:#fff;border:1px solid var(--rn-border);border-radius:var(--rn-radius-compact);padding:16px 17px}
+  .stat.hero-stat{grid-column:1/-1;background:var(--rn-ink);color:var(--rn-ink-on-dark);border-color:var(--rn-ink)}
+  .stat .k{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--rn-text-muted);margin:0 0 5px}
+  .stat.hero-stat .k{color:var(--rn-lime)}
+  .stat .v{font-family:var(--rn-font-mono);font-size:30px;font-weight:700;letter-spacing:-.01em;margin:0}
+  .stat.hero-stat .v{font-size:38px}
+  .stat .sub{font-size:13px;color:var(--rn-text-muted);margin:4px 0 0}.stat.hero-stat .sub{color:#cfc9b4}
+  .verdict{border-radius:var(--rn-radius-compact);padding:15px 17px;font-size:15.5px;margin-bottom:4px;border:1px solid transparent}
+  .verdict b{font-weight:800}
+  .verdict.under{background:#fff;border-color:var(--rn-border-warm)}
+  .verdict.peak{background:var(--rn-surface-lime);border-color:var(--rn-success)}
+  .verdict.over,.verdict.bad{background:#fdecec;border-color:#f3c9c6}
+  .chart-card{margin-top:18px}.chart-wrap{width:100%;overflow:hidden}
+  svg.chart{width:100%;height:auto;display:block}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;font-size:13.5px;color:var(--rn-text-muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}.legend .sw{width:16px;height:4px;border-radius:2px;display:inline-block}
+  .tbl-scroll{overflow-x:auto;margin-top:16px;border:1px solid var(--rn-border);border-radius:var(--rn-radius-compact)}
+  table.cohort{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+  table.cohort th,table.cohort td{padding:10px 13px;text-align:right;font-family:var(--rn-font-mono)}
+  table.cohort th:first-child,table.cohort td:first-child{text-align:left;font-family:var(--rn-font-sans);font-weight:600}
+  table.cohort thead th{background:var(--rn-surface);font-family:var(--rn-font-sans);font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--rn-text-muted)}
+  table.cohort tbody tr{border-top:1px solid var(--rn-border)}
+  table.cohort tbody tr.peak{background:var(--rn-surface-lime)}
+  table.cohort tbody tr.peak td:first-child::after{content:" peak";font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--rn-success-dark);font-family:var(--rn-font-sans)}
+  table.cohort tbody tr.breakeven{background:#fdecec}
+  .neg{color:var(--rn-error)}
+  .callout-line{display:flex;gap:10px;align-items:flex-start;font-size:15px;margin-top:12px}
+  .callout-line .mk{flex:0 0 auto;width:14px;height:3px;background:var(--rn-lime);border-radius:2px;margin-top:10px}
+  .cta-band{margin:clamp(48px,8vw,80px) 0 0}
+  .cta-band .card.ink{border-radius:var(--rn-radius-card);padding:clamp(34px,5vw,56px)}
+  .cta-band h2{font-size:clamp(26px,3.6vw,38px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin:0 0 16px;color:var(--rn-ink-on-dark)}
+  .cta-band h2 .hl{color:var(--rn-lime)}
+  .cta-band p{color:#d6d0bd;font-size:18px;max-width:600px;margin:0 0 28px;line-height:1.55}
+  .cta-actions{display:flex;flex-wrap:wrap;gap:12px}.cta-band .btn{padding:13px 22px;font-size:16px}
+  .foot{border-top:1px solid var(--rn-border);margin-top:clamp(40px,7vw,72px);padding:30px 0 48px;color:var(--rn-text-muted);font-size:14px}
+  .foot .brand{font-weight:800;font-size:20px;color:var(--rn-ink);letter-spacing:-.02em;margin-bottom:14px}
+  .foot .fine{max-width:680px;line-height:1.6;margin:0}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="brand">runneth</div>
+  <div class="nav-actions">
+    <a class="btn btn-ghost" href="https://runneth.com" target="_blank" rel="noopener">Explore Runneth</a>
+    <a class="btn btn-primary" href="https://runneth.com/book-a-demo" target="_blank" rel="noopener">Talk to a product pro</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow"><span class="accent">From the event</span> How to Scale Ad Spend</p>
+    <h1 class="title">Find your <span class="u">scaling target</span>.</h1>
+    <p class="lede">Most brands scale to the wrong CAC. They chase a blended average and quietly acquire customers at a lifetime loss. This runs the exact math Abir walked through, so you can find the spend level that hits peak cohort profit, not more, not less.</p>
+    <p class="credit">Based on the <b>Profit Last</b> framework by <b>Abir Syed, CPA</b>. Plug in your numbers below.</p>
+  </header>
+
+  <section class="section">
+    <span class="kicker">The setup</span>
+    <h2 class="sec">Back-of-napkin CAC math has three flaws</h2>
+    <p class="sec-sub">The usual "price minus costs equals my CAC target" hides three problems. This calculator is built to beat all three.</p>
+    <div class="flaws">
+      <div class="flaw"><span class="num">1</span><h3>Your margins are probably wrong</h3><p>Freight, duties, tariffs, broker fees and un-trued-up estimates get missed. If your margin is off, every target is off. Use your true gross margin below.</p></div>
+      <div class="flaw"><span class="num">2</span><h3>LTV is a fuzzy number</h3><p>Retention shifts, you sell on other channels, and last year's LTV isn't this year's. Watch your subscription mix as a leading signal, and refresh often.</p></div>
+      <div class="flaw hot"><span class="num">3</span><h3>There isn't one CAC. There are two.</h3><p>Your blended <b>average CAC</b> is what you see. Your <b>marginal CAC</b>, the cost of the next customer, is what actually decides profit. This is the big one.</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="kicker lime">The calculator</span>
+    <h2 class="sec">Your scaling target</h2>
+    <p class="sec-sub">Everything updates live. Numbers are pre-filled with Abir's example so you can see it working, then swap in your own.</p>
+    <div class="calc">
+      <div class="card">
+        <span class="kicker">Inputs</span>
+        <p class="step-label">Step 1 &middot; Your true unit economics</p>
+        <div class="field"><label>Customer LTV</label><div class="input-money"><input type="number" id="ltv" value="100" min="0"></div><div class="hint">Total revenue you collect from one customer over their lifetime.</div></div>
+        <div class="field"><label>True gross margin</label><div class="input-plain input-pct"><input type="number" id="margin" value="70" min="0"></div><div class="hint">After product cost, freight, duties, tariffs, broker &amp; merchant fees. Be honest here (flaw #1).</div></div>
+        <p class="step-label" style="margin-top:24px">Step 2 &middot; Calibrate your CAC curve</p>
+        <p class="hint" style="margin-top:-6px;margin-bottom:14px">Two real spend scenarios you can estimate. As you push spend, you acquire more customers but blended CAC rises. This is the calibration exercise Abir describes.</p>
+        <div class="anchor-grid">
+          <div class="field"><label>Efficient: customers</label><div class="input-plain"><input type="number" id="n1" value="100" min="0"></div><div class="hint">A lower, efficient spend level.</div></div>
+          <div class="field"><label>&hellip;at blended CAC</label><div class="input-money"><input type="number" id="c1" value="30" min="0"></div></div>
+          <div class="field"><label>Pushed: customers</label><div class="input-plain"><input type="number" id="n2" value="500" min="0"></div><div class="hint">A higher spend level.</div></div>
+          <div class="field"><label>&hellip;at blended CAC</label><div class="input-money"><input type="number" id="c2" value="55" min="0"></div></div>
+        </div>
+        <p class="step-label" style="margin-top:24px">Step 3 &middot; Where are you now? (optional)</p>
+        <div class="field"><label>Current new customers per cohort</label><div class="input-plain"><input type="number" id="curN" value="500" min="0"></div><div class="hint">Optional. Only used to place you on the curve and give the under / over verdict. It doesn't change your target.</div></div>
+      </div>
+      <div class="card out-card">
+        <span class="kicker lime">Your results</span>
+        <div id="results"></div>
+      </div>
+    </div>
+    <div id="chart"></div>
+    <div id="table"></div>
+  </section>
+
+  <section class="cta-band">
+    <div class="card ink">
+      <span class="kicker lime">Keep the signal live</span>
+      <h2>Your scaling target moves. <span class="hl">Runneth can watch it for you.</span></h2>
+      <p>Margins drift, LTV shifts, and CAC creeps every week, so the peak you found today won't be the peak next month. Runneth can build you a routine that monitors CAC and cohort profit in real time and pings you the moment you drift into the lifetime-loss zone, so you never miss the signal again.</p>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="https://runneth.com/book-a-demo" target="_blank" rel="noopener">Talk to a product pro</a>
+        <a class="btn btn-ink" href="https://runneth.com" target="_blank" rel="noopener" style="border-color:#4a4326">Explore Runneth</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="brand">runneth</div>
+    <p class="fine">An interactive companion to Abir Syed's <b>Profit Last</b> framework from the "How to Scale Ad Spend" event. Estimates are directional and depend on the numbers you enter. Marginal CAC can't be measured perfectly without incrementality testing, so treat this as a calibration tool: adjust spend, watch how CAC and cohort profit move, and triangulate your peak.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var money=function(n,dp){dp=dp||0;return isFinite(n)?'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:dp,maximumFractionDigits:dp}):'--';};
+  var whole=function(n){return isFinite(n)?Math.round(n).toLocaleString('en-US'):'--';};
+  var ids=['ltv','margin','n1','c1','n2','c2','curN'];
+  function num(id){var v=document.getElementById(id).value;return v===''?NaN:Number(v);}
+
+  function compute(){
+    var ltv=num('ltv'),margin=num('margin'),n1=num('n1'),c1=num('c1'),n2=num('n2'),c2=num('c2'),curN=num('curN');
+    var gp=ltv*(margin/100);
+    var denom=n2-n1;
+    var bHalf=denom!==0?(c2-c1)/denom:NaN;
+    var b=2*bHalf, a=c1-bHalf*n1;
+    var marginalCAC=function(n){return a+b*n;};
+    var avgCAC=function(n){return a+bHalf*n;};
+    var totalSpend=function(n){return a*n+bHalf*n*n;};
+    var cohortProfit=function(n){return gp*n-totalSpend(n);};
+    var nStar=b>0?(gp-a)/b:NaN;
+    var targetAvgCAC=(a+gp)/2;
+    var targetSpend=totalSpend(nStar);
+    var peakProfit=cohortProfit(nStar);
+    var breakevenN=2*nStar;
+    var hasCurrent=isFinite(curN)&&curN>0;
+    var curMarg=marginalCAC(curN),curProfit=cohortProfit(curN);
+    var sane=isFinite(gp)&&gp>0&&margin>0&&margin<100&&n1>0&&n2>n1&&c1>0&&c2>c1&&isFinite(bHalf)&&b>0;
+    var underwater=sane&&a>=gp;
+    var valid=sane&&!underwater&&nStar>0;
+    var verdict='bad';
+    if(valid){ if(!hasCurrent)verdict='none'; else if(curN<nStar*0.95)verdict='under'; else if(curN>nStar*1.05)verdict='over'; else verdict='peak';}
+    var rows=[];
+    if(valid){
+      var factors=[0.25,0.5,0.75,1,1.25,1.5,2],seen={},rnd=nStar>200?10:1;
+      for(var i=0;i<factors.length;i++){
+        var n=Math.max(1,Math.round(nStar*factors[i]/rnd)*rnd);
+        if(seen[n])continue;seen[n]=1;
+        rows.push({n:n,marg:marginalCAC(n),avg:avgCAC(n),profit:cohortProfit(n),peak:Math.abs(factors[i]-1)<0.001,be:Math.abs(factors[i]-2)<0.001});
+      }
+    }
+    return {ltv:ltv,margin:margin,curN:curN,gp:gp,a:a,b:b,bHalf:bHalf,nStar:nStar,targetAvgCAC:targetAvgCAC,targetSpend:targetSpend,
+      peakProfit:peakProfit,breakevenN:breakevenN,hasCurrent:hasCurrent,curMarg:curMarg,curProfit:curProfit,
+      valid:valid,underwater:underwater,verdict:verdict,rows:rows,cohortProfit:cohortProfit};
+  }
+
+  function renderResults(m){
+    if(!m.valid){
+      var msg=m.underwater
+        ? '<b>You\u2019re underwater at any scale.</b> Even your cheapest customer costs more to acquire than the $'+whole(m.gp)+' of gross profit they generate. Fix margins or LTV before scaling, that\u2019s flaws #1 and #2.'
+        : '<b>Check your inputs.</b> Set a margin between 1 and 99%, and make the "pushed" scenario have more customers <i>and</i> a higher blended CAC than the "efficient" one (diminishing returns).';
+      return '<div class="verdict bad">'+msg+'</div>';
+    }
+    var html='<div class="results">'+
+      '<div class="stat hero-stat"><p class="k">Your scaling-target CAC</p><p class="v">'+money(m.targetAvgCAC)+'</p><p class="sub">The blended CAC to actually aim for. Above this, you start losing money on the margin.</p></div>'+
+      '<div class="stat"><p class="k">Marginal CAC ceiling</p><p class="v">'+money(m.gp)+'</p><p class="sub">Most you can pay for the next customer.</p></div>'+
+      '<div class="stat"><p class="k">Target customers / cohort</p><p class="v">'+whole(m.nStar)+'</p><p class="sub">Where cohort profit peaks.</p></div>'+
+      '<div class="stat"><p class="k">Target spend / cohort</p><p class="v">'+money(m.targetSpend)+'</p><p class="sub">Total acquisition spend at the peak.</p></div>'+
+      '<div class="stat"><p class="k">Peak cohort profit</p><p class="v">'+money(m.peakProfit)+'</p><p class="sub">The most profit this cohort can make.</p></div>'+
+      '</div>';
+    if(m.verdict==='none') html+='<div class="verdict under">Add your current new customers per cohort in step 3 to see whether you\u2019re currently underspending, dialed in, or overspending against this target.</div>';
+    if(m.verdict==='under') html+='<div class="verdict under"><b>You\u2019re underspending.</b> At ~'+whole(m.curN)+' customers your marginal CAC is only '+money(m.curMarg)+', well under the '+money(m.gp)+' ceiling. Scaling toward ~'+whole(m.nStar)+' customers would add about <b>'+money(m.peakProfit-m.curProfit)+'</b> in cohort profit.</div>';
+    if(m.verdict==='peak') html+='<div class="verdict peak"><b>You\u2019re dialed in.</b> At ~'+whole(m.curN)+' customers you\u2019re right around peak cohort profit. Marginal CAC ('+money(m.curMarg)+') is sitting near your '+money(m.gp)+' ceiling. To grow from here you have to move the curve, not just spend more.</div>';
+    if(m.verdict==='over') html+='<div class="verdict over"><b>You\u2019re overspending.</b> At ~'+whole(m.curN)+' customers your marginal CAC is '+money(m.curMarg)+', above the '+money(m.gp)+' ceiling, so the last customers come in at a lifetime loss. Pulling back toward ~'+whole(m.nStar)+' would recover about <b>'+money(m.peakProfit-m.curProfit)+'</b> in cohort profit even as revenue dips.</div>';
+    return html;
+  }
+
+  function renderChart(m){
+    if(!m.valid) return '';
+    var W=720,H=320,padL=56,padR=20,padT=24,padB=42;
+    var xMax=m.breakevenN,yMax=m.peakProfit*1.14,yMin=0,steps=80;
+    var sx=function(n){return padL+(n/xMax)*(W-padL-padR);};
+    var sy=function(p){return padT+(1-(p-yMin)/(yMax-yMin))*(H-padT-padB);};
+    var d='';
+    for(var i=0;i<=steps;i++){var n=xMax*i/steps;var p=Math.max(0,m.cohortProfit(n));d+=(i?'L':'M')+sx(n).toFixed(1)+','+sy(p).toFixed(1)+' ';}
+    var area=d+'L'+sx(xMax).toFixed(1)+','+sy(0).toFixed(1)+' L'+sx(0).toFixed(1)+','+sy(0).toFixed(1)+' Z';
+    var zeroY=sy(0),px=sx(m.nStar),py=sy(m.peakProfit);
+    var curMark='';
+    if(m.hasCurrent&&m.curN<=xMax){var cx=sx(m.curN),cy=sy(Math.max(0,m.curProfit));
+      curMark='<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="5" fill="#fff" stroke="#b3261e" stroke-width="2"/><text x="'+cx.toFixed(1)+'" y="'+(cy-12).toFixed(1)+'" text-anchor="middle" font-size="12" font-weight="700" fill="#b3261e">you</text>';}
+    var svg='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Cohort profit curve">'+
+      '<line x1="'+sx(0)+'" y1="'+zeroY+'" x2="'+sx(xMax)+'" y2="'+zeroY+'" stroke="#d9d8cc" stroke-width="1"/>'+
+      '<path d="'+area+'" fill="#ceff5b" opacity="0.24"/>'+
+      '<path d="'+d+'" fill="none" stroke="#1c180e" stroke-width="2.5"/>'+
+      '<line x1="'+px.toFixed(1)+'" y1="'+py.toFixed(1)+'" x2="'+px.toFixed(1)+'" y2="'+zeroY+'" stroke="#1f7a3a" stroke-width="1.5" stroke-dasharray="3 3"/>'+
+      '<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="6" fill="#ceff5b" stroke="#1c180e" stroke-width="2"/>'+
+      '<text x="'+px.toFixed(1)+'" y="'+(py-12).toFixed(1)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#1c180e">peak &middot; '+whole(m.nStar)+'</text>'+
+      curMark+
+      '<text x="'+sx(0)+'" y="'+(H-14)+'" font-size="12" fill="#6b6757">0 customers</text>'+
+      '<text x="'+sx(xMax)+'" y="'+(H-14)+'" text-anchor="end" font-size="12" fill="#6b6757">'+whole(xMax)+' customers</text>'+
+      '<text x="12" y="'+(zeroY+4)+'" font-size="12" fill="#6b6757">$0</text></svg>';
+    var legend='<div class="legend"><span><span class="sw" style="background:#1c180e"></span>Cohort profit</span><span><span class="sw" style="background:#ceff5b"></span>Peak (scaling target)</span>'+(m.hasCurrent&&m.curN<=xMax?'<span><span class="sw" style="background:#b3261e"></span>Where you are now</span>':'')+'</div>';
+    return '<div class="card chart-card"><span class="kicker warm">The curve</span><h3 class="card-title">Cohort profit as you scale</h3>'+
+      '<p class="hint" style="margin-bottom:12px">Profit climbs, then peaks where marginal CAC meets your gross-profit ceiling. Past the peak it falls away, and the whole game is pushing this peak further to the right.</p>'+
+      '<div class="chart-wrap">'+svg+'</div>'+legend+'</div>';
+  }
+
+  function renderTable(m){
+    if(!m.valid||!m.rows.length) return '';
+    var body='';
+    for(var i=0;i<m.rows.length;i++){var r=m.rows[i];var cls=r.peak?'peak':(r.be?'breakeven':'');
+      body+='<tr class="'+cls+'"><td>'+whole(r.n)+'</td><td class="'+(r.marg>m.gp?'neg':'')+'">'+money(r.marg)+'</td><td>'+money(r.avg)+'</td><td class="'+(r.profit<0?'neg':'')+'">'+money(r.profit)+'</td></tr>';}
+    return '<div class="card" style="margin-top:18px"><span class="kicker">The scaling-target table</span><h3 class="card-title">Average vs marginal CAC at each spend level</h3>'+
+      '<p class="hint">Average CAC is what your systems show. Marginal CAC is the cost of the next customer. Once marginal CAC crosses your '+money(m.gp)+' ceiling, every additional customer is a lifetime loss.</p>'+
+      '<div class="tbl-scroll"><table class="cohort"><thead><tr><th>Customers / cohort</th><th>Marginal CAC</th><th>Average CAC</th><th>Cohort profit</th></tr></thead><tbody>'+body+'</tbody></table></div>'+
+      '<div class="callout-line"><span class="mk"></span><span>Break-even for the whole cohort lands around <b>'+whole(m.breakevenN)+' customers</b>, where average CAC finally hits your '+money(m.gp)+' ceiling and all the profit is wiped out. Everything past the peak got you there at a loss.</span></div></div>';
+  }
+
+  function render(){
+    var m=compute();
+    document.getElementById('results').innerHTML=renderResults(m);
+    document.getElementById('chart').innerHTML=renderChart(m);
+    document.getElementById('table').innerHTML=renderTable(m);
+  }
+  for(var i=0;i<ids.length;i++){document.getElementById(ids[i]).addEventListener('input',render);}
+  render();
+})();
+</script>
+</body>
+</html>
