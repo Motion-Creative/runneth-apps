@@ -5,13 +5,13 @@
 A new Runneth user often has months or years of context already living inside another AI. This use case collapses the ramp-up into a single review session.
 
 **Install time:** ~5 minutes
-**Requires:** [add-roles-permissions](../add-roles-permissions) (must be installed first)
+**Requires:** Nothing
 
 ---
 
-## Prerequisites
+## Identity
 
-`add-roles-permissions` must be installed and have at least one admin mapped. `import-from-ai` writes to the user's permissions home base (`/agent/brain/users/<handle>/imports/`), so identity resolution must work before this can run.
+Standalone — no other package required. The skill derives the user's handle from the conversation surface (Slack profile email or the Motion `userEmail`, falling back to asking once), files imports under `/agent/brain/users/<handle>/imports/`, and states the handle and path in the pre-write confirmation so the user can correct it before anything lands.
 
 ---
 
@@ -87,7 +87,7 @@ Raises are explicit user calls during chat approval. Never automatic.
 
 ## Fallbacks
 
-- **add-roles-permissions not installed:** Skill stops and tells the user to install it first.
+- **No email on the conversation surface:** Skill asks once what handle to file imports under.
 - **Upload not parseable:** Skill explains what went wrong and offers the fallback continuation prompt.
 - **Source AI truncated output:** Skill detects partial JSON and hands over a follow-up prompt that resumes from where the truncation happened.
 - **Re-importing same content:** Content-hash dedupe makes it a no-op with a clear "already imported, nothing new" report.
