@@ -6,7 +6,7 @@
       "id": "context-kit",
       "name": "Context Kit",
       "description": "Builds the brand knowledge that makes every Runneth answer sharper. Seeds a brain skeleton, a Context Kit board app, and the Context Kit skill. Install first, then ad-naming for naming conventions and query contract, then creative-corpus for the full creative library.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "categories": ["baseline"],
       "packageManagerVersion": 1,
       "source": {

@@ -18,6 +18,8 @@ Builds the institutional knowledge that makes every Runneth answer sharper: brai
   `/context-kit/data/context-kit-state.json` and the Bucket B `data/*.md` files on load, so brain updates
   show on refresh with no rebuild. Never go back to a static `import` of the state JSON.
 - **Package sync does not run `app build`.** The skill (or an operator) builds on first run.
+- **Motion calls stay in agent turns.** Task-scoped bash cannot access trusted Motion
+  tools, so refresh routines prompt an agent to run the skill directly.
 
 ## Manifest note
 
