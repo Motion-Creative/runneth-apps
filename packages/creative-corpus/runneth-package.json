@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "creative-corpus",
+  "name": "Creative Corpus",
+  "description": "Builds and maintains a durable per-creative brain library for the connected Meta account. Pulls Motion summary sections, glossary tags, and decoded naming into local Markdown files indexed by full creative asset ID. Enables whole-account historical analysis, voice mining, naming-convention decoding, and brief generation without re-fetching durable content on every question. Companion to Context Kit and Ad Naming.",
+  "version": "0.2.0",
+  "updatePolicy": "manual",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "creative-corpus-behavior",
+      "type": "package_instruction",
+      "sourcePath": "instructions/behavior.md"
+    },
+    {
+      "id": "creative-corpus-state",
+      "type": "file",
+      "sourcePath": "brain/meta/corpus-state.json",
+      "target": { "root": "agent_brain", "path": "meta/corpus-state.json" },
+      "executable": false
+    },
+    {
+      "id": "creative-corpus-playbook",
+      "type": "file",
+      "sourcePath": "brain/meta/creatives/PLAYBOOK.md",
+      "target": { "root": "agent_brain", "path": "meta/creatives/PLAYBOOK.md" },
+      "executable": false
+    },
+    {
+      "id": "creative-corpus-skill",
+      "type": "directory",
+      "sourcePath": "skills",
+      "target": { "root": "agent_skills", "path": "creative-corpus" },
+      "executablePaths": []
+    }
+  ]
+}

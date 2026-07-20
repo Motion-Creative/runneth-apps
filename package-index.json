@@ -1,5 +1,57 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "initial-empty",
-  "packages": []
+  "indexRevision": "creative-corpus-0.2.0",
+  "packages": [
+    {
+      "id": "context-kit",
+      "name": "Context Kit",
+      "description": "Builds the brand knowledge that makes every Runneth answer sharper. Seeds a brain skeleton, a Context Kit board app, and the Context Kit skill. Install first, then ad-naming for naming conventions and query contract, then creative-corpus for the full creative library.",
+      "version": "1.0.1",
+      "categories": ["baseline"],
+      "packageManagerVersion": 1,
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "ref": "main",
+        "path": "packages/context-kit"
+      },
+      "updatePolicy": "manual",
+      "uninstallPolicy": "allowed"
+    },
+    {
+      "id": "ad-naming",
+      "name": "Ad Naming",
+      "description": "Builds the account intelligence layer that powers precise analysis. Decodes the ad naming convention into a reusable taxonomy, maps per-campaign KPI targets, and auto-discovers the Motion query contract (workspace ID, attribution windows, conversion events, metric gotchas). Install after Context Kit. Required before Creative Corpus for decoded naming in corpus files.",
+      "version": "0.1.1",
+      "categories": ["creative-strategy"],
+      "packageManagerVersion": 1,
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "ref": "main",
+        "path": "packages/ad-naming"
+      },
+      "updatePolicy": "manual",
+      "uninstallPolicy": "allowed"
+    },
+    {
+      "id": "creative-corpus",
+      "name": "Creative Corpus",
+      "description": "Builds and maintains a durable per-creative brain library for the connected Meta account. Pulls Motion summary sections, glossary tags, and decoded naming into local Markdown files indexed by full creative asset ID. Enables whole-account historical analysis, voice mining, naming-convention decoding, and brief generation without re-fetching durable content on every question. Companion to Context Kit and Ad Naming.",
+      "version": "0.2.0",
+      "categories": ["creative-strategy"],
+      "packageManagerVersion": 1,
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "ref": "main",
+        "path": "packages/creative-corpus"
+      },
+      "updatePolicy": "manual",
+      "uninstallPolicy": "allowed"
+    }
+  ]
 }

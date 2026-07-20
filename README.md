@@ -2,6 +2,10 @@
 
 The app & skill library behind the **Runneth Use Case Library** at [runneth.motionapp.com](https://runneth.motionapp.com). Each top-level directory is a self-contained use case — a skill bundle or a sandbox app — that a Runneth user can install in a couple of clicks. The public site reads this repo's curated metadata **live** via the GitHub raw API (~60s cache), so editing the files here *is* how the site is organized.
 
+For the package-manager contract, repository architecture, and an evidence-ranked
+inventory of local and external CLI commands, see
+[`docs/REPOSITORY_AND_CLI_GUIDE.md`](docs/REPOSITORY_AND_CLI_GUIDE.md).
+
 ## How a use case is structured
 
 | File | Purpose |
