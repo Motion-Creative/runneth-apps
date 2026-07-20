@@ -42,14 +42,11 @@ If `context-kit-state.json` shows `lanesRegistered: false` or the field is absen
 
 Set `lanesRegistered: true` in state. Do not re-register on subsequent runs.
 
-## Step 0c — Register the refresh workflow (first run only)
+## Step 0c — Keep Motion work in the agent turn
 
-If `context-kit-state.json` shows `refreshWorkflowId` absent:
-1. Read `/agent/brain/context-kit/workflows/context-kit-refresh.ts`.
-2. Run `workflow push /agent/brain/context-kit/workflows/context-kit-refresh.ts --name context-kit-refresh`.
-3. Save the workflow ID to state as `refreshWorkflowId`.
-4. `task add --kind workflow --workflow-id <id> --name "Context Kit Refresh"` → save as `refreshTaskId`.
-5. Mirror state.
+Run every `motion` command directly in this agent turn. Do not put Motion calls in
+`task.bash` or script-mode routines: task-scoped broker tokens cannot access the
+trusted Motion tool. Deterministic local file processing may use bash.
 
 ## Step 1 — Build and open the board (first run only)
 
@@ -73,7 +70,34 @@ Import confirmed docs, mirror, mark `imported`.
 
 Pull the ground-truth spine once:
 1. `motion ai-glossary`
-2. `motion meta insights --include-glossary --date-range last_30d --sort topSpend` — read tag distribution from `creatives[].glossaryTags[]`
+2. Run:
+   ```
+   motion meta insights \
+     --date-range last_30d \
+     --sort topSpend \
+     --glossary-category intended-audience \
+     --glossary-category messaging-angle \
+     --glossary-category hook-tactic \
+     --glossary-category visual-format \
+     --glossary-category asset-type \
+     --glossary-category offer-type \
+     --glossary-category seasonality
+   ```
+   Read the returned category data for each creative.
+3. For VoC, take up to 20 top-spend creative asset IDs and enrich them in batches of
+   no more than 15:
+   ```
+   motion meta insights \
+     --scope creative-asset-id \
+     --creative-asset-id <id> \
+     --date-range last_365d \
+     --summary-sections hookOrHeadline \
+     --summary-sections creativeBreakdown \
+     --summary-sections messagingAndPositioning \
+     --summary-sections emotionalAndAudienceInsight \
+     --summary-sections adDescription
+   ```
+   Repeat `--creative-asset-id` for each ID in the batch.
 
 Category-to-item mapping:
 - `intended-audience` → positioning + voc
@@ -84,7 +108,7 @@ Category-to-item mapping:
 - `seasonality` → products + competitors
 
 Per-item fallback chain (explicit, sequential):
-1. Motion glossary spine + summaries + transcripts → draft, status `drafted`.
+1. Motion glossary spine + summary sections → draft, status `drafted`.
 2. Motion empty → Drive/Notion if connected → status `imported`.
 3. Neither → general brand knowledge → status `inferred` + `sourceNote`.
 4. Still unreliable → leave `missing`, show thought starters.
@@ -92,7 +116,9 @@ Per-item fallback chain (explicit, sequential):
 After each: mirror to `data/<id>.md`, tell the user what was drafted.
 
 **voice**: 4-6 named characteristics with sounds-like/doesn't-sound-like pairs.
-**voc**: 7-category swipe file (pain, emotional language, desire, before/after, objections, competitor complaints, trigger events), near-verbatim from transcripts.
+**voc**: 7-category swipe file (pain, emotional language, desire, before/after,
+objections, competitor complaints, trigger events). Preserve exact customer-facing
+language when present in summary sections; do not label generated prose as a transcript.
 
 ## Step 5 — Bucket C: collect with depth
 
@@ -112,7 +138,7 @@ routine add \
   --name "Context Kit weekly refresh" \
   --cron "0 9 * * 1" \
   --delivery "Send a summary in a new web conversation." \
-  --prompt "Run the context-kit refresh task (task id: <refreshTaskId from state>). Wait for completion with task wait. Read the returned JSON. Open a new conversation summarising what changed — highlight shifts in voice, voc, or competitors. Flag items not updated in 3+ weeks as stale. Deliver with conversation send --new."
+  --prompt "Start an agent turn and read the installed context-kit skill. Refresh Context Kit directly in that agent turn using its current Motion commands; never call Motion from task.bash. Preserve every Runneth Instructions section, update only Motion-derived content, mirror changed files and state, and open a new conversation summarising shifts in voice, VoC, or competitors plus anything stale for 3+ weeks."
 ```
 
 Save routine ID to state as `refreshRoutineId`.
