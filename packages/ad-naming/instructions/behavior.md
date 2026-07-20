@@ -26,9 +26,11 @@ The skill registers this lane on first run. Check `lanesRegistered` in `/agent/b
 
 The `ad-naming` lane injects these automatically. If a file is still empty, say so rather than inferring.
 
-## Refresh workflow
+## Refresh behavior
 
-Registered by the skill on first run. Refreshes all three files from live Motion data on demand or on the weekly schedule offered after first build. Saves `refreshWorkflowId` and `refreshTaskId` in state.
+Refresh all three files directly in an agent turn so trusted Motion tools are
+available. Do not call Motion from `task.bash` or a script-mode routine. The weekly
+agent-mode routine is offered after first build and its ID is saved in state.
 
 ## Works independently
 

@@ -17,14 +17,11 @@ If `lanesRegistered` is absent or false:
 1. Call ContextConfig to register the `ad-naming` lane at `/agent/brain/ad-naming/` covering `naming-decoder.md`, `kpi-map.md`, `query-contract.md`.
 2. Set `lanesRegistered: true` in state.
 
-## Step 0c — Register the refresh workflow (first run only)
+## Step 0c — Keep Motion work in the agent turn
 
-If `refreshWorkflowId` is absent:
-1. Read `/agent/brain/ad-naming/workflows/ad-naming-refresh.ts`.
-2. `workflow push /agent/brain/ad-naming/workflows/ad-naming-refresh.ts --name ad-naming-refresh`
-3. Save workflow ID as `refreshWorkflowId`.
-4. `task add --kind workflow --workflow-id <id> --name "Ad Naming Refresh"` → save as `refreshTaskId`.
-5. Mirror state.
+Run every `motion` command directly in this agent turn. Do not put Motion calls in
+`task.bash` or script-mode routines: task-scoped broker tokens cannot access the
+trusted Motion tool. Deterministic local file processing may use bash.
 
 ## Step 1 — Build the naming decoder
 
@@ -105,7 +102,8 @@ Auto-discover and write the account's Motion CLI contract:
    - `campaignName` is null in `--grain ads` → use `--grain adnames` or insights for campaign reads
    - `adType` may be null in ads grain → use `format` field instead
    - `roas` varies by account configuration → check workspace goal for the actual judgment metric
-   - `last_365d` with `--include-transcript` times out → use 30-day windows
+   - For creative text, use ID-scoped `--summary-sections` pulls; do not use the
+     blocked `--include-transcript` fast path
 
 7. Write `/agent/brain/ad-naming/query-contract.md`:
    ```markdown
@@ -140,8 +138,9 @@ Auto-discover and write the account's Motion CLI contract:
      --name "Ad naming weekly refresh" \
      --cron "0 9 * * 1" \
      --delivery "Post a summary in a new web conversation." \
-     --prompt "Run the ad-naming refresh task (task id: <refreshTaskId from state>). Wait for completion. Send a brief summary of what changed with conversation send --new."
+     --prompt "Start an agent turn and read the installed ad-naming skill. Refresh the naming decoder, KPI map, and query contract directly in that agent turn using live Motion tools; never call Motion from task.bash. Preserve customer corrections, update state, and open a new conversation with a brief summary of what changed."
    ```
+4. Save the routine ID as `refreshRoutineId`.
 
 ## Rules
 - Naming decoder built from real Motion data → status `drafted`.
