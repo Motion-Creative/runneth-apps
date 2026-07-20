@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "ad-naming",
+  "name": "Ad Naming",
+  "description": "Builds the account intelligence layer that powers precise analysis. Decodes the ad naming convention into a reusable taxonomy, maps per-campaign KPI targets, and auto-discovers the Motion query contract (workspace ID, attribution windows, conversion events, metric gotchas). Install after Context Kit. Required before Creative Corpus for decoded naming in corpus files.",
+  "version": "0.1.0",
+  "updatePolicy": "manual",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "ad-naming-behavior",
+      "type": "package_instruction",
+      "sourcePath": "instructions/behavior.md"
+    },
+    {
+      "id": "ad-naming-state",
+      "type": "file",
+      "sourcePath": "brain/ad-naming/ad-naming-state.json",
+      "target": { "root": "agent_brain", "path": "ad-naming/ad-naming-state.json" },
+      "executable": false
+    },
+    {
+      "id": "naming-decoder-scaffold",
+      "type": "file",
+      "sourcePath": "brain/ad-naming/naming-decoder.md",
+      "target": { "root": "agent_brain", "path": "ad-naming/naming-decoder.md" },
+      "executable": false
+    },
+    {
+      "id": "kpi-map-scaffold",
+      "type": "file",
+      "sourcePath": "brain/ad-naming/kpi-map.md",
+      "target": { "root": "agent_brain", "path": "ad-naming/kpi-map.md" },
+      "executable": false
+    },
+    {
+      "id": "query-contract-scaffold",
+      "type": "file",
+      "sourcePath": "brain/ad-naming/query-contract.md",
+      "target": { "root": "agent_brain", "path": "ad-naming/query-contract.md" },
+      "executable": false
+    },
+    {
+      "id": "ad-naming-refresh-workflow",
+      "type": "file",
+      "sourcePath": "workflows/ad-naming-refresh.ts",
+      "target": { "root": "agent_brain", "path": "ad-naming/workflows/ad-naming-refresh.ts" },
+      "executable": false
+    },
+    {
+      "id": "ad-naming-skill",
+      "type": "directory",
+      "sourcePath": "skills",
+      "target": { "root": "agent_skills", "path": "ad-naming" },
+      "executablePaths": []
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "context-kit-1.0.0",
+  "indexRevision": "ad-naming-0.1.0",
   "packages": [
     {
       "id": "context-kit",
@@ -15,6 +15,23 @@
         "repo": "runneth-apps",
         "ref": "main",
         "path": "packages/context-kit"
+      },
+      "updatePolicy": "manual",
+      "uninstallPolicy": "allowed"
+    },
+    {
+      "id": "ad-naming",
+      "name": "Ad Naming",
+      "description": "Builds the account intelligence layer that powers precise analysis. Decodes the ad naming convention into a reusable taxonomy, maps per-campaign KPI targets, and auto-discovers the Motion query contract (workspace ID, attribution windows, conversion events, metric gotchas). Install after Context Kit. Required before Creative Corpus for decoded naming in corpus files.",
+      "version": "0.1.0",
+      "categories": ["creative-strategy"],
+      "packageManagerVersion": 1,
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "ref": "main",
+        "path": "packages/ad-naming"
       },
       "updatePolicy": "manual",
       "uninstallPolicy": "allowed"
