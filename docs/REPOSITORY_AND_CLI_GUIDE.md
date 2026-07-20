@@ -217,16 +217,17 @@ Current package layout conventions:
 - `skills/` is installed as an `agent_skills` directory;
 - files under `brain/` are mapped explicitly into `agent_brain`;
 - app source under `apps/<id>/` is installed as an `agent_apps` directory;
-- v1 workflow and script files are ordinary resources staged into brain paths, then
-  registered by an installed skill.
+- when a v1 package intentionally ships a workflow or script, it is an ordinary file
+  resource staged into a target path; the current three-package series avoids
+  workflow/script Motion execution because of broker scoping.
 
 Declared resource source paths must be relative, exist, have the declared file kind,
 and contain no symlink segment. `..`, leading `/`, and `//` are rejected. The validator
 does not verify target existence, target writability, or target collisions.
 
 `executable: true` and `executablePaths` are installer metadata. The source file does
-not need Git executable mode. Current CI accepts the corpus script as mode `100644`;
-installer chmod behavior is external and is not verified by this repository.
+not need Git executable mode. Installer chmod behavior is external and is not verified
+by this repository.
 
 ### What package installation does not do
 
@@ -337,7 +338,7 @@ Use this order when command examples disagree:
 
 1. A local parser or executable implementation.
 2. Current platform `--help` output on a VM.
-3. Current package workflows and skills.
+3. Current package skills and instructions.
 4. Older use-case skills and README examples.
 
 The repository implements validators, `corpus-search`, and several standalone scripts.
@@ -350,7 +351,7 @@ Primary command evidence:
 |---|---|
 | Package schema | `scripts/validate-runneth-package-index.mjs` |
 | Package runtime behavior | package READMEs/skills plus live install results; no local installer |
-| Current Motion package calls | `packages/*/workflows/`, `packages/*/skills/` |
+| Current Motion package calls | `packages/*/skills/` and runtime feedback |
 | Broader/older Motion calls | `brain-onboard/`, `runneth-classic/`, `paid-strategy-audit/`, `competitor-intel/` |
 | App lifecycle | app README files and package skills; no local app CLI parser |
 | Workflow/task/routine | `packages/*/skills/SKILL.md`; external platform CLIs |
@@ -426,7 +427,7 @@ repository; confirm those with platform help.
 
 ## External `motion` CLI
 
-Current package data workflows treat the Motion commands they invoke as returning an
+Current package skills treat the Motion data commands they invoke as returning an
 envelope on stdout:
 
 ```bash
@@ -601,9 +602,6 @@ motion meta competitor-ad-insights \
   --include-glossary \
   --with-summary
 ```
-
-`motion inspo brands --limit 20` appears in one Context Kit workflow but is not
-corroborated elsewhere. Confirm it with `motion --help` before depending on it.
 
 ### Older or generic Motion forms
 
