@@ -3,7 +3,7 @@
   "id": "context-kit",
   "name": "Context Kit",
   "description": "Builds the brand knowledge that makes every Runneth answer sharper. Seeds a brain skeleton, a Context Kit board app, and the Context Kit skill. Install first, then ad-naming for naming conventions and query contract, then creative-corpus for the full creative library.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "updatePolicy": "manual",
   "uninstallPolicy": "allowed",
   "resources": [
@@ -89,16 +89,6 @@
       "target": {
         "root": "agent_brain",
         "path": "context-kit/landing-pages.md"
-      },
-      "executable": false
-    },
-    {
-      "id": "context-kit-refresh-workflow",
-      "type": "file",
-      "sourcePath": "workflows/context-kit-refresh.ts",
-      "target": {
-        "root": "agent_brain",
-        "path": "context-kit/workflows/context-kit-refresh.ts"
       },
       "executable": false
     },

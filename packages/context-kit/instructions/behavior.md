@@ -22,7 +22,8 @@ If **ad-naming** is installed, it registers its own `ad-naming` lane covering th
 - Board is client-rendered: fetches `data/context-kit-state.json` and `data/*.md` at runtime. Rebuild only needed for source changes, not content.
 - State: `/agent/brain/context-kit/context-kit-state.json` (source of truth), mirrored to `data/context-kit-state.json`.
 - Lanes: registered by the skill on first run. Check `lanesRegistered` in state.
-- Refresh workflow: registered by the skill on first run. Check `refreshWorkflowId` in state.
+- Refresh: performed directly in an agent turn so trusted Motion tools are available.
+  Do not call Motion from `task.bash` or a script-mode routine.
 
 ## Self-improvement loop (always on)
 
