@@ -1,5 +1,7 @@
 {
   "version": 3,
+  "name": "context-kit",
+  "route": "/context-kit",
   "conversationId": "__CONVERSATION_ID__",
   "workspaceId": "__WORKSPACE_ID__",
   "oauthEnabled": true,

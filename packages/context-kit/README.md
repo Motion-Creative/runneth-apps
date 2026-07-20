@@ -5,9 +5,10 @@ Builds the institutional knowledge that makes every Runneth answer sharper: brai
 
 ## App build gotchas (learned in staging — read before editing the app)
 
-- **`buildeth.app.json` must be v3** with `conversationId`, `workspaceId`, `oauthEnabled: true`,
-  `data: { "dir": "data" }`, `static: { "dist": "dist", "index": "index.html" }`. It ships as a template
-  with `__CONVERSATION_ID__` / `__WORKSPACE_ID__` tokens the skill substitutes before `app build`.
+- **`buildeth.app.json` must be v3** with `name: "context-kit"`, `route: "/context-kit"`,
+  `conversationId`, `workspaceId`, `oauthEnabled: true`, `data: { "dir": "data" }`, and
+  `static: { "dist": "dist", "index": "index.html" }`. It ships as a template with
+  `__CONVERSATION_ID__` / `__WORKSPACE_ID__` tokens the skill substitutes before `app build`.
 - **`astro.config.mjs` must set `base: "/context-kit"`** (and `trailingSlash: "never"`). Without a base,
   Astro emits absolute `/_astro/...` asset URLs and `app build` rejects the static output.
 - **Use `<style is:global>`.** Astro scopes `<style>` by default via a build-time `data-astro-cid` attribute
