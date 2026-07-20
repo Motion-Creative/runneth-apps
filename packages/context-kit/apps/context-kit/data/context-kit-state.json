@@ -23,7 +23,7 @@
       "id": "brand-context",
       "label": "Brand context",
       "bucket": "A",
-      "status": "inferred",
+      "status": "missing",
       "why": "Keeps every output unmistakably on-brand.",
       "preview": "",
       "dataFile": "brand-context.md"
@@ -32,7 +32,7 @@
       "id": "kpis-goal",
       "label": "KPIs & goal",
       "bucket": "A",
-      "status": "inferred",
+      "status": "missing",
       "why": "Every readout leads with the metric you care about.",
       "preview": "",
       "dataFile": "kpis-goal.md"
@@ -41,7 +41,7 @@
       "id": "spend-threshold",
       "label": "Spend threshold",
       "bucket": "A",
-      "status": "inferred",
+      "status": "missing",
       "why": "Separates a proven winner from early noise.",
       "preview": "",
       "dataFile": "spend-threshold.md"
@@ -143,6 +143,45 @@
         "Any visual styles or creative directions that are always off-limits?",
         "Non-negotiables for claims, tone, or offers?",
         "Any past ad types or messages to avoid repeating?"
+      ]
+    },
+    {
+      "id": "media-buying",
+      "label": "Media buying model",
+      "bucket": "C",
+      "status": "missing",
+      "why": "Keeps creative recommendations aligned with how you actually buy.",
+      "dataFile": "media-buying.md",
+      "thoughtStarters": [
+        "How do you primarily buy? (ABO, CBO, Advantage+)",
+        "What does a typical campaign structure look like?",
+        "Any budget rules or pacing preferences Runneth should know?"
+      ]
+    },
+    {
+      "id": "business-team",
+      "label": "Business & team",
+      "bucket": "C",
+      "status": "missing",
+      "why": "Runneth works better knowing who is using it and how decisions get made.",
+      "dataFile": "business-team.md",
+      "thoughtStarters": [
+        "Who reviews and approves creatives?",
+        "Who owns the brief-to-production pipeline?",
+        "Any team rules or review steps Runneth should respect?"
+      ]
+    },
+    {
+      "id": "landing-pages",
+      "label": "Landing pages",
+      "bucket": "C",
+      "status": "missing",
+      "why": "Briefs land harder when Runneth knows what the ad is sending to.",
+      "dataFile": "landing-pages.md",
+      "thoughtStarters": [
+        "What are your main landing page URLs or page types?",
+        "What is the primary CTA on your top pages?",
+        "Any pages that are off-limits for ads?"
       ]
     },
     {
