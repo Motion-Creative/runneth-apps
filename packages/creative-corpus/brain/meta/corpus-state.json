@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "creative-corpus",
+  "name": "Creative Corpus",
+  "description": "Builds and maintains a durable per-creative brain library for the connected Meta account. Pulls summaries, transcripts, glossary tags, and decoded naming for every creative into local Markdown files — indexed by creative ID. Enables whole-account historical analysis, VoC mining, naming-convention decoding, and brief generation without re-fetching from Motion on every question. Companion to Context Kit.",
+  "version": "0.1.0",
+  "totalCreatives": 0,
+  "lastBuildDate": null,
+  "lastRefreshDate": null,
+  "corpusLaneId": null,
+  "buildWorkflowId": null,
+  "buildTaskId": null,
+  "refreshRoutineId": null,
+  "lanesRegistered": false
+}
