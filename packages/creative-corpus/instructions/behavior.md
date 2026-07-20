@@ -23,7 +23,7 @@ The skill registers this lane on first run. Individual creative files are surfac
 | What lives in the corpus | What stays a live Motion pull |
 |---|---|
 | Hook / opening line | Spend (last N days) |
-| Full transcript | ROAS, CPA, CTR |
+| Motion summary sections / creative text | ROAS, CPA, CTR |
 | Glossary tags (AI-derived) | Thumbstop, hold rate |
 | Decoded ad name (from ad-naming) | Current status |
 | Summary / value props | Recent impressions |
@@ -36,18 +36,20 @@ The corpus checks for the naming decoder at `/agent/brain/ad-naming/naming-decod
 
 ## File naming convention
 
-`{sanitized-adname}__{id8}.md`
-- `sanitized-adname`: ad name with non-alphanumeric chars → `-`, max 80 chars
-- `id8`: first 8 characters of the Motion creative asset ID
+`{sanitized-adname}__{sanitized-full-creative-id}.md`
+- `sanitized-adname`: ad name with non-alphanumeric chars → `-`, max 60 chars
+- `sanitized-full-creative-id`: the complete Motion creative asset ID, normalized
+  to safe filename characters
 
-The `id8` is the stable key. Never rename a file after creation.
+The full creative ID is the stable key. Match existing files by the full-ID suffix or
+exact `id:` frontmatter; an ad-name change must not create a duplicate.
 
 ## When to use the corpus
 
 Use corpus files when:
 - The question is about a specific creative by name or ID
 - Analyzing patterns across the full account (hook tactics, messaging angles, format mix)
-- Building briefs that reference past hooks or transcripts
+- Building briefs that reference past hooks and creative text
 - VoC mining beyond the current `last_30d` pull
 - Looking up paused or historical creatives
 
@@ -55,19 +57,27 @@ Use live Motion pulls for current performance numbers.
 
 ## Refresh behavior
 
-The daily refresh script (`corpus-refresh.mjs`) runs as a script-mode routine:
+The daily agent-mode routine reads the installed skill and performs refresh work in
+an agent turn:
 1. Pulls `last_7d` for new creative IDs not yet in the corpus.
 2. New IDs: fetches enrichment in batches of ≤15, writes new corpus files.
 3. Existing IDs in the `last_7d` pull: updates `spendState` and `status` in-place.
-4. Does NOT re-pull transcripts or summaries for already-indexed creatives.
+4. Does NOT re-pull summary sections for already-indexed creatives.
+
+Every Motion call must run directly in the agent turn. Never call Motion from
+`task.bash` or a script-mode routine.
 
 ## State file
 
-`/agent/brain/meta/corpus-state.json` tracks: `totalCreatives`, `lastBuildDate`, `lastRefreshDate`, `corpusLaneId`, `buildWorkflowId`, `buildTaskId`, `refreshRoutineId`.
+`/agent/brain/meta/corpus-state.json` tracks: `totalCreatives`, `lastBuildDate`,
+`lastRefreshDate`, `corpusLaneId`, `refreshRoutineId`, and
+`filenameConventionVersion`.
 
 ## Rules
 
-- Never re-pull transcripts/summaries for already-indexed files.
+- Never re-pull summary sections for already-indexed files.
 - Always batch enrichment at ≤15 IDs per `motion meta insights --scope creative-asset-id` call.
 - Use `--date-range last_365d` on ID-scoped calls.
-- Write is create-if-absent; refresh is update-in-place via `id8` key.
+- Use repeated `--glossary-category` and `--summary-sections` flags from the skill.
+  Do not use rejected `--include-glossary` or blocked `--include-transcript` flags.
+- Write is create-if-absent; refresh is update-in-place via the full creative ID.

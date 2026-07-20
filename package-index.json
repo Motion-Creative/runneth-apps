@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "three-package-split-0.1.0",
+  "indexRevision": "creative-corpus-0.2.0",
   "packages": [
     {
       "id": "context-kit",
@@ -39,8 +39,8 @@
     {
       "id": "creative-corpus",
       "name": "Creative Corpus",
-      "description": "Builds and maintains a durable per-creative brain library for the connected Meta account. Pulls summaries, transcripts, glossary tags, and decoded naming for every creative into local Markdown files — indexed by creative ID. Enables whole-account historical analysis, VoC mining, naming-convention decoding, and brief generation without re-fetching from Motion on every question. Companion to Context Kit.",
-      "version": "0.1.0",
+      "description": "Builds and maintains a durable per-creative brain library for the connected Meta account. Pulls Motion summary sections, glossary tags, and decoded naming into local Markdown files indexed by full creative asset ID. Enables whole-account historical analysis, voice mining, naming-convention decoding, and brief generation without re-fetching durable content on every question. Companion to Context Kit and Ad Naming.",
+      "version": "0.2.0",
       "categories": ["creative-strategy"],
       "packageManagerVersion": 1,
       "source": {

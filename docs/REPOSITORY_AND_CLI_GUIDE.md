@@ -30,9 +30,9 @@ The repository has two independent distribution systems.
 
 The checked-out cumulative feature branch contains three package candidates:
 
-1. `context-kit`: brand knowledge, a board app, skill, and refresh workflow.
-2. `ad-naming`: naming decoder, KPI map, query contract, skill, and refresh workflow.
-3. `creative-corpus`: durable per-creative files, build workflow, and daily refresh script.
+1. `context-kit`: brand knowledge, a board app, and an agent-mode refresh skill.
+2. `ad-naming`: naming decoder, KPI map, query contract, and agent-mode refresh.
+3. `creative-corpus`: durable full-ID per-creative files and agent-mode daily refresh.
 
 At the time this guide was written, `origin/main` still had an empty package index and
 none of these package directories. They are not released through the main registry
@@ -247,9 +247,10 @@ a new contract.
 Activation belongs in the installed skill and package instructions. In the current
 package series:
 
-- Context Kit builds its app and registers its refresh workflow on first use.
-- Ad Naming registers its refresh workflow on first use.
-- Creative Corpus registers and runs its build workflow, then creates a refresh routine.
+- Context Kit builds its app; build and refresh Motion calls run directly in agent turns.
+- Ad Naming builds and refreshes directly in agent turns.
+- Creative Corpus builds directly in the requesting agent turn, then creates an
+  agent-mode refresh routine.
 
 ### Fleet approval
 
@@ -487,22 +488,28 @@ motion meta insights \
 motion meta insights \
   --scope creative-asset-id \
   --creative-asset-id <id> \
-  --include-transcript \
-  --include-glossary \
   --date-range last_365d \
-  --include-metrics
+  --include-metrics \
+  --glossary-category intended-audience \
+  --glossary-category messaging-angle \
+  --glossary-category hook-tactic \
+  --glossary-category visual-format \
+  --glossary-category asset-type \
+  --glossary-category offer-type \
+  --glossary-category seasonality \
+  --summary-sections hookOrHeadline \
+  --summary-sections creativeBreakdown \
+  --summary-sections messagingAndPositioning \
+  --summary-sections emotionalAndAudienceInsight \
+  --summary-sections adDescription
 
 motion meta insights \
-  --include-glossary \
   --date-range last_30d \
   --sort topSpend \
-  --limit 100
-
-motion meta insights \
-  --include-transcript \
-  --date-range last_30d \
-  --sort topSpend \
-  --limit 20
+  --limit 100 \
+  --glossary-category intended-audience \
+  --glossary-category messaging-angle \
+  --glossary-category hook-tactic
 
 motion meta insights \
   --date-range last_30d \
@@ -511,7 +518,9 @@ motion meta insights \
   --table-kpi thumbstop_rate
 ```
 
-The creative-corpus code repeats `--creative-asset-id` for batches of at most 15 IDs.
+Creative Corpus repeats `--creative-asset-id` for batches of at most 15 IDs. The
+current CLI rejects `--include-glossary`, and its fast path blocks
+`--include-transcript`; use the repeated category and section flags above.
 
 Naming and conversion discovery:
 
@@ -652,27 +661,23 @@ start from runtime placeholder replacement plus `app build`.
 
 ### Workflow registration
 
+The external platform exposes forms such as:
+
 ```bash
-workflow push /agent/brain/context-kit/workflows/context-kit-refresh.ts \
-  --name context-kit-refresh
-
-workflow push /agent/brain/ad-naming/workflows/ad-naming-refresh.ts \
-  --name ad-naming-refresh
-
-workflow push /agent/brain/meta/corpus-build.ts \
-  --name creative-corpus-build
+workflow push <workflow-file.ts> --name <workflow-name>
 ```
 
 ### Workflow-backed tasks
 
 ```bash
-task add --kind workflow --workflow-id <id> --name "Context Kit Refresh"
-task add --kind workflow --workflow-id <id> --name "Ad Naming Refresh"
-task add --kind workflow --workflow-id <id> --name "Creative Corpus Build"
-
+task add --kind workflow --workflow-id <id> --name "<task-name>"
 task run --id <task-id>
 task wait --run <run-id>
 ```
+
+Do not call trusted Motion tools from `task.bash`: task-scoped broker tokens cannot
+access them. The current package series therefore performs Motion work directly in
+agent turns and does not ship workflow-backed Motion tasks.
 
 No task-listing syntax is established by the checked-in package skills. Confirm it
 with platform help before making it part of a package contract.
@@ -687,19 +692,18 @@ routine list
 routine add \
   --name "Creative corpus daily refresh" \
   --cron "0 5 * * *" \
-  --delivery "Update corpus state only — no conversation needed unless errors occur." \
-  --prompt "Run the corpus refresh script. If the script fails, report the error in a new web conversation." \
-  --script /agent/brain/meta/corpus-refresh.mjs
+  --delivery "Update corpus state only — no conversation needed unless new creatives are indexed or errors occur." \
+  --prompt "Start an agent turn, read the installed creative-corpus skill, and run its refresh procedure directly with trusted Motion tools."
 ```
 
-Workflow-backed weekly refresh examples use:
+Weekly agent-mode refresh examples use:
 
 ```bash
 routine add \
   --name "<name>" \
   --cron "0 9 * * 1" \
   --delivery "<delivery behavior>" \
-  --prompt "<run task, wait, summarize>"
+  --prompt "<start an agent turn, read the installed skill, refresh directly, summarize>"
 ```
 
 Routine prompt prose contains this conversation-delivery form:
@@ -919,17 +923,12 @@ or failure semantics.
 implemented resolver interprets that position as a display name and resolves email
 itself. Treat that invocation as stale; it can provision an incorrect handle.
 
-### Migration and refresh scripts
+### Migration scripts
 
 ```bash
 bash competitor-intel/migration-helper.sh
 bash team-member-memory/migration-helper.sh
-
-ROUTINE_TRIGGER=test /agent/brain/meta/corpus-refresh.mjs
-/agent/brain/meta/corpus-refresh.mjs
 ```
-
-The Creative Corpus test trigger exits without making Motion calls.
 
 ## Supporting external utilities
 
@@ -967,6 +966,10 @@ Check these before reusing an old example:
 12. CI does not type-check package workflows or build packaged apps.
 13. A feature branch can validate locally even while its registry source points to files
     not yet present on `main`.
+14. Current sandbox installs can fail when the external package CLI calls `chmod` on
+    staged files and receives `EPERM`. This repository does not implement that staging
+    operation; manual file copying is a test-only recovery that bypasses atomic install
+    behavior and should not be treated as the production fix.
 
 ## Package authoring checklist
 
@@ -1028,28 +1031,25 @@ Expected durable files include:
 /agent/.agents/skills/creative-corpus/SKILL.md
 /agent/apps/context-kit/buildeth.app.json
 /agent/brain/context-kit/context-kit-state.json
-/agent/brain/context-kit/workflows/context-kit-refresh.ts
 /agent/brain/ad-naming/ad-naming-state.json
 /agent/brain/ad-naming/naming-decoder.md
 /agent/brain/ad-naming/kpi-map.md
 /agent/brain/ad-naming/query-contract.md
-/agent/brain/ad-naming/workflows/ad-naming-refresh.ts
 /agent/brain/meta/corpus-state.json
 /agent/brain/meta/creatives/PLAYBOOK.md
-/agent/brain/meta/corpus-build.ts
-/agent/brain/meta/corpus-refresh.mjs
 ```
 
-Exercise executable staging safely:
-
-```bash
-ROUTINE_TRIGGER=test /agent/brain/meta/corpus-refresh.mjs
-```
+Creative files should end in a sanitized full creative asset ID, never an eight-character
+prefix. Inspect `corpus-state.json` for `filenameConventionVersion: 2`.
 
 Check the Context Kit app through `app list`, and inspect task/routine state using only
 commands confirmed by live platform help. Context Kit and Ad Naming offer weekly
 routines; they do not create them automatically. Creative Corpus creates its daily
 routine only after the corpus build completes.
+
+If install fails at staging `chmod` with `EPERM`, capture the exact operation/path and
+report it to the Runneth platform team. The package source cannot repair the external
+installer's filesystem ownership, and manual registration should remain test-only.
 
 After merge, separately repeat installation from `main` and test managed/index
 discovery. Feature-branch installation bypasses those release surfaces.

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "creative-corpus",
   "name": "Creative Corpus",
-  "description": "Builds and maintains a durable per-creative brain library for the connected Meta account. Pulls summaries, transcripts, glossary tags, and decoded naming for every creative into local Markdown files — indexed by creative ID. Enables whole-account historical analysis, VoC mining, naming-convention decoding, and brief generation without re-fetching from Motion on every question. Companion to Context Kit.",
-  "version": "0.1.0",
+  "description": "Builds and maintains a durable per-creative brain library for the connected Meta account. Pulls Motion summary sections, glossary tags, and decoded naming into local Markdown files indexed by full creative asset ID. Enables whole-account historical analysis, voice mining, naming-convention decoding, and brief generation without re-fetching durable content on every question. Companion to Context Kit and Ad Naming.",
+  "version": "0.2.0",
   "installPolicy": "manual",
   "updatePolicy": "manual",
   "uninstallPolicy": "allowed",
@@ -26,20 +26,6 @@
       "sourcePath": "brain/meta/creatives/PLAYBOOK.md",
       "target": { "root": "agent_brain", "path": "meta/creatives/PLAYBOOK.md" },
       "executable": false
-    },
-    {
-      "id": "creative-corpus-build-workflow",
-      "type": "file",
-      "sourcePath": "workflows/corpus-build.ts",
-      "target": { "root": "agent_brain", "path": "meta/corpus-build.ts" },
-      "executable": false
-    },
-    {
-      "id": "creative-corpus-refresh-script",
-      "type": "file",
-      "sourcePath": "scripts/corpus-refresh.mjs",
-      "target": { "root": "agent_brain", "path": "meta/corpus-refresh.mjs" },
-      "executable": true
     },
     {
       "id": "creative-corpus-skill",
