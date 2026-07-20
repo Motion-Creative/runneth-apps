@@ -1,110 +1,137 @@
 ---
 name: context-kit
-description: Builds a customer's Context Kit, the institutional knowledge that makes every Runneth answer sharper. Reads the Context Kit state index, confirms what Motion knows, drafts brand-context and every Bucket B item from Motion creative data (AI glossary tag distribution first) before asking anything, imports what already lives in Google Drive or Notion, researches real customer language for voice-of-customer, and collects what only the customer knows, filling each into the brain and moving the completeness meter. Triggers on "build my context kit", "set up my context kit", "context kit", "build my brain", "sharpen Runneth", "what makes my answers better", "what do you still need from me", "what does Runneth know about us".
+description: Builds a customer's Context Kit, the brand knowledge that makes every Runneth answer sharper. Reads the Context Kit state index, confirms what Motion knows, drafts brand-context and every Bucket B item from Motion creative data before asking anything, imports what already lives in Google Drive or Notion, and collects what only the customer knows. Triggers on "build my context kit", "set up my context kit", "context kit", "build my brain", "sharpen Runneth", "what do you still need from me", "what does Runneth know about us".
 ---
 
 # Context Kit skill
 
-Turn a fresh brain into a filled one, without the manual sales/CS back-and-forth. The board app is the
-mirror; this skill is the doer. Draft from Motion data first, then import, then collect. Never write to
-`user.md`. Fill happens as deliberate in-conversation brain writes.
+Turn a fresh brain into a filled one. The board app is the mirror; this skill is the doer. Draft from Motion data first, then import, then collect. Never write to `user.md`.
+
+Naming conventions, per-campaign KPI maps, and the Motion query contract are handled by the **ad-naming** companion package. Install that after Context Kit when the account has a structured naming system.
 
 ## Single source of truth
-Every one of the 12 files lives in `/agent/brain/context-kit/<item-id>.md` and is mirrored to
-`/agent/apps/context-kit/data/<item-id>.md` so the board can fetch it. Do NOT scatter files into
-`brand-audit/` or `templates/`. Item ids: brand-context, kpis-goal, spend-threshold, competitors,
-products, positioning, voice, voc, legal (file legal-compliance.md), briefing-template, source-of-truth,
-guardrails.
 
-## Status meaning (drives the board color, keep it honest)
+Every one of the 15 files lives in `/agent/brain/context-kit/<item-id>.md` and is mirrored to `/agent/apps/context-kit/data/<item-id>.md` so the board can fetch it.
+
+Item ids: brand-context, kpis-goal, spend-threshold, competitors, products, positioning, voice, voc, legal (file legal-compliance.md), briefing-template, source-of-truth, guardrails, media-buying, business-team, landing-pages.
+
+Integration guides: `/agent/brain/context-kit/integrations/<source>.md`, mirrored to `data/integrations/<source>.md`.
+
+## Status meaning
 - `confirmed` / `imported`: locked in by the customer (green).
-- `drafted` (butter): built from ACTUAL Motion data (glossary tags, creative summaries, transcripts, Inspo).
-- `inferred` (blue): written from general brand knowledge because Motion was unavailable. MUST carry a
-  `sourceNote` explaining that, so the customer knows to scrutinize it.
+- `drafted`: built from ACTUAL Motion data. Must carry real data, not general knowledge.
+- `inferred`: written from general brand knowledge because Motion was unavailable. MUST carry a `sourceNote`.
 - `missing`: nothing yet.
 
 ## Step 0 — Load state + set brand name
+
 1. Read `/agent/brain/context-kit/context-kit-state.json`.
-2. Set top-level `brandName` from `motion workspaces` (current workspace name) or brand context, BEFORE the
-   first state write, so the board title reads "<Brand>'s Context Kit" from first load.
+2. Set top-level `brandName` from `motion workspaces` or brand context before the first state write.
 3. Run `motion brand-context --data-query "summary"`, `motion workspace-goal`, `motion spend-threshold`.
-4. Note which context sources are connected (Google Drive, Notion, reviews platform, Shopify, attribution).
+4. Note which context sources are connected (Google Drive, Notion, reviews platform).
+
+## Step 0b — Register Knoweth lanes (first run only)
+
+If `context-kit-state.json` shows `lanesRegistered: false` or the field is absent, register the three core lanes before any brain writes:
+
+| Lane ID | Path | Patterns |
+|---|---|---|
+| `context-kit-core` | `/agent/brain/context-kit/` | `context-kit-state.json`, `guardrails.md`, `legal-compliance.md`, `source-of-truth.md`, `briefing-template.md` |
+| `context-kit-brand` | `/agent/brain/context-kit/` | `brand-context.md`, `voice.md`, `voc.md`, `positioning.md`, `products.md`, `competitors.md` |
+| `context-kit-performance` | `/agent/brain/context-kit/` | `kpis-goal.md`, `spend-threshold.md` |
+
+Set `lanesRegistered: true` in state. Do not re-register on subsequent runs.
+
+## Step 0c — Register the refresh workflow (first run only)
+
+If `context-kit-state.json` shows `refreshWorkflowId` absent:
+1. Read `/agent/brain/context-kit/workflows/context-kit-refresh.ts`.
+2. Run `workflow push /agent/brain/context-kit/workflows/context-kit-refresh.ts --name context-kit-refresh`.
+3. Save the workflow ID to state as `refreshWorkflowId`.
+4. `task add --kind workflow --workflow-id <id> --name "Context Kit Refresh"` → save as `refreshTaskId`.
+5. Mirror state.
 
 ## Step 1 — Build and open the board (first run only)
-Sync stages files but does not build apps. Fill `/agent/apps/context-kit/buildeth.app.json` (replace
-`__CONVERSATION_ID__` and `__WORKSPACE_ID__`), run `app build context-kit`, then `app list` for the URL.
-`astro.config.mjs` ships in the package. After first build the board reads `data/` at runtime, no rebuild
-needed for content/state changes.
 
-## Step 2 — Bucket A: confirm, and auto-draft brand-context
-- **kpis-goal, spend-threshold:** show the live Motion value, one-tap confirm, write the full doc, set the
-  `preview` string, mark `confirmed`.
-- **brand-context (auto-draft, never ask from scratch):** if `motion brand-context` has content, show and
-  confirm; if empty, draft from `motion meta insights --date-range last_30d --sort topSpend --include-metrics`
-  (+ TikTok if connected). Foundation only (brand name, origin story, positioning statement, product
-  description, proof points, 2-sentence tone, 2-sentence audience). Present, confirm, write, save to workspace
-  config, mirror to `data/`, mark `confirmed`.
+Fill `/agent/apps/context-kit/buildeth.app.json` (replace `__CONVERSATION_ID__` and `__WORKSPACE_ID__`), run `app build context-kit`, then `app list` for the URL.
+
+## Step 2 — Bucket A: confirm and auto-draft brand-context
+
+- **kpis-goal:** show the live Motion workspace-goal value. Present, confirm, write the full doc with `## Latest Import From Motion` and blank `## Runneth Instructions`. Mark `confirmed`. Note: the per-campaign KPI map is handled by the **ad-naming** package.
+- **spend-threshold:** same pattern.
+- **brand-context:** if `motion brand-context` has content, show and confirm; if empty, draft from `motion meta insights --date-range last_30d --sort topSpend --include-metrics`. Foundation only (brand name, origin story, positioning, product description, proof points, 2-sentence tone, 2-sentence audience). Present, confirm, write, save to workspace config, mirror, mark `confirmed`.
 
 ## Step 3 — Proactive import + connect offers
+
 If any Bucket B/C item is missing:
-- Drive/Notion connected: "I see you have [Drive/Notion] connected, want me to search there first?"
-- No reviews platform: suggest it (powers the best voice-of-customer).
-Import confirmed docs into `/agent/brain/context-kit/<id>.md`, mirror to `data/`, mark `imported`.
+- Drive/Notion connected: offer to search there first.
+- No reviews platform: suggest connecting it (powers voice-of-customer).
 
-## Step 4 — Bucket B: glossary tag distribution is the data spine, then fallback chain
-Before drafting ANY Bucket B item, pull the ground-truth spine once:
-1. `motion ai-glossary` (which tag categories exist for this workspace).
-2. `motion meta insights --include-glossary --date-range last_30d --sort topSpend` and read the tag
-   distribution from `creatives[].glossaryTags[]`. This is what the brand actually bets spend on.
+Import confirmed docs, mirror, mark `imported`.
 
-Category-to-item mapping (use as the factual spine, then layer language on top):
-- `intended-audience` -> positioning (who the top-spend ads target)
-- `messaging-angle` -> positioning + voice (what they lead with, how they frame claims)
-- `hook-tactic` -> voice + voc (how ads open, which customer-language patterns win spend)
-- `visual-format` + `asset-type` -> voice (UGC vs polished vs demo vs testimonial)
-- `offer-type` -> products (which offer structures attach to which products)
-- `seasonality` -> products + competitors
+## Step 4 — Bucket B: glossary spine, then draft each item
 
-Per-item **fallback chain** (explicit, sequential):
-1. Motion first: glossary spine + creative summaries + hooks; Inspo brands for **competitors**; video
-   transcripts (`--include-transcript`) for **voc**; `review-audit` + `brand-relevant-keywords` + web research
-   for real customer language on **voc** (ad transcripts are only a labeled supplement there).
-2. Good Motion signal -> draft, status `drafted`.
-3. Motion empty or errors -> if Drive/Notion connected, search + import, status `imported`.
-4. Neither -> draft from general brand knowledge, status `inferred`, and set a `sourceNote` like
-   "Drafted from general brand knowledge, Motion ad data was unavailable. Review and correct."
-5. Even that unreliable -> leave `missing` and show thought starters / ask.
-After each: mirror the file to `data/<id>.md`, tell the user "I drafted [item], click the card to review or
-tell me what to change." Never silently skip; say what was missing.
+Pull the ground-truth spine once:
+1. `motion ai-glossary`
+2. `motion meta insights --include-glossary --date-range last_30d --sort topSpend` — read tag distribution from `creatives[].glossaryTags[]`
 
-Content depth: **voice** is the brand's voice (4-6 named characteristics with sounds-like/doesn't pairs).
-**voc** is the customer's voice: a 7-category swipe file (pain, emotional language, desire, before/after,
-objections, competitor complaints, trigger events), near-verbatim, plus the Sarah Levinger lived-context
-layer (generation, what shaped their trust, 5-10 trigger moments with the emotion on each).
+Category-to-item mapping:
+- `intended-audience` → positioning + voc
+- `messaging-angle` → positioning + voice
+- `hook-tactic` → voice + voc
+- `visual-format` + `asset-type` → voice
+- `offer-type` → products
+- `seasonality` → products + competitors
+
+Per-item fallback chain (explicit, sequential):
+1. Motion glossary spine + summaries + transcripts → draft, status `drafted`.
+2. Motion empty → Drive/Notion if connected → status `imported`.
+3. Neither → general brand knowledge → status `inferred` + `sourceNote`.
+4. Still unreliable → leave `missing`, show thought starters.
+
+After each: mirror to `data/<id>.md`, tell the user what was drafted.
+
+**voice**: 4-6 named characteristics with sounds-like/doesn't-sound-like pairs.
+**voc**: 7-category swipe file (pain, emotional language, desire, before/after, objections, competitor complaints, trigger events), near-verbatim from transcripts.
 
 ## Step 5 — Bucket C: collect with depth
-legal, briefing-template, source-of-truth, guardrails: file drop when they have it, use the item's
-thoughtStarters when stuck, one prompt when short. Prompt for the COMPLETE rule set. Write to
-`/agent/brain/context-kit/<id>.md` (legal -> legal-compliance.md), mirror to `data/`, mark `confirmed`.
+
+legal, briefing-template, source-of-truth, guardrails, media-buying, business-team, landing-pages: file drop when they have it, thought starters when stuck. Write, mirror, mark `confirmed`.
 
 ## Step 6 — Keep the map correct
-- Refresh `/agent/INDEX.md` entries pointing to `/agent/brain/context-kit/` as the canonical home.
-- After every change update BOTH state copies (`/agent/brain/context-kit/context-kit-state.json` and the
-  app's `data/context-kit-state.json`). No rebuild needed for data-only changes.
+
+- Refresh `/agent/INDEX.md` for all `/agent/brain/context-kit/` files.
+- Update BOTH state copies after every change.
+
+## Step 7 — Offer the weekly refresh routine
+
+After the completeness meter hits 100%, offer:
+
+```
+routine add \
+  --name "Context Kit weekly refresh" \
+  --cron "0 9 * * 1" \
+  --delivery "Send a summary in a new web conversation." \
+  --prompt "Run the context-kit refresh task (task id: <refreshTaskId from state>). Wait for completion with task wait. Read the returned JSON. Open a new conversation summarising what changed — highlight shifts in voice, voc, or competitors. Flag items not updated in 3+ weeks as stale. Deliver with conversation send --new."
+```
+
+Save routine ID to state as `refreshRoutineId`.
 
 ## Rules
-- Never touch `user.md`. Never overwrite an already-filled file (create-if-absent, edit-in-place on confirm).
-- Reserve `drafted` for real Motion-data content; use `inferred` + a `sourceNote` for general-knowledge drafts.
-- Plain, non-technical language with the customer. No file paths or JSON in chat.
-- One item at a time; celebrate the Level 3 unlock when the meter completes.
-- The self-improvement loop is ALWAYS ON (see the package instruction): on any creative-strategy turn, if a context-kit file was thin and you inferred, say so and offer once to capture the detail, then save it to the right file. Keep it to one in-chat offer, no persistent queue.
-
+- Never touch `user.md`.
+- Create-if-absent; edit-in-place on confirm. Never overwrite a filled file.
+- Reserve `drafted` for real Motion data. Use `inferred` + `sourceNote` for general-knowledge drafts.
+- Plain language with the customer. No file paths or JSON in chat.
 
 ## Bucket A: two-section import contract
-When writing brand-context, kpis-goal, and spend-threshold, use the durable import format so a Motion re-sync never wipes a customer correction:
-- `## Latest Import From Motion` holds the current Motion value.
-- `## Runneth Instructions` holds the customer's corrections and rules.
-On conflict, follow `Runneth Instructions` and say so plainly. A refresh updates only the import section and preserves instructions. Confirming still moves the item to `confirmed`.
 
-## Bucket D: integration source guides (Your tools)
-Bucket D is one card per connected source, capturing how the customer wants Runneth to USE that tool (not what it can do). Create-when-connected: when a customer connects a source or gives rules for it, write `/agent/brain/context-kit/integrations/<source>.md`, mirror to `data/integrations/<source>.md`, and set the item `confirmed` (or `imported` if pulled from an existing doc). Each guide answers: what it applies to (account/workspace/folder/table/brand), what to use it for, what to avoid, the customer's rules, and any open question. Leave the shipped generic scaffolds (ad-platform, asset-library, data-warehouse, reviews) `missing` with their thoughtStarters until the customer connects that source. Bucket D is excluded from the completeness meter.
+- `## Latest Import From Motion` — current Motion value.
+- `## Runneth Instructions` — customer corrections and rules.
+
+On conflict, follow `Runneth Instructions`. A refresh updates only the import section.
+
+## Bucket D: integration source guides
+
+Files at `/agent/brain/context-kit/integrations/<source>.md`, mirrored to `data/integrations/<source>.md`. The ad-platform guide (workspace ID, attribution windows, conversion events, metric gotchas) is provided by the **ad-naming** package when installed. Other guides (asset-library, data-warehouse, reviews) use their thoughtStarters until the customer connects that source.
+
+Bucket D excluded from completeness meter.

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "context-kit",
   "name": "Context Kit",
-  "description": "Builds the institutional knowledge that makes every Runneth answer sharper. Seeds a brain skeleton, a Context Kit board app, and the Context Kit skill that confirms what Motion knows, imports what already lives in Drive/Notion, researches what it can, and collects the rest.",
-  "version": "0.9.0",
+  "description": "Builds the brand knowledge that makes every Runneth answer sharper. Seeds a brain skeleton, a Context Kit board app, and the Context Kit skill. Install first, then ad-naming for naming conventions and query contract, then creative-corpus for the full creative library.",
+  "version": "1.0.0",
   "updatePolicy": "manual",
   "uninstallPolicy": "allowed",
   "resources": [
@@ -59,6 +59,46 @@
       "target": {
         "root": "agent_brain",
         "path": "context-kit/briefing-template.md"
+      },
+      "executable": false
+    },
+    {
+      "id": "media-buying-scaffold",
+      "type": "file",
+      "sourcePath": "brain/context-kit/media-buying.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "context-kit/media-buying.md"
+      },
+      "executable": false
+    },
+    {
+      "id": "business-team-scaffold",
+      "type": "file",
+      "sourcePath": "brain/context-kit/business-team.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "context-kit/business-team.md"
+      },
+      "executable": false
+    },
+    {
+      "id": "landing-pages-scaffold",
+      "type": "file",
+      "sourcePath": "brain/context-kit/landing-pages.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "context-kit/landing-pages.md"
+      },
+      "executable": false
+    },
+    {
+      "id": "context-kit-refresh-workflow",
+      "type": "file",
+      "sourcePath": "workflows/context-kit-refresh.ts",
+      "target": {
+        "root": "agent_brain",
+        "path": "context-kit/workflows/context-kit-refresh.ts"
       },
       "executable": false
     },
