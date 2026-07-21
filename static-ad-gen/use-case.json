@@ -1,8 +1,0 @@
-{
-  "slug": "static-ad-gen",
-  "display_title": "Sentence to Static Brief",
-  "pitch": "One sentence in. Runneth writes the static ad brief, refines the image prompt against your brand, and waits for your okay before it renders.",
-  "status": "experimental",
-  "category": "creative-production",
-  "github_path": "static-ad-gen"
-}
