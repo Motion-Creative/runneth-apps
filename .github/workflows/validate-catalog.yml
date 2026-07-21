@@ -1,10 +1,8 @@
 name: Validate
 
-# Structural gate for the Use Case Library. Two jobs:
-#   validate-catalog — the catalog-contract tests (fast, zero deps)
-#   build-site       — typecheck + build use-case-library-site
-# If both pass, the catalog is renderable and the site compiles. Pairs with the
-# @runneth semantic review in #use-case-reviews.
+# Structural gates for OS packages and the rebuilding-page site:
+#   validate-package-index — package registry and manifest contract
+#   build-site             — typecheck + build use-case-library-site
 
 on:
   pull_request:
@@ -19,16 +17,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate-catalog:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Validate the use-case catalog
-        run: node --test scripts/validate-catalog.mjs
-
   validate-package-index:
     runs-on: ubuntu-latest
     steps:
