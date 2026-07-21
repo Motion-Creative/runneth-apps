@@ -26,7 +26,7 @@ client-side cutoffs on their platforms.
 - Field mapping: `rating` <- `rating` (1-5 int); body <- `body`; `title` <- `title`;
   `product_ref` <- `product_external_id` (Shopify product id; `product_handle` also exists);
   `author_name` <- `reviewer.name`; `created_at` <- `created_at`; `verified` <- `verified`;
-  media in `pictures[]` (keep in raw payload only); `source_url` <- null (the list payload
+  media in `pictures[]` is not carried into the file; `source_url` <- null (the list payload
   carries no permalink).
 
 ## trustpilot (Pipedream OAuth) - doc-grounded, verify on first connect
@@ -41,8 +41,8 @@ Two-step:
 
 - Date bound: none - client-side cutoff.
 - Field mapping: `rating` <- `stars`; body <- `text`; `title` <- `title`;
-  `author_name` <- `consumer.displayName`; `created_at` <- `createdAt`; `companyReply` stays
-  in the raw payload; `source_url` <- a `links`/review-URL field if the payload carries one
+  `author_name` <- `consumer.displayName`; `created_at` <- `createdAt`; `companyReply` is not
+  carried into the file; `source_url` <- a `links`/review-URL field if the payload carries one
   (verify on first connect), else null.
 - **`product_ref` is always null**: Trustpilot core is company-level reviews. Product reviews
   are a separate API surface - verify grant coverage before using it.
@@ -57,7 +57,7 @@ Two-step:
 - Date bound: `updated_at_min` - **the only platform here with a native date bound**.
 - Field mapping: `rating` <- `score`; body <- `content`; `title` <- `title`;
   `author_name` <- `user.display_name`; `created_at` <- `created_at`; `product_ref` <- `sku`;
-  `verified` <- `verified_buyer`; votes stay in the raw payload; `source_url` <- null (no
+  `verified` <- `verified_buyer`; votes are not carried into the file; `source_url` <- null (no
   permalink in the list payload).
 
 ## junip (keys-auth in Pipedream) - BLOCKED: no working key verified

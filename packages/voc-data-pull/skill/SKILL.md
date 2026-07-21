@@ -42,10 +42,9 @@ the date range before starting.
   dumps in guides. VoC data lives only under `/agent/brain/data-sources/`.
 - **PII: leave `author_contact` null.** The unified template keeps the field, but the policy
   call on storing customer emails is pending. Do not populate it until told the policy allows
-  it. Note the same policy call also covers raw payloads: the never-lossy `## Raw payload`
-  section currently retains whatever PII the platform returns (including customer emails).
-  That is a deliberately unresolved open item, not a decision - do not strip raw payloads on
-  your own, and do not treat their contents as cleared for reuse elsewhere.
+  it. Raw platform payloads are NOT persisted in output files (see the file format below), so
+  do not paste payload JSON - which carries reviewer emails and other PII - into any brain
+  file.
 
 ## Step 1 - Resolve the platform and connection path
 
@@ -91,14 +90,49 @@ Re-pulls: reviews and comments are immutable - skip files that already exist. Su
 live over time - overwriting a ticket's file with fresher `updated_at`/messages is correct,
 and the id-keyed path is what makes that overwrite land on the same file.
 
-### File format - the unified metadata template
+### File format
 
-Every file is markdown: a fenced ```yaml metadata block at the top (the metadata header),
-then the body sections. Use a fenced block, not raw `---` frontmatter - the fenced block
-renders as clean YAML in file viewers while staying just as parseable. The metadata is ONE
-flat record shape for every VoC item. **All fields are always present; use `null` when the
-source lacks the concept.** Never drop a field and never add org-specific fields at the top
-level (org-specific platform fields ride in `custom`).
+Every file has the same three-part layout, top to bottom (copyable skeletons for all three
+source types are in `templates/`):
+
+1. **Headline + human header** - an `# H1` identity line, then a block of bold-label lines
+   (`**Label:** value`, each line ending with two trailing spaces so markdown keeps the line
+   breaks). The header is a human-readable *projection* of the metadata for that source
+   type - humanized values (`No` instead of `false`, `—` for empty), only the fields that
+   are meaningful for the item, and every key in `custom` surfaced as its own label (that is
+   where org-specific lines like `Category` / `Customer tier` come from). It is never the
+   source of truth; the metadata block below is.
+   - Reviews: `# Review #<external_id> - "<title>" <stars>` (`★`/`☆` out of 5; omit the
+     quoted title when null). Labels: Platform, Rating, Reviewer, Date, Product, Verified
+     buyer.
+   - Support: `# Ticket #<external_id> - Re: <subject>`. Labels: Platform, Date, Status,
+     Channel, Customer, each `custom` key, Tags, Messages (count + last activity).
+   - Ad comments: `# Ad comment #<external_id>`. Labels: Platform (facebook/instagram),
+     Author, Date, Reactions, Replies, and In reply to when `parent_ref` is set.
+2. **The content**, between two `---` rules: the review text as plain prose, the **full
+   conversation** for support items (one `### <author> (<role>) - <timestamp>` section per
+   message, in order), or the comment text.
+3. **The metadata block** - a collapsed section, exactly:
+
+   ```
+   <details>
+   <summary>Metadata (unified VoC record)</summary>
+
+   [fenced yaml block]
+
+   </details>
+   ```
+
+   The yaml inside is the machine contract downstream packages parse. It is ONE flat record
+   shape for every VoC item. **All fields are always present; use `null` when the source
+   lacks the concept.** Never drop a field and never add org-specific fields at the top
+   level (org-specific platform fields ride in `custom`). Keep the blank lines around the
+   fenced block - markdown inside `<details>` needs them.
+
+Do NOT write the raw platform payload into the file. Map the recipe's fields, keep anything
+org-specific in `custom`, and leave the rest of the payload behind.
+
+### The unified metadata record
 
 Common fields (every item):
 
@@ -115,7 +149,6 @@ Common fields (every item):
 | `reply_count` | Number of replies/messages **beyond the root item** (a 4-message ticket has `reply_count: 3`); null when unknown |
 | `parent_ref` | For ad-comment replies: the parent comment's `external_id`. Null for root items. |
 | `source_url` | Link back to the item on the platform. Set it only from the recipe's `source_url` mapping; most platforms provide none in the list payload - then it is null. Never invent a URL pattern. |
-| `raw` | The untouched platform payload. Projected into the `## Raw payload` section (see below), not duplicated in the metadata block - same as `body`. |
 
 Review fields (null for support and ad comments):
 
@@ -141,18 +174,12 @@ Ad-comment fields (null elsewhere):
 |---|---|
 | `reactions_total` | Total reactions on the comment |
 
-Body and raw payload, after the metadata block:
+`body` is the file's content section (part 2 of the layout), not a yaml key - it is the one
+template field that lives outside the metadata block.
 
-- `## Content` - the review text, or the **full conversation** for support items (one
-  `### <author> - <timestamp>` subsection per message, in order), or the comment text.
-- `## Raw payload` - the untouched platform payload for the item as a fenced `json` block.
-  The template is never lossy; keep the raw payload even when it repeats mapped fields.
-
-Copyable file skeletons are in `templates/review.md`, `templates/support-conversation.md`,
-and `templates/ad-comment.md` in this skill folder. Per-platform field mappings
-(`rating` <- Judge.me `rating` / Trustpilot `stars` / Yotpo `score` / Stamped `reviewRating`,
-and so on) are in the recipes reference - each platform adapter is a field-mapping exercise,
-not design work.
+Per-platform field mappings (`rating` <- Judge.me `rating` / Trustpilot `stars` / Yotpo
+`score` / Stamped `reviewRating`, and so on) are in the recipes reference - each platform
+adapter is a field-mapping exercise, not design work.
 
 ## Step 4 - Report
 
@@ -167,3 +194,8 @@ live-verified), say which calls you verified live during this pull.
 - **Okendo / Stamped**: need a customer API key stored as a secret before any pull.
 - **Trustpilot / Yotpo**: recipes are doc-grounded; verify grant coverage and the discovery
   step on first connect before promising data.
+- **Template deviation, pending sign-off**: the proposed unified template lists a `raw`
+  (untouched payload) column; this package deliberately does not persist raw payloads in
+  files - leaner files, and no platform PII stored beyond what the mapped fields carry. If
+  the template sign-off insists on `raw`, the file format gains a collapsed raw-payload
+  section back.

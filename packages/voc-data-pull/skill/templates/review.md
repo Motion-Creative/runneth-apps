@@ -2,14 +2,33 @@
 
 Path: `/agent/brain/data-sources/<platform>/reviews/review-<external_id>.md`
 
-Every metadata field is always present; `null` when the source lacks the concept.
-`author_contact` stays `null` until the PII policy call is made (the raw payload still
-carries source PII - that is part of the same pending policy call, see SKILL.md).
-`source_url` comes only from the recipe's mapping - Judge.me's list payload has no
-permalink, so it is null here. The metadata is a fenced yaml block (not raw `---`
-frontmatter) so it renders as clean YAML in file viewers.
+Layout: H1 headline with stars (omit the quoted title when null), bold-label human header
+(two trailing spaces end every label line), the review text between `---` rules, then the
+collapsed metadata block. Every metadata field is always present; `null` when the source
+lacks the concept. `author_contact` stays `null` until the PII policy call is made, and raw
+platform payloads are never written into the file. `source_url` comes only from the
+recipe's mapping - Judge.me's list payload has no permalink, so it is null here.
 
 ````markdown
+# Review #31274522 — "Finally something that works" ★★★★★
+
+**Platform:** Judge.me  
+**Rating:** 5/5  
+**Reviewer:** Dana M.  
+**Date:** 2026-06-14  
+**Product:** 8641242349791  
+**Verified buyer:** Yes  
+
+---
+
+Finally something that works. I'd given up on strapless options entirely until a friend
+recommended this - wore it for a full wedding day and forgot I had it on.
+
+---
+
+<details>
+<summary>Metadata (unified VoC record)</summary>
+
 ```yaml
 source_platform: judge_me
 source_type: review
@@ -32,24 +51,8 @@ custom: null
 reactions_total: null
 ```
 
-## Content
-
-Finally something that works. I'd given up on strapless options entirely until a friend
-recommended this - wore it for a full wedding day and forgot I had it on.
-
-## Raw payload
-
-```json
-{
-  "id": 31274522,
-  "rating": 5,
-  "title": "Finally something that works",
-  "body": "Finally something that works. I'd given up on strapless options entirely...",
-  "product_external_id": 8641242349791,
-  "reviewer": { "name": "Dana M.", "email": "dana@example.com" },
-  "created_at": "2026-06-14T09:12:44Z",
-  "verified": "buyer",
-  "pictures": []
-}
-```
+</details>
 ````
+
+For a shop-level review (no product) the Product label reads `**Product:** — (shop-level
+review)` and `product_ref` is null. For a 1-star review the headline stars are `★☆☆☆☆`.

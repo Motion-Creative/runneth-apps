@@ -34,16 +34,20 @@ exists for those two; add the intent manually or via the CSM-prompted path).
 
 ## The output contract
 
-One flat metadata record shape for every VoC item - all fields always present, `null` when
-the source lacks the concept - with the review text or full conversation as the file body
-and the untouched platform payload preserved at the bottom. See `skill/SKILL.md` for the
-field table. Raw data files are deliberately separate from integration guides: nothing is
-ever written into `/agent/brain/integrations/<source>/`.
+Every file: an H1 headline plus a bold-label human header (the Ramy Brook shape - org
+custom fields surface as their own labels), the review text or full conversation as
+readable content, and a collapsed metadata block carrying the unified VoC record - one
+flat yaml shape for every item, all fields always present, `null` when the source lacks
+the concept. Raw platform payloads are not persisted (a flagged deviation from the
+proposed template, pending sign-off). See `skill/SKILL.md` for the layout and field table.
+Data files are deliberately separate from integration guides: nothing is ever written into
+`/agent/brain/integrations/<source>/`.
 
 ## Known v1 gaps
 
 The authoritative list lives in `skill/SKILL.md` ("Known v1 gaps" + the PII hard boundary).
 In short: Junip blocked on a key; Okendo/Stamped need stored customer keys;
 Trustpilot/Yotpo doc-grounded pending first connects; no automatic post-install trigger
-(CSM/user prompt starts pulls); and the PII policy call is open - `author_contact` stays
-null while raw payloads still retain source PII until that call is made.
+(CSM/user prompt starts pulls); the PII policy call is open (`author_contact` stays null);
+and dropping the template's `raw` column from files is a flagged deviation pending
+template sign-off.
