@@ -8,6 +8,13 @@
  * Existing use-case-library folders are intentionally ignored unless the index
  * references them. That keeps the migration from use cases to packages
  * incremental.
+ *
+ * These assertions are a zero-dependency mirror of the runtime zod contracts in
+ * Motion-Creative/agent-builder — keep them in sync with:
+ * - packages/runneth-tools/src/runtime/packages/schema.ts   (index entry, source, policies)
+ * - packages/runneth-tools/src/runtime/packages/manifest.ts (manifest v1/v2, tasks, workflows)
+ * - packages/runneth-tools/src/runtime/packages/sync.ts     (install/update policy semantics
+ *   behind the managed-sync fleet gate below)
  */
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
@@ -51,6 +58,17 @@ const assertKeys = (value, expectedKeys, label) => {
     [...expectedKeys].sort(),
     `${label}: unexpected keys ${JSON.stringify(actualKeys)}`,
   )
+}
+
+// Strict key-set check where some keys are optional: required keys must all be
+// present (enforced by the final assertKeys) and no key outside required+optional
+// may appear.
+const assertKeysWithOptional = (value, requiredKeys, optionalKeys, label) => {
+  const expectedKeys = [
+    ...requiredKeys,
+    ...optionalKeys.filter((key) => key in value),
+  ]
+  assertKeys(value, expectedKeys, label)
 }
 
 const assertNonEmptyString = (value, label) => {
@@ -158,14 +176,7 @@ const assertTaskSpec = (spec, label) => {
   assert.equal(typeof spec.kind, 'string', `${label}.kind: must be a string`)
 
   if (spec.kind === 'agent') {
-    const expectedKeys = ['kind', 'prompt']
-    if ('name' in spec) {
-      expectedKeys.push('name')
-    }
-    if ('outputSchema' in spec) {
-      expectedKeys.push('outputSchema')
-    }
-    assertKeys(spec, expectedKeys, label)
+    assertKeysWithOptional(spec, ['kind', 'prompt'], ['name', 'outputSchema'], label)
     assertNonEmptyString(spec.prompt, `${label}.prompt`)
     if ('name' in spec) {
       assertTaskName(spec.name, `${label}.name`)
@@ -175,17 +186,7 @@ const assertTaskSpec = (spec, label) => {
   }
 
   if (spec.kind === 'bash') {
-    const expectedKeys = ['kind', 'script']
-    if ('cwd' in spec) {
-      expectedKeys.push('cwd')
-    }
-    if ('env' in spec) {
-      expectedKeys.push('env')
-    }
-    if ('timeoutMs' in spec) {
-      expectedKeys.push('timeoutMs')
-    }
-    assertKeys(spec, expectedKeys, label)
+    assertKeysWithOptional(spec, ['kind', 'script'], ['cwd', 'env', 'timeoutMs'], label)
     assertNonEmptyString(spec.script, `${label}.script`)
     assertOptionalNonEmptyString(spec, 'cwd', label)
     if ('env' in spec) {
@@ -224,17 +225,12 @@ const assertPackageTask = (task, label) => {
 
 const assertPackageWorkflow = (workflow, label) => {
   assert.ok(isRecord(workflow), `${label}: must be an object`)
-  const expectedKeys = ['name', 'sourcePath']
-  if ('entry' in workflow) {
-    expectedKeys.push('entry')
-  }
-  if ('inputSchema' in workflow) {
-    expectedKeys.push('inputSchema')
-  }
-  if ('outputSchema' in workflow) {
-    expectedKeys.push('outputSchema')
-  }
-  assertKeys(workflow, expectedKeys, label)
+  assertKeysWithOptional(
+    workflow,
+    ['name', 'sourcePath'],
+    ['entry', 'inputSchema', 'outputSchema'],
+    label,
+  )
   assertTaskName(workflow.name, `${label}.name`)
   assertRelativePath(workflow.sourcePath, `${label}.sourcePath`)
   assertOptionalNonEmptyString(workflow, 'entry', label)
@@ -242,24 +238,22 @@ const assertPackageWorkflow = (workflow, label) => {
   assertOptionalJsonValue(workflow, 'outputSchema', label)
 }
 
-const assertPackageManifestV1 = (manifest, label) => {
-  assert.ok(isRecord(manifest), `${label}: must be an object`)
-  assertKeys(
-    manifest,
-    [
-      'description',
-      'id',
-      'installPolicy',
-      'name',
-      'resources',
-      'schemaVersion',
-      'uninstallPolicy',
-      'updatePolicy',
-      'version',
-    ],
-    label,
-  )
-  assert.equal(manifest.schemaVersion, 1, `${label}.schemaVersion: must be 1`)
+const MANIFEST_COMMON_KEYS = [
+  'description',
+  'id',
+  'installPolicy',
+  'name',
+  'resources',
+  'schemaVersion',
+  'uninstallPolicy',
+  'updatePolicy',
+  'version',
+]
+
+// Shared by every manifest version: identity, policies, and resources. Repo
+// policy requires semver versions in both v1 and v2 (the runtime only requires
+// a non-empty string, so this is deliberately stricter).
+const assertPackageManifestCommon = (manifest, label) => {
   assertPackageId(manifest.id, `${label}.id`)
   assertNonEmptyString(manifest.name, `${label}.name`)
   assertNonEmptyString(manifest.description, `${label}.description`)
@@ -276,41 +270,16 @@ const assertPackageManifestV1 = (manifest, label) => {
   })
 }
 
+const assertPackageManifestV1 = (manifest, label) => {
+  assertKeys(manifest, MANIFEST_COMMON_KEYS, label)
+  assert.equal(manifest.schemaVersion, 1, `${label}.schemaVersion: must be 1`)
+  assertPackageManifestCommon(manifest, label)
+}
+
 const assertPackageManifestV2 = (manifest, label) => {
-  assert.ok(isRecord(manifest), `${label}: must be an object`)
-  const expectedKeys = [
-    'description',
-    'id',
-    'installPolicy',
-    'name',
-    'resources',
-    'schemaVersion',
-    'uninstallPolicy',
-    'updatePolicy',
-    'version',
-  ]
-  if ('tasks' in manifest) {
-    expectedKeys.push('tasks')
-  }
-  if ('workflows' in manifest) {
-    expectedKeys.push('workflows')
-  }
-  assertKeys(manifest, expectedKeys, label)
+  assertKeysWithOptional(manifest, MANIFEST_COMMON_KEYS, ['tasks', 'workflows'], label)
   assert.equal(manifest.schemaVersion, 2, `${label}.schemaVersion: must be 2`)
-  assertPackageId(manifest.id, `${label}.id`)
-  assertNonEmptyString(manifest.name, `${label}.name`)
-  assertNonEmptyString(manifest.description, `${label}.description`)
-  assertNonEmptyString(manifest.version, `${label}.version`)
-  assert.ok(INSTALL_POLICIES.has(manifest.installPolicy), `${label}.installPolicy: invalid`)
-  assert.ok(UPDATE_POLICIES.has(manifest.updatePolicy), `${label}.updatePolicy: invalid`)
-  assert.ok(
-    UNINSTALL_POLICIES.has(manifest.uninstallPolicy),
-    `${label}.uninstallPolicy: invalid`,
-  )
-  assert.ok(Array.isArray(manifest.resources), `${label}.resources: must be array`)
-  manifest.resources.forEach((resource, index) => {
-    assertPackageResource(resource, `${label}.resources[${index}]`)
-  })
+  assertPackageManifestCommon(manifest, label)
   if ('tasks' in manifest) {
     assert.ok(Array.isArray(manifest.tasks), `${label}.tasks: must be array`)
     manifest.tasks.forEach((task, index) => {
@@ -438,6 +407,19 @@ const assertManifestResourceFilesExist = (manifest, manifestRootPath) => {
   }
 }
 
+const assertManifestAssetFilesExist = (manifest, manifestRootPath) => {
+  if (manifest.schemaVersion !== 2 || !Array.isArray(manifest.workflows)) {
+    return
+  }
+
+  for (const [index, workflow] of manifest.workflows.entries()) {
+    assertExistingFile(
+      `${manifestRootPath}/${workflow.sourcePath}`,
+      `${manifest.id}: workflows[${index}] ${workflow.name}.sourcePath`,
+    )
+  }
+}
+
 const assertManifestMatchesIndexEntry = (entry, manifest, manifestPath) => {
   assert.equal(manifest.id, entry.id, `${entry.id}: manifest id does not match index id`)
   assert.equal(
@@ -474,19 +456,6 @@ const assertManifestMatchesIndexEntry = (entry, manifest, manifestPath) => {
   const manifestRootPath = manifestPath.replace(/\/package\.json$/, '')
   assertManifestResourceFilesExist(manifest, manifestRootPath)
   assertManifestAssetFilesExist(manifest, manifestRootPath)
-}
-
-const assertManifestAssetFilesExist = (manifest, manifestRootPath) => {
-  if (manifest.schemaVersion !== 2 || !Array.isArray(manifest.workflows)) {
-    return
-  }
-
-  for (const [index, workflow] of manifest.workflows.entries()) {
-    assertExistingFile(
-      `${manifestRootPath}/${workflow.sourcePath}`,
-      `${manifest.id}: workflows[${index}] ${workflow.name}.sourcePath`,
-    )
-  }
 }
 
 const getIndexedPackageById = (index) =>
@@ -531,6 +500,10 @@ const sourceFingerprint = (entry) =>
   JSON.stringify({
     categories: [...entry.categories].sort(),
     installPolicy: entry.installPolicy,
+    // packageManagerVersion selects the manifest contract (v2 adds executable
+    // tasks/workflows), so flipping it is a fleet-affecting change even when
+    // the version string stays the same.
+    packageManagerVersion: entry.packageManagerVersion,
     source: entry.source,
     uninstallPolicy: entry.uninstallPolicy,
     updatePolicy: entry.updatePolicy,

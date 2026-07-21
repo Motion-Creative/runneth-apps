@@ -3,7 +3,10 @@
 Path: `/agent/brain/data-sources/<platform>/reviews/review-<external_id>.md`
 
 Every frontmatter field is always present; `null` when the source lacks the concept.
-`author_contact` stays `null` until the PII policy call is made.
+`author_contact` stays `null` until the PII policy call is made (the raw payload still
+carries source PII - that is part of the same pending policy call, see SKILL.md).
+`source_url` comes only from the recipe's mapping - Judge.me's list payload has no
+permalink, so it is null here.
 
 ````markdown
 ---
@@ -16,7 +19,7 @@ author_name: "Dana M."
 author_contact: null
 reply_count: 0
 parent_ref: null
-source_url: "https://judge.me/reviews/31274522"
+source_url: null
 rating: 5
 product_ref: "8641242349791"
 verified: true

@@ -32,16 +32,20 @@ the date range before starting.
 
 - **Read-only against platforms.** List/read endpoints only. Never write, reply, or delete
   through a VoC platform API.
-- **Bounded pulls.** Default to the trailing 12 months and cap paging (see per-platform page
-  caps in the recipes). Only Yotpo bounds by date server-side; everywhere else, page in
-  newest-first order where supported and stop client-side once items are older than the
-  cutoff.
+- **Bounded pulls.** Default to the trailing 12 months and cap paging (global default in the
+  recipes header: 100 per page, max 50 pages). Use a server-side date bound where one exists -
+  Yotpo's list endpoint takes `updated_at_min`, and Intercom's `POST /conversations/search`
+  is the preferred bounded path there. Everywhere else, page in newest-first order where
+  supported and stop client-side once items are older than the cutoff.
 - **Raw data files are separate from integration guides.** Never write pulled data into
   `/agent/brain/integrations/<source>/` - the integration guide spec explicitly forbids raw
   dumps in guides. VoC data lives only under `/agent/brain/data-sources/`.
 - **PII: leave `author_contact` null.** The unified template keeps the field, but the policy
   call on storing customer emails is pending. Do not populate it until told the policy allows
-  it.
+  it. Note the same policy call also covers raw payloads: the never-lossy `## Raw payload`
+  section currently retains whatever PII the platform returns (including customer emails).
+  That is a deliberately unresolved open item, not a decision - do not strip raw payloads on
+  your own, and do not treat their contents as cleared for reuse elsewhere.
 
 ## Step 1 - Resolve the platform and connection path
 
@@ -74,16 +78,18 @@ Root: `/agent/brain/data-sources/<platform>/`. Use the platform's registry slug 
 name (`judge_me`, `gorgias_oauth`, ...; use `meta-ads` for ad comments).
 
 - Reviews: `/agent/brain/data-sources/<platform>/reviews/review-<external_id>.md`
-- Support tickets/conversations: `/agent/brain/data-sources/<platform>/daily/<pull-date>/ticket-<external_id>.md`
-  (the Ramy Brook Gorgias precedent; `<pull-date>` is the pull run date, `YYYY-MM-DD`)
+- Support tickets/conversations: `/agent/brain/data-sources/<platform>/tickets/ticket-<external_id>.md`
 - Ad comments: `/agent/brain/data-sources/meta-ads/comments/comment-<external_id>.md`
 
-If the org brain already has an established convention under `data-sources/`, follow the
-existing convention instead and say so. The exact convention is pending confirmation from
-creative strategy; do not invent additional hierarchy beyond the above.
+Every path is keyed by the item's `external_id` and nothing else, so a re-pull always maps
+an item to the same file. If the org brain already has an established convention under
+`data-sources/` (for example a `daily/<date>/` layout from an earlier manual setup), follow
+the existing convention instead and say so. The exact convention is pending confirmation
+from creative strategy; do not invent additional hierarchy beyond the above.
 
 Re-pulls: reviews and comments are immutable - skip files that already exist. Support tickets
-live over time - re-writing a ticket file with fresher `updated_at`/messages is correct.
+live over time - overwriting a ticket's file with fresher `updated_at`/messages is correct,
+and the id-keyed path is what makes that overwrite land on the same file.
 
 ### File format - the unified metadata template
 
@@ -104,9 +110,10 @@ Common fields (every item):
 | `body` | Always populated in the file body section (see below), not duplicated in frontmatter |
 | `author_name` | Reviewer/customer/commenter display name |
 | `author_contact` | **Always null for now** (PII policy pending) |
-| `reply_count` | Number of replies/messages beyond the root item; null when unknown |
+| `reply_count` | Number of replies/messages **beyond the root item** (a 4-message ticket has `reply_count: 3`); null when unknown |
 | `parent_ref` | For ad-comment replies: the parent comment's `external_id`. Null for root items. |
-| `source_url` | Link back to the item on the platform, when the platform provides one |
+| `source_url` | Link back to the item on the platform. Set it only from the recipe's `source_url` mapping; most platforms provide none in the list payload - then it is null. Never invent a URL pattern. |
+| `raw` | The untouched platform payload. Projected into the `## Raw payload` section (see below), not duplicated in frontmatter - same as `body`. |
 
 Review fields (null for support and ad comments):
 
@@ -139,8 +146,8 @@ Body and raw payload, after the frontmatter:
 - `## Raw payload` - the untouched platform payload for the item as a fenced `json` block.
   The template is never lossy; keep the raw payload even when it repeats mapped fields.
 
-Copyable file skeletons are in `templates/review.md` and
-`templates/support-conversation.md` in this skill folder. Per-platform field mappings
+Copyable file skeletons are in `templates/review.md`, `templates/support-conversation.md`,
+and `templates/ad-comment.md` in this skill folder. Per-platform field mappings
 (`rating` <- Judge.me `rating` / Trustpilot `stars` / Yotpo `score` / Stamped `reviewRating`,
 and so on) are in the recipes reference - each platform adapter is a field-mapping exercise,
 not design work.

@@ -17,8 +17,8 @@ appear in the public site catalog.
 - `skill/references/platform-recipes.md` - per-platform endpoints, pagination, discovery
   steps, and unified-template field mappings, with evidence levels (live-verified vs
   doc-grounded).
-- `skill/templates/review.md` and `skill/templates/support-conversation.md` - copyable file
-  skeletons for the two output shapes.
+- `skill/templates/` - copyable file skeletons for the three output shapes (review,
+  support conversation, ad comment).
 
 ## How it installs
 
@@ -42,9 +42,8 @@ ever written into `/agent/brain/integrations/<source>/`.
 
 ## Known v1 gaps
 
-- Junip has no verified working API key; its recipe is doc-grounded.
-- Okendo and Stamped need customer API keys stored as secrets before any pull.
-- Trustpilot and Yotpo recipes are doc-grounded pending first connects.
-- Nothing triggers the pull automatically post-install yet; a CSM or user prompt starts it
-  (routine triggers land separately).
-- `author_contact` stays null in output files pending the PII policy call.
+The authoritative list lives in `skill/SKILL.md` ("Known v1 gaps" + the PII hard boundary).
+In short: Junip blocked on a key; Okendo/Stamped need stored customer keys;
+Trustpilot/Yotpo doc-grounded pending first connects; no automatic post-install trigger
+(CSM/user prompt starts pulls); and the PII policy call is open - `author_contact` stays
+null while raw payloads still retain source PII until that call is made.
