@@ -60,7 +60,8 @@ The server defaults catalog requests to the immutable
 | `RUNNETH_APPS_REF` | `pre-cleanup-2026-07-21` | Archived catalog source ref |
 | `VITE_REVAMP_MODE` | enabled | Set to `false` only for archived catalog development |
 | `LOG_LEVEL` | `info` | Fastify log level |
-| `REVIEWS_DB_PATH` | `/data/reviews.db` in Docker | SQLite review database |
+| `REVIEWS_DB_PATH` | `./reviews.db` locally | SQLite review database |
+| `BRAIN_SUBMISSIONS_DB_PATH` | `./brain-submissions.db` locally | SQLite brain-submission database |
 | `RESEND_API_KEY` | unset | Flag-email transport |
 | `FLAG_TO_EMAIL` | `support@motionapp.com` | Flag recipient |
 | `FLAG_FROM_EMAIL` | `onboarding@resend.dev` | Flag sender |
