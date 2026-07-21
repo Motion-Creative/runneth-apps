@@ -2,8 +2,8 @@
  * SQLite-backed brain checklist submissions store.
  *
  * Persistence: DB file path comes from BRAIN_SUBMISSIONS_DB_PATH (default
- * /data/brain-submissions.db, matching the reviews.db convention). On Railway
- * this should point at a mounted volume path so data survives redeploys.
+ * ./brain-submissions.db). On Railway this should point at a mounted volume
+ * path so data survives redeploys.
  *
  * Schema is migrated on boot — safe to re-run.
  *
@@ -17,7 +17,7 @@ import { mkdirSync } from 'node:fs'
 
 import type { BrainChecklistFile, BrainChecklistSection } from './brain-checklist-email.js'
 
-const DB_PATH = process.env.BRAIN_SUBMISSIONS_DB_PATH || '/data/brain-submissions.db'
+const DB_PATH = process.env.BRAIN_SUBMISSIONS_DB_PATH || './brain-submissions.db'
 
 const dir = dirname(DB_PATH)
 if (dir && dir !== '.' && dir !== '/') {
