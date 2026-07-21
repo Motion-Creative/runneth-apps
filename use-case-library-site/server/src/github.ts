@@ -16,7 +16,7 @@
 
 const REPO_OWNER = 'Motion-Creative'
 const REPO_NAME = 'runneth-apps'
-const ARCHIVED_LIBRARY_REF = 'pre-cleanup-2026-07-21'
+const ARCHIVED_LIBRARY_REF = 'pre-cleanup-2026-07-21-with-aligned-onboarding'
 
 const resolveRef = (): string => process.env.RUNNETH_APPS_REF?.trim() || ARCHIVED_LIBRARY_REF
 

@@ -43,13 +43,13 @@ The old catalog frontend remains in the codebase as migration reference. To
 render it locally:
 
 ```bash
-RUNNETH_APPS_REF=pre-cleanup-2026-07-21 pnpm dev:server
+RUNNETH_APPS_REF=pre-cleanup-2026-07-21-with-aligned-onboarding pnpm dev:server
 VITE_REVAMP_MODE=false pnpm dev:frontend
 ```
 
 The server defaults catalog requests to the immutable
-`pre-cleanup-2026-07-21` tag, so the retired metadata is not expected on
-`main`.
+`pre-cleanup-2026-07-21-with-aligned-onboarding` tag, so the retired metadata
+is not expected on `main`.
 
 ## Configuration
 
@@ -57,7 +57,7 @@ The server defaults catalog requests to the immutable
 |---|---|---|
 | `PORT` | `3000` | Server port |
 | `HOST` | `0.0.0.0` | Bind address |
-| `RUNNETH_APPS_REF` | `pre-cleanup-2026-07-21` | Archived catalog source ref |
+| `RUNNETH_APPS_REF` | `pre-cleanup-2026-07-21-with-aligned-onboarding` | Archived catalog source ref |
 | `VITE_REVAMP_MODE` | enabled | Set to `false` only for archived catalog development |
 | `LOG_LEVEL` | `info` | Fastify log level |
 | `REVIEWS_DB_PATH` | `./reviews.db` locally | SQLite review database |
@@ -80,7 +80,7 @@ and brain-submissions SQLite databases.
 
 The complete historical library is preserved on
 [`archive/full-library`](https://github.com/Motion-Creative/runneth-apps/tree/archive/full-library)
-and by the `pre-cleanup-2026-07-21` tag.
+and by the `pre-cleanup-2026-07-21-with-aligned-onboarding` tag.
 
 The catalog should only be relaunched publicly after it has been rebuilt
 against `package-index.json`; archived catalog mode is not the new package

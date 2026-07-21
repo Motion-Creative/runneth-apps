@@ -5,7 +5,7 @@ The source registry for packages installed by Runneth.
 This repository is migrating from the retired Use Case Library format to the
 OS package format. The complete pre-migration library remains available on
 [`archive/full-library`](https://github.com/Motion-Creative/runneth-apps/tree/archive/full-library)
-and at the immutable `pre-cleanup-2026-07-21` tag.
+and at the immutable `pre-cleanup-2026-07-21-with-aligned-onboarding` tag.
 
 ## Package contract
 
