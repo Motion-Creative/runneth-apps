@@ -30,12 +30,12 @@ The one-line model:
 > The **Account Context Brain** tells Runneth **how to analyze** the account. The **Creative
 > Corpus** gives Runneth **the attributes it needs to actually do the job**.
 
-Read the package overview at `/agent/brain/aligned-onboarding/README.md` before running. The full
+Read the package overview at `/agent/brain/meta/README.md` before running. The full
 procedures live in the staged docs and are the source of truth for each step:
 
-- Account Context Brain: `/agent/brain/aligned-onboarding/account-context-brain.md`
-- Creative Corpus playbook: `/agent/brain/aligned-onboarding/creative-corpus-playbook.md`
-- Motion CLI data-query guide: `/agent/brain/aligned-onboarding/motion-cli-data-query-guide.md`
+- Account Context Brain: `/agent/brain/meta/account-context-brain.md`
+- Creative Corpus playbook: `/agent/brain/meta/creative-corpus-playbook.md`
+- Motion CLI data-query guide: `/agent/brain/meta/motion-cli-data-query-guide.md`
 
 ## Scope rules (apply throughout)
 
