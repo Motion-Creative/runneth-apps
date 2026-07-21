@@ -22,7 +22,7 @@
         "type": "github",
         "owner": "Motion-Creative",
         "repo": "runneth-apps",
-        "path": "voc-data-pull",
+        "path": "packages/voc-data-pull",
         "ref": "main"
       },
       "installPolicy": "auto",

@@ -4,6 +4,9 @@ Installer package that pulls raw voice-of-customer (VoC) data - product reviews,
 conversations, and ad comments - from a connected platform into standardized files in the
 org brain: **one file per review/ticket/comment**, metadata header + body.
 
+This is an installer package under `packages/`, not a use-case-library card; it does not
+appear in the public site catalog.
+
 ## How it's built
 
 - `package.json` - the installer manifest. One directory resource installs `skill/` to
