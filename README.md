@@ -47,6 +47,13 @@ are available from the archive branch and snapshot tag. Reintroduce one to
 `main` only after rebuilding it as a schema-v1 package; do not restore its
 legacy directory directly.
 
+## Aligned Onboarding compatibility
+
+`aligned-onboarding/` remains on `main` with `corpus-search/` and
+`building-integrations/`. These are a deliberate compatibility exception so
+the recently merged onboarding flow keeps its source and referenced
+dependencies while it is migrated to the package contract.
+
 ## Library website
 
 `use-case-library-site/` remains deployed as a rebuilding page. Its archived
