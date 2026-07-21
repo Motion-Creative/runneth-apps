@@ -93,10 +93,12 @@ and the id-keyed path is what makes that overwrite land on the same file.
 
 ### File format - the unified metadata template
 
-Every file is markdown: YAML frontmatter (the metadata header), then the body. The
-frontmatter is ONE flat record shape for every VoC item. **All fields are always present;
-use `null` when the source lacks the concept.** Never drop a field and never add org-specific
-fields at the top level (org-specific platform fields ride in `custom`).
+Every file is markdown: a fenced ```yaml metadata block at the top (the metadata header),
+then the body sections. Use a fenced block, not raw `---` frontmatter - the fenced block
+renders as clean YAML in file viewers while staying just as parseable. The metadata is ONE
+flat record shape for every VoC item. **All fields are always present; use `null` when the
+source lacks the concept.** Never drop a field and never add org-specific fields at the top
+level (org-specific platform fields ride in `custom`).
 
 Common fields (every item):
 
@@ -107,13 +109,13 @@ Common fields (every item):
 | `external_id` | The platform's id for the item |
 | `created_at` | ISO 8601 |
 | `title` | Review title / support subject; null when absent |
-| `body` | Always populated in the file body section (see below), not duplicated in frontmatter |
+| `body` | Always populated in the file body section (see below), not duplicated in the metadata block |
 | `author_name` | Reviewer/customer/commenter display name |
 | `author_contact` | **Always null for now** (PII policy pending) |
 | `reply_count` | Number of replies/messages **beyond the root item** (a 4-message ticket has `reply_count: 3`); null when unknown |
 | `parent_ref` | For ad-comment replies: the parent comment's `external_id`. Null for root items. |
 | `source_url` | Link back to the item on the platform. Set it only from the recipe's `source_url` mapping; most platforms provide none in the list payload - then it is null. Never invent a URL pattern. |
-| `raw` | The untouched platform payload. Projected into the `## Raw payload` section (see below), not duplicated in frontmatter - same as `body`. |
+| `raw` | The untouched platform payload. Projected into the `## Raw payload` section (see below), not duplicated in the metadata block - same as `body`. |
 
 Review fields (null for support and ad comments):
 
@@ -139,7 +141,7 @@ Ad-comment fields (null elsewhere):
 |---|---|
 | `reactions_total` | Total reactions on the comment |
 
-Body and raw payload, after the frontmatter:
+Body and raw payload, after the metadata block:
 
 - `## Content` - the review text, or the **full conversation** for support items (one
   `### <author> - <timestamp>` subsection per message, in order), or the comment text.

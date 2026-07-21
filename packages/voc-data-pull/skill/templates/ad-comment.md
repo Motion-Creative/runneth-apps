@@ -2,14 +2,14 @@
 
 Path: `/agent/brain/data-sources/meta-ads/comments/comment-<external_id>.md`
 
-Every frontmatter field is always present; `null` when the source lacks the concept.
+Every metadata field is always present; `null` when the source lacks the concept.
 Replies are **their own files**, not nested blobs: a reply file sets `parent_ref` to the
 parent comment's `external_id`. Root comments have `parent_ref: null`.
 
 Root comment example:
 
 ````markdown
----
+```yaml
 source_platform: meta-ads
 source_type: ad_comment
 external_id: "17912345678901234"
@@ -29,7 +29,7 @@ tags: null
 updated_at: null
 custom: null
 reactions_total: 41
----
+```
 
 ## Content
 

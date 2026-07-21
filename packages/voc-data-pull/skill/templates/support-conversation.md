@@ -4,7 +4,7 @@ Path: `/agent/brain/data-sources/<platform>/tickets/ticket-<external_id>.md`
 (shape follows the Ramy Brook Gorgias precedent - metadata top, full conversation below -
 keyed by ticket id so re-pulls overwrite the same file).
 
-Every frontmatter field is always present; `null` when the source lacks the concept.
+Every metadata field is always present; `null` when the source lacks the concept.
 `custom` passes platform custom fields through as-is (Gorgias `custom_fields`, Intercom
 `custom_attributes`) - this is where org-specific headers like Category / Detail /
 Customer tier come from. Do not rename or enumerate its keys.
@@ -14,7 +14,7 @@ Customer tier come from. Do not rename or enumerate its keys.
 retains source PII pending the same policy call as `author_contact` (see SKILL.md).
 
 ````markdown
----
+```yaml
 source_platform: gorgias_oauth
 source_type: support_conversation
 external_id: "88213307"
@@ -39,7 +39,7 @@ custom:
   Detail: "Wrong size shipped"
   Customer tier: "Repeat"
 reactions_total: null
----
+```
 
 ## Content
 

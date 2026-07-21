@@ -2,14 +2,15 @@
 
 Path: `/agent/brain/data-sources/<platform>/reviews/review-<external_id>.md`
 
-Every frontmatter field is always present; `null` when the source lacks the concept.
+Every metadata field is always present; `null` when the source lacks the concept.
 `author_contact` stays `null` until the PII policy call is made (the raw payload still
 carries source PII - that is part of the same pending policy call, see SKILL.md).
 `source_url` comes only from the recipe's mapping - Judge.me's list payload has no
-permalink, so it is null here.
+permalink, so it is null here. The metadata is a fenced yaml block (not raw `---`
+frontmatter) so it renders as clean YAML in file viewers.
 
 ````markdown
----
+```yaml
 source_platform: judge_me
 source_type: review
 external_id: "31274522"
@@ -29,7 +30,7 @@ tags: null
 updated_at: null
 custom: null
 reactions_total: null
----
+```
 
 ## Content
 
