@@ -1,8 +1,0 @@
-{
-  "slug": "import-from-ai",
-  "display_title": "Move Your AI Memory Over",
-  "pitch": "Paste one prompt into ChatGPT, Claude, or Gemini. Upload what comes back. Caught up in 15 minutes.",
-  "status": "experimental",
-  "category": "agent-foundations",
-  "github_path": "import-from-ai"
-}

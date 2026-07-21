@@ -1,40 +1,54 @@
 # runneth-apps
 
-The app & skill library behind the **Runneth Use Case Library** at [runneth.motionapp.com](https://runneth.motionapp.com). Each top-level directory is a self-contained use case — a skill bundle or a sandbox app — that a Runneth user can install in a couple of clicks. The public site reads this repo's curated metadata **live** via the GitHub raw API (~60s cache), so editing the files here *is* how the site is organized.
+The source registry for packages installed by Runneth.
 
-## How a use case is structured
+This repository is migrating from the retired Use Case Library format to the
+OS package format. The complete pre-migration library remains available on
+[`archive/full-library`](https://github.com/Motion-Creative/runneth-apps/tree/archive/full-library)
+and at the immutable `pre-cleanup-2026-07-21` tag.
 
-| File | Purpose |
-|---|---|
-| `use-case.json` | Card metadata the site reads: `display_title`, `pitch`, `status` (`proven`/`experimental`), `category`, `github_path` |
-| `marketing.md` | Customer-facing hero / super-powers / example (frontmatter + body) |
-| `README.md` | The card's "How it's built" tab + full-README expander |
-| `install-config.json` | Install steps + customize tokens (optional; about half the cards have one) |
-| `SKILL.md` | The skill definition, for skill-style use cases |
-| `buildeth.app.json` + `frontend/` + `server/` | For sandbox-app use cases |
+## Package contract
 
-## The catalog — what shows, and where
+`package-index.json` is the package-manager registry. Each indexed source path
+must contain a `runneth-package.json` schema-v1 manifest.
 
-The site is driven entirely by three things in this repo; there is no separate CMS:
+The validator enforces:
 
-- **`.use-case-library/catalog.json`** — `slugs[]` is the ordered list of what ships; `excluded[]` lists slugs deliberately hidden, each with a `reason`.
-- **`.use-case-library/categories.json`** — the category tabs (`slug`, `title`, `order`, `blurb`).
-- **each `<slug>/use-case.json`** — that card's `category` and `status`.
+- kebab-case package IDs and semantic versions;
+- matching metadata and policies in the index and manifest;
+- GitHub sources from `Motion-Creative/runneth-apps` at `main`;
+- existing, relative resource paths without symlinks; and
+- supported targets under `agent_apps`, `agent_brain`, `agent_skills`, or
+  `agent_tools`.
 
-`status` lives **only** in `use-case.json` — the site does not read it from `marketing.md`.
+Run the contract tests with:
 
-### Add a use case
-1. Create `<slug>/use-case.json` and `<slug>/marketing.md` (see `.use-case-library/voice-guide.md` for tone).
-2. Optionally add an SVG glyph for the slug in `use-case-library-site/frontend/src/Illustration.tsx` (falls back to a generic glyph otherwise).
-3. Append the slug to `.use-case-library/catalog.json` `slugs[]` in the order it should appear.
-4. Commit. The site re-pulls within ~1 minute (redeploy the site only if you added a glyph).
+```bash
+node --test scripts/validate-runneth-package-index.mjs
+```
 
-### Hide a use case
-Move its slug from `slugs[]` to `excluded[]` with a reason. Files can stay for history.
+Changes to auto-updating packages require core engineering approval and the
+`runneth-fleet-change-approved` pull-request label.
 
-## The site
-`use-case-library-site/` is the deployed app (React + Fastify) that renders this catalog — see its [README](use-case-library-site/README.md) for running and deploying it.
+## Adding a package
 
-## Conventions
-- Slugs are kebab-case and match the directory name. The landing-page bundle's sub-skills resolve under `landing-page-bundle/<slug>`.
-- No committed build artifacts — keep archives out of the repo; distribute use cases through the library, not as bundles.
+1. Add the package payload and its `runneth-package.json`.
+2. Add one matching entry to `package-index.json`.
+3. Run the package contract tests.
+4. Open a focused pull request for that package.
+
+Package pull requests should be merged one at a time because they share the
+central index.
+
+## Migration candidates
+
+`creative-strategy/`, `bootcamp/`, and `add-roles-permissions/` are retained
+while their package shapes are finalized. They are not installable through the
+new package index until they have schema-v1 manifests and index entries.
+
+## Library website
+
+`use-case-library-site/` remains deployed as a rebuilding page. Its archived
+catalog mode reads the immutable pre-cleanup tag and is available only for
+local recovery and migration work. See its
+[README](use-case-library-site/README.md) for build and deployment commands.
