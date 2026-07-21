@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "voc-data-pull",
+  "name": "VoC Data Pull",
+  "version": "0.1.0",
+  "description": "Pull raw voice-of-customer data - reviews, support conversations, and ad comments - from a connected VoC platform into standardized files in the org brain, one file per item.",
+  "installPolicy": "auto",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "voc-data-pull-skill",
+      "type": "directory",
+      "sourcePath": "skill",
+      "target": {
+        "root": "agent_skills",
+        "path": "voc-data-pull"
+      },
+      "executablePaths": []
+    }
+  ]
+}
