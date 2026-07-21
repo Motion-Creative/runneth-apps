@@ -24,7 +24,7 @@ The earlier `pre-cleanup-2026-07-09` tag remains unchanged.
 `main` contains:
 
 - `package-index.json` and its schema-v1 validator;
-- package payloads and package-migration candidates;
+- canonical package payloads as they are merged;
 - the Runneth Library rebuilding-page site;
 - scripts and GitHub workflows; and
 - repository documentation.
@@ -32,18 +32,19 @@ The earlier `pre-cleanup-2026-07-09` tag remains unchanged.
 Legacy use cases that have no active package migration are available only from
 the archive branch and snapshot tag.
 
-## Active migration candidates
+## Archived migration candidates
 
-These payloads remain on `main` until their package contracts are settled:
+These legacy payloads are preserved in `archive/full-library` and at the
+snapshot tag. They must return to `main` only as schema-v1 packages:
 
 | Candidate | Current blocker |
 |---|---|
-| `creative-strategy` | Reconcile the complete payload with the separate skills-only package |
-| `bootcamp` | Decide how its corpus maps to supported package resources and targets |
-| `add-roles-permissions` | Complete the active rework and add a schema-v1 manifest |
+| Creative Strategy | Reconcile the complete payload with the separate skills-only package |
+| Bootcamp | Decide how its corpus maps to supported package resources and targets |
+| Permissions | Complete the active rework and add a schema-v1 manifest |
 
-They are not package-manager installable until a matching
-`runneth-package.json` and `package-index.json` entry are merged.
+They are not package-manager installable until a canonical package payload,
+matching `runneth-package.json`, and `package-index.json` entry are merged.
 
 ## Package acceptance criteria
 

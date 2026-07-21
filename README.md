@@ -40,11 +40,12 @@ Changes to auto-updating packages require core engineering approval and the
 Package pull requests should be merged one at a time because they share the
 central index.
 
-## Migration candidates
+## Migrating an archived use case
 
-`creative-strategy/`, `bootcamp/`, and `add-roles-permissions/` are retained
-while their package shapes are finalized. They are not installable through the
-new package index until they have schema-v1 manifests and index entries.
+Legacy Creative Strategy, Bootcamp, Permissions, and other use-case payloads
+are available from the archive branch and snapshot tag. Reintroduce one to
+`main` only after rebuilding it as a schema-v1 package; do not restore its
+legacy directory directly.
 
 ## Library website
 
