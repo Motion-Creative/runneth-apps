@@ -33,9 +33,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
-# Default to /data so a mounted Railway volume at /data persists reviews.
-# Override with REVIEWS_DB_PATH env var if you mount the volume elsewhere.
+# Default to /data so a mounted Railway volume persists both databases.
+# Override either path if you mount the volume elsewhere.
 ENV REVIEWS_DB_PATH=/data/reviews.db
+ENV BRAIN_SUBMISSIONS_DB_PATH=/data/brain-submissions.db
 
 # Self-contained bundle: package.json + node_modules + dist + public.
 COPY --from=builder /app/bundle ./

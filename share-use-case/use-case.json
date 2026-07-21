@@ -1,8 +1,0 @@
-{
-  "slug": "share-use-case",
-  "display_title": "Package Your Builds to Share",
-  "pitch": "Turns anything you've built into a one-click install for your team.",
-  "status": "proven",
-  "category": "agent-foundations",
-  "github_path": "share-use-case"
-}

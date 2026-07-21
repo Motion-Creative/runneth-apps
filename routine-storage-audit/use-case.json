@@ -1,8 +1,0 @@
-{
-  "slug": "routine-storage-audit",
-  "display_title": "Find What's Saving in the Wrong Place",
-  "pitch": "Checks where every routine actually writes and tells you what needs to move.",
-  "status": "experimental",
-  "category": "agent-foundations",
-  "github_path": "routine-storage-audit"
-}

@@ -1,152 +1,87 @@
-# Use Case Library
+# Runneth Library site
 
-Public-facing template catalog of every Runneth use case Motion has shipped. A marketer browses by category, opens a card, reads an app-store-style pitch, and copies a one-click install prompt for their own Runneth.
+The deployed React and Fastify site for the Runneth Library.
 
-Lives at the root of [`Motion-Creative/runneth-apps`](https://github.com/Motion-Creative/runneth-apps). The site reads its curated content directly from this same repo via the GitHub raw API, with a 60-second server-side cache. Update any `marketing.md` or `use-case.json` in the repo and the change surfaces on the site within about a minute.
-
-## What it serves
-
-- **Home** — hero with brand-styled tabs, filtered card grid for each category
-- **All** — every use case in one grid with category and status filters
-- **Detail modal** — pitch, super powers, how it works, a real example, plus a one-click "Give this to my Runneth" prompt copier
-- **Reviews** — anonymous-name, 1–5 stars + text. Visible aggregate on each card. Report button sends a flag email to support@motionapp.com.
-- **Source link** for every use case back to its folder in this repo
+The frontend currently shows a rebuilding page while the repository migrates
+from use cases to OS packages. Revamp mode is enabled by default and does not
+request catalog data.
 
 ## Architecture
 
-```
+```text
 use-case-library-site/
-├── frontend/         React 19 + Vite + framer-motion + marked
-│   └── src/          Pages, components, illustrations, theme
-├── server/           Fastify
-│   └── src/
-│       ├── github.ts API client + 60s in-memory cache over raw.githubusercontent.com
-│       └── index.ts  Serves /api/* and the static frontend on one port
-├── Dockerfile        Single-process container, ready for Fly/Render/Railway/etc.
-└── package.json      pnpm workspaces root
+├── frontend/   React 19 and Vite
+├── server/     Fastify API and static frontend
+├── Dockerfile
+└── package.json
 ```
 
-### Where the content lives
-
-The site does not store its own content. Everything comes from the parent repo:
-
-| Repo file | Used for |
-|---|---|
-| `.use-case-library/catalog.json` | Slug order and which slugs ship |
-| `.use-case-library/categories.json` | Categories with order + blurb |
-| `.use-case-library/voice-guide.md` | Tone rules for editors |
-| `<slug>/use-case.json` | Display title, pitch, status, category |
-| `<slug>/marketing.md` | Customer-facing hero, super powers, example |
-| `<slug>/README.md` | "How it's built" tab + full README expand |
-| `<slug>/install-config.json` | Install steps and customize tokens, when present |
-
-To add or change a use case, edit those files. No deploy is required for content changes — the running site re-pulls them within the cache TTL.
+The server also hosts the standalone one-pager, brain-building guide, reviews,
+and brain-submission routes. Those surfaces are independent of the retired
+catalog.
 
 ## Running locally
 
 ```bash
-# 1. Install
-pnpm install:all
-
-# 2. Build the frontend (lands in server/public) and the server
+pnpm install --frozen-lockfile
 pnpm build
-
-# 3. Run the server
 pnpm start
-
-# Server listens on http://localhost:3000
-#   GET  /                       static SPA
-#   GET  /one-pager              customer-facing capabilities one-pager (standalone HTML, source: server/src/one-pager.html)
-#   GET  /api/health             { ok, cache: { size, ttlMs, ref } }
-#   GET  /api/catalog            assembled catalog
-#   GET  /api/use-case/<slug>    detail
-#   POST /api/refresh            clears cache (rate-limited to 1/30s per IP)
 ```
 
-### Hot-reload during development
+The server listens on `http://localhost:3000` by default.
 
-Run the API and the Vite dev server in two terminals:
+For hot reload, run these in separate terminals:
 
 ```bash
-pnpm dev:server     # Fastify on :3000, watches dist
-pnpm dev:frontend   # Vite on :5173, proxies /api → :3000
+pnpm dev:server
+pnpm dev:frontend
 ```
 
-Open `http://localhost:5173`.
+## Archived catalog mode
+
+The old catalog frontend remains in the codebase as migration reference. To
+render it locally:
+
+```bash
+RUNNETH_APPS_REF=pre-cleanup-2026-07-21-with-aligned-onboarding pnpm dev:server
+VITE_REVAMP_MODE=false pnpm dev:frontend
+```
+
+The server defaults catalog requests to the immutable
+`pre-cleanup-2026-07-21-with-aligned-onboarding` tag, so the retired metadata
+is not expected on `main`.
 
 ## Configuration
 
-Defaults in parentheses.
-
 | Variable | Default | Purpose |
 |---|---|---|
-| `PORT` | `3000` | Port the server binds. Most hosts inject this. |
-| `HOST` | `0.0.0.0` | Bind address. |
-| `RUNNETH_APPS_REF` | `main` | Git ref this site reads metadata from. Useful for staging. |
-| `LOG_LEVEL` | `info` | Fastify log level. |
-| `REVIEWS_DB_PATH` | `/data/reviews.db` (Docker) / `./reviews.db` (bare) | SQLite file path. **Must point at a persistent volume in production** — Railway: mount a volume at `/data`. |
-| `RESEND_API_KEY` | _(unset)_ | Resend API key for flag-email delivery. If unset, flag events log to the server log instead of emailing. |
-| `FLAG_TO_EMAIL` | `support@motionapp.com` | Recipient of flag-email notifications. |
-| `FLAG_FROM_EMAIL` | `onboarding@resend.dev` | Sender. In prod, set to a Resend-verified domain. |
-| `IP_HASH_SECRET` | _(random per boot)_ | Salt for hashing reviewer IPs (used only for per-IP rate-limit cohort). Set in prod to keep cohorts stable across restarts. |
-
-### Reviews persistence
-
-Reviews live in SQLite. The DB file path is `REVIEWS_DB_PATH`. On Railway:
-
-1. Add a volume to the service, mount path `/data`.
-2. Leave `REVIEWS_DB_PATH` at its default (`/data/reviews.db`) — the container creates the file on first boot.
-
-Without a mounted volume, reviews disappear on every container restart.
+| `PORT` | `3000` | Server port |
+| `HOST` | `0.0.0.0` | Bind address |
+| `RUNNETH_APPS_REF` | `pre-cleanup-2026-07-21-with-aligned-onboarding` | Archived catalog source ref |
+| `VITE_REVAMP_MODE` | enabled | Set to `false` only for archived catalog development |
+| `LOG_LEVEL` | `info` | Fastify log level |
+| `REVIEWS_DB_PATH` | `./reviews.db` locally | SQLite review database |
+| `BRAIN_SUBMISSIONS_DB_PATH` | `./brain-submissions.db` locally | SQLite brain-submission database |
+| `RESEND_API_KEY` | unset | Flag-email transport |
+| `FLAG_TO_EMAIL` | `support@motionapp.com` | Flag recipient |
+| `FLAG_FROM_EMAIL` | `onboarding@resend.dev` | Flag sender |
+| `IP_HASH_SECRET` | random per boot | Reviewer rate-limit salt |
+| `BRAIN_DASHBOARD_TOKEN` | unset | Protects brain-submission routes |
 
 ## Deploying
 
-The container is the simplest path — one process, one port, healthcheck on `/api/health`.
+Build from `use-case-library-site/Dockerfile` and expose port `3000`.
+`GET /api/health` is the container health endpoint.
 
-### Fly.io
+For Railway or another persistent deployment, mount `/data` for the reviews
+and brain-submissions SQLite databases.
 
-```bash
-fly launch --dockerfile Dockerfile --no-deploy
-fly deploy
-```
+## Restoring the library
 
-### Render or Railway
+The complete historical library is preserved on
+[`archive/full-library`](https://github.com/Motion-Creative/runneth-apps/tree/archive/full-library)
+and by the `pre-cleanup-2026-07-21-with-aligned-onboarding` tag.
 
-Point at this directory, set runtime to Docker, internal port `3000`. No other config required.
-
-### Bare Node host
-
-```bash
-pnpm install:all
-pnpm build
-PORT=8080 pnpm start
-```
-
-### Static + serverless
-
-The frontend is a static SPA after `pnpm --filter use-case-library-frontend build` — the artifacts land in `server/public/`. The API is a small Fastify app; on Vercel or Netlify Functions it should be wrapped as a single function handler. The Dockerfile route is recommended for v1.
-
-## Caching and refresh behavior
-
-The server keeps each repo file in memory for 60 seconds. After that, the next request re-fetches from GitHub. `POST /api/refresh` clears the cache early. It is rate-limited to one call per 30 seconds per IP.
-
-Cache state is exposed at `/api/health` so you can sanity-check the deployed ref:
-
-```json
-{ "ok": true, "cache": { "size": 25, "ttlMs": 60000, "ref": "main" } }
-```
-
-## Adding a new use case
-
-1. Create `<slug>/use-case.json` and `<slug>/marketing.md` per the schema in `.use-case-library/voice-guide.md`.
-2. Copy a `*-filled.svg` from buildeth-app-ui into `frontend/src/icons/` and map the slug in `frontend/src/Illustration.tsx`. Unmapped slugs use `layout-dashboard-filled`.
-3. Append the slug to `.use-case-library/catalog.json` in the order it should appear.
-4. Commit. The site refreshes within ~1 minute. Re-deploy the container only if you added a new illustration.
-
-## Removing a use case
-
-Remove the slug from `.use-case-library/catalog.json` and add it to the `excluded` array with a reason. Files on disk can stay for history.
-
-## License
-
-Internal. Motion-Creative.
+The catalog should only be relaunched publicly after it has been rebuilt
+against `package-index.json`; archived catalog mode is not the new package
+discovery implementation.
