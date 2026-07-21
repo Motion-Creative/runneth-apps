@@ -1,0 +1,8 @@
+{
+  "slug": "building-integrations",
+  "display_title": "Set Up Any Integration Right",
+  "pitch": "Picks the right setup depth, solves the quirks before you hit them, and leaves a guide for the next person.",
+  "status": "experimental",
+  "category": "agent-foundations",
+  "github_path": "building-integrations"
+}

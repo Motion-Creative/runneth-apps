@@ -1,0 +1,27 @@
+{
+  "_comment": "Sources to keep indexed. `corpus-search refresh` walks each one, ingests new or changed files, then embeds any new chunks. Idempotent: unchanged files are skipped automatically. Edit this file freely; no migration needed when you add or remove sources.",
+  "sources": [
+    {
+      "_comment": "A folder of video scene summaries. Each file is one video; chunks are scenes with optional timestamps.",
+      "name": "creative-library",
+      "source": "~/drive/creative-library/scene-summaries",
+      "kind": "video-summary",
+      "pattern": "**/*.md",
+      "enabled": false
+    },
+    {
+      "_comment": "A folder of briefs. Frontmatter on each file (title, brand, event_at) becomes filterable metadata.",
+      "name": "team-briefs",
+      "source": "~/drive/briefs",
+      "kind": "brief",
+      "enabled": false
+    },
+    {
+      "_comment": "Per-source fields: name (label), source (folder), kind (asset tag), pattern (default '**/*.md'), tenant (optional id), enabled (skip without deleting).",
+      "name": "example-disabled",
+      "source": "/path/that/does/not/exist",
+      "kind": "note",
+      "enabled": false
+    }
+  ]
+}
