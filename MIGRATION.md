@@ -9,15 +9,16 @@ The complete library immediately before this cleanup is preserved in two
 places:
 
 - browsable branch: `archive/full-library`
-- immutable tag: `pre-cleanup-2026-07-21`
+- immutable tag: `pre-cleanup-2026-07-21-with-aligned-onboarding`
 
 Restore a file or directory with:
 
 ```bash
-git restore --source pre-cleanup-2026-07-21 -- <path>
+git restore --source pre-cleanup-2026-07-21-with-aligned-onboarding -- <path>
 ```
 
-The earlier `pre-cleanup-2026-07-09` tag remains unchanged.
+The earlier `pre-cleanup-2026-07-09` and `pre-cleanup-2026-07-21` tags remain
+unchanged.
 
 ## Main branch after cleanup
 
@@ -66,5 +67,5 @@ index.
 ## Website
 
 The library website remains deployed in rebuilding mode. Its archived catalog
-mode reads `pre-cleanup-2026-07-21` for local migration work and is not the new
-package discovery experience.
+mode reads `pre-cleanup-2026-07-21-with-aligned-onboarding` for local migration
+work and is not the new package discovery experience.
