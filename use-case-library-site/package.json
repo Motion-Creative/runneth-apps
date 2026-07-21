@@ -2,7 +2,7 @@
   "name": "use-case-library-site",
   "private": true,
   "version": "1.0.0",
-  "description": "Public-facing template catalog of every Runneth use case Motion has shipped.",
+  "description": "Runneth Library rebuilding page and supporting services.",
   "type": "module",
   "scripts": {
     "install:all": "pnpm install --recursive",

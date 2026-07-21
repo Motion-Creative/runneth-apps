@@ -15,7 +15,7 @@
  * Env:
  *   PORT (default 3000)
  *   HOST (default 0.0.0.0)
- *   RUNNETH_APPS_REF (default main)  — git ref of Motion-Creative/runneth-apps to read from
+ *   RUNNETH_APPS_REF                  — archived library git ref override
  *   REVIEWS_DB_PATH                  — SQLite file path (default ./reviews.db)
  *   RESEND_API_KEY                   — flag-email transport (falls back to log-only)
  *   FLAG_TO_EMAIL                    — flag recipient (default support@motionapp.com)
