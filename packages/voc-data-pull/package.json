@@ -17,6 +17,11 @@
         "path": "voc-data-pull"
       },
       "executablePaths": []
+    },
+    {
+      "id": "voc-data-pull-activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
     }
   ]
 }

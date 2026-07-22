@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-07-21-01",
+  "indexRevision": "2026-07-22-01",
   "packages": [
     {
       "id": "voc-data-pull",
@@ -19,7 +19,7 @@
         "integration:stamped"
       ],
       "source": {
-        "type": "github",
+        "type": "backend-github",
         "owner": "Motion-Creative",
         "repo": "runneth-apps",
         "path": "packages/voc-data-pull",

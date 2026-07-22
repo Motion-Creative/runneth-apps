@@ -9,8 +9,11 @@ appear in the public site catalog.
 
 ## How it's built
 
-- `package.json` - the installer manifest. One directory resource installs `skill/` to
-  `agent_skills/voc-data-pull`.
+- `package.json` - the installer manifest. A directory resource installs `skill/` to
+  `agent_skills/voc-data-pull`, and a `package_instruction` resource
+  (`instructions/activation.md`) lands in the agent's standing instructions so Runneth
+  knows to offer the first pull after a VoC platform connects (offer only - pulls start on
+  user confirmation).
 - `skill/SKILL.md` - the pull workflow: resolve the connection path (Pipedream OAuth vs
   stored secret vs Motion native), follow the platform recipe, write files under
   `/agent/brain/data-sources/<platform>/`, report.
