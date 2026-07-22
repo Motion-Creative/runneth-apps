@@ -1,12 +1,13 @@
 ---
 name: voc-data-pull
 description: |
-  Pull raw voice-of-customer data - product reviews, support conversations, and ad comments -
-  from a connected VoC platform into standardized files in the org's brain, one file per
-  review/ticket/comment. Use when a reviews or support platform (Judge.me, Trustpilot, Yotpo,
-  Junip, Okendo, Stamped, Gorgias, Intercom) is connected and its data should land in files,
-  or when the user asks to "pull the reviews", "dump the reviews", "pull support tickets",
-  "sync customer conversations to files", or "run the VoC data pull".
+  Pull raw voice-of-customer data - product reviews, support conversations, community posts,
+  and ad comments - from a connected VoC platform into standardized files in the org's brain,
+  one file per review/ticket/post/comment. Use when a covered VoC platform (the Step 1 table:
+  Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Gorgias, Intercom, Reddit) is connected
+  and its data should land in files, or when the user asks to "pull the reviews", "dump the
+  reviews", "pull support tickets", "sync customer conversations to files", or "run the VoC
+  data pull".
   Do NOT use for analyzing reviews (analyzing skill), building integration guides, or one-off
   API questions about a platform.
 ---
@@ -22,8 +23,11 @@ on these files, so shape consistency matters more than volume.
 
 - A `voc-sync-<platform>` routine run is executing (the normal path - see Recurring sync
   runs below).
-- The user asks to refresh or extend an existing VoC pull.
-- The user asks for customer reviews/support conversations "in files" or "in the brain".
+- The user asks to pull, refresh, or extend VoC data, or asks for reviews/support
+  conversations "in files" or "in the brain". Route these through the routine, not an
+  in-conversation pull: make sure `voc-sync-<platform>` exists (the package's activation
+  instruction owns creating it), then `routine run --id <routine-id>` for an immediate
+  refresh.
 
 Run one platform per pull unless asked otherwise. Never wait for confirmation to start -
 the window rules below fully determine what to pull.
@@ -84,15 +88,22 @@ name (`judge_me`, `gorgias_oauth`, ...; use `meta-ads` for ad comments).
 - Community posts/comments (Reddit): `/agent/brain/data-sources/reddit/posts/post-<external_id>.md`
   and `/agent/brain/data-sources/reddit/comments/comment-<external_id>.md`
 
-Every path is keyed by the item's `external_id` and nothing else, so a re-pull always maps
-an item to the same file. If the org brain already has an established convention under
-`data-sources/` (for example a `daily/<date>/` layout from an earlier manual setup), follow
-the existing convention instead and say so. The exact convention is pending confirmation
-from creative strategy; do not invent additional hierarchy beyond the above.
+Every path is keyed by the item's `external_id` and nothing else - this is the contract
+that re-pull dedupe, ticket overwrite, and the recurring-sync incremental window all depend
+on, so it holds even when the org brain has an existing folder convention under
+`data-sources/`: adopt the surrounding folder layout if one exists, but keep the id-keyed
+filenames, and say so in the report. Do not invent additional hierarchy beyond the above.
 
-Re-pulls: reviews and comments are immutable - skip files that already exist. Support tickets
-live over time - overwriting a ticket's file with fresher `updated_at`/messages is correct,
-and the id-keyed path is what makes that overwrite land on the same file.
+Re-pull write policy, per source type:
+
+- **Reviews**: immutable at the source - skip files that already exist.
+- **Support tickets**: live over time - overwrite the ticket's file when the source shows a
+  fresher `updated_at` or more messages.
+- **Ad comments and community posts**: content is fixed but engagement mutates (reactions,
+  reply counts, scores) - overwrite when the item is inside the run's pull window, skip
+  when it is older than the window.
+
+The id-keyed path is what makes every overwrite land on the same file.
 
 ### File format
 

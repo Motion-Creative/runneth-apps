@@ -24,11 +24,12 @@ okendo/stamped key is stored), run `routine list --search "voc-sync-<platform>"`
    ```
    routine add --name "voc-sync-<platform>" \
      --delivery "No notification on success - the deliverable is the files under /agent/brain/data-sources/<platform>/. If the run fails, a platform is disconnected, or coverage is incomplete, send a brief note to web conversation <conversation-id> with conversation send --to <conversation-id>." \
-     --prompt "Run the voc-data-pull skill for <platform> as a recurring sync run: iterate every connected account of that platform and follow the skill's Recurring sync rules exactly (pull window, disconnect handling, coverage reporting). If the platform is disconnected, note it in the run summary and do nothing else - do not pause or cancel this routine." \
+     --prompt "Run the voc-data-pull skill for <platform> as a recurring sync run, following the skill's Recurring sync rules exactly - they define the pull window, account iteration, disconnect handling, and coverage reporting." \
      --cron "0 6 * * *"
    ```
 
-2. Kick the first run now (this run is the backfill; it happens in the background):
+2. Kick the first sync run now (it happens in the background; the skill determines the
+   window - a full backfill when no files exist yet, incremental otherwise):
 
    ```
    routine run --id <routine-id>

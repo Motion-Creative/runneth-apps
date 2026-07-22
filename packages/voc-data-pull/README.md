@@ -33,14 +33,14 @@ VoC platform. When a sandbox's package intent gains one of those connected-integ
 reconciler selects this package and the installer installs it. Installing is desired-state:
 re-installs and double-fires are no-ops.
 
-Covered platform slugs: `judge_me`, `trustpilot`, `yotpo`, `junip`, `gorgias_oauth`,
-`intercom`, `reddit`, plus the secrets-path platforms `okendo` and `stamped` (no Pipedream
-connect exists for those two; add the intent manually or via the CSM-prompted path).
+The covered platforms are the `integration:<slug>` categories in the index entry; the
+authoritative per-platform table is SKILL.md Step 1. The secrets-path platforms (Okendo,
+Stamped) have no Pipedream connect; add the intent manually or via the CSM-prompted path.
 
 ## The output contract
 
-Every file: an H1 headline plus a bold-label human header (the Ramy Brook shape - org
-custom fields surface as their own labels), the review text or full conversation as
+Every file: an H1 headline plus a bold-label human header (org custom fields surface as
+their own header labels), the review text or full conversation as
 readable content, and a collapsed metadata block carrying the unified VoC record - one
 flat yaml shape for every item, all fields always present, `null` when the source lacks
 the concept. Raw platform payloads are not persisted (a flagged deviation from the
@@ -52,7 +52,6 @@ Data files are deliberately separate from integration guides: nothing is ever wr
 
 The authoritative list lives in `skill/SKILL.md` ("Known v1 gaps" + the PII hard boundary).
 In short: Junip blocked on a key; Okendo/Stamped need stored customer keys;
-Trustpilot/Yotpo doc-grounded pending first connects; no automatic post-install trigger
-(CSM/user prompt starts pulls); the PII policy call is open (`author_contact` stays null);
-and dropping the template's `raw` column from files is a flagged deviation pending
-template sign-off.
+Trustpilot/Yotpo doc-grounded pending first connects; the PII policy call is open
+(`author_contact` stays null); and dropping the template's `raw` column from files is a
+flagged deviation pending template sign-off.
