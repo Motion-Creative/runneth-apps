@@ -36,6 +36,8 @@ procedures live in the staged docs and are the source of truth for each step:
 - Account Context Brain: `/agent/brain/aligned-onboarding/account-context-brain.md`
 - Creative Corpus playbook: `/agent/brain/aligned-onboarding/creative-corpus-playbook.md`
 - Motion CLI data-query guide: `/agent/brain/aligned-onboarding/motion-cli-data-query-guide.md`
+- Creative Corpus exporter:
+  `/agent/.agents/skills/aligned-onboarding/bin/export-creative-corpus.mjs`
 
 ## Scope rules (apply throughout)
 
@@ -66,9 +68,12 @@ procedures live in the staged docs and are the source of truth for each step:
    install-config; never clobber a customized copy. It supplements Knoweth for deliberate,
    filterable search. Register `/agent/brain/meta/creatives` as a source with `kind: creative`.
 5. **Build the Creative Corpus.** Follow `creative-corpus-playbook.md`: read what the Account
-   Context Brain already knows, pull only the creative content from Motion, and write one enriched
-   Markdown file per active creative under `/agent/brain/meta/creatives/`. Writing the files is the
-   index step for Knoweth; index the corpus-search source too if installed.
+   Context Brain already knows, request all four Motion summary sections (`adDescription`,
+   `hookOrHeadline`, `creativeBreakdown`, and `messagingAndPositioning`), then run the installed
+   exporter over the returned Motion JSON. Do not hand-select nested fields. The exporter writes one
+   enriched Markdown file per active creative under `/agent/brain/meta/creatives/` and fails on a
+   malformed non-null section. Writing the files is the index step for Knoweth; index the
+   corpus-search source too if installed.
 6. **Keep both current.** Account Context Brain on a monthly-plus-drift cadence; Creative Corpus on
    daily and event-triggered maintenance. Log every refresh in `/agent/brain/meta/_changelog.md`.
 

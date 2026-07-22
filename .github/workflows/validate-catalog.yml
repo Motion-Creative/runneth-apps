@@ -1,6 +1,7 @@
 name: Validate
 
 # Structural gates for OS packages and the rebuilding-page site:
+#   test-aligned-onboarding — full-fidelity creative-corpus export
 #   validate-package-index — package registry and manifest contract
 #   build-site             — typecheck + build use-case-library-site
 
@@ -17,6 +18,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  test-aligned-onboarding:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Test the Aligned Onboarding creative-corpus exporter
+        run: node --test aligned-onboarding/test/export-creative-corpus.test.mjs
+
   validate-package-index:
     runs-on: ubuntu-latest
     steps:

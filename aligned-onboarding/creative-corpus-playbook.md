@@ -22,8 +22,9 @@ creative content itself.
 
 The output is:
 
-- **Individual creative Markdown files**, one per active creative, with identity, summary, hook,
-  value props, transcript, AI tags, and naming.
+- **Individual creative Markdown files**, one per active creative, with identity, the complete Motion
+  ad description, hook/headline, creative breakdown, messaging and positioning, transcript, AI
+  tags, and naming.
 - An optional thin **tagging taxonomy** file, only if the Account Context Brain has a decoded
   naming convention to
   project.
@@ -74,15 +75,17 @@ This is the genuinely new data the Account Context Brain does not hold. Use the 
 (default `last_365d`).
 
 ```
-motion meta insights --date-range last_365d --include-glossary --include-metrics --include-transcript --workspace-id <workspaceId from the Account Context Brain>
+motion meta insights --date-range last_365d --include-glossary --include-metrics --include-transcript --summary-sections adDescription --summary-sections hookOrHeadline --summary-sections creativeBreakdown --summary-sections messagingAndPositioning --workspace-id <workspaceId from the Account Context Brain>
 ```
 
 Inspect the returned file with `jq`:
 
 - `totalCount` vs `providerTotalCount`: if they differ, the pull is partial. Narrow and re-pull
   before treating it as the full set.
-- `.creatives[0]`: confirm summaries, hooks, glossaryTags, value props, and `transcript` are
-  populated.
+- `.creatives[0]`: confirm `summary.adDescription`, `summary.hookOrHeadline`,
+  `summary.creativeBreakdown`, `summary.messagingAndPositioning`, `glossaryTags`, and `transcript`
+  are populated. The three structured summary sections are JSON strings in the CLI output; do not
+  treat them as prose or select a few nested fields.
 - `.adsWithoutCreativeAsset`: spend-bearing ads with no synced creative. Skip them for
   individual files.
 
@@ -103,6 +106,16 @@ Only video creatives have a spoken transcript. If a creative returns no transcri
 it has none rather than inventing one.
 
 Note the exact pull date and window. This anchors the "corpus as of" timestamp.
+
+Export the returned JSON file with the package's deterministic exporter:
+
+```
+node /agent/.agents/skills/aligned-onboarding/bin/export-creative-corpus.mjs --input <motion-meta-insights.json> --workspace-id <workspaceId> --brand <brand-or-account> --output-dir /agent/brain/meta/creatives
+```
+
+The exporter validates all non-null summary sections before writing any files. If it reports a
+creative ID and section, re-pull or repair that source record; do not replace the section with a
+handwritten reduction.
 
 ---
 
@@ -126,12 +139,12 @@ The underscore keeps it at the top of the folder and signals it is a reference, 
 
 One file per creative.
 
-**File naming:** match the ad name exactly, `.md` extension, replace slashes or special
-characters with hyphens.
+**File naming:** `<safe-ad-name>--<Motion-creative-ID>.md`. The exporter replaces filesystem-unsafe
+characters and includes the creative ID so duplicate ad names cannot overwrite each other.
 
-**Location:** `/agent/brain/meta/creatives/<AdName>.md`
+**Location:** `/agent/brain/meta/creatives/<safe-ad-name>--<Motion-creative-ID>.md`
 
-**Each file contains:**
+**Each file contains this complete content contract:**
 
 ```markdown
 ---
@@ -151,27 +164,44 @@ duration_s: <video length in seconds - video only>
 ## Naming Convention
 - Decoded fields if the Account Context Brain has a decoder; otherwise the raw ad name as-is
 
-## Creative Summary
-- From Motion's creative summary / adDescription field
+## Ad Description
+- The complete `summary.adDescription` string
 
-## Hook
-- From Motion's spoken hook / first-line hook field
+## Hook or Headline
+- The complete parsed `summary.hookOrHeadline` object or array, including every spoken, overlay,
+  visual, and headline field Motion returned
+
+## Creative Breakdown
+- The complete parsed `summary.creativeBreakdown` object or array, including storyline, visuals,
+  visual style, people, text, video elements, brand description, product description, and
+  fonts/effects/language when returned
+
+## Messaging and Positioning
+- The complete parsed `summary.messagingAndPositioning` object or array, including CTAs, offer,
+  benefits, features, pain points, social proof, stage of funnel, desired outcomes, and the nested
+  emotional and audience insight when returned
 
 ## Transcript
-- From Motion's creative.transcript (--include-transcript). Video only. Note "none" if not returned.
-
-## Value Propositions
-- From Motion's value propositions / messaging and positioning
+- The complete `creative.transcript` object (`--include-transcript`). Video only. Note "Not returned
+  by Motion" when absent.
 
 ## AI Tags (Motion Glossary)
-- All tags Motion returns, with Motion's own definitions. Always captured.
+- The complete `creative.glossaryTags` array, including Motion's definitions. Always captured.
 ```
+
+The four requested summary sections are the content contract. Preserve each section in full. Do
+not reduce `hookOrHeadline` to the first hook, replace `creativeBreakdown` with a short description,
+or flatten `messagingAndPositioning` to value propositions. Storyline, visuals, product framing,
+pain points, desired outcomes, funnel stage, and audience insight are all durable corpus content.
+Null or missing sections may be recorded as not returned; malformed non-null sections must stop the
+export.
 
 **Why this shape (so it works with corpus-search):** the frontmatter keys (`brand`, `workspace`,
 `source_id`, `event_at`) are what corpus-search filters and dedupes on, so keep them accurate.
 `source_id` is the Motion creative ID and makes re-indexing idempotent (an update replaces the
 record instead of duplicating it). Keep each part under its own `##` heading, because corpus-search
-chunks by header: that keeps the hook, transcript, value props, and tags independently searchable.
+chunks by header: that keeps the hook, creative breakdown, messaging, transcript, and tags
+independently searchable.
 Knoweth reads the same file with no frontmatter required; the frontmatter exists purely to make
 corpus-search filtering work.
 
@@ -236,10 +266,11 @@ retired from the account.
 
 ### Daily
 
-1. Pull recent launches: `motion meta insights --date-range last_7d --include-glossary --include-metrics --include-transcript --workspace-id <workspaceId>`
+1. Pull recent launches: `motion meta insights --date-range last_7d --include-glossary --include-metrics --include-transcript --summary-sections adDescription --summary-sections hookOrHeadline --summary-sections creativeBreakdown --summary-sections messagingAndPositioning --workspace-id <workspaceId>`
 2. Compare returned creative IDs against existing files in `/agent/brain/meta/creatives/`.
-3. For each new ID, generate its MD file (run the scoped transcript pass if the inline transcript
-   came back empty).
+3. Run the deterministic exporter over the returned JSON. It creates or replaces the file for each
+   returned creative (run the scoped transcript pass first if the inline transcript came back
+   empty).
 4. Knoweth picks up the new files automatically. For corpus-search, run its refresh so filterable
    search stays current: `bash /agent/tools/corpus-search/corpus-search.sh refresh`.
 5. Update the `updated` date on the creatives folder entry in `/agent/INDEX.md`, and append a
@@ -297,16 +328,17 @@ holds more than one workspace, scope per workspace so entries do not collide:
 | What | Where |
 |---|---|
 | Account Context Brain | `/agent/brain/meta/account-context.md` |
-| Individual creative files | `/agent/brain/meta/creatives/<AdName>.md` |
+| Individual creative files | `/agent/brain/meta/creatives/<safe-ad-name>--<Motion-creative-ID>.md` |
 | Tagging taxonomy (optional) | `/agent/brain/meta/creatives/_tagging-taxonomy.md` |
 | Brain index | `/agent/INDEX.md` |
 | Change log | `/agent/brain/meta/_changelog.md` |
 
 | What | Command |
 |---|---|
-| Pull creative corpus | `motion meta insights --date-range last_365d --include-glossary --include-metrics --include-transcript --workspace-id <workspaceId>` |
+| Pull creative corpus | `motion meta insights --date-range last_365d --include-glossary --include-metrics --include-transcript --summary-sections adDescription --summary-sections hookOrHeadline --summary-sections creativeBreakdown --summary-sections messagingAndPositioning --workspace-id <workspaceId>` |
+| Export creative corpus | `node /agent/.agents/skills/aligned-onboarding/bin/export-creative-corpus.mjs --input <motion-meta-insights.json> --workspace-id <workspaceId> --brand <brand-or-account>` |
 | Transcript-only backfill | `motion meta insights --scope creative-asset-id --creative-asset-id <id> --include-transcript --date-range last_365d --workspace-id <workspaceId>` |
-| Pull recent launches | `motion meta insights --date-range last_7d --include-glossary --include-metrics --include-transcript --workspace-id <workspaceId>` |
+| Pull recent launches | `motion meta insights --date-range last_7d --include-glossary --include-metrics --include-transcript --summary-sections adDescription --summary-sections hookOrHeadline --summary-sections creativeBreakdown --summary-sections messagingAndPositioning --workspace-id <workspaceId>` |
 
 Default window is `last_365d` unless the account or the person overrides it. There are no
 corpus-search commands. Knoweth handles retrieval over the brain automatically.

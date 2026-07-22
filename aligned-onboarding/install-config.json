@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "aligned-onboarding",
-  "version": "1.0.0",
-  "description": "Teaches Runneth how a customer reads their Meta ad account, then builds one enriched record per active creative. Stages three instruction docs into the brain (Account Context Brain, Creative Corpus playbook, Motion CLI data-query guide) plus a thin orchestration skill. Activation merges a read-before-performance guard into /agent/user.md and runs the guided nine-field fill-in. Reuses the corpus-search tool from the library for filterable retrieval rather than bundling it. Meta only.",
+  "version": "1.0.1",
+  "description": "Teaches Runneth how a customer reads their Meta ad account, then builds one enriched record per active creative. Stages three instruction docs into the brain (Account Context Brain, Creative Corpus playbook, Motion CLI data-query guide), a thin orchestration skill, and a deterministic exporter that preserves all requested creative-summary content. Activation merges a read-before-performance guard into /agent/user.md and runs the guided nine-field fill-in. Reuses the corpus-search tool from the library for filterable retrieval rather than bundling it. Meta only.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -23,6 +23,12 @@
       "to": "/agent/.agents/skills/aligned-onboarding/SKILL.md",
       "on_exists": "overwrite",
       "purpose": "Orchestration skill. Activates the account-context guard, runs the nine-field fill-in, then builds and maintains the creative corpus. Triggered by prompts like 'run aligned onboarding' or 'set up my Meta account context'."
+    },
+    {
+      "from": "bin/export-creative-corpus.mjs",
+      "to": "/agent/.agents/skills/aligned-onboarding/bin/export-creative-corpus.mjs",
+      "on_exists": "overwrite",
+      "purpose": "Deterministic exporter for Motion Meta insights JSON. Validates every non-null summary section and writes one full-fidelity Markdown record per creative."
     },
     {
       "from": "README.md",
@@ -50,6 +56,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-07-22",
+      "type": "patch",
+      "notes": "Creative Corpus pulls request adDescription, hookOrHeadline, creativeBreakdown, and messagingAndPositioning explicitly. The installed exporter validates their stringified payloads and preserves the complete creative breakdown and messaging content in deterministic per-creative Markdown files."
+    },
     {
       "version": "1.0.0",
       "date": "2026-07-21",

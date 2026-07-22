@@ -23,7 +23,9 @@ files: they do different jobs, persist to different places, and refresh on diffe
 These instruction files (this overview, the Account Context Brain, the Creative Corpus, and the
 Motion CLI Data-Query Guide) are the package itself, not its output. They live in the Brain outside
 the `meta` folder structure; the exact folder for them is not fixed yet and can be decided later.
-corpus-search is a bundled tool, not an instruction file, and installs under
+The deterministic creative-corpus exporter installs with the orchestration skill at
+`/agent/.agents/skills/aligned-onboarding/bin/export-creative-corpus.mjs`. corpus-search is a
+bundled tool, not an instruction file, and installs under
 `/agent/tools/corpus-search/`. The `meta` folder holds only what Runneth generates from running the
 package: the filled account context and the per-creative files.
 
@@ -64,12 +66,14 @@ File: `account-context-brain.md`
 ### Creative Corpus
 File: `creative-corpus-playbook.md`
 
-- **Job:** build and maintain one enriched record per active creative (identity, summary, hook,
-  value props, transcript, AI tags, naming), the attributes Runneth uses to do the analysis the
-  Account Context Brain defines.
+- **Job:** build and maintain one enriched record per active creative (identity, complete ad
+  description, complete hook/headline, creative breakdown, messaging and positioning, transcript,
+  AI tags, naming), the attributes Runneth uses to do the analysis the Account Context Brain
+  defines.
 - **How it runs:** reads what the Account Context Brain already knows, then pulls from Motion only
-  what the Account Context Brain cannot tell it (the creative content itself). No separate corpus
-  tool to install.
+  what the Account Context Brain cannot tell it (the creative content itself). The installed
+  exporter validates and writes the raw sections deterministically; it never selects only the first
+  hook or reduces the creative breakdown and messaging to a few fields.
 - **Persists to:** individual creative Markdown files under `/agent/brain/meta/creatives/`, plus an
   optional tagging taxonomy at `/agent/brain/meta/creatives/_tagging-taxonomy.md`.
 - **Retrieval:** automatic through Knoweth. Writing the file is the index step.
@@ -122,9 +126,10 @@ similar. Everything shares one index, kept separate by the `kind` tag (`creative
 4. **Install corpus-search.** Run `bash /agent/tools/corpus-search/install.sh`, resolve its
    checklist (including `OPENAI_API_KEY`), and register `/agent/brain/meta/creatives` as a source
    with `kind: creative`. One-time; can happen before or after the corpus is built.
-5. **Build the Creative Corpus.** With the Account Context Brain in place, generate the per-creative
-   attribute files (each with its frontmatter). The Creative Corpus reads the Account Context Brain
-   for interpretation. Then index the folder into corpus-search so filterable search is available.
+5. **Build the Creative Corpus.** With the Account Context Brain in place, request all four Motion
+   summary sections and run the installed exporter to generate the per-creative attribute files
+   (each with its frontmatter). The Creative Corpus reads the Account Context Brain for
+   interpretation. Then index the folder into corpus-search so filterable search is available.
 6. **Keep both current.** The Account Context Brain on its refresh cadence, the Creative Corpus on
    daily and event-triggered maintenance, and refresh the corpus-search index on that same cadence.
 
