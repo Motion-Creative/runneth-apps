@@ -11,9 +11,11 @@ appear in the public site catalog.
 
 - `package.json` - the installer manifest. A directory resource installs `skill/` to
   `agent_skills/voc-data-pull`, and a `package_instruction` resource
-  (`instructions/activation.md`) lands in the agent's standing instructions so Runneth
-  knows to offer the first pull after a VoC platform connects (offer only - pulls start on
-  user confirmation).
+  (`instructions/activation.md`) lands in the agent's standing instructions: when a
+  covered platform is connected and its `voc-sync-<platform>` routine doesn't exist,
+  Runneth creates the daily sync routine and kicks its first run (the backfill) in the
+  background - pulls never run inside the user's conversation. Routine absence is the
+  setup trigger, so cancel-and-reconnect re-sets-up cleanly.
 - `skill/SKILL.md` - the pull workflow: resolve the connection path (Pipedream OAuth vs
   stored secret vs Motion native), follow the platform recipe, write files under
   `/agent/brain/data-sources/<platform>/`, report.

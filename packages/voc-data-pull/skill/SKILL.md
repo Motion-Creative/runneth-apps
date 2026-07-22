@@ -20,13 +20,13 @@ on these files, so shape consistency matters more than volume.
 
 ## When to use
 
-- A VoC platform was just connected (the platform's package intent installed this package)
-  and a CSM or user asks to pull its data.
+- A `voc-sync-<platform>` routine run is executing (the normal path - see Recurring sync
+  runs below).
 - The user asks to refresh or extend an existing VoC pull.
 - The user asks for customer reviews/support conversations "in files" or "in the brain".
 
-Run one platform per pull unless asked otherwise. Confirm the platform and, when relevant,
-the date range before starting.
+Run one platform per pull unless asked otherwise. Never wait for confirmation to start -
+the window rules below fully determine what to pull.
 
 ## Hard boundaries
 
@@ -186,6 +186,31 @@ template field that lives outside the metadata block.
 Per-platform field mappings (`rating` <- Judge.me `rating` / Trustpilot `stars` / Yotpo
 `score` / Stamped `reviewRating`, and so on) are in the recipes reference - each platform
 adapter is a field-mapping exercise, not design work.
+
+## Recurring sync runs
+
+The package's activation instruction sets up one daily routine per connected platform
+(`voc-sync-<platform>`). When you are executing one of those runs, these rules apply on
+top of the normal skill flow:
+
+- **Pull window** (this is what makes runs incremental - id-keyed files only dedupe
+  writes, they do not shrink API paging):
+  - `/agent/brain/data-sources/<platform>/` empty -> pull the trailing 12 months (this
+    run is the backfill).
+  - Otherwise -> pull from the **newest existing item's `created_at` minus 2 days**
+    (overlap for safety; self-healing across paused or failed runs), never further back
+    than 12 months. For support tickets, use the platform's `updated_at` bound where the
+    recipe has one, so updated conversations are re-pulled and overwritten.
+- **Iterate every connected account** of the platform - a second account connected later
+  must not be stranded by the routine-exists no-op.
+- **Disconnected platform** -> do nothing except say so in the run summary. Do not pause
+  or cancel the routine; reconnecting self-heals (the connect flow re-fires, the routine
+  already exists, the next run resumes).
+- **Delivery**: nothing on success - the files are the deliverable and the run summary is
+  recorded in run history. Failures, disconnects, and incomplete coverage get a brief note
+  to the delivery conversation named in the routine.
+- Everything else - boundaries, recipes, file format, coverage reporting - is the normal
+  skill contract.
 
 ## Step 4 - Report
 
