@@ -67,6 +67,11 @@ is not expected on `main`.
 | `FLAG_FROM_EMAIL` | `onboarding@resend.dev` | Flag sender |
 | `IP_HASH_SECRET` | random per boot | Reviewer rate-limit salt |
 | `BRAIN_DASHBOARD_TOKEN` | unset | Protects brain-submission routes |
+| `TRUST_PROXY_HOPS` | `1` | Reverse-proxy hops trusted when resolving client IPs; use `0` for direct exposure |
+
+The authenticated brain-submission routes enforce per-client request limits.
+Keep `TRUST_PROXY_HOPS=1` for the standard Railway deployment so limits use
+the forwarded client address instead of grouping all traffic under the proxy.
 
 ## Deploying
 
