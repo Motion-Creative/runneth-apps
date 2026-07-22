@@ -4,6 +4,10 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
 const DEFAULT_OUTPUT_DIR = '/agent/brain/meta/creatives'
+const ACCOUNT_CONTEXT_PROJECTION_START =
+  '<!-- aligned-onboarding:account-context-projection:start -->'
+const ACCOUNT_CONTEXT_PROJECTION_END =
+  '<!-- aligned-onboarding:account-context-projection:end -->'
 const STRUCTURED_SUMMARY_SECTIONS = [
   'hookOrHeadline',
   'creativeBreakdown',
@@ -170,6 +174,68 @@ const renderStructuredValue = (value) => {
     .join('\n')
 }
 
+const renderDefaultAccountContextProjection = (creative) =>
+  [
+    ACCOUNT_CONTEXT_PROJECTION_START,
+    '## Account Context Projection',
+    '',
+    '### Naming Convention',
+    '',
+    `- Raw ad name: ${displayValue(creative.adName)}`,
+    '- Decoded naming: Not projected yet',
+    '',
+    '### Spend State',
+    '',
+    `- Motion-reported seed: ${displayValue(creative.spendState)}`,
+    '- Account Context result: Not projected yet',
+    ACCOUNT_CONTEXT_PROJECTION_END,
+  ].join('\n')
+
+const extractAccountContextProjection = (content, filename) => {
+  const startIndex = content.indexOf(ACCOUNT_CONTEXT_PROJECTION_START)
+  const endIndex = content.indexOf(ACCOUNT_CONTEXT_PROJECTION_END)
+  const hasDuplicateStart =
+    startIndex !== -1 &&
+    content.indexOf(
+      ACCOUNT_CONTEXT_PROJECTION_START,
+      startIndex + ACCOUNT_CONTEXT_PROJECTION_START.length,
+    ) !== -1
+  const hasDuplicateEnd =
+    endIndex !== -1 &&
+    content.indexOf(
+      ACCOUNT_CONTEXT_PROJECTION_END,
+      endIndex + ACCOUNT_CONTEXT_PROJECTION_END.length,
+    ) !== -1
+
+  if (
+    startIndex === -1 ||
+    endIndex === -1 ||
+    endIndex < startIndex ||
+    hasDuplicateStart ||
+    hasDuplicateEnd
+  ) {
+    fail(
+      `${filename}: existing file must contain exactly one complete account-context projection block`,
+    )
+  }
+
+  return content.slice(
+    startIndex,
+    endIndex + ACCOUNT_CONTEXT_PROJECTION_END.length,
+  )
+}
+
+const replaceAccountContextProjection = (content, projection, filename) => {
+  const startIndex = content.indexOf(ACCOUNT_CONTEXT_PROJECTION_START)
+  const endIndex = content.indexOf(ACCOUNT_CONTEXT_PROJECTION_END)
+  if (startIndex === -1 || endIndex === -1 || endIndex < startIndex) {
+    fail(`${filename}: generated file is missing its account-context projection block`)
+  }
+  return `${content.slice(0, startIndex)}${projection}${content.slice(
+    endIndex + ACCOUNT_CONTEXT_PROJECTION_END.length,
+  )}`
+}
+
 const renderCreative = (creative, creativeId, options) => {
   const name =
     typeof creative.adName === 'string' && creative.adName.trim().length > 0
@@ -201,7 +267,6 @@ const renderCreative = (creative, creativeId, options) => {
     `- Format: ${displayValue(creative.format)}`,
     `- Launch Date: ${displayValue(creative.launchDate)}`,
     `- Status: ${displayValue(activeStatus)}`,
-    `- Spend State: ${displayValue(creative.spendState)}`,
     `- Campaign: ${displayValue(creative.campaignName)}`,
     `- Ad Set: ${displayValue(creative.adsetName)}`,
     `- Ad: ${displayValue(creative.adName)}`,
@@ -216,9 +281,7 @@ const renderCreative = (creative, creativeId, options) => {
     '',
     ...identity,
     '',
-    '## Naming Convention',
-    '',
-    `Raw ad name: ${displayValue(creative.adName)}`,
+    renderDefaultAccountContextProjection(creative),
     '',
     '## Ad Description',
     '',
@@ -281,6 +344,40 @@ const buildFiles = (input, options) => {
   return files
 }
 
+const prepareFiles = async (files, outputDir) => {
+  const prepared = []
+  for (const file of files) {
+    const destination = join(outputDir, file.filename)
+    let existingContent
+    try {
+      existingContent = await readFile(destination, 'utf8')
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw error
+      }
+    }
+
+    if (existingContent === undefined) {
+      prepared.push(file)
+      continue
+    }
+
+    const projection = extractAccountContextProjection(
+      existingContent,
+      file.filename,
+    )
+    prepared.push({
+      ...file,
+      content: replaceAccountContextProjection(
+        file.content,
+        projection,
+        file.filename,
+      ),
+    })
+  }
+  return prepared
+}
+
 const writeFiles = async (files, outputDir) => {
   await mkdir(outputDir, { recursive: true })
   for (const [index, file] of files.entries()) {
@@ -295,7 +392,8 @@ const main = async () => {
   const options = parseArgs(process.argv.slice(2))
   const input = await parseInput(options.input)
   const files = buildFiles(input, options)
-  await writeFiles(files, options.outputDir)
+  const preparedFiles = await prepareFiles(files, options.outputDir)
+  await writeFiles(preparedFiles, options.outputDir)
   process.stdout.write(
     `${JSON.stringify({ exportedCount: files.length, files: files.map((file) => file.filename) })}\n`,
   )

@@ -73,7 +73,9 @@ File: `creative-corpus-playbook.md`
 - **How it runs:** reads what the Account Context Brain already knows, then pulls from Motion only
   what the Account Context Brain cannot tell it (the creative content itself). The installed
   exporter validates and writes the raw sections deterministically; it never selects only the first
-  hook or reduces the creative breakdown and messaging to a few fields.
+  hook or reduces the creative breakdown and messaging to a few fields. Replacement exports
+  preserve a protected Account Context projection containing decoded naming and custom-threshold
+  Spend State.
 - **Persists to:** individual creative Markdown files under `/agent/brain/meta/creatives/`, plus an
   optional tagging taxonomy at `/agent/brain/meta/creatives/_tagging-taxonomy.md`.
 - **Retrieval:** automatic through Knoweth. Writing the file is the index step.
@@ -128,7 +130,9 @@ similar. Everything shares one index, kept separate by the `kind` tag (`creative
    with `kind: creative`. One-time; can happen before or after the corpus is built.
 5. **Build the Creative Corpus.** With the Account Context Brain in place, request all four Motion
    summary sections and run the installed exporter to generate the per-creative attribute files
-   (each with its frontmatter). The Creative Corpus reads the Account Context Brain for
+   (each with its frontmatter). Project decoded naming and custom-threshold Spend State into each
+   file's protected Account Context block; the exporter preserves that block on later full or
+   fully enriched scoped replacements. The Creative Corpus reads the Account Context Brain for
    interpretation. Then index the folder into corpus-search so filterable search is available.
 6. **Keep both current.** The Account Context Brain on its refresh cadence, the Creative Corpus on
    daily and event-triggered maintenance, and refresh the corpus-search index on that same cadence.

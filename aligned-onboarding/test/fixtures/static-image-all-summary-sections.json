@@ -13,6 +13,9 @@
       "spendState": {
         "state": "scaling"
       },
+      "metrics": {
+        "spend": 4200
+      },
       "summary": {
         "adDescription": "AD_DESCRIPTION_SENTINEL: a static product-led ad.",
         "hookOrHeadline": "{\"headline\":\"HOOK_SENTINEL: built for the long haul\",\"textOverlayHook\":[{\"line\":\"OVERLAY_SENTINEL: carry less\"}]}",

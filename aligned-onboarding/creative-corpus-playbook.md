@@ -95,15 +95,19 @@ conditional.
 
 **Transcripts.** `--include-transcript` returns `creative.transcript` on the same pull, so one
 pass usually gets everything. On a large corpus this can be heavy, and some rows may come back
-without a transcript. In that case, do a second scoped pass over the creative asset IDs from
-this pull:
+without a transcript. Export the full pull first. Then, for each missing video transcript, run a
+fully enriched scoped re-pull over the creative asset IDs from that pull:
 
 ```
-motion meta insights --scope creative-asset-id --creative-asset-id <id> [--creative-asset-id <id> ...] --include-transcript --date-range last_365d --workspace-id <workspaceId>
+motion meta insights --scope creative-asset-id --creative-asset-id <id> [--creative-asset-id <id> ...] --date-range last_365d --include-glossary --include-metrics --include-transcript --summary-sections adDescription --summary-sections hookOrHeadline --summary-sections creativeBreakdown --summary-sections messagingAndPositioning --workspace-id <workspaceId>
 ```
 
-Only video creatives have a spoken transcript. If a creative returns no transcript, record that
-it has none rather than inventing one.
+Export each fully enriched scoped result after the full pull. This order replaces the selected
+creative with a record that still contains all four summary sections, glossary tags, identity, and
+the backfilled transcript. Never export a transcript-only scoped result: its absent summaries and
+tags are not evidence that the creative has no summaries or tags. Only video creatives have a
+spoken transcript. If a fully enriched scoped re-pull still returns no transcript, record that it
+has none rather than inventing one.
 
 Note the exact pull date and window. This anchors the "corpus as of" timestamp.
 
@@ -115,7 +119,8 @@ node /agent/.agents/skills/aligned-onboarding/bin/export-creative-corpus.mjs --i
 
 The exporter validates all non-null summary sections before writing any files. If it reports a
 creative ID and section, re-pull or repair that source record; do not replace the section with a
-handwritten reduction.
+handwritten reduction. On replacement, it also preserves the protected Account Context Projection
+block described in Step 4.
 
 ---
 
@@ -159,10 +164,18 @@ duration_s: <video length in seconds - video only>
 # <Creative Name>
 
 ## Identity
-- Motion ID, Format, Launch Date, Status, Spend State, Campaign, Ad Set
+- Motion ID, Format, Launch Date, Status, Campaign, Ad Set
 
-## Naming Convention
-- Decoded fields if the Account Context Brain has a decoder; otherwise the raw ad name as-is
+<!-- aligned-onboarding:account-context-projection:start -->
+## Account Context Projection
+
+### Naming Convention
+- Decoded fields from the Account Context Brain if it has a decoder; otherwise the raw ad name
+
+### Spend State
+- The state derived from this creative's spend using the Account Context Brain's confirmed custom
+  thresholds
+<!-- aligned-onboarding:account-context-projection:end -->
 
 ## Ad Description
 - The complete `summary.adDescription` string
@@ -196,6 +209,19 @@ pain points, desired outcomes, funnel stage, and audience insight are all durabl
 Null or missing sections may be recorded as not returned; malformed non-null sections must stop the
 export.
 
+**Protected Account Context Projection.** The exporter owns the Motion-derived sections and seeds
+the marker block with the raw ad name and Motion-reported spend state. After the first export, read
+the Account Context Brain and replace the contents inside that one marker pair with:
+
+- the decoded naming fields from its naming decoder, or the raw ad name if no decoder exists; and
+- Spend State derived from `metrics.spend` against its confirmed custom thresholds.
+
+Keep both marker comments. On every later full or scoped export, the exporter copies that whole
+block verbatim from the existing destination into the replacement file. It refuses to overwrite an
+existing destination that does not contain exactly one complete marker block, so authored naming
+or threshold decisions cannot be silently discarded. Edit Account Context projections only inside
+the block; Motion content stays outside it.
+
 **Why this shape (so it works with corpus-search):** the frontmatter keys (`brand`, `workspace`,
 `source_id`, `event_at`) are what corpus-search filters and dedupes on, so keep them accurate.
 `source_id` is the Motion creative ID and makes re-indexing idempotent (an update replaces the
@@ -211,8 +237,9 @@ corpus-search filtering work.
 - Tool-calling notes and CLI mechanics: these files are customer-facing account content, not
   internal Runneth-team notes.
 
-**Spend State** is a lightweight performance-tier proxy. Derive it from `metrics.spend` against
-the thresholds already in the Account Context Brain (do not re-fetch the workspace spend threshold):
+**Spend State** is a lightweight performance-tier proxy. Write it inside the protected Account
+Context Projection block and derive it from `metrics.spend` against the thresholds already in the
+Account Context Brain (do not re-fetch the workspace spend threshold):
 - Above threshold and scaling: `scaling`
 - At threshold, holding: `holding`
 - Below threshold or declining: `declining`
@@ -269,27 +296,30 @@ retired from the account.
 1. Pull recent launches: `motion meta insights --date-range last_7d --include-glossary --include-metrics --include-transcript --summary-sections adDescription --summary-sections hookOrHeadline --summary-sections creativeBreakdown --summary-sections messagingAndPositioning --workspace-id <workspaceId>`
 2. Compare returned creative IDs against existing files in `/agent/brain/meta/creatives/`.
 3. Run the deterministic exporter over the returned JSON. It creates or replaces the file for each
-   returned creative (run the scoped transcript pass first if the inline transcript came back
-   empty).
-4. Knoweth picks up the new files automatically. For corpus-search, run its refresh so filterable
+   returned creative while preserving existing Account Context Projection blocks.
+4. For each missing video transcript, run the fully enriched scoped re-pull from Step 2 and export
+   that result second. Never export a transcript-only result.
+5. For new files, project decoded naming and custom-threshold Spend State into the protected block.
+6. Knoweth picks up the new files automatically. For corpus-search, run its refresh so filterable
    search stays current: `bash /agent/tools/corpus-search/corpus-search.sh refresh`.
-5. Update the `updated` date on the creatives folder entry in `/agent/INDEX.md`, and append a
+7. Update the `updated` date on the creatives folder entry in `/agent/INDEX.md`, and append a
    one-line note to the `meta` folder `_changelog.md` (same convention the Account Context Brain uses).
 
 **What you do not touch daily:**
 - AI tags, transcripts, and Motion summaries are stable once set. Only re-pull if Motion re-ran
   its AI pipeline on a creative.
-- Naming fields are stable unless the team changed their system, which is an Account Context Brain change.
+- Naming and custom-threshold Spend State projections do not need regeneration unless the Account
+  Context Brain changes; the exporter preserves their protected block.
 - Existing files do not need regeneration unless the taxonomy changes.
 
 ### Event-triggered
 
 | Event | What to do |
 |---|---|
-| Naming conventions change in the Account Context Brain | Re-project the naming table and re-decode affected files |
+| Naming conventions change in the Account Context Brain | Re-project the naming table and re-decode affected protected blocks |
 | Campaign structure changes (new campaigns, renamed ad sets) | Update the naming table and re-tag affected files |
-| A creative's Spend State changes materially | Update its Spend State field |
-| Motion re-tags or re-transcribes a creative | Re-pull and refresh that file's AI Tags or Transcript |
+| A creative's Spend State changes materially | Re-derive Spend State inside its protected block from the Account Context thresholds |
+| Motion re-tags or re-transcribes a creative | Run the fully enriched scoped re-pull and export it after the full pull |
 | A new workspace is added | Run the Account Context Brain fill-in first for that workspace, then this playbook |
 
 Because the Account Context Brain is upstream, taxonomy changes start there: update it, then
@@ -337,7 +367,7 @@ holds more than one workspace, scope per workspace so entries do not collide:
 |---|---|
 | Pull creative corpus | `motion meta insights --date-range last_365d --include-glossary --include-metrics --include-transcript --summary-sections adDescription --summary-sections hookOrHeadline --summary-sections creativeBreakdown --summary-sections messagingAndPositioning --workspace-id <workspaceId>` |
 | Export creative corpus | `node /agent/.agents/skills/aligned-onboarding/bin/export-creative-corpus.mjs --input <motion-meta-insights.json> --workspace-id <workspaceId> --brand <brand-or-account>` |
-| Transcript-only backfill | `motion meta insights --scope creative-asset-id --creative-asset-id <id> --include-transcript --date-range last_365d --workspace-id <workspaceId>` |
+| Enriched transcript backfill | `motion meta insights --scope creative-asset-id --creative-asset-id <id> --date-range last_365d --include-glossary --include-metrics --include-transcript --summary-sections adDescription --summary-sections hookOrHeadline --summary-sections creativeBreakdown --summary-sections messagingAndPositioning --workspace-id <workspaceId>` |
 | Pull recent launches | `motion meta insights --date-range last_7d --include-glossary --include-metrics --include-transcript --summary-sections adDescription --summary-sections hookOrHeadline --summary-sections creativeBreakdown --summary-sections messagingAndPositioning --workspace-id <workspaceId>` |
 
 Default window is `last_365d` unless the account or the person overrides it. There are no
