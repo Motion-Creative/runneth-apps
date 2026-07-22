@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "connect-my-stack",
+  "name": "Connect My Stack",
+  "version": "1.0.0",
+  "description": "Guided integration onboarding that scans a customer's website, confirms the detected marketing and adtech stack, checks existing connections, and walks through connecting the remaining tools one at a time.",
+  "updatePolicy": "manual",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "connect-my-stack-skill",
+      "type": "directory",
+      "sourcePath": "skills/connect-my-stack",
+      "target": {
+        "root": "agent_skills",
+        "path": "connect-my-stack"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "tech-stack-scanner-skill",
+      "type": "directory",
+      "sourcePath": "skills/tech-stack-scanner",
+      "target": {
+        "root": "agent_skills",
+        "path": "tech-stack-scanner"
+      },
+      "executablePaths": []
+    }
+  ]
+}
