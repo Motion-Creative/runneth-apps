@@ -188,6 +188,10 @@
       #hs-form-atc-growth .hs-button:hover { transform: translateY(-1px); }
       #hs-form-atc-growth .hs-error-msgs, #hs-form-atc-growth .hs-error-msg { color: #d9455f; font-size: .8rem; list-style: none; padding: 0; margin: 6px 0 0; }
       #hs-form-atc-growth .submitted-message { text-align: center; color: var(--ink); font-weight: 700; font-size: 1.15rem; padding: 18px 8px; }
+      .form-success { text-align: center; padding: 12px 6px; }
+      .form-success .success-check { width: 62px; height: 62px; line-height: 60px; margin: 0 auto 20px; border-radius: 50%; background: var(--lime); color: var(--ink); font-size: 1.9rem; font-weight: 800; border: 2px solid var(--ink); }
+      .form-success .success-title { font-family: var(--sans); font-size: 1.7rem; font-weight: 800; letter-spacing: -.01em; margin: 0 0 10px; color: var(--ink); }
+      .form-success .success-sub { font-family: var(--sans); font-size: 1.02rem; line-height: 1.55; color: var(--muted); margin: 0 auto; max-width: 34ch; }
 
 
       /* footer */
@@ -436,7 +440,14 @@
     <section class="block dark final" id="signup">
       <div class="wrap narrow center">
         <h2>Sick of hearing about AI? Come actually build with it.</h2>
-        <div class="form-card"><div id="hs-form-atc-growth"></div></div>
+        <div class="form-card">
+          <div id="hs-form-atc-growth"></div>
+          <div class="form-success" id="atc-form-success" style="display:none;">
+            <div class="success-check">&#10003;</div>
+            <h3 class="success-title">You&rsquo;re in!</h3>
+            <p class="success-sub">Check your inbox &mdash; we just sent the details so you can add it to your calendar. See you there.</p>
+          </div>
+        </div>
         <script charset="utf-8" src="//js.hsforms.net/forms/embed/v2.js"></script>
         <script>
           (function () {
@@ -448,7 +459,11 @@
                 formId: "002ba042-22d0-4ea4-a467-68d66eaa262a",
                 target: "#hs-form-atc-growth",
                 css: "",
-                cssClass: "atc-hs-form"
+                cssClass: "atc-hs-form",
+                onFormSubmitted: function () {
+                  var t = document.getElementById('hs-form-atc-growth'); if (t) { t.style.display = 'none'; }
+                  var s = document.getElementById('atc-form-success'); if (s) { s.style.display = 'block'; }
+                }
               });
             }
             loadForm();
