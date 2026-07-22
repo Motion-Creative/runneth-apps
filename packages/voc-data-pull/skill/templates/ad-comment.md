@@ -1,6 +1,6 @@
 # Template: ad comment file
 
-Path: `/agent/brain/data-sources/meta-ads/comments/comment-<external_id>.md`
+Path: `/agent/brain/data-sources/voc/meta-ads/comment-<external_id>.md`
 
 Layout: H1 headline, bold-label human header (two trailing spaces end every label line),
 the comment text between `---` rules, then the collapsed metadata block.

@@ -1,6 +1,6 @@
 # Template: support conversation file
 
-Path: `/agent/brain/data-sources/<platform>/tickets/ticket-<external_id>.md`
+Path: `/agent/brain/data-sources/voc/<platform>/ticket-<external_id>.md`
 (keyed by ticket id so re-pulls overwrite the same file).
 
 Layout: H1 headline, bold-label human header (two trailing spaces end every label line;

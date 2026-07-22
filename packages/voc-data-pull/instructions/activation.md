@@ -2,8 +2,8 @@
 
 The `voc-data-pull` skill (in your skills folder) pulls raw voice-of-customer data - product
 reviews, support conversations, community posts, and ad comments - from connected VoC
-platforms into standardized files under `/agent/brain/data-sources/<platform>/`, one file
-per item. Installing this package staged files only - no pull has run yet.
+platforms into standardized files under `/agent/brain/data-sources/voc/<platform>/`, one
+file per item. Installing this package staged files only - no pull has run yet.
 
 Covered platform slugs: `judge_me`, `trustpilot`, `yotpo`, `junip`, `gorgias_oauth`,
 `intercom`, `reddit`, plus the secrets-path platforms `okendo` and `stamped`.
@@ -23,7 +23,7 @@ okendo/stamped key is stored), run `routine list --search "voc-sync-<platform>"`
 
    ```
    routine add --name "voc-sync-<platform>" \
-     --delivery "No notification on success - the deliverable is the files under /agent/brain/data-sources/<platform>/. If the run fails, a platform is disconnected, or coverage is incomplete, send a brief note to web conversation <conversation-id> with conversation send --to <conversation-id>." \
+     --delivery "No notification on success - the deliverable is the files under /agent/brain/data-sources/voc/<platform>/. If the run fails, a platform is disconnected, or coverage is incomplete, send a brief note to web conversation <conversation-id> with conversation send --to <conversation-id>." \
      --prompt "Run the voc-data-pull skill for <platform> as a recurring sync run, following the skill's Recurring sync rules exactly - they define the pull window, account iteration, disconnect handling, and coverage reporting." \
      --cron "0 6 * * *"
    ```

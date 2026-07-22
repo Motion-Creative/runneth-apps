@@ -18,7 +18,7 @@ appear in the public site catalog.
   setup trigger, so cancel-and-reconnect re-sets-up cleanly.
 - `skill/SKILL.md` - the pull workflow: resolve the connection path (Pipedream OAuth vs
   stored secret vs Motion native), follow the platform recipe, write files under
-  `/agent/brain/data-sources/<platform>/`, report.
+  `/agent/brain/data-sources/voc/<platform>/`, report.
 - `skill/references/platform-recipes.md` - per-platform endpoints, pagination, discovery
   steps, and unified-template field mappings, with evidence levels (live-verified vs
   doc-grounded).

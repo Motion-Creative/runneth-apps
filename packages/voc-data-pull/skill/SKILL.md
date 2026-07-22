@@ -45,7 +45,7 @@ the window rules below fully determine what to pull.
   is covered" - never "done."
 - **Raw data files are separate from integration guides.** Never write pulled data into
   `/agent/brain/integrations/<source>/` - the integration guide spec explicitly forbids raw
-  dumps in guides. VoC data lives only under `/agent/brain/data-sources/`.
+  dumps in guides. VoC data lives only under `/agent/brain/data-sources/voc/`.
 - **PII: leave `author_contact` null.** The unified template keeps the field, but the policy
   call on storing customer emails is pending. Do not populate it until told the policy allows
   it. Raw platform payloads are NOT persisted in output files (see the file format below), so
@@ -79,14 +79,16 @@ file body can carry the full conversation.
 
 ### Folder convention
 
-Root: `/agent/brain/data-sources/<platform>/`. Use the platform's registry slug as the folder
-name (`judge_me`, `gorgias_oauth`, ...; use `meta-ads` for ad comments).
+Root: `/agent/brain/data-sources/voc/<platform>/` - all VoC pulls live under the shared
+`voc/` parent, one flat folder per platform, no type subfolders. Use the platform's registry
+slug as the folder name (`judge_me`, `gorgias_oauth`, ...; use `meta-ads` for ad comments).
+The filename prefix carries the source type:
 
-- Reviews: `/agent/brain/data-sources/<platform>/reviews/review-<external_id>.md`
-- Support tickets/conversations: `/agent/brain/data-sources/<platform>/tickets/ticket-<external_id>.md`
-- Ad comments: `/agent/brain/data-sources/meta-ads/comments/comment-<external_id>.md`
-- Community posts/comments (Reddit): `/agent/brain/data-sources/reddit/posts/post-<external_id>.md`
-  and `/agent/brain/data-sources/reddit/comments/comment-<external_id>.md`
+- Reviews: `/agent/brain/data-sources/voc/<platform>/review-<external_id>.md`
+- Support tickets/conversations: `/agent/brain/data-sources/voc/<platform>/ticket-<external_id>.md`
+- Ad comments: `/agent/brain/data-sources/voc/meta-ads/comment-<external_id>.md`
+- Community posts/comments (Reddit): `/agent/brain/data-sources/voc/reddit/post-<external_id>.md`
+  and `/agent/brain/data-sources/voc/reddit/comment-<external_id>.md`
 
 Every path is keyed by the item's `external_id` and nothing else - this is the contract
 that re-pull dedupe, ticket overwrite, and the recurring-sync incremental window all depend
@@ -206,7 +208,7 @@ top of the normal skill flow:
 
 - **Pull window** (this is what makes runs incremental - id-keyed files only dedupe
   writes, they do not shrink API paging):
-  - `/agent/brain/data-sources/<platform>/` empty -> pull the trailing 12 months (this
+  - `/agent/brain/data-sources/voc/<platform>/` empty -> pull the trailing 12 months (this
     run is the backfill).
   - Otherwise -> pull from the **newest existing item's `created_at` minus 2 days**
     (overlap for safety; self-healing across paused or failed runs), never further back

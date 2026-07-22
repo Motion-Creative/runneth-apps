@@ -1,7 +1,7 @@
 # Template: community post file (Reddit)
 
-Paths: `/agent/brain/data-sources/reddit/posts/post-<external_id>.md` for posts,
-`/agent/brain/data-sources/reddit/comments/comment-<external_id>.md` for pulled comments
+Paths: `/agent/brain/data-sources/voc/reddit/post-<external_id>.md` for posts,
+`/agent/brain/data-sources/voc/reddit/comment-<external_id>.md` for pulled comments
 (each comment is its own file with `parent_ref` set - never nested blobs).
 
 Every metadata field is always present; `null` when the source lacks the concept. The

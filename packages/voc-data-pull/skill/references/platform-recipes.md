@@ -4,7 +4,7 @@ Per-platform endpoints, pagination, discovery steps, and unified-template field 
 Evidence levels: **live-verified** (probed through the real Connect proxy on a dev account)
 vs **doc-grounded** (provider docs, unprobed - verify with a bounded call before promising
 data). Registry slugs are the Builder integration registry's; use them as `--app` values and
-as the `data-sources/<platform>/` folder name.
+as the `data-sources/voc/<platform>/` folder name.
 
 Pagination defaults for every platform: page size 100 (or the platform max), and a
 client-side date cutoff on the item's created date except where a server-side bound
