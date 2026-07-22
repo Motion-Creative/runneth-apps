@@ -26,8 +26,8 @@ unchanged.
 
 - `package-index.json` and its schema-v1 validator;
 - canonical package payloads as they are merged;
-- `aligned-onboarding`, `corpus-search`, and `building-integrations` as a
-  temporary compatibility set;
+- `aligned-onboarding` and `building-integrations` as a temporary
+  compatibility set;
 - the Runneth Library rebuilding-page site;
 - scripts and GitHub workflows; and
 - repository documentation.
@@ -35,9 +35,12 @@ unchanged.
 Legacy use cases that have no active package migration are available only from
 the archive branch and snapshot tag.
 
-Aligned Onboarding is intentionally retained with both directories referenced
-by its instructions. Do not remove any member of that set until a replacement
-package carries the same behavior and dependencies.
+Aligned Onboarding is intentionally retained with `building-integrations`,
+which its instructions reference. `corpus-search` was removed with the v2
+onboarding package: retrieval runs on Knoweth with summaries in Cacheth
+(staging), and no remaining instruction depends on it. Do not remove
+`building-integrations` until a replacement package carries the same behavior
+and dependencies.
 
 ## Archived migration candidates
 

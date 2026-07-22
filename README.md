@@ -49,10 +49,12 @@ legacy directory directly.
 
 ## Aligned Onboarding compatibility
 
-`aligned-onboarding/` remains on `main` with `corpus-search/` and
-`building-integrations/`. These are a deliberate compatibility exception so
-the recently merged onboarding flow keeps its source and referenced
-dependencies while it is migrated to the package contract.
+`aligned-onboarding/` remains on `main` with `building-integrations/`. These
+are a deliberate compatibility exception so the onboarding flow keeps its
+source and referenced dependencies while it is migrated to the package
+contract. The `corpus-search/` tool has been removed: retrieval now runs on
+Knoweth, with per-creative summaries held in Cacheth (staging). The removed
+payload remains available from the archive branch and snapshot tag.
 
 ## Library website
 

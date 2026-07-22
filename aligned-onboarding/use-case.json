@@ -1,7 +1,7 @@
 {
   "slug": "aligned-onboarding",
   "display_title": "Teach Runneth How You Read Your Meta Account",
-  "pitch": "Runneth learns how your team judges the account, then builds one enriched record per creative. Every performance answer matches how you actually think.",
+  "pitch": "Runneth collects the facts of your creatives, learns how your team judges the account, then proves it understood by answering your real questions and building your weekly deck.",
   "status": "experimental",
   "category": "agent-foundations",
   "github_path": "aligned-onboarding"
