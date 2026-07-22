@@ -22,7 +22,7 @@
  *   FLAG_TO_EMAIL                    — flag recipient (default support@motionapp.com)
  *   FLAG_FROM_EMAIL                  — flag sender (default onboarding@resend.dev)
  *   IP_HASH_SECRET                   — server-side salt for hashing IPs (rate-limit cohort key)
- *   TRUST_PROXY_HOPS (default 1)     — trusted reverse-proxy hops; 0 disables proxy trust
+ *   TRUST_PROXY_HOPS (default 0)     — trusted reverse-proxy hops; 0 disables proxy trust
  */
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
@@ -74,18 +74,23 @@ const HOW_TO_BUILD_THE_BRAIN_HTML = readFileSync(resolve(__dirname, 'how-to-buil
 const HOW_TO_PROMPT_HTML = readFileSync(resolve(__dirname, 'how-to-prompt-masterfully.html'), 'utf-8')
 
 const parseTrustProxyHops = (value: string | undefined): number | false => {
-  const hops = Number(value ?? 1)
+  const hops = Number(value ?? 0)
   if (!Number.isInteger(hops) || hops < 0) {
     throw new Error('TRUST_PROXY_HOPS must be a non-negative integer')
   }
   return hops === 0 ? false : hops
 }
 
+const ADMIN_RATE_LIMIT_WINDOW = '1 minute'
+
 export const ADMIN_RATE_LIMITS = {
-  destructive: { max: 3, timeWindow: '1 minute' },
-  read: { max: 120, timeWindow: '1 minute' },
-  download: { max: 60, timeWindow: '1 minute' },
-  archive: { max: 10, timeWindow: '1 minute' },
+  // Database wipes should be exceptional and require the strictest ceiling.
+  destructive: { max: 3, timeWindow: ADMIN_RATE_LIMIT_WINDOW },
+  // Dashboard polling and navigation need enough headroom for normal use.
+  read: { max: 120, timeWindow: ADMIN_RATE_LIMIT_WINDOW },
+  // File transfers and archive generation have progressively higher resource costs.
+  download: { max: 60, timeWindow: ADMIN_RATE_LIMIT_WINDOW },
+  archive: { max: 10, timeWindow: ADMIN_RATE_LIMIT_WINDOW },
 } as const
 
 export const server = Fastify({
