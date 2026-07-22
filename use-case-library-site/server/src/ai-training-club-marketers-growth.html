@@ -177,11 +177,17 @@
       .form-card button { width: 100%; margin-top: 6px; cursor: pointer; background: var(--lime); color: var(--ink); border: 2px solid var(--ink); font-family: var(--sans); font-weight: 800; font-size: 1.05rem; padding: 15px 30px; border-radius: var(--pill); }
       .form-card button:hover { transform: translateY(-1px); }
 
-      .form-success { text-align: center; padding: 12px 6px; }
-      .form-success .success-check { width: 62px; height: 62px; line-height: 60px; margin: 0 auto 20px; border-radius: 50%; background: var(--lime); color: var(--ink); font-size: 1.9rem; font-weight: 800; border: 2px solid var(--ink); }
-      .form-success .success-title { font-family: var(--sans); font-size: 1.7rem; font-weight: 800; letter-spacing: -.01em; margin: 0 0 10px; color: var(--ink); }
-      .form-success .success-sub { font-family: var(--sans); font-size: 1.02rem; line-height: 1.55; color: var(--muted); margin: 0 auto; max-width: 34ch; }
-      #hs-form-hidden { position: absolute; left: -9999px; top: 0; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
+      #hs-form-atc-growth ul { list-style: none; padding: 0; margin: 0; }
+      #hs-form-atc-growth .hs-form-field { margin-bottom: 16px; }
+      #hs-form-atc-growth .hs-form-field > label { display: block; font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin: 0 0 6px; color: var(--ink); }
+      #hs-form-atc-growth .hs-form-field > label .hs-form-required { color: var(--lime-2); }
+      #hs-form-atc-growth .hs-field-desc { display: none; }
+      #hs-form-atc-growth .hs-input:not([type=checkbox]):not([type=radio]) { width: 100%; box-sizing: border-box; padding: 13px 15px; font-family: var(--sans); font-size: 1rem; color: var(--ink); background: #fff; border: 1.5px solid #dcdcdc; border-radius: 10px; }
+      #hs-form-atc-growth .hs-input:focus { outline: none; border-color: var(--lime-2); box-shadow: 0 0 0 3px rgba(182,240,62,.35); }
+      #hs-form-atc-growth .hs-button { width: 100%; margin-top: 6px; cursor: pointer; background: var(--lime); color: var(--ink); border: 2px solid var(--ink); font-family: var(--sans); font-weight: 800; font-size: 1.05rem; padding: 15px 30px; border-radius: var(--pill); }
+      #hs-form-atc-growth .hs-button:hover { transform: translateY(-1px); }
+      #hs-form-atc-growth .hs-error-msgs, #hs-form-atc-growth .hs-error-msg { color: #d9455f; font-size: .8rem; list-style: none; padding: 0; margin: 6px 0 0; }
+      #hs-form-atc-growth .submitted-message { text-align: center; color: var(--ink); font-weight: 700; font-size: 1.15rem; padding: 18px 8px; }
 
 
       /* footer */
@@ -430,80 +436,22 @@
     <section class="block dark final" id="signup">
       <div class="wrap narrow center">
         <h2>Sick of hearing about AI? Come actually build with it.</h2>
-        <div class="form-card">
-          <form id="atc-signup-form" novalidate>
-            <div class="fld"><label for="email">Your email</label><input id="email" name="email" type="email" required placeholder="you@company.com" /></div>
-            <div class="fld"><label for="firstname">First name</label><input id="firstname" name="firstname" type="text" required placeholder="First name" /></div>
-            <div class="fld"><label for="lastname">Last name</label><input id="lastname" name="lastname" type="text" required placeholder="Last name" /></div>
-            <div class="fld"><label for="jobtitle">Job title</label><input id="jobtitle" name="jobtitle" type="text" required placeholder="Job title" /></div>
-            <div class="fld"><label for="company">Company name</label><input id="company" name="company" type="text" required placeholder="Company name" /></div>
-            <button type="submit">Save my spot</button>
-            <p class="form-msg" id="atc-form-msg" style="display:none;margin:14px 0 0;font-weight:700;"></p>
-          </form>
-          <div class="form-success" id="atc-form-success" style="display:none;">
-            <div class="success-check">&#10003;</div>
-            <h3 class="success-title">You&rsquo;re in!</h3>
-            <p class="success-sub">Check your inbox &mdash; we just sent the details so you can add it to your calendar. See you there.</p>
-          </div>
-        </div>
-        <div id="hs-form-hidden" aria-hidden="true"></div>
+        <div class="form-card"><div id="hs-form-atc-growth"></div></div>
         <script charset="utf-8" src="//js.hsforms.net/forms/embed/v2.js"></script>
         <script>
           (function () {
-            var visible = document.getElementById('atc-signup-form');
-            var msg = document.getElementById('atc-form-msg');
-            var successBlock = document.getElementById('atc-form-success');
-            if (!visible) return;
-            var hsReady = false;
-            function loadHidden() {
-              if (!window.hbspt || !window.hbspt.forms) { return setTimeout(loadHidden, 200); }
+            function loadForm() {
+              if (!window.hbspt || !window.hbspt.forms) { return setTimeout(loadForm, 200); }
               window.hbspt.forms.create({
-                region: "na1", portalId: "19514659", formId: "002ba042-22d0-4ea4-a467-68d66eaa262a",
-                target: "#hs-form-hidden",
-                onFormReady: function () { hsReady = true; }
+                region: "na1",
+                portalId: "19514659",
+                formId: "002ba042-22d0-4ea4-a467-68d66eaa262a",
+                target: "#hs-form-atc-growth",
+                css: "",
+                cssClass: "atc-hs-form"
               });
             }
-            loadHidden();
-            function setNativeValue(el, value) {
-              var proto = window.HTMLInputElement.prototype;
-              var setter = Object.getOwnPropertyDescriptor(proto, 'value').set;
-              setter.call(el, value);
-              el.dispatchEvent(new Event('input', { bubbles: true }));
-              el.dispatchEvent(new Event('change', { bubbles: true }));
-            }
-            function showSuccess() { visible.style.display = 'none'; successBlock.style.display = 'block'; }
-            function fail() {
-              msg.style.display = 'block'; msg.style.color = '#d9455f'; msg.textContent = 'Something went wrong, please try again.';
-              var b = visible.querySelector('button[type=submit]'); b.disabled = false; b.textContent = 'Save my spot';
-            }
-            visible.addEventListener('submit', function (e) {
-              e.preventDefault();
-              var btn = visible.querySelector('button[type=submit]');
-              var names = ['email','firstname','lastname','jobtitle','company'];
-              var vals = {}, missing = false;
-              names.forEach(function (n) { var v = (visible.querySelector('[name=' + n + ']').value || '').trim(); vals[n] = v; if (!v) missing = true; });
-              if (missing) { msg.style.display = 'block'; msg.style.color = '#d9455f'; msg.textContent = 'Please fill in all fields.'; return; }
-              var hidden = document.getElementById('hs-form-hidden');
-              var hsForm = hidden.querySelector('form.hs-form');
-              if (!hsReady || !hsForm) { btn.disabled = true; btn.textContent = 'Saving...'; return setTimeout(function () { btn.disabled = false; visible.requestSubmit ? visible.requestSubmit() : visible.dispatchEvent(new Event('submit', { cancelable: true })); }, 500); }
-              btn.disabled = true; btn.textContent = 'Saving...';
-              names.forEach(function (n) { var input = hsForm.querySelector('input[name="' + n + '"]'); if (input) setNativeValue(input, vals[n]); });
-              var done = false;
-              var observer = new MutationObserver(function () {
-                if (done) return;
-                if (hidden.querySelector('.submitted-message') || !hidden.querySelector('form.hs-form')) { done = true; observer.disconnect(); showSuccess(); }
-              });
-              observer.observe(hidden, { childList: true, subtree: true });
-              setTimeout(function () {
-                var sb = hsForm.querySelector('input[type=submit], button[type=submit], .hs-button');
-                if (sb) sb.click();
-                setTimeout(function () {
-                  if (done) return;
-                  if (hidden.querySelector('.hs-error-msg')) { done = true; observer.disconnect(); fail(); }
-                  else { done = true; observer.disconnect(); showSuccess(); }
-                }, 9000);
-              }, 200);
-            });
+            loadForm();
           })();
         </script>
       </div>
