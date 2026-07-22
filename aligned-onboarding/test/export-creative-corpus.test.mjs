@@ -88,7 +88,7 @@ test('exports every field from all four Motion summary sections', async () => {
   }
 })
 
-test('preserves Account Context naming and spend projection during an enriched transcript re-pull', async () => {
+test('merges an incomplete transcript retry without losing Motion enrichment or Account Context', async () => {
   const temporaryRoot = await mkdtemp(resolve(tmpdir(), 'creative-corpus-merge-'))
   try {
     const outputDir = resolve(temporaryRoot, 'output')
@@ -131,6 +131,8 @@ test('preserves Account Context naming and spend projection during an enriched t
     const scopedInput = structuredClone(initialInput)
     scopedInput.totalCount = 1
     scopedInput.providerTotalCount = 1
+    delete scopedInput.creatives[0].summary
+    delete scopedInput.creatives[0].glossaryTags
     scopedInput.creatives[0].transcript = {
       durationMs: 42000,
       language: 'en',
@@ -174,7 +176,16 @@ test('refuses to overwrite an existing file without the Account Context projecti
     assert.equal(initialResult.status, 0, initialResult.stderr)
 
     const outputPath = resolve(outputDir, FILENAME)
-    const authoredContent = '# Authored creative\n\nNAMING_DECODER_SENTINEL\n'
+    const authoredContent = [
+      '---',
+      'source_id: "creative-static-ridge"',
+      '---',
+      '',
+      '# Authored creative',
+      '',
+      'NAMING_DECODER_SENTINEL',
+      '',
+    ].join('\n')
     await writeFile(outputPath, authoredContent, 'utf8')
 
     const result = runExporter({ input: FIXTURE, outputDir })
@@ -182,6 +193,90 @@ test('refuses to overwrite an existing file without the Account Context projecti
     assert.match(result.stderr, new RegExp(FILENAME))
     assert.match(result.stderr, /account-context projection block/u)
     assert.equal(await readFile(outputPath, 'utf8'), authoredContent)
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true })
+  }
+})
+
+test('renames one stable source_id record and retains its Account Context projection', async () => {
+  const temporaryRoot = await mkdtemp(resolve(tmpdir(), 'creative-corpus-rename-'))
+  try {
+    const outputDir = resolve(temporaryRoot, 'output')
+    const initialResult = runExporter({ input: FIXTURE, outputDir })
+    assert.equal(initialResult.status, 0, initialResult.stderr)
+
+    const initialPath = resolve(outputDir, FILENAME)
+    const initialMarkdown = await readFile(initialPath, 'utf8')
+    const projectionStartIndex = initialMarkdown.indexOf(PROJECTION_START)
+    const projectionEndIndex = initialMarkdown.indexOf(PROJECTION_END)
+    const projected = [
+      PROJECTION_START,
+      '## Account Context Projection',
+      '',
+      '### Naming Convention',
+      '',
+      '- RENAMED_PROJECTION_SENTINEL: decoded before representative-name drift',
+      '',
+      '### Spend State',
+      '',
+      '- CUSTOM_SPEND_STATE_SENTINEL: holding',
+      PROJECTION_END,
+    ].join('\n')
+    await writeFile(
+      initialPath,
+      `${initialMarkdown.slice(0, projectionStartIndex)}${projected}${initialMarkdown.slice(
+        projectionEndIndex + PROJECTION_END.length,
+      )}`,
+      'utf8',
+    )
+
+    const renamedInput = JSON.parse(await readFile(FIXTURE, 'utf8'))
+    renamedInput.creatives[0].adName = 'Ridge Static Renamed'
+    const renamedInputPath = resolve(temporaryRoot, 'renamed-input.json')
+    await writeFile(renamedInputPath, JSON.stringify(renamedInput), 'utf8')
+
+    const renameResult = runExporter({ input: renamedInputPath, outputDir })
+    assert.equal(renameResult.status, 0, renameResult.stderr)
+    const renamedFilename = 'Ridge Static Renamed--creative-static-ridge.md'
+    assert.deepEqual(await readdir(outputDir), [renamedFilename])
+    const renamedMarkdown = await readFile(
+      resolve(outputDir, renamedFilename),
+      'utf8',
+    )
+    assert.match(renamedMarkdown, /RENAMED_PROJECTION_SENTINEL/u)
+    assert.match(renamedMarkdown, /CUSTOM_SPEND_STATE_SENTINEL/u)
+    assert.match(renamedMarkdown, /source_id: "creative-static-ridge"/u)
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true })
+  }
+})
+
+test('fails a source_id rename before writing when the destination is owned', async () => {
+  const temporaryRoot = await mkdtemp(resolve(tmpdir(), 'creative-corpus-collision-'))
+  try {
+    const outputDir = resolve(temporaryRoot, 'output')
+    const initialResult = runExporter({ input: FIXTURE, outputDir })
+    assert.equal(initialResult.status, 0, initialResult.stderr)
+
+    const initialPath = resolve(outputDir, FILENAME)
+    const initialMarkdown = await readFile(initialPath, 'utf8')
+    const collisionFilename = 'Ridge Static Renamed--creative-static-ridge.md'
+    const collisionPath = resolve(outputDir, collisionFilename)
+    const collisionContent = initialMarkdown
+      .replace('source_id: "creative-static-ridge"', 'source_id: "other-creative"')
+      .replace('# Ridge Static All Sections', '# Other creative')
+    await writeFile(collisionPath, collisionContent, 'utf8')
+
+    const renamedInput = JSON.parse(await readFile(FIXTURE, 'utf8'))
+    renamedInput.creatives[0].adName = 'Ridge Static Renamed'
+    const renamedInputPath = resolve(temporaryRoot, 'renamed-input.json')
+    await writeFile(renamedInputPath, JSON.stringify(renamedInput), 'utf8')
+
+    const result = runExporter({ input: renamedInputPath, outputDir })
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /destination is already owned by other-creative/u)
+    assert.equal(await readFile(initialPath, 'utf8'), initialMarkdown)
+    assert.equal(await readFile(collisionPath, 'utf8'), collisionContent)
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true })
   }

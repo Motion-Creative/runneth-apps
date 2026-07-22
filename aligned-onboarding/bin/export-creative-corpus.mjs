@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
 const DEFAULT_OUTPUT_DIR = '/agent/brain/meta/creatives'
@@ -14,6 +14,7 @@ const STRUCTURED_SUMMARY_SECTIONS = [
   'messagingAndPositioning',
 ]
 const SUMMARY_SECTIONS = ['adDescription', ...STRUCTURED_SUMMARY_SECTIONS]
+const NOT_RETURNED = 'Not returned by Motion.'
 
 const usage = String.raw`Usage:
   node export-creative-corpus.mjs \
@@ -166,7 +167,7 @@ const displayValue = (value) => {
 
 const renderStructuredValue = (value) => {
   if (value === undefined || value === null) {
-    return 'Not returned by Motion.'
+    return NOT_RETURNED
   }
   return JSON.stringify(value, null, 2)
     .split('\n')
@@ -236,6 +237,62 @@ const replaceAccountContextProjection = (content, projection, filename) => {
   )}`
 }
 
+const findMarkdownSection = (content, heading, filename) => {
+  const marker = `\n## ${heading}\n`
+  const markerIndex = content.indexOf(marker)
+  const duplicateIndex =
+    markerIndex === -1
+      ? -1
+      : content.indexOf(marker, markerIndex + marker.length)
+  if (markerIndex === -1 || duplicateIndex !== -1) {
+    fail(`${filename}: expected exactly one ${heading} section`)
+  }
+
+  const startIndex = markerIndex + 1
+  const nextHeadingIndex = content.indexOf('\n## ', startIndex + marker.length)
+  const endIndex = nextHeadingIndex === -1 ? content.length : nextHeadingIndex
+  const block = content.slice(startIndex, endIndex)
+  return {
+    block,
+    complete: block.slice(`## ${heading}`.length).trim() !== NOT_RETURNED,
+    endIndex,
+    startIndex,
+  }
+}
+
+const replaceMarkdownSection = (content, heading, replacement, filename) => {
+  const section = findMarkdownSection(content, heading, filename)
+  return `${content.slice(0, section.startIndex)}${replacement}${content.slice(
+    section.endIndex,
+  )}`
+}
+
+const mergeMissingMotionSections = (content, existingContent, file) => {
+  let merged = content
+  for (const section of file.missingMotionSections) {
+    const existingSection = findMarkdownSection(
+      existingContent,
+      section.heading,
+      file.existingFilename,
+    )
+    if (!existingSection.complete) {
+      if (section.required) {
+        fail(
+          `Creative ${file.creativeId} ${section.field}: incoming enrichment is missing and the existing record has no complete section to preserve`,
+        )
+      }
+      continue
+    }
+    merged = replaceMarkdownSection(
+      merged,
+      section.heading,
+      existingSection.block,
+      file.filename,
+    )
+  }
+  return merged
+}
+
 const renderCreative = (creative, creativeId, options) => {
   const name =
     typeof creative.adName === 'string' && creative.adName.trim().length > 0
@@ -285,7 +342,7 @@ const renderCreative = (creative, creativeId, options) => {
     '',
     '## Ad Description',
     '',
-    summary.adDescription ?? 'Not returned by Motion.',
+    summary.adDescription ?? NOT_RETURNED,
     '',
     '## Hook or Headline',
     '',
@@ -312,6 +369,62 @@ const renderCreative = (creative, creativeId, options) => {
   return {
     content,
     filename: `${safeFileComponent(name)}--${safeFileComponent(creativeId)}.md`,
+    missingMotionSections: [
+      ...(summary.adDescription === null
+        ? [
+            {
+              field: 'summary.adDescription',
+              heading: 'Ad Description',
+              required: true,
+            },
+          ]
+        : []),
+      ...(summary.hookOrHeadline === null
+        ? [
+            {
+              field: 'summary.hookOrHeadline',
+              heading: 'Hook or Headline',
+              required: true,
+            },
+          ]
+        : []),
+      ...(summary.creativeBreakdown === null
+        ? [
+            {
+              field: 'summary.creativeBreakdown',
+              heading: 'Creative Breakdown',
+              required: true,
+            },
+          ]
+        : []),
+      ...(summary.messagingAndPositioning === null
+        ? [
+            {
+              field: 'summary.messagingAndPositioning',
+              heading: 'Messaging and Positioning',
+              required: true,
+            },
+          ]
+        : []),
+      ...(creative.transcript === undefined || creative.transcript === null
+        ? [
+            {
+              field: 'transcript',
+              heading: 'Transcript',
+              required: false,
+            },
+          ]
+        : []),
+      ...(creative.glossaryTags === undefined || creative.glossaryTags === null
+        ? [
+            {
+              field: 'glossaryTags',
+              heading: 'AI Tags (Motion Glossary)',
+              required: true,
+            },
+          ]
+        : []),
+    ],
   }
 }
 
@@ -331,8 +444,13 @@ const buildFiles = (input, options) => {
       : compareStrings(left.creativeId, right.creativeId)
   })
 
+  const ownersByCreativeId = new Set()
   const ownersByFilename = new Map()
   for (const file of files) {
+    if (ownersByCreativeId.has(file.creativeId)) {
+      fail(`Duplicate creative ID in input: ${file.creativeId}`)
+    }
+    ownersByCreativeId.add(file.creativeId)
     const existingOwner = ownersByFilename.get(file.filename)
     if (existingOwner !== undefined) {
       fail(
@@ -344,35 +462,113 @@ const buildFiles = (input, options) => {
   return files
 }
 
+const parseExistingSourceId = (content, filename) => {
+  if (!content.startsWith('---\n')) {
+    return undefined
+  }
+  const frontmatterEnd = content.indexOf('\n---\n', 4)
+  if (frontmatterEnd === -1) {
+    fail(`${filename}: unterminated frontmatter`)
+  }
+  const sourceLines = content
+    .slice(4, frontmatterEnd)
+    .split('\n')
+    .filter((line) => line.startsWith('source_id:'))
+  if (sourceLines.length === 0) {
+    return undefined
+  }
+  if (sourceLines.length !== 1) {
+    fail(`${filename}: expected exactly one source_id in frontmatter`)
+  }
+
+  const rawSourceId = sourceLines[0].slice('source_id:'.length).trim()
+  let sourceId
+  try {
+    sourceId = JSON.parse(rawSourceId)
+  } catch (error) {
+    fail(`${filename}: invalid source_id (${error.message})`)
+  }
+  if (typeof sourceId !== 'string' || sourceId.trim().length === 0) {
+    fail(`${filename}: source_id must be a non-empty JSON string`)
+  }
+  return sourceId.trim()
+}
+
+const readExistingRecords = async (outputDir) => {
+  let entries
+  try {
+    entries = await readdir(outputDir, { withFileTypes: true })
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return { byFilename: new Map(), bySourceId: new Map() }
+    }
+    throw error
+  }
+
+  const byFilename = new Map()
+  const bySourceId = new Map()
+  entries.sort((left, right) => compareStrings(left.name, right.name))
+  for (const entry of entries) {
+    if (!entry.isFile() || !entry.name.endsWith('.md')) {
+      continue
+    }
+    const path = join(outputDir, entry.name)
+    const content = await readFile(path, 'utf8')
+    const sourceId = parseExistingSourceId(content, entry.name)
+    const record = { content, filename: entry.name, path, sourceId }
+    byFilename.set(entry.name, record)
+    if (sourceId === undefined) {
+      continue
+    }
+    const duplicate = bySourceId.get(sourceId)
+    if (duplicate !== undefined) {
+      fail(
+        `Creative ${sourceId}: duplicate existing records ${duplicate.filename} and ${entry.name}`,
+      )
+    }
+    bySourceId.set(sourceId, record)
+  }
+  return { byFilename, bySourceId }
+}
+
 const prepareFiles = async (files, outputDir) => {
+  const existingRecords = await readExistingRecords(outputDir)
   const prepared = []
   for (const file of files) {
     const destination = join(outputDir, file.filename)
-    let existingContent
-    try {
-      existingContent = await readFile(destination, 'utf8')
-    } catch (error) {
-      if (error.code !== 'ENOENT') {
-        throw error
-      }
+    const existing = existingRecords.bySourceId.get(file.creativeId)
+    const destinationOwner = existingRecords.byFilename.get(file.filename)
+    if (destinationOwner !== undefined && destinationOwner !== existing) {
+      fail(
+        `${file.filename}: destination is already owned by ${
+          destinationOwner.sourceId ?? 'a file without source_id'
+        }`,
+      )
     }
 
-    if (existingContent === undefined) {
-      prepared.push(file)
+    if (existing === undefined) {
+      prepared.push({ ...file, destination })
       continue
     }
 
     const projection = extractAccountContextProjection(
-      existingContent,
+      existing.content,
+      existing.filename,
+    )
+    const contentWithProjection = replaceAccountContextProjection(
+      file.content,
+      projection,
       file.filename,
     )
     prepared.push({
       ...file,
-      content: replaceAccountContextProjection(
-        file.content,
-        projection,
-        file.filename,
+      content: mergeMissingMotionSections(
+        contentWithProjection,
+        existing.content,
+        { ...file, existingFilename: existing.filename },
       ),
+      destination,
+      existingPath: existing.path,
     })
   }
   return prepared
@@ -380,11 +576,22 @@ const prepareFiles = async (files, outputDir) => {
 
 const writeFiles = async (files, outputDir) => {
   await mkdir(outputDir, { recursive: true })
+  const staged = []
   for (const [index, file] of files.entries()) {
-    const destination = join(outputDir, file.filename)
     const temporary = join(outputDir, `.${file.filename}.${process.pid}.${index}.tmp`)
     await writeFile(temporary, file.content, { encoding: 'utf8', flag: 'wx' })
-    await rename(temporary, destination)
+    staged.push({ ...file, temporary })
+  }
+  for (const file of staged) {
+    if (
+      file.existingPath !== undefined &&
+      file.existingPath !== file.destination
+    ) {
+      await rename(file.temporary, file.existingPath)
+      await rename(file.existingPath, file.destination)
+      continue
+    }
+    await rename(file.temporary, file.destination)
   }
 }
 

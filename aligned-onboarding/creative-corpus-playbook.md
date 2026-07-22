@@ -105,9 +105,12 @@ motion meta insights --scope creative-asset-id --creative-asset-id <id> [--creat
 Export each fully enriched scoped result after the full pull. This order replaces the selected
 creative with a record that still contains all four summary sections, glossary tags, identity, and
 the backfilled transcript. Never export a transcript-only scoped result: its absent summaries and
-tags are not evidence that the creative has no summaries or tags. Only video creatives have a
-spoken transcript. If a fully enriched scoped re-pull still returns no transcript, record that it
-has none rather than inventing one.
+tags are not evidence that the creative has no summaries or tags. If Motion omits a requested
+summary or glossary from the enriched retry anyway, the exporter resolves the existing record by
+`source_id` and carries its prior complete Motion section into the replacement. It fails before
+writing if the existing record has no complete required section to preserve. Only video creatives
+have a spoken transcript. If a fully enriched scoped re-pull still returns no transcript, retain a
+prior transcript when one exists; otherwise record that it has none rather than inventing one.
 
 Note the exact pull date and window. This anchors the "corpus as of" timestamp.
 
@@ -119,8 +122,9 @@ node /agent/.agents/skills/aligned-onboarding/bin/export-creative-corpus.mjs --i
 
 The exporter validates all non-null summary sections before writing any files. If it reports a
 creative ID and section, re-pull or repair that source record; do not replace the section with a
-handwritten reduction. On replacement, it also preserves the protected Account Context Projection
-block described in Step 4.
+handwritten reduction. On replacement, it resolves the existing record by `source_id`, preserves
+missing Motion enrichment from the prior complete sections, and preserves the protected Account
+Context Projection block described in Step 4.
 
 ---
 
@@ -145,7 +149,11 @@ The underscore keeps it at the top of the folder and signals it is a reference, 
 One file per creative.
 
 **File naming:** `<safe-ad-name>--<Motion-creative-ID>.md`. The exporter replaces filesystem-unsafe
-characters and includes the creative ID so duplicate ad names cannot overwrite each other.
+characters and includes the creative ID so duplicate ad names cannot overwrite each other. The ad
+name is display data, not identity: before writing, the exporter scans destination frontmatter and
+resolves the existing record by stable `source_id`. If the representative ad name changed, it moves
+that one record to the new filename after all validation. Duplicate source IDs or a destination
+owned by another record fail before any destination file is changed.
 
 **Location:** `/agent/brain/meta/creatives/<safe-ad-name>--<Motion-creative-ID>.md`
 
@@ -206,8 +214,11 @@ The four requested summary sections are the content contract. Preserve each sect
 not reduce `hookOrHeadline` to the first hook, replace `creativeBreakdown` with a short description,
 or flatten `messagingAndPositioning` to value propositions. Storyline, visuals, product framing,
 pain points, desired outcomes, funnel stage, and audience insight are all durable corpus content.
-Null or missing sections may be recorded as not returned; malformed non-null sections must stop the
-export.
+Null or missing sections on a new record may be recorded as not returned; malformed non-null
+sections must stop the export. On replacement, a missing summary or glossary section preserves the
+prior complete Motion section by `source_id`; if neither input nor existing record has that required
+content, the export stops before writing. A missing transcript preserves the prior transcript when
+one exists.
 
 **Protected Account Context Projection.** The exporter owns the Motion-derived sections and seeds
 the marker block with the raw ad name and Motion-reported spend state. After the first export, read
@@ -216,11 +227,12 @@ the Account Context Brain and replace the contents inside that one marker pair w
 - the decoded naming fields from its naming decoder, or the raw ad name if no decoder exists; and
 - Spend State derived from `metrics.spend` against its confirmed custom thresholds.
 
-Keep both marker comments. On every later full or scoped export, the exporter copies that whole
-block verbatim from the existing destination into the replacement file. It refuses to overwrite an
-existing destination that does not contain exactly one complete marker block, so authored naming
-or threshold decisions cannot be silently discarded. Edit Account Context projections only inside
-the block; Motion content stays outside it.
+Keep both marker comments. On every later full or scoped export, the exporter finds the existing
+record by `source_id` across the destination folder and copies that whole block verbatim into the
+replacement file, even when the ad-name portion of the filename changed. It refuses to overwrite an
+existing source-ID record that does not contain exactly one complete marker block, so authored
+naming or threshold decisions cannot be silently discarded. Edit Account Context projections only
+inside the block; Motion content stays outside it.
 
 **Why this shape (so it works with corpus-search):** the frontmatter keys (`brand`, `workspace`,
 `source_id`, `event_at`) are what corpus-search filters and dedupes on, so keep them accurate.
@@ -296,7 +308,8 @@ retired from the account.
 1. Pull recent launches: `motion meta insights --date-range last_7d --include-glossary --include-metrics --include-transcript --summary-sections adDescription --summary-sections hookOrHeadline --summary-sections creativeBreakdown --summary-sections messagingAndPositioning --workspace-id <workspaceId>`
 2. Compare returned creative IDs against existing files in `/agent/brain/meta/creatives/`.
 3. Run the deterministic exporter over the returned JSON. It creates or replaces the file for each
-   returned creative while preserving existing Account Context Projection blocks.
+   returned creative by `source_id`, preserving missing prior Motion enrichment and existing Account
+   Context Projection blocks. Ad-name drift moves the same record instead of creating a duplicate.
 4. For each missing video transcript, run the fully enriched scoped re-pull from Step 2 and export
    that result second. Never export a transcript-only result.
 5. For new files, project decoded naming and custom-threshold Spend State into the protected block.

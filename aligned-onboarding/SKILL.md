@@ -74,10 +74,12 @@ procedures live in the staged docs and are the source of truth for each step:
    enriched Markdown file per active creative under `/agent/brain/meta/creatives/` and fails on a
    malformed non-null section. Project the Account Context Brain's decoded naming and
    custom-threshold Spend State inside each file's protected Account Context block; later exports
-   preserve that block. If a transcript needs a scoped retry, request all four summaries, glossary,
-   metrics, and transcript together, then export that fully enriched result after the full pull.
-   Never export a transcript-only result. Writing the files is the index step for Knoweth; index
-   the corpus-search source too if installed.
+   find the record by stable `source_id` and preserve that block across ad-name changes. If a
+   transcript needs a scoped retry, request all four summaries, glossary, metrics, and transcript
+   together, then export that fully enriched result after the full pull. Never export a
+   transcript-only result. If Motion omits requested retry enrichment, the exporter preserves the
+   prior complete Motion sections by `source_id` or fails before writing when none exists. Writing
+   the files is the index step for Knoweth; index the corpus-search source too if installed.
 6. **Keep both current.** Account Context Brain on a monthly-plus-drift cadence; Creative Corpus on
    daily and event-triggered maintenance. Log every refresh in `/agent/brain/meta/_changelog.md`.
 
