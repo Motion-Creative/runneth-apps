@@ -20,11 +20,11 @@
         "integration:stamped"
       ],
       "source": {
-        "type": "backend-github",
+        "type": "github",
         "owner": "Motion-Creative",
         "repo": "runneth-apps",
         "path": "packages/voc-data-pull",
-        "ref": "main"
+        "ref": "voc-e2e-test"
       },
       "installPolicy": "auto",
       "updatePolicy": "auto",
