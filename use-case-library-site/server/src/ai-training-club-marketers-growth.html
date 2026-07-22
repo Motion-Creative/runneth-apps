@@ -423,14 +423,22 @@
     <section class="block dark final" id="signup">
       <div class="wrap narrow center">
         <h2>Sick of hearing about AI? Come actually build with it.</h2>
-        <form class="form-card" onsubmit="return false;">
-          <div class="fld"><label for="email">Your email</label><input id="email" type="email" placeholder="you@company.com" /></div>
-          <div class="fld"><label for="first">First name</label><input id="first" type="text" placeholder="First name" /></div>
-          <div class="fld"><label for="last">Last name</label><input id="last" type="text" placeholder="Last name" /></div>
-          <div class="fld"><label for="title">Job title</label><input id="title" type="text" placeholder="Job title" /></div>
-          <div class="fld"><label for="company">Company name</label><input id="company" type="text" placeholder="Company name" /></div>
-          <button type="submit">Save my free spot</button>
-        </form>
+        <div class="form-card"><div id="hs-form-atc-growth"></div></div>
+        <script charset="utf-8" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+          (function () {
+            function loadForm() {
+              if (!window.hbspt || !window.hbspt.forms) { return setTimeout(loadForm, 200); }
+              window.hbspt.forms.create({
+                region: "na1",
+                portalId: "19514659",
+                formId: "002ba042-22d0-4ea4-a467-68d66eaa262a",
+                target: "#hs-form-atc-growth"
+              });
+            }
+            loadForm();
+          })();
+        </script>
       </div>
     </section>
 
