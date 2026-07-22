@@ -1,0 +1,450 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/atc-growth/favicon.svg" />
+    <title>AI Training Club For Marketers | Runneth</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --ink: #14130E;
+        --ink-soft: #26241c;
+        --cream: #FFF7D6;
+        --sky: #AEE1ED;
+        --sky-soft: #D5F0F6;
+        --lime: #CEFF5B;
+        --lime-2: #b6f03e;
+        --green-soft: #DFF7A8;
+        --yellow: #FFF95C;
+        --muted: #6B6757;
+        --muted-dark: #9c988b;
+        --card: #F6F6F6;
+        --surface-lime: #F1FFCF;
+        --surface-warm: #FFF4C9;
+        --border: #ECECEC;
+        --radius: 16px;
+        --radius-sm: 10px;
+        --pill: 999px;
+        --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        --display: "Anton", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body { font-family: var(--sans); background: #fff; color: var(--ink); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+      .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+      .narrow { max-width: 940px; }
+
+      /* HERO with branded swirl bg + floating dark nav */
+      .hero { position: relative; background-color: var(--sky); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 20px 0 96px; }
+      .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0) 60%, rgba(255,255,255,.25)); pointer-events: none; }
+      .navbar { position: sticky; top: 0; z-index: 50; background: var(--sky); padding: 12px 24px; }
+      nav.top { max-width: 1180px; margin: 0 auto; background: var(--ink); border-radius: var(--pill); display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 14px 24px; }
+      .logo-white { height: 22px; width: auto; display: block; }
+      .nav-links { display: flex; align-items: center; gap: 26px; }
+      .nav-links a { color: #fff; text-decoration: none; font-weight: 500; font-size: .95rem; opacity: .92; }
+      .nav-links a:hover { opacity: .65; }
+      .nav-links a.nav-cta { background: #fff; color: var(--ink); font-weight: 700; padding: 10px 20px; border-radius: var(--pill); opacity: 1; }
+      .nav-links a.nav-cta:hover { background: var(--lime); }
+      .navbar.scrolled .nav-plain { display: none; }
+
+      .hero-inner { position: relative; z-index: 3; text-align: center; padding-top: 64px; }
+      .title-lockup { width: min(760px, 84vw); height: auto; display: block; margin: 0 auto; }
+      .motion-presents { display: inline-block; font-family: var(--display); text-transform: uppercase; letter-spacing: .04em; font-size: clamp(19px, 2.5vw, 30px); color: var(--ink); margin-bottom: 16px; transform: skewX(-6deg); }
+      .motion-presents-logo { height: 30px; width: auto; display: block; margin: 0 auto 18px; }
+      .mp-bar { background: #fff; text-align: center; padding: 26px 20px 6px; }
+      .hero-banner { display: block; width: 100%; height: auto; }
+      .hero-band { padding-top: 44px; }
+      .hero-sub { max-width: 660px; margin: 40px auto 0; font-size: clamp(18px, 2.2vw, 24px); color: var(--ink); font-weight: 700; letter-spacing: -.01em; }
+      .hero-support { max-width: 600px; margin: 14px auto 0; font-size: clamp(15px, 1.8vw, 18px); color: #2b3f52; font-weight: 600; }
+      .hero-cta { display: inline-block; margin-top: 26px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 700; font-size: 1.05rem; padding: 17px 42px; border-radius: var(--pill); transition: transform .08s ease; }
+      .hero-cta:hover { transform: translateY(-2px); }
+      .hero-date { margin: 14px auto 0; font-size: .95rem; font-weight: 600; color: #2b3f52; }
+      .hero-free { margin: 12px auto 0; font-size: .9rem; font-weight: 600; color: #2b3f52; }
+
+      /* trio */
+      .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 52px; text-align: left; }
+      .trio-card { background: rgba(255,255,255,.72); border: 1.5px solid rgba(255,255,255,.95); border-radius: var(--radius); padding: 26px; backdrop-filter: blur(3px); }
+      .trio-card .big { font-family: var(--display); text-transform: uppercase; font-size: 1.85rem; letter-spacing: .005em; margin-bottom: 10px; line-height: 1; }
+      .trio-card .lbl { font-size: .98rem; color: #40566a; }
+
+      /* value strip under trio */
+      .value-strip { margin-top: 16px; background: rgba(20,19,14,.92); color: #fff; border-radius: var(--radius); padding: 20px 28px; text-align: left; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px 26px; align-items: center; }
+      .value-strip .vitem { position: relative; padding-left: 30px; font-size: 1.02rem; font-weight: 600; }
+      .value-strip .vitem::before { content: "\2713"; position: absolute; left: 0; top: 0; color: var(--lime); font-weight: 900; }
+      .value-strip .vkick { grid-column: 1 / -1; margin-top: 4px; padding-top: 14px; border-top: 1px solid #ffffff24; font-size: 1.05rem; color: #ffffff; }
+      .steps { display: flex; align-items: stretch; justify-content: center; gap: 12px; margin-top: 18px; flex-wrap: nowrap; }
+      .step { flex: 1 1 0; background: rgba(255,255,255,.74); border: 1.5px solid rgba(255,255,255,.95); border-radius: var(--radius); padding: 20px 22px; text-align: left; display: flex; gap: 14px; align-items: center; backdrop-filter: blur(3px); }
+      .step .sn { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--lime); font-family: var(--display); font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+      .step .st { font-size: 1rem; font-weight: 700; color: var(--ink); letter-spacing: -.01em; }
+      .step-arrow { display: flex; align-items: center; color: var(--ink); font-size: 1.5rem; font-weight: 800; opacity: .55; }
+      .steps-payoff { margin-top: 20px; text-align: center; font-size: clamp(16px, 2vw, 20px); color: var(--ink); font-weight: 600; }
+      .steps-payoff strong { font-weight: 800; }
+      .value-strip .vkick strong { color: var(--lime); font-weight: 800; }
+
+      /* section shells */
+      section.block { padding: 90px 0; }
+      section.block.cream { background: var(--cream); }
+      section.block.green { background: var(--green-soft); }
+      section.block.dark { background: var(--ink); color: #fff; }
+      .eyebrow { font-size: .94rem; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin-bottom: 16px; }
+      .eyebrow .accent { background: var(--lime); color: var(--ink); padding: 2px 8px; border-radius: 5px; }
+      h2.sec { font-weight: 800; font-size: clamp(30px, 4.4vw, 52px); line-height: 1.04; letter-spacing: -.025em; margin-bottom: 16px; }
+      h2.sec.xl { font-size: clamp(36px, 5.4vw, 66px); }
+      .center { text-align: center; }
+      .center .lead { margin-left: auto; margin-right: auto; }
+      .lead { font-size: 1.15rem; color: var(--muted); max-width: 640px; margin-bottom: 44px; }
+      .lead strong { color: var(--ink); }
+      section.dark .lead { color: var(--muted-dark); }
+      section.dark .eyebrow { color: #d8d3c4; }
+
+      /* sessions accordion */
+      .sessions { display: grid; gap: 14px; }
+      details.session { background: #fff; color: var(--ink); border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+      details.session[open] { border-color: var(--lime-2); }
+      details.session summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 20px; padding: 24px 28px; font-size: 1.3rem; font-weight: 800; letter-spacing: -.01em; color: var(--ink); }
+      details.session summary::-webkit-details-marker { display: none; }
+      .snum { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: var(--lime); font-family: var(--display); font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+      .stitle { flex: 1; }
+      .chev { flex: 0 0 auto; width: 22px; height: 22px; position: relative; transition: transform .2s ease; }
+      .chev::before, .chev::after { content: ""; position: absolute; top: 10px; width: 12px; height: 2.5px; background: var(--ink); border-radius: 2px; }
+      .chev::before { left: 1px; transform: rotate(45deg); }
+      .chev::after { right: 1px; transform: rotate(-45deg); }
+      details[open] .chev { transform: rotate(180deg); }
+      .sbody { padding: 0 28px 26px 92px; }
+      .srow { display: grid; grid-template-columns: 150px 1fr; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border); }
+      .srow .k { font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+      .srow .v { font-size: 1.02rem; color: var(--ink); }
+
+      /* speakers */
+      .speakers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 12px; }
+      .spk .photo { width: 100%; aspect-ratio: 1/1; border-radius: 14px; object-fit: cover; display: block; margin-bottom: 18px; background: var(--sky); }
+      .spk .nm { font-size: 1.28rem; font-weight: 800; letter-spacing: -.01em; }
+      .spk .rl { font-size: .95rem; font-weight: 600; color: var(--muted); margin-top: 2px; }
+      .spk .bio { font-size: .95rem; color: var(--muted); margin-top: 14px; line-height: 1.5; }
+
+      /* who */
+      .who { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 6px; }
+      .who-card { border-radius: var(--radius); padding: 30px 32px; border: 1.5px solid var(--border); background: #fff; }
+      .who-card.yes { background: var(--lime); border-color: #a6e02e; }
+      .who-card.no { background: #EFFBD4; border-color: #E1F5A8; }
+      .who-card h4 { font-size: 1.05rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 18px; }
+      .who-card ul { list-style: none; }
+      .who-card li { position: relative; padding: 10px 0 10px 28px; font-size: 1.02rem; border-top: 1px solid rgba(20,19,14,.07); }
+      .who-card li:first-child { border-top: none; }
+      .who-card.yes li::before { content: "\2713"; position: absolute; left: 0; font-weight: 900; color: #2f7a1f; }
+      .who-card.no li::before { content: "\2014"; position: absolute; left: 0; font-weight: 900; color: var(--muted); }
+
+      /* Tuesday / Thursday boxes */
+      .week-boxes { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 10px; }
+      .wbox { border-radius: var(--radius); padding: 38px 36px; border: 2px solid var(--ink); }
+      .wbox.tue { background: var(--sky); }
+      .wbox.thu { background: var(--green-soft); }
+      .wbox .tag { font-size: 1.5rem; font-weight: 800; letter-spacing: -.01em; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+      .wbox .tag .arrow { display: inline-flex; width: 30px; height: 30px; border-radius: 8px; background: var(--ink); color: var(--lime); align-items: center; justify-content: center; font-size: 1rem; }
+      .wmeta { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
+      .wmeta .m { display: grid; grid-template-columns: 130px 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid rgba(20,19,14,.14); font-size: .98rem; }
+      .wmeta .m:first-child { border-top: none; }
+      .wmeta .m .lab { font-size: .74rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: rgba(20,19,14,.55); align-self: center; }
+      .wbox p { font-size: 1.02rem; color: var(--ink); }
+      .extras { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px; }
+      .extras .pill { background: var(--ink); color: var(--lime); font-size: .88rem; font-weight: 700; padding: 9px 18px; border-radius: var(--pill); }
+
+      /* urgency */
+      .urgency { background: var(--yellow); border-radius: var(--radius); padding: 44px 44px; text-align: center; }
+      .urgency h2 { font-weight: 800; font-size: clamp(28px, 4vw, 46px); margin-bottom: 14px; line-height: 1.02; letter-spacing: -.02em; }
+      .urgency p { font-size: 1.12rem; color: var(--ink); max-width: 600px; margin: 0 auto 26px; }
+
+      /* slack + prizes */
+      .slack-cols { display: grid; grid-template-columns: 0.52fr 1.48fr; gap: 40px; align-items: center; margin-top: 10px; }
+      .slack-bul { list-style: none; display: grid; grid-template-columns: 1fr; gap: 24px; }
+      .slack-bul li { position: relative; padding-left: 42px; font-size: 1.16rem; font-weight: 500; }
+      .slack-bul li::before { content: "\2713"; position: absolute; left: 0; top: -2px; width: 26px; height: 26px; border-radius: 7px; background: var(--lime); color: var(--ink); font-weight: 900; font-size: .9rem; display: flex; align-items: center; justify-content: center; }
+      .slack-img { width: 100%; height: auto; display: block; border-radius: 14px; border: 1px solid var(--border); }
+      .prize-wrap { display: grid; grid-template-columns: 1fr .9fr; gap: 40px; align-items: center; margin-top: 8px; }
+      .prize-img { width: 100%; max-width: 460px; height: auto; display: block; }
+
+      /* sign up (dark) + form */
+      .final h2 { font-weight: 800; font-size: clamp(30px, 4.6vw, 60px); line-height: 1.02; letter-spacing: -.03em; margin-bottom: 30px; }
+      .form-card { background: #fff; border-radius: var(--radius); padding: 34px 32px; max-width: 520px; margin: 0 auto; text-align: left; color: var(--ink); }
+      .form-card label { display: block; font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin: 0 0 6px; }
+      .form-card .fld { margin-bottom: 16px; }
+      .form-card input { width: 100%; padding: 13px 15px; font-family: var(--sans); font-size: 1rem; color: var(--ink); background: #fff; border: 1.5px solid #dcdcdc; border-radius: 10px; }
+      .form-card input:focus { outline: none; border-color: var(--lime-2); box-shadow: 0 0 0 3px rgba(182,240,62,.35); }
+      .form-card button { width: 100%; margin-top: 6px; cursor: pointer; background: var(--lime); color: var(--ink); border: 2px solid var(--ink); font-family: var(--sans); font-weight: 800; font-size: 1.05rem; padding: 15px 30px; border-radius: var(--pill); }
+      .form-card button:hover { transform: translateY(-1px); }
+
+      /* footer */
+      footer { background: var(--ink); color: var(--muted-dark); padding: 64px 0 56px; }
+      .foot-top { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; }
+      .foot-brand .logo-white { height: 24px; margin-bottom: 16px; }
+      .foot-brand p { max-width: 300px; font-size: .98rem; }
+      .foot-news { margin-top: 22px; }
+      .foot-news .fl { font-size: .82rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+      .foot-news form { display: flex; gap: 8px; max-width: 340px; }
+      .foot-news input { flex: 1; padding: 11px 13px; border-radius: 10px; border: 1.5px solid #3a382f; background: #1d1c15; color: #fff; font-family: var(--sans); font-size: .92rem; }
+      .foot-news button { background: var(--lime); color: var(--ink); border: none; border-radius: 10px; padding: 0 18px; font-weight: 800; font-family: var(--sans); cursor: pointer; }
+      .foot-col h5 { color: #fff; font-size: .82rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 16px; }
+      .foot-col a { display: block; color: var(--muted-dark); text-decoration: none; font-size: .95rem; margin-bottom: 12px; }
+      .foot-col a:hover { color: #fff; }
+      .foot-btm { margin-top: 44px; padding-top: 22px; border-top: 1px solid #2c2a22; font-size: .85rem; }
+
+      @media (max-width: 900px) { .speakers { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 720px) {
+        .nav-links a.nav-plain { display: none; }
+        .hero-inner { padding-top: 40px; }
+        .trio, .who, .week-boxes, .value-strip, .slack-cols, .prize-wrap, .foot-top { grid-template-columns: 1fr; }
+        .steps { flex-direction: column; }
+        .step-arrow { display: none; }
+        .prize-wrap { text-align: center; } .prize-img { margin: 0 auto; }
+        .srow { grid-template-columns: 1fr; gap: 2px; }
+        .sbody { padding: 0 24px 24px 24px; }
+        .urgency { padding: 36px 24px; }
+        section.block { padding: 60px 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HERO -->
+    <div class="navbar">
+      <nav class="top">
+        <img class="logo-white" src="/atc-growth/runneth-wordmark-white.svg" alt="Runneth" />
+        <div class="nav-links">
+          <a class="nav-cta" href="#signup">Save my spot</a>
+        </div>
+      </nav>
+    </div>
+    <div class="hero" style="background-image:url('/atc-growth/bg-header.jpg');">
+      <div class="hero-inner">
+        <div class="wrap">
+          <img class="motion-presents-logo" src="/atc-growth/motion-presents-black.png" alt="Motion Presents" />
+          <img class="title-lockup" src="/atc-growth/title-lockup.png" alt="AI Training Club, For Marketers" />
+          <p class="hero-sub">A free 5-week program where you actually build AI into your marketing work, one 10-minute lesson at a time.</p>
+          <div class="trio">
+            <div class="trio-card"><div class="big">10 minutes</div><div class="lbl">One short, hands-on lesson every week. Watchable on your phone.</div></div>
+            <div class="trio-card"><div class="big">+ weekly coaching calls</div><div class="lbl">A live group coaching call every week to ask your specific questions and go deeper.</div></div>
+            <div class="trio-card"><div class="big">$0</div><div class="lbl">Free to sign up. No catch. Slack community and prizes included.</div></div>
+          </div>
+          <a class="hero-cta" href="#signup">Save my free spot</a>
+          <p class="hero-date">Starts August 4th at 1PM EST. Free &amp; virtual event.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SESSIONS -->
+    <section class="block dark">
+      <div class="wrap">
+        <p class="eyebrow"><span class="accent">Build</span> something real every week</p>
+        <h2 class="sec xl">Five weeks. Five real skills you'll actually walk away with.</h2>
+        <p class="lead">No concepts explained and forgotten. Each session ends with a tangible deliverable built on your own work.</p>
+        <div class="sessions">
+          <details class="session" open>
+            <summary><span class="snum">1</span><span class="stitle">Conduct a review audit</span><span class="chev"></span></summary>
+            <div class="sbody">
+              <div class="srow"><div class="k">Topic</div><div class="v">Run a gap analysis on your own customer reviews to surface winning ad angles.</div></div>
+              <div class="srow"><div class="k">Takeaway</div><div class="v">You leave with a working "analyst" that reads your reviews and hands you angles.</div></div>
+              <div class="srow"><div class="k">In your work</div><div class="v">Stop guessing at messaging. Pull proven angles straight from what customers already tell you.</div></div>
+            </div>
+          </details>
+          <details class="session">
+            <summary><span class="snum">2</span><span class="stitle">Get AI to script in your own voice</span><span class="chev"></span></summary>
+            <div class="sbody">
+              <div class="srow"><div class="k">Topic</div><div class="v">The AI-scripting myth, busted. Good scripts come from iteration and voice training, not one magic prompt.</div></div>
+              <div class="srow"><div class="k">Takeaway</div><div class="v">A voice doc and a workflow that writes scripts that actually sound like you.</div></div>
+              <div class="srow"><div class="k">In your work</div><div class="v">Turn around on-brand scripts in minutes instead of starting from a blank page.</div></div>
+            </div>
+          </details>
+          <details class="session">
+            <summary><span class="snum">3</span><span class="stitle">Build the ultimate creator report</span><span class="chev"></span></summary>
+            <div class="sbody">
+              <div class="srow"><div class="k">Topic</div><div class="v">Analyze which creators are working and why, by audience segment, format, product, and pain point.</div></div>
+              <div class="srow"><div class="k">Takeaway</div><div class="v">A clear read on which creators to double down on, delivered as a simple write-up you can act on.</div></div>
+              <div class="srow"><div class="k">In your work</div><div class="v">Spend your creator budget on the ones actually driving results.</div></div>
+            </div>
+          </details>
+          <details class="session">
+            <summary><span class="snum">4</span><span class="stitle">Get AI to QA your creative for you</span><span class="chev"></span></summary>
+            <div class="sbody">
+              <div class="srow"><div class="k">Topic</div><div class="v">Train AI to evaluate and QA creative, using a video use case, so it catches issues the way you would.</div></div>
+              <div class="srow"><div class="k">Takeaway</div><div class="v">A real feel for what it means to train AI, plus a QA pass you can reuse.</div></div>
+              <div class="srow"><div class="k">In your work</div><div class="v">Catch problems before creative ships, not after it flops.</div></div>
+            </div>
+          </details>
+          <details class="session">
+            <summary><span class="snum">5</span><span class="stitle">Launch your ads from Slack</span><span class="chev"></span></summary>
+            <div class="sbody">
+              <div class="srow"><div class="k">Topic</div><div class="v">Start from a ready asset and apply a naming convention in an instant, then launch the ad using AI.</div></div>
+              <div class="srow"><div class="k">Takeaway</div><div class="v">A clean, repeatable naming and launch process you can run every time.</div></div>
+              <div class="srow"><div class="k">In your work</div><div class="v">Ship organized, trackable ads without the manual mess.</div></div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPEAKERS -->
+    <section class="block">
+      <div class="wrap center">
+        <h2 class="sec">Train with the best minds in the industry.</h2>
+        <p class="lead">The people teaching each week have built this for a living, and they'll be right there in the community with you.</p>
+        <div class="speakers" style="text-align:left;">
+          <div class="spk">
+            <img class="photo" src="/atc-growth/spk-alysha.jpg" alt="Alysha Boehm" />
+            <div class="nm">Alysha Boehm</div>
+            <div class="rl">Creative Strategist at Motion</div>
+            <p class="bio">Alysha is working in the frontier of AI-native creative strategy and will teach the most up-to-date techniques for orchestrating ad production at speeds that were impossible to imagine even six months ago.</p>
+          </div>
+          <div class="spk">
+            <img class="photo" src="/atc-growth/spk-evan.jpg" alt="Evan Lee" />
+            <div class="nm">Evan Lee</div>
+            <div class="rl">Head of Partnerships at Motion</div>
+            <p class="bio">Evan has worked with hundreds of our best customers at Motion and led countless events, livestreams, and training sessions. Evan will be teaching sessions and cheering you on in our private community.</p>
+          </div>
+          <div class="spk">
+            <img class="photo" src="/atc-growth/spk-jose.jpg" alt="Jose Garcia" />
+            <div class="nm">Jose Garcia</div>
+            <div class="rl">Creative Strategist at Motion</div>
+            <p class="bio">Jose has spent years helping brands and agencies turn creative into measurable ROAS, first on the paid social and creator side at Insense, a TikTok and Meta partner, and now at Motion.</p>
+          </div>
+          <div class="spk">
+            <img class="photo" src="/atc-growth/spk-rabia.jpg" alt="Rabia Sohail" />
+            <div class="nm">Rabia Sohail</div>
+            <div class="rl">Customer Success Manager at Motion</div>
+            <p class="bio">Rabia came up through the creator and agency world, running influencer partnerships at Viral Nation and building communities in Toronto before joining Motion.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHO IT'S FOR -->
+    <section class="block cream">
+      <div class="wrap">
+        <p class="eyebrow"><span class="accent">Who</span> it's for</p>
+        <h2 class="sec">Built for the people too buried in the work to go all in on AI.</h2>
+        <p class="lead">You're not behind on AI because you're bad at it. You're just too busy doing the work.</p>
+        <div class="who">
+          <div class="who-card yes">
+            <h4>This is for you if</h4>
+            <ul>
+              <li>You're on a growth or creative performance team and want to level-set your AI skills on real, everyday use cases.</li>
+              <li>You feel like you're falling behind on AI.</li>
+              <li>Your boss keeps saying "go use AI" with no roadmap.</li>
+              <li>You've always wanted to pull off certain AI use cases but never knew how.</li>
+              <li>You just want to see what "good" looks like in 2026.</li>
+            </ul>
+          </div>
+          <div class="who-card no">
+            <h4>Probably not for you if</h4>
+            <ul>
+              <li>You're already an AI power user who has gone all in.</li>
+              <li>You want theory and frameworks more than something built.</li>
+              <li>You're looking for a generic "intro to AI" course.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WEEKLY FORMAT: Tuesday + Thursday -->
+    <section class="block">
+      <div class="wrap">
+        <p class="eyebrow"><span class="accent">Format</span> two touchpoints a week</p>
+        <h2 class="sec">How each week actually runs</h2>
+        <p class="lead">Two short touchpoints a week. Designed to fit around a busy season, not add to it.</p>
+        <div class="week-boxes">
+          <div class="wbox tue">
+            <div class="tag"><span class="arrow">&#8599;</span> Your Tuesday class</div>
+            <div class="wmeta">
+              <div class="m"><span class="lab">Duration</span><span>10 minutes, instructional</span></div>
+              <div class="m"><span class="lab">Time</span><span>1:00PM EST / 10:00AM PST</span></div>
+            </div>
+            <p>We open with the finished product, then walk the roadmap of how to set it up with AI. You'll see exactly what's involved, what actually matters, and how to get to a working setup fast. You leave with real marketing work built.</p>
+          </div>
+          <div class="wbox thu">
+            <div class="tag"><span class="arrow">&#8599;</span> Your Thursday coaching session</div>
+            <div class="wmeta">
+              <div class="m"><span class="lab">Duration</span><span>As long as you need</span></div>
+              <div class="m"><span class="lab">Time</span><span>1:00PM EST / 10:00AM PST</span></div>
+            </div>
+            <p>We stay as long as you need. Our team answers your questions, plus your peers show what they built that week, so you get the push to finish yours. Live coaching and peer-to-peer learning.</p>
+          </div>
+        </div>
+        <div class="extras">
+          <span class="pill">Watchable on your phone</span>
+          <span class="pill">Slack community support</span>
+          <span class="pill">Prizes along the way</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- URGENCY -->
+    <section class="block">
+      <div class="wrap narrow">
+        <div class="urgency">
+          <h2>Get AI-fluent before your busiest season</h2>
+          <p>We've timed the club so you're all prepped ahead of Black Friday. Come out the other side with real systems built and running, one 10-minute lesson at a time.</p>
+          <a class="hero-cta" href="#signup">Save my free spot</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLACK COMMUNITY -->
+    <section class="block">
+      <div class="wrap">
+        <h2 class="sec center">Join our Slack community</h2>
+        <div class="slack-cols">
+          <ul class="slack-bul">
+            <li>Join 13,500 creative strategists</li>
+            <li>Local chapters for LA, NYC, Toronto</li>
+            <li>Find jobs, ask our coaches, and get peer-to-peer advice</li>
+          </ul>
+          <img class="slack-img" src="/atc-growth/slack-shot.png" alt="Runneth Slack community threads" />
+        </div>
+      </div>
+    </section>
+
+    <!-- PRIZES -->
+    <section class="block green">
+      <div class="wrap">
+        <div class="prize-wrap">
+          <div>
+            <h2 class="sec">Win prizes along the way</h2>
+            <p class="lead" style="margin-bottom:0;"><strong>Show up and build.</strong> We're handing out prizes through the series for the people putting the lessons into practice. Turn up each week, ship the deliverable, and you're in the running.</p>
+          </div>
+          <img class="prize-img" src="/atc-growth/prize-card.png" alt="AI Training Club prize card" />
+        </div>
+      </div>
+    </section>
+
+    <!-- SIGN UP -->
+    <section class="block dark final" id="signup">
+      <div class="wrap narrow center">
+        <h2>Sick of hearing about AI? Come actually build with it.</h2>
+        <form class="form-card" onsubmit="return false;">
+          <div class="fld"><label for="email">Your email</label><input id="email" type="email" placeholder="you@company.com" /></div>
+          <div class="fld"><label for="first">First name</label><input id="first" type="text" placeholder="First name" /></div>
+          <div class="fld"><label for="last">Last name</label><input id="last" type="text" placeholder="Last name" /></div>
+          <div class="fld"><label for="title">Job title</label><input id="title" type="text" placeholder="Job title" /></div>
+          <div class="fld"><label for="company">Company name</label><input id="company" type="text" placeholder="Company name" /></div>
+          <button type="submit">Save my free spot</button>
+        </form>
+      </div>
+    </section>
+
+    <script>
+      (function () {
+        var nav = document.querySelector('.navbar');
+        if (!nav) return;
+        function onScroll() {
+          if (window.scrollY > 40) nav.classList.add('scrolled');
+          else nav.classList.remove('scrolled');
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      })();
+    </script>
+  </body>
+</html>

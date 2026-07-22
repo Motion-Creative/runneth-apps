@@ -70,6 +70,7 @@ const PUBLIC_DIR = resolve(__dirname, '..', 'public')
 const ONE_PAGER_HTML = readFileSync(resolve(__dirname, 'one-pager.html'), 'utf-8')
 const HOW_TO_BUILD_THE_BRAIN_HTML = readFileSync(resolve(__dirname, 'how-to-build-the-brain.html'), 'utf-8')
 const HOW_TO_PROMPT_HTML = readFileSync(resolve(__dirname, 'how-to-prompt-masterfully.html'), 'utf-8')
+const ATC_GROWTH_HTML = readFileSync(resolve(__dirname, 'ai-training-club-marketers-growth.html'), 'utf-8')
 
 const server = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' } })
 
@@ -433,6 +434,16 @@ server.get('/how-to-prompt-masterfully/', async (_, reply) => {
   reply.header('content-type', 'text/html; charset=utf-8')
   reply.header('cache-control', 'public, max-age=300')
   return HOW_TO_PROMPT_HTML
+})
+server.get('/ai-training-club-marketers-growth', async (_, reply) => {
+  reply.header('content-type', 'text/html; charset=utf-8')
+  reply.header('cache-control', 'public, max-age=300')
+  return ATC_GROWTH_HTML
+})
+server.get('/ai-training-club-marketers-growth/', async (_, reply) => {
+  reply.header('content-type', 'text/html; charset=utf-8')
+  reply.header('cache-control', 'public, max-age=300')
+  return ATC_GROWTH_HTML
 })
 // CSM roster — used to validate path params on /how-to-build-the-brain/:csm
 // and to render the dashboard tabs. Keep alphabetical.
