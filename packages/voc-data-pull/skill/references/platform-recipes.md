@@ -6,12 +6,18 @@ vs **doc-grounded** (provider docs, unprobed - verify with a bounded call before
 data). Registry slugs are the Builder integration registry's; use them as `--app` values and
 as the `data-sources/<platform>/` folder name.
 
-Pagination defaults for every platform: page size 100 (or the platform max), hard cap of 50
-pages per pull unless the user asks for full history, and a client-side date cutoff on the
-item's created date except where a server-side bound exists. Two platforms have one: Yotpo
-is the only *list* endpoint with a date param (`updated_at_min`), and Intercom has a
-date-boundable *search* endpoint (`POST /conversations/search`) - prefer those over
-client-side cutoffs on their platforms.
+Pagination defaults for every platform: page size 100 (or the platform max), and a
+client-side date cutoff on the item's created date except where a server-side bound
+exists. Two platforms have one: Yotpo is the only *list* endpoint with a date param
+(`updated_at_min`), and Intercom has a date-boundable *search* endpoint
+(`POST /conversations/search`) - prefer those over client-side cutoffs on their platforms.
+
+**The date window is the coverage contract**: a pull is complete only when paging has
+reached items older than the cutoff (or the platform's last page). The 50-pages-per-run
+cap is runaway protection, not a coverage limit - if you hit it before reaching the
+cutoff, the pull is NOT complete: say so, then keep going in further batches (resuming
+from the last page) until the window is covered. Never treat a capped run as done, and
+never silently drop in-window items because of the cap.
 
 ---
 

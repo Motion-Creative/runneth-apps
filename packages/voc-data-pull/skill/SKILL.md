@@ -32,11 +32,13 @@ the date range before starting.
 
 - **Read-only against platforms.** List/read endpoints only. Never write, reply, or delete
   through a VoC platform API.
-- **Bounded pulls.** Default to the trailing 12 months and cap paging (global default in the
-  recipes header: 100 per page, max 50 pages). Use a server-side date bound where one exists -
-  Yotpo's list endpoint takes `updated_at_min`, and Intercom's `POST /conversations/search`
-  is the preferred bounded path there. Everywhere else, page in newest-first order where
-  supported and stop client-side once items are older than the cutoff.
+- **Bounded pulls, complete within the bound.** Default to the trailing 12 months; the date
+  window is the coverage contract - everything inside it gets pulled, nothing outside it
+  does. Use a server-side date bound where one exists (Yotpo's `updated_at_min`, Intercom's
+  `POST /conversations/search`); everywhere else, page newest-first and stop once items are
+  older than the cutoff. The per-run page cap in the recipes header is runaway protection
+  only: hitting it means "pause, report, and continue in further batches until the window
+  is covered" - never "done."
 - **Raw data files are separate from integration guides.** Never write pulled data into
   `/agent/brain/integrations/<source>/` - the integration guide spec explicitly forbids raw
   dumps in guides. VoC data lives only under `/agent/brain/data-sources/`.
@@ -184,8 +186,9 @@ adapter is a field-mapping exercise, not design work.
 ## Step 4 - Report
 
 After the pull, report: platform, account used, date bound, item count written, folder path,
-and any items skipped or pages capped. If the platform recipe was doc-grounded (not
-live-verified), say which calls you verified live during this pull.
+whether the full date window was covered, and any items skipped. If a run hit the page cap,
+report the batches used and confirm coverage continued to the cutoff. If the platform recipe
+was doc-grounded (not live-verified), say which calls you verified live during this pull.
 
 ## Known v1 gaps - state these honestly when relevant
 
