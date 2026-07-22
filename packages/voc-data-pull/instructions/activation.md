@@ -5,7 +5,7 @@ reviews, support conversations, and ad comments - from a connected VoC platform 
 standardized files under `/agent/brain/data-sources/<platform>/`, one file per item.
 
 Covered platform slugs: `judge_me`, `trustpilot`, `yotpo`, `junip`, `gorgias_oauth`,
-`intercom`, plus the secrets-path platforms `okendo` and `stamped`.
+`intercom`, `reddit`, plus the secrets-path platforms `okendo` and `stamped`.
 
 When to act:
 

@@ -130,6 +130,35 @@ Two-step:
 - Intercom workspaces can be large: keep `per_page` small on the first call and stay
   deliberate about pull size.
 
+## reddit (Pipedream OAuth) - doc-grounded, verify on first connect. Community posts, not reviews.
+
+- `source_type: community_post`, platform folder `reddit`.
+- **Connection:** Pipedream OAuth, needs-setup (the connect modal asks for a Reddit Client
+  ID/Secret). Base `https://oauth.reddit.com`; always add `raw_json=1` to reads.
+- **Pull targets are org-specific - confirm before the first pull**: which subreddits
+  (brand's own sub, category subs) and/or search queries (brand name, product names).
+  Candidates: `GET /r/{subreddit}/new?limit=100&raw_json=1`,
+  `GET /r/{subreddit}/search?q={query}&restrict_sr=1&sort=new&limit=100&raw_json=1`,
+  `GET /search?q={query}&restrict_sr=0&sort=new&limit=100&raw_json=1`.
+- **Pagination:** cursor via fullname `after` tokens (`limit` max 100). Items are under
+  `data.children[].data`; the next cursor is `data.after`; stop when `data.after` is null -
+  NOT when a page looks short.
+- **Coverage cap (platform-imposed):** every listing tops out at ~1000 items total. If the
+  12-month window holds more, full coverage is impossible through the API - report the real
+  coverage (newest ~1000 per listing) instead of claiming the window is covered.
+- Date bound: none server-side on listings - `sort=new` plus client-side cutoff on
+  `created_utc`.
+- Field mapping: `title` <- `title` (posts; null for comments); body <- `selftext` (posts) /
+  `body` (comments); `author_name` <- `author` (username; `author_contact` stays null
+  regardless); `created_at` <- `created_utc` (epoch -> ISO 8601);
+  `reactions_total` <- `score`; `reply_count` <- `num_comments` (posts);
+  `parent_ref` <- parent fullname for comments (comments become their own files);
+  `source_url` <- `https://www.reddit.com` + `permalink`; subreddit name rides in `custom`
+  (`{ "subreddit": "..." }`); `rating`, `product_ref`, `verified`, and the support fields
+  are null.
+- Comment trees: pull comments only for in-scope posts and only when the org wants them
+  (deep trees multiply volume fast); each pulled comment is its own file with `parent_ref`.
+
 ## meta ad comments (Motion native - NOT a Runneth integration)
 
 - `source_type: ad_comment`, platform folder `meta-ads`.

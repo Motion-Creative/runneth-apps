@@ -54,7 +54,7 @@ Two connection paths exist and the pull mechanics differ:
 
 | Path | Platforms | How to call the API |
 |---|---|---|
-| Pipedream OAuth | `judge_me`, `trustpilot`, `yotpo`, `gorgias_oauth`, `intercom`, `junip` (keys-auth in Pipedream) | `integrations` CLI: check `integrations status --app <slug>`, pick the account with `integrations accounts --app <slug>`, then `integrations proxy --app <slug> --account <accountId> --method GET --path <path>` (or the registered app command) |
+| Pipedream OAuth | `judge_me`, `trustpilot`, `yotpo`, `gorgias_oauth`, `intercom`, `reddit`, `junip` (keys-auth in Pipedream) | `integrations` CLI: check `integrations status --app <slug>`, pick the account with `integrations accounts --app <slug>`, then `integrations proxy --app <slug> --account <accountId> --method GET --path <path>` (or the registered app command) |
 | Stored secret (customer API key) | `okendo`, `stamped` | `secure-fetch` (`n run --url <url> --secret-key <SECRET_KEY> ...`) per `/runneth/references/secure-fetch-cli--command-contracts.md`. If no stored key exists, request one via the secret-collection flow - never ask for the key in chat. |
 | Motion native | Meta ad comments | `motion meta creative-comments` (no Runneth connect involved) |
 
@@ -81,6 +81,8 @@ name (`judge_me`, `gorgias_oauth`, ...; use `meta-ads` for ad comments).
 - Reviews: `/agent/brain/data-sources/<platform>/reviews/review-<external_id>.md`
 - Support tickets/conversations: `/agent/brain/data-sources/<platform>/tickets/ticket-<external_id>.md`
 - Ad comments: `/agent/brain/data-sources/meta-ads/comments/comment-<external_id>.md`
+- Community posts/comments (Reddit): `/agent/brain/data-sources/reddit/posts/post-<external_id>.md`
+  and `/agent/brain/data-sources/reddit/comments/comment-<external_id>.md`
 
 Every path is keyed by the item's `external_id` and nothing else, so a re-pull always maps
 an item to the same file. If the org brain already has an established convention under
@@ -111,6 +113,8 @@ source types are in `templates/`):
      Channel, Customer, each `custom` key, Tags, Messages (count + last activity).
    - Ad comments: `# Ad comment #<external_id>`. Labels: Platform (facebook/instagram),
      Author, Date, Reactions, Replies, and In reply to when `parent_ref` is set.
+   - Community posts: `# Reddit post — "<title>"` (comments: `# Reddit comment #<id>`).
+     Labels: Subreddit, Author, Date, Upvotes, Replies, and In reply to for comments.
 2. **The content**, between two `---` rules: the review text as plain prose, the **full
    conversation** for support items (one `### <author> (<role>) - <timestamp>` section per
    message, in order), or the comment text.
@@ -141,7 +145,7 @@ Common fields (every item):
 | Field | Meaning |
 |---|---|
 | `source_platform` | Registry slug (`judge_me`, `gorgias_oauth`, `meta-ads`, ...) |
-| `source_type` | `review` \| `support_conversation` \| `ad_comment` |
+| `source_type` | `review` \| `support_conversation` \| `ad_comment` \| `community_post` |
 | `external_id` | The platform's id for the item |
 | `created_at` | ISO 8601 |
 | `title` | Review title / support subject; null when absent |
@@ -170,11 +174,11 @@ Support-conversation fields (null for reviews and ad comments):
 | `updated_at` | ISO 8601 - tickets live over time |
 | `custom` | Pass-through object of platform custom fields <- Gorgias `custom_fields`, Intercom `custom_attributes`. Carry keys as-is; do not enumerate or rename. |
 
-Ad-comment fields (null elsewhere):
+Ad-comment and community-post fields (null elsewhere):
 
 | Field | Meaning |
 |---|---|
-| `reactions_total` | Total reactions on the comment |
+| `reactions_total` | Total reactions on the comment, or upvotes/score for community posts |
 
 `body` is the file's content section (part 2 of the layout), not a yaml key - it is the one
 template field that lives outside the metadata block.
@@ -197,6 +201,10 @@ was doc-grounded (not live-verified), say which calls you verified live during t
 - **Okendo / Stamped**: need a customer API key stored as a secret before any pull.
 - **Trustpilot / Yotpo**: recipes are doc-grounded; verify grant coverage and the discovery
   step on first connect before promising data.
+- **Reddit**: recipe is doc-grounded (registry examples, unprobed), and Reddit's API caps
+  every listing at ~1000 items - full date-window coverage may be impossible; report actual
+  coverage honestly. Pull targets (subreddits, search queries) are org-specific and must be
+  confirmed before the first pull.
 - **Template deviation, pending sign-off**: the proposed unified template lists a `raw`
   (untouched payload) column; this package deliberately does not persist raw payloads in
   files - leaner files, and no platform PII stored beyond what the mapped fields carry. If

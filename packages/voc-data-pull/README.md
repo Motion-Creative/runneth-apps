@@ -20,8 +20,8 @@ appear in the public site catalog.
 - `skill/references/platform-recipes.md` - per-platform endpoints, pagination, discovery
   steps, and unified-template field mappings, with evidence levels (live-verified vs
   doc-grounded).
-- `skill/templates/` - copyable file skeletons for the three output shapes (review,
-  support conversation, ad comment).
+- `skill/templates/` - copyable file skeletons for the four output shapes (review,
+  support conversation, ad comment, community post).
 
 ## How it installs
 
@@ -32,8 +32,8 @@ reconciler selects this package and the installer installs it. Installing is des
 re-installs and double-fires are no-ops.
 
 Covered platform slugs: `judge_me`, `trustpilot`, `yotpo`, `junip`, `gorgias_oauth`,
-`intercom`, plus the secrets-path platforms `okendo` and `stamped` (no Pipedream connect
-exists for those two; add the intent manually or via the CSM-prompted path).
+`intercom`, `reddit`, plus the secrets-path platforms `okendo` and `stamped` (no Pipedream
+connect exists for those two; add the intent manually or via the CSM-prompted path).
 
 ## The output contract
 

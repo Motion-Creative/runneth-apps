@@ -15,6 +15,7 @@
         "integration:junip",
         "integration:gorgias_oauth",
         "integration:intercom",
+        "integration:reddit",
         "integration:okendo",
         "integration:stamped"
       ],
