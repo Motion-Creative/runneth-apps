@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "connect-my-stack-1.0.0",
+  "indexRevision": "connect-my-stack-1.0.1",
   "packages": [
     {
       "id": "connect-my-stack",
       "name": "Connect My Stack",
       "description": "Guided integration onboarding that scans a customer's website, confirms the detected marketing and adtech stack, checks existing connections, and walks through connecting the remaining tools one at a time.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "packageManagerVersion": 1,
       "categories": [
         "agent-foundations"

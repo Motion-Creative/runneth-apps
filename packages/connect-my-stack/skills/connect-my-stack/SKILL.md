@@ -32,7 +32,8 @@ These apply to every customer-facing message in this flow.
 - Never use these terms in customer-facing copy: OAuth, Pipedream, API key, secret, token, credential, webhook, client ID, integration type.
 - Never show credential key names, internal IDs, account email addresses, or connection tier labels.
 - If you need to describe how a connection works, say "connect [tool] to Runneth" or "link your [tool] account." Nothing more technical than that.
-- Group tools by what they do for the customer (ads, email, reviews, analytics, support, scheduling), never by how they connect.
+- Group tools by what they do for the customer (email, reviews, analytics, support, scheduling), never by how they connect.
+- Never show the scanner's raw internal category names (for example "Advertising Pixel", "Ad pixels", "Tag Manager", "CDN"). Those are engine labels. Translate to plain-English groupings, or leave a tool out of the grouped list when it is not something the customer connects here.
 - A scan is a fingerprint, not proof. If something is uncertain, say "I think I spotted [tool]" rather than asserting it as fact. Confirm before connecting.
 
 ## Step 1: Get the URL
@@ -62,10 +63,9 @@ From the scan result, collect:
 
 ## Step 3: Present Findings for Confirmation (then stop)
 
-Present the detected tools in a simple, scannable list grouped by what they do.
-Use plain labels:
+Present the detected tools as a simple, scannable list grouped by what they do
+for the customer. Use plain-English groupings such as:
 
-- "Ad platforms" (Meta, TikTok, Google Ads, LinkedIn, etc.)
 - "Email or SMS" (Klaviyo, Postscript, etc.)
 - "Reviews" (Trustpilot, Yotpo, Judge.me, etc.)
 - "Analytics" (GA4, Hotjar, Plausible, etc.)
@@ -75,6 +75,16 @@ Use plain labels:
 - "Design or assets" (Figma, Frame.io, etc.)
 - "CRM" (HubSpot, Salesforce, etc.)
 - "Anything else"
+
+**Do not surface ad-platform tracking pixels as a detected category or as tools.**
+Meta Pixel, TikTok Pixel, LinkedIn Insight, and the Google Ads tag are just
+evidence the customer advertises on those platforms; they are not tools to
+connect here (ad data comes through Motion, see Step 4). Never show the scanner's
+"Advertising Pixel" / "Ad pixels" bucket in the customer view. At most, fold them
+into one optional aside after the grouped list, in plain language, for example:
+"I can also see you're advertising on Meta, TikTok, LinkedIn, and Google. That ad
+data runs through Motion directly, so there's nothing to connect here." Omit even
+that line unless it is useful.
 
 For each tool, use a natural confidence level in plain language:
 - High confidence: just name it. "Klaviyo for email"
@@ -225,6 +235,9 @@ said during the flow.
 - Never expose connection mechanics (OAuth, Pipedream, API key, secret, token,
   credential, webhook, client ID) in customer-facing copy.
 - Never show credential key names, internal IDs, or email addresses.
+- Never show the scanner's raw internal category names. Ad-platform tracking
+  pixels (Meta, TikTok, LinkedIn, Google Ads) are never a detected category or a
+  tool to connect here; at most a single optional plain-language aside.
 - Never ask for secrets in chat. Always use secure collection.
 - Never claim a tool has no connection path without checking the live list of
   connectable apps first.
