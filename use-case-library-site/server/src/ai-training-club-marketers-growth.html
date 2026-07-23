@@ -235,7 +235,7 @@
         </div>
       </nav>
     </div>
-    <div class="hero" style="background-image:url('/atc-growth/bg-header.jpg');">
+    <div class="hero" style="background-image:url('/atc-growth/semicircle-stripes.png');">
       <div class="hero-inner">
         <div class="wrap">
           <img class="motion-presents-logo" src="/atc-growth/motion-presents-black.png" alt="Motion Presents" />
@@ -255,7 +255,6 @@
     <!-- SESSIONS -->
     <section class="block dark">
       <div class="wrap">
-        <p class="eyebrow"><span class="accent">Build</span> something real every week</p>
         <h2 class="sec xl">Five weeks. Five real skills you'll actually walk away with.</h2>
         <p class="lead">No concepts explained and forgotten. Each session ends with a tangible deliverable built on your own work.</p>
         <div class="sessions">
@@ -340,7 +339,6 @@
     <!-- WHO IT'S FOR -->
     <section class="block cream">
       <div class="wrap">
-        <p class="eyebrow"><span class="accent">Who</span> it's for</p>
         <h2 class="sec">Built for the people too buried in the work to go all in on AI.</h2>
         <p class="lead">You're not behind on AI because you're bad at it. You're just too busy doing the work.</p>
         <div class="who">
@@ -369,9 +367,8 @@
     <!-- WEEKLY FORMAT: Tuesday + Thursday -->
     <section class="block">
       <div class="wrap">
-        <p class="eyebrow"><span class="accent">Format</span> two touchpoints a week</p>
         <h2 class="sec">How each week actually runs</h2>
-        <p class="lead">Two short touchpoints a week. Designed to fit around a busy season, not add to it.</p>
+        <p class="lead">Two short touchpoints a week. Designed to fit around your work, not add to it.</p>
         <div class="week-boxes">
           <div class="wbox tue">
             <div class="tag"><span class="arrow">&#8599;</span> Your Tuesday class</div>
@@ -384,10 +381,10 @@
           <div class="wbox thu">
             <div class="tag"><span class="arrow">&#8599;</span> Your Thursday coaching session</div>
             <div class="wmeta">
-              <div class="m"><span class="lab">Duration</span><span>As long as you need</span></div>
+              <div class="m"><span class="lab">Duration</span><span>As long as vibes are high</span></div>
               <div class="m"><span class="lab">Time</span><span>1:00PM EST / 10:00AM PST</span></div>
             </div>
-            <p>We stay as long as you need. Our team answers your questions, plus your peers show what they built that week, so you get the push to finish yours. Live coaching and peer-to-peer learning.</p>
+            <p>No set length, we just hop on a call and get to work. Our team answers your questions, plus your peers show what they built that week, so you get the push to finish yours. Live coaching and peer-to-peer learning.</p>
           </div>
         </div>
         <div class="extras">
@@ -402,7 +399,7 @@
     <section class="block">
       <div class="wrap narrow">
         <div class="urgency">
-          <h2>Get AI-fluent before your busiest season</h2>
+          <h2>Get AI-fluent in time for BFCM</h2>
           <p>We've timed the club so you're all prepped ahead of Black Friday. Come out the other side with real systems built and running, one 10-minute lesson at a time.</p>
           <a class="hero-cta" href="#signup">Save my free spot</a>
         </div>
@@ -440,7 +437,7 @@
     <!-- SIGN UP -->
     <section class="block dark final" id="signup">
       <div class="wrap narrow center">
-        <h2>Sick of hearing about AI? Come actually build with it.</h2>
+        <h2 id="signup-headline">Sick of hearing about AI? Come actually build with it.</h2>
         <div class="form-card">
           <div id="hs-form-atc-growth"></div>
           <div class="form-success" id="atc-form-success" style="display:none;">
@@ -464,6 +461,7 @@
                 onFormSubmitted: function () {
                   var t = document.getElementById('hs-form-atc-growth'); if (t) { t.style.display = 'none'; }
                   var s = document.getElementById('atc-form-success'); if (s) { s.style.display = 'block'; }
+                  var h = document.getElementById('signup-headline'); if (h) { h.style.display = 'none'; }
                 }
               });
             }
