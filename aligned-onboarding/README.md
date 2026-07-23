@@ -24,7 +24,7 @@ build found.
 
 This folder holds one part per subfolder: `meta/` (the Creative Attribution playbook, the
 Account Context Brain package, the Meta Validation package, and the Motion CLI Data-Query
-Guide) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates). This README
+Guide) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates), plus `knoweth/` (the organize-the-brain part that runs after the questions). This README
 covers all of them; `install-config.json` maps every file to its installed location.
 
 These instruction files are the package itself, not its output. They live in the brain
@@ -124,7 +124,13 @@ Folder: `voc-data-pull/`
 4. **Set up the VoC data sync (when asked).** For each connected VoC platform, run the
    voc-data-pull skill's "Set up the recurring sync" procedure - it creates the daily sync
    routine and kicks the backfill in the background.
-5. **Keep everything current.** Creative Attribution maintenance (daily and event-triggered)
+5. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
+   confirmed and data-source content has landed, organize the brain: keep shared content in the
+   global lane and make it findable with tags and a naming decoder, and merge the Knoweth guard
+   blocks so save-routing and maintenance stay consistent. Do not carve data-source-family or
+   initiative lanes today; only global, the user lane, and the workspace lane are queried. See
+   knoweth/knoweth-organize-onboarding-package.md.
+6. **Keep everything current.** Creative Attribution maintenance (daily and event-triggered)
    applies only where the attribution build was explicitly requested. Account Context Brain on
    monthly cadence and structural-drift triggers. VoC data refreshes itself through its daily
    routines once set up.
