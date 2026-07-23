@@ -126,8 +126,9 @@ Folder: `voc-data-pull/`
    routine and kicks the backfill in the background.
 5. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
    confirmed and data-source content has landed, organize the brain: keep shared content in the
-   global lane and make it findable with tags and a naming decoder, and merge the Knoweth guard
-   blocks so save-routing and maintenance stay consistent. Do not carve data-source-family or
+   global lane and make it findable with tags and a naming decoder, and merge both the
+   `runneth:knoweth-organize` and `runneth:knoweth-brain` guard blocks into /agent/user.md (per the
+   MERGE INSTRUCTIONS in that doc) so the organize trigger fires and save-routing/maintenance stay on. Do not carve data-source-family or
    initiative lanes today; only global, the user lane, and the workspace lane are queried. See
    knoweth/knoweth-organize-onboarding-package.md.
 6. **Keep everything current.** Creative Attribution maintenance (daily and event-triggered)
