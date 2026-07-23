@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -7,6 +7,7 @@ import { test } from 'node:test'
 
 const ROOT = resolve(import.meta.dirname, '../..')
 const EXPORTER = resolve(ROOT, 'aligned-onboarding/bin/export-creative-corpus.mjs')
+const INSTALL_CONFIG = resolve(ROOT, 'aligned-onboarding/install-config.json')
 const FIXTURE = resolve(
   ROOT,
   'aligned-onboarding/test/fixtures/static-image-all-summary-sections.json',
@@ -17,11 +18,24 @@ const PROJECTION_END =
   '<!-- aligned-onboarding:account-context-projection:end -->'
 const FILENAME = 'Ridge Static All Sections--creative-static-ridge.md'
 
-const runExporter = ({ input, outputDir }) =>
+const installExporter = async (temporaryRoot) => {
+  const installConfig = JSON.parse(await readFile(INSTALL_CONFIG, 'utf8'))
+  const exporterInstall = installConfig.installs.find(
+    (install) => install.from === 'bin/export-creative-corpus.mjs',
+  )
+  assert.ok(exporterInstall)
+
+  const installedPath = resolve(temporaryRoot, exporterInstall.to.slice(1))
+  await mkdir(resolve(installedPath, '..'), { recursive: true })
+  await copyFile(EXPORTER, installedPath)
+  return installedPath
+}
+
+const runExporter = ({ exporter = EXPORTER, input, outputDir }) =>
   spawnSync(
     process.execPath,
     [
-      EXPORTER,
+      exporter,
       '--input',
       input,
       '--workspace-id',
@@ -37,8 +51,9 @@ const runExporter = ({ input, outputDir }) =>
 test('exports every field from all four Motion summary sections', async () => {
   const temporaryRoot = await mkdtemp(resolve(tmpdir(), 'creative-corpus-export-'))
   try {
+    const exporter = await installExporter(temporaryRoot)
     const outputDir = resolve(temporaryRoot, 'output')
-    const result = runExporter({ input: FIXTURE, outputDir })
+    const result = runExporter({ exporter, input: FIXTURE, outputDir })
     assert.equal(result.status, 0, result.stderr)
 
     const filenames = await readdir(outputDir)
@@ -77,7 +92,11 @@ test('exports every field from all four Motion summary sections', async () => {
     assert.doesNotMatch(markdown, /\[object Object\]/u)
 
     const secondOutputDir = resolve(temporaryRoot, 'second-output')
-    const secondResult = runExporter({ input: FIXTURE, outputDir: secondOutputDir })
+    const secondResult = runExporter({
+      exporter,
+      input: FIXTURE,
+      outputDir: secondOutputDir,
+    })
     assert.equal(secondResult.status, 0, secondResult.stderr)
     assert.equal(
       await readFile(resolve(secondOutputDir, filenames[0]), 'utf8'),
@@ -310,5 +329,25 @@ test('fails malformed non-null summary sections with the creative ID and section
         await rm(temporaryRoot, { recursive: true, force: true })
       }
     })
+  }
+})
+
+test('fails before writing required enrichment when no prior record exists', async () => {
+  const temporaryRoot = await mkdtemp(resolve(tmpdir(), 'creative-corpus-missing-'))
+  try {
+    const incomplete = JSON.parse(await readFile(FIXTURE, 'utf8'))
+    delete incomplete.creatives[0].summary
+    const input = resolve(temporaryRoot, 'input.json')
+    const outputDir = resolve(temporaryRoot, 'output')
+    await writeFile(input, JSON.stringify(incomplete), 'utf8')
+
+    const result = runExporter({ input, outputDir })
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /creative-static-ridge/u)
+    assert.match(result.stderr, /summary\.adDescription/u)
+    assert.match(result.stderr, /no existing record/u)
+    await assert.rejects(readdir(outputDir), { code: 'ENOENT' })
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true })
   }
 })

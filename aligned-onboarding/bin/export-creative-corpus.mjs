@@ -547,6 +547,14 @@ const prepareFiles = async (files, outputDir) => {
     }
 
     if (existing === undefined) {
+      const missingRequiredSection = file.missingMotionSections.find(
+        (section) => section.required,
+      )
+      if (missingRequiredSection !== undefined) {
+        fail(
+          `Creative ${file.creativeId} ${missingRequiredSection.field}: incoming enrichment is missing and there is no existing record with a complete section to preserve`,
+        )
+      }
       prepared.push({ ...file, destination })
       continue
     }
