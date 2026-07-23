@@ -22,9 +22,13 @@ build found.
 
 ## Where the package files live
 
-These instruction files (this overview, the Creative Attribution playbook, the Account Context
-Brain package, and the Motion CLI Data-Query Guide) are the package itself, not its output. They
-live in the brain outside the `meta` folder structure. The `meta` folder holds only what Runneth
+This folder holds one part per subfolder: `meta/` (the Creative Attribution playbook, the
+Account Context Brain package, the Meta Validation package, and the Motion CLI Data-Query
+Guide) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates). This README
+covers all of them; `install-config.json` maps every file to its installed location.
+
+These instruction files are the package itself, not its output. They live in the brain
+outside the `meta` folder structure. The brain's `meta` folder holds only what Runneth
 generates from running them: the per-creative attribution files and the filled account context.
 
 ---
@@ -44,7 +48,7 @@ generates from running them: the per-creative attribution files and the filled a
 ## The two parts
 
 ### Creative Attribution
-File: `meta-creative-attribution-playbook.md`
+File: `meta/meta-creative-attribution-playbook.md`
 
 - **Job:** build and maintain one enriched record per active creative — identity, summary, hook,
   value props, transcript, AI tags, naming. The per-creative facts Runneth uses for every analysis
@@ -60,7 +64,7 @@ File: `meta-creative-attribution-playbook.md`
   and store summary files in the brain. It runs only on an explicit request from a person.
 
 ### Account Context Brain
-File: `meta-account-context-brain-onboarding-package.md`
+File: `meta/meta-account-context-brain-onboarding-package.md`
 
 - **Job:** capture how the team interprets the account — what "best" means, which numbers to
   trust, how campaigns map to stages. Nine required fields confirmed with a person.
@@ -74,12 +78,34 @@ File: `meta-account-context-brain-onboarding-package.md`
 ---
 
 ### Motion CLI Data-Query Guide (supporting reference)
-File: `motion-cli-data-query-guide.md`
+File: `meta/motion-cli-data-query-guide.md`
 
 - **Job:** the canonical contract for how Runneth pulls Meta data through the `motion` CLI, so
   queries come out right on the first try. Both parts lean on it for their pulls.
 - **Not run on its own.** Reference only, not a step to execute. Brand-agnostic; carries no
   account-specific IDs.
+
+---
+
+## VoC Data Pull (separate part, own folder)
+
+Folder: `voc-data-pull/`
+
+- **Job:** pull raw voice-of-customer data - product reviews, support conversations, community
+  posts, and ad comments - from available VoC platforms (Judge.me, Trustpilot, Yotpo, Junip,
+  Gorgias, Intercom, Reddit, Okendo, Stamped - reachable by OAuth connection, stored API key,
+  or Motion native alike) into standardized files under
+  `/agent/brain/data-sources/voc/<platform>/`, one file per item.
+- **Own scope rules.** The Meta-only scope rules above do not apply to this part; its
+  boundaries live in `voc-data-pull/SKILL.md` (read-only against platforms, bounded
+  12-month pulls, PII rules).
+- **Manually triggered, like everything here.** Installing stages the skill only. When the
+  onboarding run (or a person) asks to set up the VoC data sync, Runneth runs the skill's
+  "Set up the recurring sync" procedure: one daily routine per connected platform
+  (`voc-sync-<platform>`, 6am) whose first run backfills and whose daily runs pull only new
+  items. Nothing runs just because a platform is connected.
+- **Installs to the skills root** (`/agent/.agents/skills/voc-data-pull/`), not the brain -
+  see the install entries in `install-config.json`.
 
 ---
 
@@ -95,9 +121,13 @@ File: `motion-cli-data-query-guide.md`
 3. **Activate and run the Account Context Brain (Step 2).** Merge the guard block into
    `/agent/user.md`, then run the fill-in. Confirms how the team judges performance, drawing on
    the attribution build (if one was requested) for naming proposals and creative evidence.
-4. **Keep both current.** Creative Attribution maintenance (daily and event-triggered) applies
-   only where the attribution build was explicitly requested. Account Context Brain on monthly
-   cadence and structural-drift triggers.
+4. **Set up the VoC data sync (when asked).** For each connected VoC platform, run the
+   voc-data-pull skill's "Set up the recurring sync" procedure - it creates the daily sync
+   routine and kicks the backfill in the background.
+5. **Keep everything current.** Creative Attribution maintenance (daily and event-triggered)
+   applies only where the attribution build was explicitly requested. Account Context Brain on
+   monthly cadence and structural-drift triggers. VoC data refreshes itself through its daily
+   routines once set up.
 
 ---
 

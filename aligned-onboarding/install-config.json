@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "aligned-onboarding",
-  "version": "2.0.0",
-  "description": "The Meta onboarding package, v2. Stages five instruction docs into the brain: the package overview, the Creative Attribution playbook, the Account Context Brain onboarding package (v1.21), the Meta Validation onboarding package (v1.1), and the Motion CLI data-query guide. Installing only stages files; nothing self-runs. The Creative Attribution build runs only on an explicit request from a person and must never auto-grab creatives and store summary files in the brain: in staging, per-creative summaries live in Cacheth and are surfaced through Knoweth. No corpus-search dependency. Meta only, one workspace at a time.",
+  "version": "2.1.0",
+  "description": "The Meta onboarding package, v2. Stages five instruction docs into the brain: the package overview, the Creative Attribution playbook, the Account Context Brain onboarding package (v1.21), the Meta Validation onboarding package (v1.1), and the Motion CLI data-query guide. Installing only stages files; nothing self-runs. The Creative Attribution build runs only on an explicit request from a person and must never auto-grab creatives and store summary files in the brain: in staging, per-creative summaries live in Cacheth and are surfaced through Knoweth. No corpus-search dependency. Meta only, one workspace at a time. Also carries the VoC Data Pull part (voc-data-pull/): a skill installed to the skills root that, when setup is requested, creates one daily sync routine per connected VoC platform pulling reviews, support conversations, community posts, and ad comments into /agent/brain/data-sources/voc/<platform>/. Nothing self-runs.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -25,31 +25,73 @@
       "purpose": "Package overview: the two parts, their run order, and the staging deployment rule that the Creative Attribution build never runs automatically."
     },
     {
-      "from": "meta-creative-attribution-playbook.md",
+      "from": "meta/meta-creative-attribution-playbook.md",
       "to": "/agent/brain/aligned-onboarding/meta-creative-attribution-playbook.md",
       "on_exists": "overwrite",
       "purpose": "Step 1 (explicit request only): how to build and maintain one enriched Markdown record per active creative under /agent/brain/meta/creatives/. Never auto-run; in staging, creative summaries live in Cacheth and are surfaced through Knoweth."
     },
     {
-      "from": "meta-account-context-brain-onboarding-package.md",
+      "from": "meta/meta-account-context-brain-onboarding-package.md",
       "to": "/agent/brain/aligned-onboarding/meta-account-context-brain-onboarding-package.md",
       "on_exists": "overwrite",
       "purpose": "Step 2: the Account Context Brain fill-in package (v1.21). Nine required interpretation fields, the guard block for /agent/user.md, and the prose output shape saved to /agent/brain/meta/account-context.md."
     },
     {
-      "from": "meta-validation-onboarding-package.md",
+      "from": "meta/meta-validation-onboarding-package.md",
       "to": "/agent/brain/aligned-onboarding/meta-validation-onboarding-package.md",
       "on_exists": "overwrite",
       "purpose": "Step 3: the validation experience (v1.1). Answer-and-confirm loop, weekly deck build, lock-in (deck approval, refresh routine, Slack), and the MVCE gate saved to /agent/brain/meta/validation.md."
     },
     {
-      "from": "motion-cli-data-query-guide.md",
+      "from": "meta/motion-cli-data-query-guide.md",
       "to": "/agent/brain/aligned-onboarding/motion-cli-data-query-guide.md",
       "on_exists": "overwrite",
       "purpose": "Supporting reference: the canonical contract for pulling Meta data through the motion CLI. Brand-agnostic, carries no account IDs."
+    },
+    {
+      "from": "voc-data-pull/SKILL.md",
+      "to": "/agent/.agents/skills/voc-data-pull/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "VoC Data Pull skill: the pull workflow, hard boundaries, file format, and the 'Set up the recurring sync' procedure (one daily voc-sync-<platform> routine per connected platform; setup only when asked)."
+    },
+    {
+      "from": "voc-data-pull/references/platform-recipes.md",
+      "to": "/agent/.agents/skills/voc-data-pull/references/platform-recipes.md",
+      "on_exists": "overwrite",
+      "purpose": "Per-platform endpoints, pagination, discovery steps, and unified-template field mappings with evidence levels."
+    },
+    {
+      "from": "voc-data-pull/templates/review.md",
+      "to": "/agent/.agents/skills/voc-data-pull/templates/review.md",
+      "on_exists": "overwrite",
+      "purpose": "Copyable file skeleton for review output files."
+    },
+    {
+      "from": "voc-data-pull/templates/support-conversation.md",
+      "to": "/agent/.agents/skills/voc-data-pull/templates/support-conversation.md",
+      "on_exists": "overwrite",
+      "purpose": "Copyable file skeleton for support-conversation output files."
+    },
+    {
+      "from": "voc-data-pull/templates/ad-comment.md",
+      "to": "/agent/.agents/skills/voc-data-pull/templates/ad-comment.md",
+      "on_exists": "overwrite",
+      "purpose": "Copyable file skeleton for ad-comment output files."
+    },
+    {
+      "from": "voc-data-pull/templates/community-post.md",
+      "to": "/agent/.agents/skills/voc-data-pull/templates/community-post.md",
+      "on_exists": "overwrite",
+      "purpose": "Copyable file skeleton for community-post output files."
     }
   ],
   "changelog": [
+    {
+      "version": "2.1.0",
+      "date": "2026-07-23",
+      "type": "minor",
+      "notes": "Reorganized into meta/ and voc-data-pull/ subfolders with one combined README. Added the VoC Data Pull part: skill, platform recipes, and output templates installed to the skills root. Setup is manually triggered - when asked, Runneth creates one daily voc-sync-<platform> routine per available VoC platform (backfill first run, incremental daily runs). Nothing runs on install or on connect."
+    },
     {
       "version": "2.0.0",
       "date": "2026-07-22",
