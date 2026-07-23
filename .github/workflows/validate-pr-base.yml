@@ -1,0 +1,30 @@
+name: Validate PR base
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-pr-base:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require staging base
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$BASE_REF" = "staging" ]; then
+            exit 0
+          fi
+
+          if [ "$BASE_REF" = "main" ] && [ "$HEAD_REF" = "staging" ]; then
+            exit 0
+          fi
+
+          echo "PRs must target staging. Promotion PRs from staging to main are allowed."
+          echo "Current base: $BASE_REF"
+          echo "Current head: $HEAD_REF"
+          exit 1
