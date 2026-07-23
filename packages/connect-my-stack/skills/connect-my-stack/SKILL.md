@@ -122,18 +122,24 @@ connected tool as not connected:**
   `integrations accounts --app <app>`.
 - **Key-based tools:** check whether a stored secret for that service exists.
 
-**Never claim a tool cannot be connected without checking the live connectable
-list first** (`integrations list --with-creative-strategy --query <tool>`). If it
-is connectable, it belongs in "Ready to connect". Only say a tool has no path
-after that check comes back empty.
+**Never dead-end a tool the customer named based only on the registry.** Check
+the live connectable list first
+(`integrations list --with-creative-strategy --query <tool>`). If it is a native
+or one-click connected app, it goes in "Ready to connect". If it is not in the
+registry, check whether the service offers a usable API. When it does, put it in
+"Custom setup" and connect it last through secure setup. Only say a tool cannot
+be connected after confirming that it has no usable API. Explain that plainly;
+never say "nothing to connect" or "no path" merely because the registry returned
+no result.
 
 **Meta ads and TikTok ads** are not part of this flow; their data connects through
 Motion's data source settings. Do not put them in "Ready to connect". Google ads
 and LinkedIn ads are connectable and are treated as normal tools.
 
-Present two short groups: "Already connected" (one line each, do not ask them to
-reconnect anything working) and "Ready to connect" (everything else that passed
-the connectable check, excluding Meta/TikTok ads).
+Present up to three short groups: "Already connected" (one line each, do not ask
+them to reconnect anything working), "Ready to connect" (native and one-click
+apps, excluding Meta/TikTok ads), and "Custom setup" (tools with a usable API but
+no registry entry, handled last). Never present a "no path" or dead-end group.
 
 ## Step 5: Guide Connections One at a Time
 
@@ -143,7 +149,8 @@ priority order when choosing which to offer next, and never name these tiers:
 1. Native OAuth integrations (Slack, Google, Notion, GitHub)
 2. Pipedream connected apps
 3. API key or secret-based tools
-4. Custom or manual setup
+4. Custom: tools without a native or one-click connection that have a usable API,
+   connected through secure setup. Always last.
 
 **One tool, one message, one connect action.** Never present two connect actions
 or two widgets at once. Offer the next tool, present its single connect action,
@@ -204,8 +211,10 @@ Keep the close short.
 - Meta ads and TikTok ads are never a tool to connect here; at most one optional
   aside. Google ads and LinkedIn ads are connectable.
 - Never ask for secrets in chat. Always use secure collection.
-- Never claim a tool has no connection path without checking the live connectable
-  list first.
+- Never dead-end a named tool based only on the connectable registry. For a tool
+  without a registry entry, check for a usable API and use Custom setup when one
+  exists. Only say it cannot be connected after confirming it has no usable API;
+  never describe a registry miss as "no path".
 - If the scanner engine files are missing, stop and flag it. Never rebuild a
   replacement scanner inline.
 - Do not ask the customer to reconnect something already connected.

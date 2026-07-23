@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "connect-my-stack",
   "name": "Connect My Stack",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Guided integration onboarding that scans a customer's website, confirms the detected marketing and adtech stack, checks existing connections, and walks through connecting the remaining tools one at a time.",
   "installPolicy": "manual",
   "updatePolicy": "manual",
