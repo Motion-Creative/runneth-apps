@@ -1,6 +1,6 @@
 # Runneth Brain + Knoweth: Setup and Maintenance (Onboarding Package)
 
-### Version 0.1 — draft for review (July 2026)
+### Version 1.0 (July 2026)
 
 **How Runneth organizes the brain so retrieval stays tight and the org stays understood as it grows: lanes over the content onboarding produced, plus the standing save and maintenance discipline that keeps it that way.**
 
@@ -14,7 +14,9 @@ This part is **cross-cutting**. Unlike the Meta-only parts, it spans every data-
 
 ## How this activates and where it sits in onboarding
 
-This is the last setup step of the combined run and the first line of ongoing maintenance. Staging the file does not self-run anything. To activate it, merge the two guard blocks below into `/agent/user.md`, then let their triggers fire. Use the standard sentinel convention: idempotent, replace-in-place if the sentinel exists, never duplicate, never edit outside the sentinels.
+This is the last setup step of the combined run and the first line of ongoing maintenance. Installing only stages this file; it does not self-run. It activates the same way as the other parts: when a person runs the package (the README run order), merge the two guard blocks below into `/agent/user.md`, then the triggers fire.
+
+**MERGE INSTRUCTIONS:** For each block, if its sentinel (`runneth:knoweth-organize` or `runneth:knoweth-brain`) already exists in `/agent/user.md`, replace it in place. Otherwise append it. Never duplicate. Do not edit anything outside the sentinels.
 
 **Guard 1 — organize the brain (runs once, after the questions are answered).**
 
@@ -25,7 +27,7 @@ Knoweth organize (after the questions are answered):
   signed off) and data-source content has landed (VoC files under /agent/brain/data-sources/voc/**;
   creatives under /agent/brain/meta/creatives/ or Cacheth flagged in), and the brain has not been
   organized yet, organize it. Do not wait to be asked.
-- TODAY only three lanes are searched: global, user:<userId>, and project:<workspaceId> (the Motion
+- TODAY only three lanes are searched: global, user:<userId>, and project:<workspaceId> (the
   workspace). Keep all shared content in the global lane (the brain root default) and make it findable
   with tags/attributes and a naming decoder. Do NOT carve data-source-family or initiative lanes
   (voc, meta, campaign, ...): those lanes are not queried yet, so the content would go dark. Use a
@@ -68,7 +70,7 @@ Cross-cutting: every data-source family and every future write, not one platform
 The durable artifacts are the tag vocabulary + naming decoder plus the two `/agent/user.md` guard blocks above; the Knoweth lane config only carries what is actually queried today (global, user isolation, the automatic workspace lane). Index this doc in `/agent/INDEX.md` (aliases: knoweth, lanes, retrieval, save routing, brain maintenance) with a one-line note.
 
 ### Where it sits in the combined run
-Drop-in staging is automatic; a person says "run the package." The run: (1) set up integrations if not connected; (2) pull data and ask the interpretation questions (Account Context Brain); (3) run the validation loop (starter questions, the customer confirms or corrects); (4) **organize the brain with Knoweth now that content and confirmed interpretation exist**; then it holds going forward through the guard blocks and the maintenance routine. Sequencing note: lanes are best set up once interpretation is confirmed and content has landed. If validation should exercise the organized brain, set lanes up just before the validation loop rather than strictly last; confirm the exact position with the combined-package owner.
+The package files land on the VM automatically; a person says "run the package." The run: (1) set up integrations if not connected; (2) pull data and ask the interpretation questions (Account Context Brain); (3) run the validation loop (starter questions, the customer confirms or corrects); (4) **organize the brain with Knoweth now that content and confirmed interpretation exist**; then it holds going forward through the guard blocks and the maintenance routine. Sequencing note: lanes are best set up once interpretation is confirmed and content has landed. If validation should exercise the organized brain, run the organize step just before the validation loop rather than strictly last; confirm the exact position for your rollout.
 
 **How to read this.** The method is the standard and the contents are decided. The structure, schemas, procedures, and rules below are the same on every VM. What you fill in is decided per brand: which segments, products, metrics, personas, naming, and sources exist all come from that brand's own data and needs. Follow the method exactly; decide the contents from the brand. Where a rule depends on a platform detail that can change (a capacity limit, the config format, whether a store is flagged in), verify it against the live configuration.
 
@@ -76,7 +78,7 @@ Drop-in staging is automatic; a person says "run the package." The run: (1) set 
 
 ## 1. The two-layer brain: raw and compiled
 Knowledge has two layers and flows one way.
-- **raw = evidence.** Source material, never rewritten in substance. It lives in one of two places: as **brain files** under `data-sources/<family>/<integration>/` (one flat folder per integration; item type is the filename prefix; the folder is for navigation, and today all of it sits in the `global` lane), or in a **harness-backed store** when the platform has one. Meta is deployment-dependent: **by default** the creative-attribution step writes one file per creative under `/agent/brain/meta/creatives/<AdName>.md` (identity, summary, hook, transcript, AI tags, naming), and writing the file IS the index step. **Where Cacheth is flagged in** (e.g. staging), per-creative summaries live in Cacheth (performance in Counteth) and are surfaced through Knoweth, so those files are NOT written. Same content is either brain files or a harness store depending on whether Cacheth is present, never both.
+- **raw = evidence.** Source material, never rewritten in substance. It lives in one of two places: as **brain files** under `data-sources/<family>/<integration>/` (one flat folder per integration; item type is the filename prefix; the folder is for navigation, and today all of it sits in the `global` lane), or in a **harness-backed store** when the platform has one. Meta is deployment-dependent: **by default** the creative-attribution step writes one file per creative under `/agent/brain/meta/creatives/<AdName>.md` (identity, summary, hook, transcript, AI tags, naming), and writing the file IS the index step. **Where Cacheth is flagged in**, per-creative summaries live in Cacheth (performance in Counteth) and are surfaced through Knoweth, so those files are NOT written. Same content is either brain files or a harness store depending on whether Cacheth is present, never both.
 - **compiled = understanding.** Agent-maintained to a schema: the interpretation specs and the synthesized analysis (segments, personas, performance reads). The human corrects it in conversation, never hand-edits it. The agent may create, rewrite, merge, and delete compiled pages within the schema.
 - **One-way flow: raw to compiled, never back.** Evidence is the source of truth; a compiled page is the current understanding of it. When they disagree, fix the compiled page, not the evidence.
 - **Curate, do not just append.** Merge duplicates, delete dead pages.
@@ -105,8 +107,14 @@ Routing by question type:
 - "Campaign names / account structure / naming / what the data means to us" -> `meta` lane: `account-context.md` + naming taxonomy. Pure Knoweth.
 - "Top winning ads this week" -> Counteth (rank by the account's winner metric + spend floor) + Cacheth (creative identity) + `meta` account-context (what "winner" means). A join; Knoweth is the interpretation, not the data.
 - "Performance by campaign / product" -> Counteth + `meta` naming decode (which campaigns map to which product).
-- "Themes in winning ads (from AI tags + summaries)" -> Counteth (winners) + Cacheth (AI tags/summaries) + `meta` account-context (winner def). This is exactly why "AI tags aren't searchable in Knoweth": in staging the per-creative files are not written, so their tags live in Cacheth, not the Knoweth index. Either write the per-creative files (default model, so tags become lexical-boosted + embedded) or route tag/theme questions through Cacheth. Do not expect Knoweth's index to contain Cacheth tags.
+- "Themes in winning ads (from AI tags + summaries)" -> Counteth (winners) + Cacheth (AI tags/summaries) + `meta` account-context (winner def). This is exactly why "AI tags aren't searchable in Knoweth": where Cacheth is flagged in, the per-creative files are not written, so their tags live in Cacheth, not the Knoweth index. Either write the per-creative files (default model, so tags become lexical-boosted + embedded) or route tag/theme questions through Cacheth. Do not expect Knoweth's index to contain Cacheth tags.
 - "What are we testing / scaling / graduating" -> Counteth (spend state) + `meta` account-context (the graduation rule, still a flagged/needed field).
+
+### Why some data is not indexed in Knoweth
+Everything the agent needs is reachable; the question is where it is stored, not whether it can be used. Knoweth indexes the **brain files** (VoC, the interpretation layer, specs, asset metadata) so they are searchable by meaning and keyword. The **creative store (Cacheth)** and **performance store (Counteth)** are large, structured, frequently-updated datasets with their own query paths; they are surfaced through the CLI (and, under Knoweth, alongside brain results), not copied into the search index. Duplicating them into files would bloat the index, split the source of truth, and go stale. So a creative or metric is "not in Knoweth" the same way a database is not in a wiki: the wiki points at it. Write the interpretation (what a creative means, how a metric is judged) as a brain file; leave the creative and the number in their store.
+
+### Works with or without Knoweth
+The organizing discipline here, folders, tags, save routing, specs, and maintenance, is retrieval-agnostic: it holds whether or not Knoweth is the retrieval layer on a given VM. Only the lane configuration is Knoweth-specific. Retrieval scoping (lanes and projects) becomes fully live as the Knoweth harness rolls out; until a VM is on it, the safe default that works on any harness is to keep shared content in `global` and slice with tags. A parallel version of this package without Knoweth reuses everything except the lane config, so keep the two separable: never write a file that only makes sense if lanes are active.
 
 ---
 
@@ -119,10 +127,10 @@ Routing by question type:
 ---
 
 ## 4. The canonical Knoweth config rule
-**What is queryable today (the hard constraint).** The harness requests exactly three lanes: `global`, `user:<userId>`, and `project:<workspaceId>` (the Motion workspace). Family/business/initiative lanes are not requested, so they are not searched. Therefore:
+**What is queryable today (the hard constraint).** The harness requests exactly three lanes: `global`, `user:<userId>`, and `project:<workspaceId>` (the workspace). Family/business/initiative lanes are not requested, so they are not searched. Therefore:
 1. **Default all shared content to the `global` lane** (the brain root default) and make it findable with **tags/attributes + a naming decoder**. Tags are the working slicer. Do not carve data-source-family lanes (`voc`, `meta`, `asset-library`) or initiative lanes (`project:css-2026`) on a live VM today: a `[[lane_assignments]]` glob would move that content out of `global` and it would go dark. `project` is the workspace, not an arbitrary initiative, so a campaign/initiative is a **tag**, not a project lane. Multi-workspace orgs (agencies) get per-workspace separation for free via `project:<workspaceId>`.
 2. **Use a real lane only for what is actually gated today:** `user:` lanes for genuine per-person isolation, and the automatic workspace lane. Everything finer (segment, product, campaign, rating, angle, hook) is a tag, resolved by keyword/dense ranking plus agent-side filtering. Put those words in the file so they are findable.
-3. **Forward path (design for it, do not ship it yet).** The family-lane scheme (a lane per data-source family, plus a few earned business lanes) becomes viable only when the harness layers configured lanes into the requested read set. Until that ships, family lanes stay as tags in `global`. File the harness change as a dependency; when it lands, promote the high-value tags to family lanes via `[[lane_assignments]]`, keep the set small and under the cap (a real VM hit the cap by making a lane per platform and per workstream), and update the config then.
+3. **Forward path (design for it, do not ship it yet).** The family-lane scheme (a lane per data-source family, plus a few earned business lanes) becomes viable only when the harness layers configured lanes into the requested read set. Until that ships, family lanes stay as tags in `global`. File the harness change as a dependency; when it lands, promote the high-value tags to family lanes via `[[lane_assignments]]`, keep the set small and under the cap (over-laning, e.g. a lane per platform or per workstream, is the usual way to blow the cap), and update the config then.
 4. **Folders = the human's navigable tree.** Folders are for human sense-making, not lanes today (the lane is `global` regardless of folder). Reorganizing folders is safe; it does not change retrieval scope.
 
 ### Allocating new content (tag -> project -> lane)
@@ -131,6 +139,20 @@ When new content or a new dimension shows up, allocate it in this order, proacti
 - **Project = workspace (automatic).** Do not hand-carve project lanes; the only project lane queried is the workspace. Multi-workspace separation is free.
 - **Lane (rare).** Only for genuine read isolation (`user:` per-person; a client lane in a future multi-tenant setup). Today only `user:` isolation is wired.
 - **Propose, do not silently create.** If a tag is asked for constantly or the org clearly works in bounded initiatives, propose promoting it (to a family lane once the harness supports it, or a documented tag convention now). Keep a written allocation policy so new content is classified consistently over time.
+
+### How and when lanes get set up (users and workspaces)
+Lanes are not something the setup hand-builds for most orgs. What happens automatically: every request already carries the caller's `user:<userId>` lane and the `project:<workspaceId>` lane for the workspace it runs in, layered with `global`. So:
+- **`global`** is set up by default (the brain root); shared org content lives here and needs no lane work.
+- **The workspace lane (`project:<workspaceId>`)** is automatic per workspace. You do not create it; content saved while working a workspace is scoped to it. This is how a multi-workspace org gets per-workspace separation for free.
+- **A `user:` lane** is only set up when there is genuinely per-person private content or a person-level isolation need. You populate it by assigning that person's content to their user lane (by path or tag) and granting it to their `user_id`; most single-brand orgs never need one.
+- **Custom lanes** (a data-source family, a client, a business area) are the forward path only; they are not queried today, so do not create them now.
+The scenario test: shared across the org -> `global`; belongs to one workspace -> the workspace lane already holds it; one person's private material -> a `user:` lane; anything finer -> a tag.
+
+### Adapting to the org type: single-brand vs multi-workspace
+Orgs differ, and the setup should read which kind it is rather than assume. Most orgs run a single workspace; a smaller number (agencies and large teams) run many, and those multi-workspace orgs generate a large share of real usage. Adapt:
+- **Single-workspace org:** the workspace is the whole brand. Everything is `global` plus the automatic workspace lane; tags do all the slicing. Do not invent projects or lanes, there is nothing to separate.
+- **Multi-workspace org (agency, large team):** each workspace is already its own `project:<workspaceId>` lane, so per-client/per-brand separation is automatic. Put shared, reusable knowledge (playbooks, templates, cross-client conventions) in `global` so every workspace can reach it, and let each workspace's own content stay in its workspace lane. Do not carve custom per-client lanes; that duplicates what the workspace lane already does and burns the cap.
+This is what "a project inside a lane" means in practice: a query layers `[user, project:<workspaceId>, global]`, so a workspace's content sits inside the org-wide `global` context at query time. The workspace is the one business dimension that maps to a project today; every other dimension (segment, product, campaign) is a tag inside that scope, not its own project or lane.
 
 ### Slices the config must make easy
 For `voc`: by star rating, by tag, by segment/persona, by emerging segment, by keyword, by quote. For `meta`: by campaign, by the account's KPI, and by decoded angle/hook/format via the naming decoder. These are not structured filters; they resolve by keyword search on the facet text plus agent-side filtering of returned files, so put the facet words in the file (header and body) to make the slices findable.
@@ -153,7 +175,7 @@ A lane is the only hard boundary. Today a single brand needs no isolation lanes 
     creatives/_tagging-taxonomy.md                 # provisional naming table, only if a convention is detected
     account-context.md                             # compiled interpretation (9 fields + spend-confidence floor)
     _changelog.md
-                                                   # where Cacheth is flagged in (staging): creatives live in Cacheth/Counteth, NOT written as files
+                                                   # where Cacheth is flagged in: creatives live in Cacheth/Counteth, NOT written as files
   integrations/<source>/                          # source guide specs; raw dumps forbidden here   [not indexed]
   team/<person>.md  team/user-map.json
 /agent/INDEX.md
@@ -225,6 +247,8 @@ A **Standard spec** is a canonical, triggerable setup for one capability, stood 
 
 The spec files are short reference pages the human fills in with the agent's help. Fill-in loop: connect the data, teach the agent the idiosyncrasies, visualize to validate, confirm against the question set.
 
+**The standard-spec shape, in more detail.** A spec is a short, load-bearing definition of one capability that Runneth is trained to recognize and the customer fills in with content, not structure. It has four parts: the raw ingestion contract (what lands, where, in what file shape), the compiled schema (what the interpretation page looks like), the questions to ask the human (the idiosyncrasies platform data cannot capture), and the validation (how you know it is right). The same shape backs the other durable primitives the org builds on, a dashboard, a context source, a routine: each is a named definition of the primitive's shape, so the language is agreed, taught to Runneth, and consistent across VMs. The customer never edits the structure; they supply the specifics (their sources, their metrics, their naming), and Runneth keeps the filled spec in sync with the evidence.
+
 ---
 
 ## 9. Initial setup sequence, new org
@@ -282,7 +306,13 @@ Countering that is behavior Runneth runs on the relevant turns, not a one-time s
 Some of this is reactive (on the turn it comes up); the rest needs a **recurring maintenance routine** (the daily/weekly brain-audit shape): scan for stray/untagged files, duplicates, stale compiled pages, ad-hoc lanes, and retention candidates, then fix or surface them. Pull-side refresh is a cheap deterministic script; the audit and compile are the agentic steps, so set cadence deliberately. Bottom line: setup organizes day one, but self-organization over weeks lives in the system prompt (these behaviors) plus a maintenance routine. Without them the brain drifts back to entropy no matter how clean the initial setup.
 ---
 
-## 13. Gotchas learned from a live VM
+## Maintaining this going forward
+Two mechanisms keep the brain organized after day one, and both are set up by this part:
+1. **The `runneth:knoweth-brain` guard in `/agent/user.md`** (Guard 2 above) makes the discipline always-on: every save is routed and tagged, compiled pages regenerate when their raw changes, corrections update the compiled page (never raw), stray human-added files get adopted, and duplicates get merged rather than appended. This is what stops weeks of human edits from rotting the brain.
+2. **The `brain-maintenance` routine** (create-if-absent) runs the scheduled sweep the guard cannot do reactively: stray/untagged files, duplicates, stale compiled pages, ad-hoc lanes, and retention candidates.
+`/agent/user.md` is the durable home for this behavior, so keep it current as the org evolves: a rename updates the naming decoder (and adds aliases, since retrieval is keyword-first); a new integration runs the same probe -> folder -> spec -> tag flow; a new recurring dimension becomes a tag. Section 12 has the full behavior list; this is the short version to hold in your head.
+
+## 13. Gotchas
 - **Only `global`, `user:<userId>`, and `project:<workspaceId>` are queried today; keep shared content in `global` + tags and do not carve family/initiative lanes (they go dark). Lane count stays capped for the forward path.**
 - **Empty scaffolding equals empty retrieval.** Seed content-first.
 - **Keep one canonical view of the model** (this doc); the agent misread its own setup when there was none.
@@ -314,7 +344,7 @@ This doc is findable reference knowledge. On its own it does not hard-enforce la
 - Two sentinel guard blocks: `runneth:knoweth-organize` (post-questions organize) and `runneth:knoweth-brain` (standing save + maintenance).
 
 ### v0.2 (July 2026) — corrected to the real retrieval wiring
-- Traced the harness: the requested read set is `[user:<userId>, project:<workspaceId>, global]`; `project` is the Motion workspace, and family/custom lanes are not queried today.
+- Traced the harness: the requested read set is `[user:<userId>, project:<workspaceId>, global]`; `project` is the workspace, and family/custom lanes are not queried today.
 - Reframed the lane model (section 4) to: everything in `global` + tags today; `user:` for isolation; workspace project is automatic; family lanes are a documented forward path gated on a harness change (option B).
 - Guard 1 renamed lanes-setup -> organize (tags + naming decoder, not family lanes).
 - Positioned as the last setup step of the combined run and the first line of ongoing maintenance; sequencing of lanes vs validation flagged for the package owner.
