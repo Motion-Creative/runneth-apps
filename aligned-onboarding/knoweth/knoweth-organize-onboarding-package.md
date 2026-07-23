@@ -32,6 +32,7 @@ Knoweth organize (after the questions are answered):
   with tags/attributes and a naming decoder. Do NOT carve data-source-family or initiative lanes
   (voc, meta, campaign, ...): those lanes are not queried yet, so the content would go dark. Use a
   user: lane only for genuine per-person isolation. The workspace lane is automatic.
+- Detect single- vs multi-workspace first: a single-workspace org is all global + tags; a multi-workspace org relies on the automatic per-workspace lane and puts shared knowledge in global. Do not carve custom lanes either way.
 - Do not organize an empty brain. If content has not landed, say what is missing and route back.
 - Record the tag vocabulary + naming decoder, and note it in /agent/brain/_changelog.md. When the
   harness starts layering configured lanes (see the forward path), promote high-value tags to family
@@ -59,6 +60,13 @@ Knoweth brain discipline (all writes, going forward):
   candidates) and never run the sweep in-conversation.
 <!-- END runneth:knoweth-brain v1 -->
 ```
+
+### Activation checklist (verify it actually fired)
+Because this activates by a run following the README rather than by an automatic trigger, verify it landed:
+1. Both sentinels `runneth:knoweth-organize` and `runneth:knoweth-brain` are present in `/agent/user.md`.
+2. The organize step ran: the tag vocabulary and naming decoder are recorded, and noted in `/agent/brain/_changelog.md`.
+3. The `brain-maintenance` routine exists (`routine list --search "brain-maintenance"`).
+If any is missing, activation is incomplete; finish it before calling the package done.
 
 ### Prerequisites (hard gate)
 Do not set up lanes until both are true: the account interpretation is `[CONFIRMED]`, and data-source content has landed (VoC files exist; creatives exist under `meta/creatives/` or Cacheth is flagged in). Lanes describe what is actually in the brain, so laning before content produces empty or wrong scopes. If either is missing, say what is missing and route back; never fake it.
@@ -114,7 +122,7 @@ Routing by question type:
 Everything the agent needs is reachable; the question is where it is stored, not whether it can be used. Knoweth indexes the **brain files** (VoC, the interpretation layer, specs, asset metadata) so they are searchable by meaning and keyword. The **creative store (Cacheth)** and **performance store (Counteth)** are large, structured, frequently-updated datasets with their own query paths; they are surfaced through the CLI (and, under Knoweth, alongside brain results), not copied into the search index. Duplicating them into files would bloat the index, split the source of truth, and go stale. So a creative or metric is "not in Knoweth" the same way a database is not in a wiki: the wiki points at it. Write the interpretation (what a creative means, how a metric is judged) as a brain file; leave the creative and the number in their store.
 
 ### Works with or without Knoweth
-The organizing discipline here, folders, tags, save routing, specs, and maintenance, is retrieval-agnostic: it holds whether or not Knoweth is the retrieval layer on a given VM. Only the lane configuration is Knoweth-specific. Retrieval scoping (lanes and projects) becomes fully live as the Knoweth harness rolls out; until a VM is on it, the safe default that works on any harness is to keep shared content in `global` and slice with tags. A parallel version of this package without Knoweth reuses everything except the lane config, so keep the two separable: never write a file that only makes sense if lanes are active.
+The organizing discipline here, folders, tags, save routing, specs, and maintenance, is retrieval-agnostic: it holds whether or not Knoweth is the retrieval layer on a given VM. Only the lane configuration is Knoweth-specific. Retrieval scoping (lanes and projects) becomes fully live as the Knoweth harness rolls out; until a VM is on it, the safe default that works on any harness is to keep shared content in `global` and slice with tags. A parallel version of this package without Knoweth reuses everything except the lane config, so keep the two separable: never write a file that only makes sense if lanes are active. Setting up before the Knoweth harness reaches a VM is fine: organizing, tags, save routing, specs, and maintenance all work regardless of harness; only lane/project scoping (including the automatic workspace lane) becomes fully live once the harness reaches the VM. Never block setup on it or promise lane behavior that is not on yet, `global` + tags is correct either way.
 
 ---
 
@@ -149,7 +157,7 @@ Lanes are not something the setup hand-builds for most orgs. What happens automa
 The scenario test: shared across the org -> `global`; belongs to one workspace -> the workspace lane already holds it; one person's private material -> a `user:` lane; anything finer -> a tag.
 
 ### Adapting to the org type: single-brand vs multi-workspace
-Orgs differ, and the setup should read which kind it is rather than assume. Most orgs run a single workspace; a smaller number (agencies and large teams) run many, and those multi-workspace orgs generate a large share of real usage. Adapt:
+Step zero of organizing: read how many workspaces the org has, then follow the matching path. Orgs differ, and the setup should read which kind it is rather than assume. Most orgs run a single workspace; a smaller number (agencies and large teams) run many, and those multi-workspace orgs generate a large share of real usage. Adapt:
 - **Single-workspace org:** the workspace is the whole brand. Everything is `global` plus the automatic workspace lane; tags do all the slicing. Do not invent projects or lanes, there is nothing to separate.
 - **Multi-workspace org (agency, large team):** each workspace is already its own `project:<workspaceId>` lane, so per-client/per-brand separation is automatic. Put shared, reusable knowledge (playbooks, templates, cross-client conventions) in `global` so every workspace can reach it, and let each workspace's own content stay in its workspace lane. Do not carve custom per-client lanes; that duplicates what the workspace lane already does and burns the cap.
 This is what "a project inside a lane" means in practice: a query layers `[user, project:<workspaceId>, global]`, so a workspace's content sits inside the org-wide `global` context at query time. The workspace is the one business dimension that maps to a project today; every other dimension (segment, product, campaign) is a tag inside that scope, not its own project or lane.
