@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "aligned-onboarding",
-  "version": "2.1.0",
-  "description": "The Meta onboarding package, v2. Stages five instruction docs into the brain: the package overview, the Creative Attribution playbook, the Account Context Brain onboarding package (v1.21), the Meta Validation onboarding package (v1.1), and the Motion CLI data-query guide. Installing only stages files; nothing self-runs. The Creative Attribution build runs only on an explicit request from a person and must never auto-grab creatives and store summary files in the brain: in staging, per-creative summaries live in Cacheth and are surfaced through Knoweth. No corpus-search dependency. Meta only, one workspace at a time. Also carries the VoC Data Pull part (voc-data-pull/): a skill installed to the skills root that, when setup is requested, creates one daily sync routine per connected VoC platform pulling reviews, support conversations, community posts, and ad comments into /agent/brain/data-sources/voc/<platform>/. Nothing self-runs.",
+  "version": "2.2.0",
+  "description": "The Meta onboarding package, v2. Stages five instruction docs into the brain: the package overview, the Creative Attribution playbook, the Account Context Brain onboarding package (v1.21), the Meta Validation onboarding package (v1.1), and the Motion CLI data-query guide. Installing only stages files; nothing self-runs. The Creative Attribution build runs only on an explicit request from a person and must never auto-grab creatives and store summary files in the brain: in staging, per-creative summaries live in Cacheth and are surfaced through Knoweth. No corpus-search dependency. Meta only, one workspace at a time. Also carries the VoC Data Pull part (voc-data-pull/): a skill installed to the skills root that, when setup is requested, creates one daily sync routine per connected VoC platform pulling reviews, support conversations, community posts, and ad comments into /agent/brain/data-sources/voc/<platform>/. Nothing self-runs. Also carries the Knoweth organize part (knoweth/): after the questions are answered it organizes the brain so retrieval stays tight and sets the standing save + maintenance discipline.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -83,9 +83,21 @@
       "to": "/agent/.agents/skills/voc-data-pull/templates/community-post.md",
       "on_exists": "overwrite",
       "purpose": "Copyable file skeleton for community-post output files."
+    },
+    {
+      "from": "knoweth/knoweth-organize-onboarding-package.md",
+      "to": "/agent/brain/aligned-onboarding/knoweth-organize-onboarding-package.md",
+      "on_exists": "overwrite",
+      "purpose": "Knoweth organize part: after the account questions are answered, organize the brain (keep shared content in the global lane, make it findable with tags + a naming decoder) and set the standing save + maintenance guard blocks. Today only global, the user lane, and the workspace lane are queried; data-source-family lanes are a documented forward path."
     }
   ],
   "changelog": [
+    {
+      "version": "2.2.0",
+      "date": "2026-07-23",
+      "type": "minor",
+      "notes": "Added the Knoweth organize part (knoweth/): after the account questions are answered, organize the brain so retrieval stays tight, plus a standing save + maintenance contract. Grounded in the real retrieval wiring - only global, user:<userId>, and project:<workspaceId> (the workspace) are queried today, so shared content stays in the global lane and is sliced by tags; data-source-family lanes are a documented forward path gated on a harness change, not shipped."
+    },
     {
       "version": "2.1.0",
       "date": "2026-07-23",
