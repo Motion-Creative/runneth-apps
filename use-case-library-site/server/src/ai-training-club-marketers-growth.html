@@ -39,9 +39,9 @@
       .narrow { max-width: 940px; }
 
       /* HERO with branded swirl bg + floating dark nav */
-      .hero { position: relative; background-color: var(--sky); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 20px 0 96px; }
+      .hero { position: relative; background-color: var(--sky); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 0 0 96px; }
       .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0) 60%, rgba(255,255,255,.25)); pointer-events: none; }
-      .navbar { position: sticky; top: 0; z-index: 50; background: var(--sky); padding: 12px 24px; }
+      .navbar { position: sticky; top: 0; z-index: 50; background: transparent; padding: 12px 24px; }
       nav.top { max-width: 1180px; margin: 0 auto; background: var(--ink); border-radius: var(--pill); display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 14px 24px; }
       .logo-white { height: 22px; width: auto; display: block; }
       .nav-links { display: flex; align-items: center; gap: 26px; }
@@ -49,6 +49,7 @@
       .nav-links a:hover { opacity: .65; }
       .nav-links a.nav-cta { background: #fff; color: var(--ink); font-weight: 700; padding: 10px 20px; border-radius: var(--pill); opacity: 1; }
       .nav-links a.nav-cta:hover { background: var(--lime); }
+      .navbar.scrolled { background: var(--sky); }
       .navbar.scrolled .nav-plain { display: none; }
 
       .hero-inner { position: relative; z-index: 3; text-align: center; padding-top: 64px; }
@@ -227,6 +228,7 @@
   </head>
   <body>
     <!-- HERO -->
+    <div class="hero" style="background-image:url('/atc-growth/semicircle-stripes.png');">
     <div class="navbar">
       <nav class="top">
         <img class="logo-white" src="/atc-growth/runneth-wordmark-white.svg" alt="Runneth" />
@@ -235,7 +237,6 @@
         </div>
       </nav>
     </div>
-    <div class="hero" style="background-image:url('/atc-growth/semicircle-stripes.png');">
       <div class="hero-inner">
         <div class="wrap">
           <img class="motion-presents-logo" src="/atc-growth/motion-presents-black.png" alt="Motion Presents" />
@@ -243,7 +244,7 @@
           <p class="hero-sub">A free 5-week program where you actually build AI into your marketing work, one 10-minute lesson at a time.</p>
           <div class="trio">
             <div class="trio-card"><div class="big">10 minutes</div><div class="lbl">One short, hands-on lesson every week. Watchable on your phone.</div></div>
-            <div class="trio-card"><div class="big">+ weekly coaching calls</div><div class="lbl">A live group coaching call every week to ask your specific questions and go deeper.</div></div>
+            <div class="trio-card"><div class="big">weekly coaching calls</div><div class="lbl">A live group coaching call every week to ask your specific questions and go deeper.</div></div>
             <div class="trio-card"><div class="big">$0</div><div class="lbl">Free to sign up. No catch. Slack community and prizes included.</div></div>
           </div>
           <a class="hero-cta" href="#signup">Save my free spot</a>
