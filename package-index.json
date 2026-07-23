@@ -16,7 +16,7 @@
         "owner": "Motion-Creative",
         "repo": "runneth-apps",
         "path": "runneth-default",
-        "ref": "main"
+        "ref": "staging"
       },
       "installPolicy": "auto",
       "updatePolicy": "auto",
