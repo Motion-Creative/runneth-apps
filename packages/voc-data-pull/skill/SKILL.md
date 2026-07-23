@@ -21,13 +21,15 @@ on these files, so shape consistency matters more than volume.
 
 ## When to use
 
+- The team or user asks to set up the VoC data sync (directly, or as part of an
+  onboarding run) -> run the "Set up the recurring sync" procedure below. Setup never
+  happens unprompted.
 - A `voc-sync-<platform>` routine run is executing (the normal path - see Recurring sync
   runs below).
 - The user asks to pull, refresh, or extend VoC data, or asks for reviews/support
   conversations "in files" or "in the brain". Route these through the routine, not an
-  in-conversation pull: make sure `voc-sync-<platform>` exists (the package's activation
-  instruction owns creating it), then `routine run --id <routine-id>` for an immediate
-  refresh.
+  in-conversation pull: make sure `voc-sync-<platform>` exists (setup procedure below),
+  then `routine run --id <routine-id>` for an immediate refresh.
 
 Run one platform per pull unless asked otherwise. Never wait for confirmation to start -
 the window rules below fully determine what to pull.
@@ -200,11 +202,48 @@ Per-platform field mappings (`rating` <- Judge.me `rating` / Trustpilot `stars` 
 `score` / Stamped `reviewRating`, and so on) are in the recipes reference - each platform
 adapter is a field-mapping exercise, not design work.
 
+## Set up the recurring sync
+
+All pulling happens through one daily routine per connected platform (`voc-sync-<platform>`).
+**Setup runs only when asked** (directly, or as part of an onboarding run) - never
+unprompted. When asked, do this for each connected covered platform: run
+`routine list --search "voc-sync-<platform>"` - routine absence is what needs setup, not
+folder state:
+
+- **Routine exists** -> do nothing (already set up).
+- **Routine absent** -> create it, kick its first run, and tell the user. Exactly this:
+
+1. Create (fill in the real current conversation id for `<conversation-id>`; keep the cron
+   and names exactly as written):
+
+   ```
+   routine add --name "voc-sync-<platform>" \
+     --delivery "No notification on success - the deliverable is the files under /agent/brain/data-sources/voc/<platform>/. If the run fails, a platform is disconnected, or coverage is incomplete, send a brief note to web conversation <conversation-id> with conversation send --to <conversation-id>." \
+     --prompt "Run the voc-data-pull skill for <platform> as a recurring sync run, following the skill's Recurring sync rules exactly - they define the pull window, account iteration, disconnect handling, and coverage reporting." \
+     --cron "0 6 * * *"
+   ```
+
+2. Kick the first sync run now (it happens in the background; the window rules below make
+   it a full backfill when no files exist yet, incremental otherwise):
+
+   ```
+   routine run --id <routine-id>
+   ```
+
+3. Tell the user in one or two sentences: the initial pull is running in the background and
+   the data stays updated daily. Do not mention routine mechanics unless asked.
+
+**Never run the pull inside the user's conversation.** All pulling happens in the routine's
+runs; a one-off refresh beyond the daily cadence is `routine run --id <routine-id>`.
+
+**Junip gate:** junip's recipe is blocked on a dead key. Before creating `voc-sync-junip`,
+verify access with one bounded call (`GET /v1/stores`); if it fails, tell the user the key
+needs replacing and create nothing.
+
 ## Recurring sync runs
 
-The package's activation instruction sets up one daily routine per connected platform
-(`voc-sync-<platform>`). When you are executing one of those runs, these rules apply on
-top of the normal skill flow:
+When you are executing one of those routine runs, these rules apply on top of the normal
+skill flow:
 
 - **Pull window** (this is what makes runs incremental - id-keyed files only dedupe
   writes, they do not shrink API paging):

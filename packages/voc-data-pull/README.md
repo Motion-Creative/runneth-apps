@@ -11,14 +11,15 @@ appear in the public site catalog.
 
 - `package.json` - the installer manifest. A directory resource installs `skill/` to
   `agent_skills/voc-data-pull`, and a `package_instruction` resource
-  (`instructions/activation.md`) lands in the agent's standing instructions: when a
+  (`instructions/activation.md`) lands in the agent's standing instructions pointing at
+  the skill's setup procedure.
+- `skill/SKILL.md` - the pull workflow and the recurring-sync setup procedure: when a
   covered platform is connected and its `voc-sync-<platform>` routine doesn't exist,
   Runneth creates the daily sync routine and kicks its first run (the backfill) in the
   background - pulls never run inside the user's conversation. Routine absence is the
-  setup trigger, so cancel-and-reconnect re-sets-up cleanly.
-- `skill/SKILL.md` - the pull workflow: resolve the connection path (Pipedream OAuth vs
-  stored secret vs Motion native), follow the platform recipe, write files under
-  `/agent/brain/data-sources/voc/<platform>/`, report.
+  setup trigger, so cancel-and-reconnect re-sets-up cleanly. Also: resolve the connection
+  path (Pipedream OAuth vs stored secret vs Motion native), follow the platform recipe,
+  write files under `/agent/brain/data-sources/voc/<platform>/`, report.
 - `skill/references/platform-recipes.md` - per-platform endpoints, pagination, discovery
   steps, and unified-template field mappings, with evidence levels (live-verified vs
   doc-grounded).
@@ -27,15 +28,21 @@ appear in the public site catalog.
 
 ## How it installs
 
-The root `package-index.json` lists this package with one `integration:<slug>` category per
-VoC platform. When a sandbox's package intent gains one of those connected-integration slugs
-(automatically on connect, or manually via `package intent add-integration <slug>`), the
-reconciler selects this package and the installer installs it. Installing is desired-state:
-re-installs and double-fires are no-ops.
+`installPolicy: manual` - the team installs this package per VM, and `updatePolicy: auto`
+keeps installed copies current from `main` on every package sync. To install durably from
+the index, run in the sandbox:
 
-The covered platforms are the `integration:<slug>` categories in the index entry; the
-authoritative per-platform table is SKILL.md Step 1. The secrets-path platforms (Okendo,
-Stamped) have no Pipedream connect; add the intent manually or via the CSM-prompted path.
+```
+package intent add-optional voc-data-pull
+package sync
+```
+
+Installing is desired-state: re-installs and double-fires are no-ops. Nothing happens
+automatically after install: the team manually triggers setup (directly or via an
+onboarding run, with the integration already connected as a pre-req), and Runneth then
+creates the daily sync routines per the skill's setup procedure. The `integration:<slug>`
+categories are retained as metadata and for a future flip back to connect-time
+auto-install; the authoritative per-platform table is SKILL.md Step 1.
 
 ## The output contract
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-07-22-01",
+  "indexRevision": "2026-07-23-01",
   "packages": [
     {
       "id": "voc-data-pull",
@@ -26,7 +26,7 @@
         "path": "packages/voc-data-pull",
         "ref": "main"
       },
-      "installPolicy": "auto",
+      "installPolicy": "manual",
       "updatePolicy": "auto",
       "uninstallPolicy": "allowed"
     }
