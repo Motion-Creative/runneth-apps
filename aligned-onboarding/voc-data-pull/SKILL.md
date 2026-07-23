@@ -2,12 +2,12 @@
 name: voc-data-pull
 description: |
   Pull raw voice-of-customer data - product reviews, support conversations, community posts,
-  and ad comments - from a connected VoC platform into standardized files in the org's brain,
+  and ad comments - from an available VoC platform into standardized files in the org's brain,
   one file per review/ticket/post/comment. Use when a covered VoC platform (the Step 1 table:
-  Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Gorgias, Intercom, Reddit) is connected
-  and its data should land in files, or when the user asks to "pull the reviews", "dump the
-  reviews", "pull support tickets", "sync customer conversations to files", or "run the VoC
-  data pull".
+  Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Gorgias, Intercom, Reddit) is reachable
+  by any path - OAuth connection, stored API key, or Motion native - and its data should land
+  in files, or when the user asks to "pull the reviews", "dump the reviews", "pull support
+  tickets", "sync customer conversations to files", or "run the VoC data pull".
   Do NOT use for analyzing reviews (analyzing skill), building integration guides, or one-off
   API questions about a platform.
 ---
@@ -206,7 +206,9 @@ adapter is a field-mapping exercise, not design work.
 
 All pulling happens through one daily routine per connected platform (`voc-sync-<platform>`).
 **Setup runs only when asked** (directly, or as part of an onboarding run) - never
-unprompted. When asked, do this for each connected covered platform: run
+unprompted. When asked, do this for each available covered platform - available means the
+org can reach it by any path (OAuth connection, stored API key, or Motion native; Step 1
+resolves which): run
 `routine list --search "voc-sync-<platform>"` - routine absence is what needs setup, not
 folder state:
 

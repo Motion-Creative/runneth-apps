@@ -10,7 +10,7 @@ and at the immutable `pre-cleanup-2026-07-21-with-aligned-onboarding` tag.
 ## Package contract
 
 `package-index.json` is the package-manager registry. Each indexed source path
-must contain a `runneth-package.json` schema-v1 manifest.
+must contain a `package.json` schema-v1 manifest.
 
 The validator enforces:
 
@@ -32,7 +32,7 @@ Changes to auto-updating packages require core engineering approval and the
 
 ## Adding a package
 
-1. Add the package payload and its `runneth-package.json`.
+1. Add the package payload and its `package.json`.
 2. Add one matching entry to `package-index.json`.
 3. Run the package contract tests.
 4. Open a focused pull request for that package.
@@ -49,10 +49,12 @@ legacy directory directly.
 
 ## Aligned Onboarding compatibility
 
-`aligned-onboarding/` remains on `main` with `corpus-search/` and
-`building-integrations/`. These are a deliberate compatibility exception so
-the recently merged onboarding flow keeps its source and referenced
-dependencies while it is migrated to the package contract.
+`aligned-onboarding/` remains on `main` with `building-integrations/`. These
+are a deliberate compatibility exception so the onboarding flow keeps its
+source and referenced dependencies while it is migrated to the package
+contract. The `corpus-search/` tool has been removed: retrieval now runs on
+Knoweth, with per-creative summaries held in Cacheth (staging). The removed
+payload remains available from the archive branch and snapshot tag.
 
 ## Library website
 

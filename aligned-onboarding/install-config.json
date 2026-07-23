@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "aligned-onboarding",
-  "version": "1.0.0",
-  "description": "Teaches Runneth how a customer reads their Meta ad account, then builds one enriched record per active creative. Stages three instruction docs into the brain (Account Context Brain, Creative Corpus playbook, Motion CLI data-query guide) plus a thin orchestration skill. Activation merges a read-before-performance guard into /agent/user.md and runs the guided nine-field fill-in. Reuses the corpus-search tool from the library for filterable retrieval rather than bundling it. Meta only.",
+  "version": "2.1.0",
+  "description": "The Meta onboarding package, v2. Stages five instruction docs into the brain: the package overview, the Creative Attribution playbook, the Account Context Brain onboarding package (v1.21), the Meta Validation onboarding package (v1.1), and the Motion CLI data-query guide. Installing only stages files; nothing self-runs. The Creative Attribution build runs only on an explicit request from a person and must never auto-grab creatives and store summary files in the brain: in staging, per-creative summaries live in Cacheth and are surfaced through Knoweth. No corpus-search dependency. Meta only, one workspace at a time. Also carries the VoC Data Pull part (voc-data-pull/): a skill installed to the skills root that, when setup is requested, creates one daily sync routine per connected VoC platform pulling reviews, support conversations, community posts, and ad comments into /agent/brain/data-sources/voc/<platform>/. Nothing self-runs.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -14,47 +14,95 @@
   "customize": [
     {
       "token": "<workspaceId>",
-      "purpose": "The Meta workspace this account context describes. Used in the /agent/user.md guard block and in every --workspace-id pull during the fill-in. Resolved during activation, not at file-copy time."
+      "purpose": "The Meta workspace this onboarding describes. Used in the /agent/user.md guard blocks and in every --workspace-id pull. Resolved during activation, not at file-copy time."
     }
   ],
   "installs": [
     {
-      "from": "SKILL.md",
-      "to": "/agent/.agents/skills/aligned-onboarding/SKILL.md",
-      "on_exists": "overwrite",
-      "purpose": "Orchestration skill. Activates the account-context guard, runs the nine-field fill-in, then builds and maintains the creative corpus. Triggered by prompts like 'run aligned onboarding' or 'set up my Meta account context'."
-    },
-    {
       "from": "README.md",
       "to": "/agent/brain/aligned-onboarding/README.md",
       "on_exists": "overwrite",
-      "purpose": "Package overview: how the two parts relate and the install/run order."
+      "purpose": "Package overview: the two parts, their run order, and the staging deployment rule that the Creative Attribution build never runs automatically."
     },
     {
-      "from": "account-context-brain.md",
-      "to": "/agent/brain/aligned-onboarding/account-context-brain.md",
+      "from": "meta/meta-creative-attribution-playbook.md",
+      "to": "/agent/brain/aligned-onboarding/meta-creative-attribution-playbook.md",
       "on_exists": "overwrite",
-      "purpose": "The Account Context Brain fill-in package: nine required interpretation fields, how Runneth pulls and confirms them, and the prose output shape saved to /agent/brain/meta/account-context.md."
+      "purpose": "Step 1 (explicit request only): how to build and maintain one enriched Markdown record per active creative under /agent/brain/meta/creatives/. Never auto-run; in staging, creative summaries live in Cacheth and are surfaced through Knoweth."
     },
     {
-      "from": "creative-corpus-playbook.md",
-      "to": "/agent/brain/aligned-onboarding/creative-corpus-playbook.md",
+      "from": "meta/meta-account-context-brain-onboarding-package.md",
+      "to": "/agent/brain/aligned-onboarding/meta-account-context-brain-onboarding-package.md",
       "on_exists": "overwrite",
-      "purpose": "The Creative Corpus playbook: how to build and maintain one enriched Markdown record per active creative under /agent/brain/meta/creatives/."
+      "purpose": "Step 2: the Account Context Brain fill-in package (v1.21). Nine required interpretation fields, the guard block for /agent/user.md, and the prose output shape saved to /agent/brain/meta/account-context.md."
     },
     {
-      "from": "motion-cli-data-query-guide.md",
+      "from": "meta/meta-validation-onboarding-package.md",
+      "to": "/agent/brain/aligned-onboarding/meta-validation-onboarding-package.md",
+      "on_exists": "overwrite",
+      "purpose": "Step 3: the validation experience (v1.1). Answer-and-confirm loop, weekly deck build, lock-in (deck approval, refresh routine, Slack), and the MVCE gate saved to /agent/brain/meta/validation.md."
+    },
+    {
+      "from": "meta/motion-cli-data-query-guide.md",
       "to": "/agent/brain/aligned-onboarding/motion-cli-data-query-guide.md",
       "on_exists": "overwrite",
       "purpose": "Supporting reference: the canonical contract for pulling Meta data through the motion CLI. Brand-agnostic, carries no account IDs."
+    },
+    {
+      "from": "voc-data-pull/SKILL.md",
+      "to": "/agent/.agents/skills/voc-data-pull/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "VoC Data Pull skill: the pull workflow, hard boundaries, file format, and the 'Set up the recurring sync' procedure (one daily voc-sync-<platform> routine per connected platform; setup only when asked)."
+    },
+    {
+      "from": "voc-data-pull/references/platform-recipes.md",
+      "to": "/agent/.agents/skills/voc-data-pull/references/platform-recipes.md",
+      "on_exists": "overwrite",
+      "purpose": "Per-platform endpoints, pagination, discovery steps, and unified-template field mappings with evidence levels."
+    },
+    {
+      "from": "voc-data-pull/templates/review.md",
+      "to": "/agent/.agents/skills/voc-data-pull/templates/review.md",
+      "on_exists": "overwrite",
+      "purpose": "Copyable file skeleton for review output files."
+    },
+    {
+      "from": "voc-data-pull/templates/support-conversation.md",
+      "to": "/agent/.agents/skills/voc-data-pull/templates/support-conversation.md",
+      "on_exists": "overwrite",
+      "purpose": "Copyable file skeleton for support-conversation output files."
+    },
+    {
+      "from": "voc-data-pull/templates/ad-comment.md",
+      "to": "/agent/.agents/skills/voc-data-pull/templates/ad-comment.md",
+      "on_exists": "overwrite",
+      "purpose": "Copyable file skeleton for ad-comment output files."
+    },
+    {
+      "from": "voc-data-pull/templates/community-post.md",
+      "to": "/agent/.agents/skills/voc-data-pull/templates/community-post.md",
+      "on_exists": "overwrite",
+      "purpose": "Copyable file skeleton for community-post output files."
     }
   ],
   "changelog": [
     {
+      "version": "2.1.0",
+      "date": "2026-07-23",
+      "type": "minor",
+      "notes": "Reorganized into meta/ and voc-data-pull/ subfolders with one combined README. Added the VoC Data Pull part: skill, platform recipes, and output templates installed to the skills root. Setup is manually triggered - when asked, Runneth creates one daily voc-sync-<platform> routine per available VoC platform (backfill first run, incremental daily runs). Nothing runs on install or on connect."
+    },
+    {
+      "version": "2.0.0",
+      "date": "2026-07-22",
+      "type": "major",
+      "notes": "Full replacement of the v1 package. Reordered the flow: Creative Attribution (formerly Creative Corpus) collects raw facts first, the Account Context Brain (v1.21, with mandatory spend confidence floor) confirms interpretation second, and a new third part, Meta Validation (v1.1), proves the account is understood via the answer-and-confirm loop, the weekly deck, lock-in, and the MVCE gate. Dropped the corpus-search tool and all references to it; retrieval is Knoweth with per-creative summaries in Cacheth (staging). The Creative Attribution build and its maintenance run only on an explicit request from a person and never auto-grab creatives into the brain. Dropped the orchestration skill; the staged docs are the source of truth."
+    },
+    {
       "version": "1.0.0",
       "date": "2026-07-21",
       "type": "major",
-      "notes": "Initial release. Aligned Onboarding teaches Runneth how a customer reads their Meta ad account and then builds a per-creative corpus off that lens. It ships two parts: the Account Context Brain (nine interpretation fields Runneth auto-pulls, confirms with a person, validates, and flags, then saves as a plain-language reference at /agent/brain/meta/account-context.md) and the Creative Corpus playbook (one enriched Markdown record per active creative with identity, summary, hook, transcript, value props, and Motion AI tags, under /agent/brain/meta/creatives/). A supporting Motion CLI data-query guide keeps the auto-pulls correct on the first try. Activation merges a workspace-scoped read-before-performance guard into /agent/user.md so the lens is loaded before any Meta performance work, and treats Motion workspace settings (goal, preferred KPI, spend threshold, attribution config) as if they do not exist. Meta only, one workspace at a time. Retrieval is automatic through Knoweth; the corpus-search tool is fetched from the library only if absent for deliberate filterable search, never bundled or clobbered."
+      "notes": "Initial release. Account Context Brain plus Creative Corpus with corpus-search retrieval."
     }
   ]
 }
