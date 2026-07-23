@@ -55,3 +55,64 @@ test('matched network hosts are not reported as unmatched', () => {
   assert.equal(payload.detected.some(({ name }) => name === 'Klaviyo'), true);
   assert.deepEqual(payload.unmatchedThirdPartyHosts, ['unknown.vendor.test']);
 });
+
+test('customer mode remaps categories and ad names without regressing unmatched hosts', () => {
+  const capture = {
+    inputUrl: 'https://example.com',
+    finalUrl: 'https://example.com',
+    status: 200,
+    scannedAt: '2026-07-22T00:00:00Z',
+    requestHosts: [
+      'connect.facebook.net',
+      'googleadservices.com',
+      'static.klaviyo.com',
+      'unknown.vendor.test',
+    ],
+    requests: [
+      { url: 'https://connect.facebook.net/en_US/fbevents.js', host: 'connect.facebook.net' },
+      { url: 'https://googleadservices.com/pagead/conversion.js', host: 'googleadservices.com' },
+      { url: 'https://static.klaviyo.com/script.js', host: 'static.klaviyo.com' },
+    ],
+    mainHeaders: {},
+    cookies: [],
+    windowKeys: [],
+    metaGenerator: '',
+    html: '',
+  };
+  const result = spawnSync(
+    process.execPath,
+    [
+      resolve(PACKAGE_ROOT, 'skills/tech-stack-scanner/lib/detect.mjs'),
+      '/dev/stdin',
+      '--json',
+      '--customer',
+    ],
+    { encoding: 'utf8', input: JSON.stringify(capture) },
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+  const payload = JSON.parse(result.stdout);
+  assert.equal(payload.mode, 'customer');
+  assert.equal(
+    payload.detected.some(({ category, name }) => category === 'Paid channels' && name === 'Google ads'),
+    true,
+  );
+  assert.equal(payload.detected.some(({ name }) => name === 'Meta ads'), false);
+  assert.deepEqual(payload.motionAdPlatforms, ['Meta ads']);
+  assert.equal(
+    payload.detected.some(({ category, name }) => category === 'Email & SMS' && name === 'Klaviyo'),
+    true,
+  );
+  assert.equal(payload.detected.some(({ name }) => name.includes('Pixel')), false);
+  assert.deepEqual(payload.unmatchedThirdPartyHosts, ['unknown.vendor.test']);
+
+  const humanResult = spawnSync(
+    process.execPath,
+    [resolve(PACKAGE_ROOT, 'skills/tech-stack-scanner/lib/detect.mjs'), '/dev/stdin', '--customer'],
+    { encoding: 'utf8', input: JSON.stringify(capture) },
+  );
+  assert.equal(humanResult.status, 0, humanResult.stderr);
+  assert.match(humanResult.stdout, /Ad platforms available through Motion/);
+  assert.match(humanResult.stdout, /Meta ads/);
+  assert.doesNotMatch(humanResult.stdout, /Pixel|network:/);
+});

@@ -1,26 +1,23 @@
 ---
 name: tech-stack-scanner
 description: >
-  BuiltWith-style technographic detection. Point it at any domain (customer, prospect,
-  or competitor) and it returns the marketing/adtech/ecommerce stack that site is
-  running — ecommerce platform, CMS, analytics, tag managers, ad pixels, email/SMS,
-  reviews, subscriptions, payments, attribution, chat, A/B testing, CDN, JS framework.
-  Works by loading the site in the agent browser (headless Chromium via Playwright),
-  capturing every network request + JS global + cookie + header + rendered DOM, and
-  matching against a signature library. Falls back to a no-install fetch capture when
-  the browser is unavailable. Use on "what integrations does <brand> use", "scan
-  <domain>'s tech stack", "what's <competitor> running", "builtwith for <site>",
-  "detect the stack on <url>". This detects tech live off the site — distinct from
-  technographic-lookup, which reads the Apollo fields we pre-sync into HubSpot for
-  accounts already in our book.
+  BuiltWith-style technographic detection ENGINE. Point it at a competitor's or
+  prospect's domain and it returns the marketing/adtech/ecommerce stack that site is
+  running. Use ONLY for competitor or standalone tech-stack research, on phrases like
+  "what's <competitor> running", "builtwith for <site>", "scan <competitor>'s tech
+  stack", "detect the stack on <url>". DO NOT use this skill when a customer wants to
+  scan their OWN site to identify and connect their tools to Runneth, or asks to
+  "connect my stack", "set up my integrations", or "what tools am I running" — that is
+  the connect-my-stack skill, which calls this engine internally. If the intent is the
+  customer's own onboarding or connecting tools, defer to connect-my-stack.
 argument-hint: "<domain> [<domain2> ...] [--json]"
 ---
 
 # Tech Stack Scanner
 
 Replicates what builtwith.com does: fingerprint the technologies a website runs, straight
-off the live site. Built for the CSM/sales question "what is this customer (or prospect, or
-competitor) actually using?"
+off the live site. The standalone skill is for competitor or prospect research;
+`connect-my-stack` calls the same engine internally for customer onboarding.
 
 **Two mechanisms, one detection engine:**
 - **Browser capture (primary, `lib/scan.js`)** — loads the page in headless Chromium and
@@ -53,6 +50,7 @@ book-wide rollups.
 
 - One or more **domains** (bare domain or full URL; `https://` is added if missing).
 - `--json` to emit the machine payload instead of the human report.
+- `--customer` to remap output for the internal `connect-my-stack` onboarding flow.
 
 If no domain is given, ask for one in chat.
 
@@ -100,12 +98,16 @@ node "$SCANNER_DIR/lib/fetch-capture.mjs" "<domain>" "$WORK/<slug>.json"
 ```bash
 node "$SCANNER_DIR/lib/detect.mjs" "$WORK/<slug>.json"          # human report
 node "$SCANNER_DIR/lib/detect.mjs" "$WORK/<slug>.json" --json   # machine payload
+node "$SCANNER_DIR/lib/detect.mjs" "$WORK/<slug>.json" --customer # onboarding view
 ```
 
 The report groups detected technologies by category with the evidence that matched (network
 host, JS global, header, cookie, meta, or HTML). Anything matched **only** on an HTML substring
 is flagged `_(likely)_` — treat those as lower confidence. It also lists third-party hosts that
 fired but matched no signature, which is your lead for extending the library.
+Customer mode maps results to Runneth's customer-facing categories, uses ads-language
+names, separates Meta/TikTok as Motion-provided ad platforms, and omits technical evidence
+from the human report while retaining the same confidence and unmatched-host behavior.
 
 ---
 

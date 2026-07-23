@@ -1,14 +1,25 @@
 /**
  * detect.mjs — match a raw browser capture against signatures.json.
  *
- * Usage: node detect.mjs <captureJson> [signaturesJson] [--json]
- * Prints a human-readable report by default; add --json for a machine payload.
+ * Usage: node detect.mjs <captureJson> [signaturesJson] [--json] [--customer]
+ *
+ * Modes:
+ *   default   BuiltWith-style output using the raw signature categories. Use for
+ *             competitor/standalone tech scans where technical buckets are right.
+ *   --customer  Customer-onboarding output: remaps categories to Runneth's real
+ *             integration categories, renames ad tracking tags to ads language
+ *             ("Meta ads", not "Meta Pixel"), separates Meta/TikTok as Motion ad
+ *             platforms, drops the double-listing of matched hosts, and orders
+ *             categories for a marketer. Use this from connect-my-stack.
+ *   --json    Emit the machine payload instead of the human report (combines with
+ *             --customer).
  */
 import fs from 'fs';
 import path from 'path';
 
 const args = process.argv.slice(2);
 const asJson = args.includes('--json');
+const customer = args.includes('--customer');
 const files = args.filter((a) => !a.startsWith('--'));
 const capturePath = files[0];
 const sigPath = files[1] || path.join(path.dirname(new URL(import.meta.url).pathname), 'signatures.json');
@@ -19,7 +30,6 @@ const cap = JSON.parse(fs.readFileSync(capturePath, 'utf8'));
 const { signatures } = JSON.parse(fs.readFileSync(sigPath, 'utf8'));
 
 const hosts = (cap.requestHosts || []).map((h) => h.toLowerCase());
-const reqUrls = (cap.requests || []).map((r) => (r.url || '').toLowerCase());
 const html = (cap.html || '').toLowerCase();
 const winKeys = new Set(cap.windowKeys || []);
 const cookieNames = (cap.cookies || []).map((c) => (c.name || '').toLowerCase());
@@ -27,6 +37,52 @@ const meta = (cap.metaGenerator || '').toLowerCase();
 const headers = {};
 for (const [k, v] of Object.entries(cap.mainHeaders || {})) headers[k.toLowerCase()] = String(v).toLowerCase();
 const matchedNetworkHosts = new Set();
+
+// --- Customer-mode remapping tables ---------------------------------------
+// Raw engine category -> Runneth's real integration category. Anything not
+// mapped falls to "Other" (infra/dev noise a marketer does not connect).
+const CATEGORY_MAP = {
+  'Advertising Pixel': 'Paid channels',
+  'Analytics': 'Analytics & attribution',
+  'Attribution': 'Analytics & attribution',
+  'Attribution / Data Layer': 'Analytics & attribution',
+  'CDP / Tag Manager': 'Analytics & attribution',
+  'Analytics / Heatmaps': 'Site & product analytics',
+  'Analytics / Session Replay': 'Site & product analytics',
+  'A-B Testing': 'Site & product analytics',
+  'Personalization': 'Site & product analytics',
+  'Personalization / A-B Testing': 'Site & product analytics',
+  'CRM / Marketing': 'CRM & sales',
+  'Chat / Support': 'Voice of customer',
+  'Reviews / UGC': 'Voice of customer',
+  'Ecommerce Platform': 'Store & revenue',
+  'Merchandising / Upsell': 'Store & revenue',
+  'Payments': 'Store & revenue',
+  'Payments / BNPL': 'Store & revenue',
+  'Subscriptions': 'Store & revenue',
+  'Email / SMS': 'Email & SMS',
+  'Lifecycle / CDP': 'Email & SMS',
+  'Popups / Conversion': 'Email & SMS',
+};
+// Ad tracking tags are named in ads language, never "Pixel"/"Tag"/"Insight".
+const AD_RENAME = {
+  'Meta Pixel': 'Meta ads',
+  'TikTok Pixel': 'TikTok ads',
+  'Google Ads / Conversion': 'Google ads',
+  'Pinterest Tag': 'Pinterest ads',
+  'Snapchat Pixel': 'Snapchat ads',
+  'LinkedIn Insight': 'LinkedIn ads',
+  'Reddit Pixel': 'Reddit ads',
+  'Twitter/X Pixel': 'X ads',
+};
+// Marketer-facing category order; "Other" always last.
+const CANON_ORDER = [
+  'CRM & sales', 'Voice of customer', 'Email & SMS', 'Store & revenue',
+  'Paid channels', 'Analytics & attribution', 'Site & product analytics',
+  'Audience & social research', 'Briefing & project management',
+  'Bring your creative assets', 'Workspace & data sources',
+  'Use Runneth where you work', 'Custom', 'Other',
+];
 
 function matchNetwork(subs) {
   for (const s of subs) {
@@ -90,22 +146,51 @@ for (const sig of signatures) {
   }
 }
 
+// In customer mode, remap categories to Runneth's taxonomy and rename ad tags.
+const remapped = customer
+  ? detected.map((d) => ({
+      ...d,
+      name: AD_RENAME[d.name] || d.name,
+      category: CATEGORY_MAP[d.category] || 'Other',
+    }))
+  : detected;
+const motionAdPlatforms = customer
+  ? remapped.filter((d) => d.name === 'Meta ads' || d.name === 'TikTok ads')
+  : [];
+const view = customer
+  ? remapped.filter((d) => d.name !== 'Meta ads' && d.name !== 'TikTok ads')
+  : remapped;
+
 const byCat = {};
-for (const d of detected) (byCat[d.category] ||= []).push(d);
-const catOrder = Object.keys(byCat).sort();
+for (const d of view) (byCat[d.category] ||= []).push(d);
+
+const catOrder = customer
+  ? Object.keys(byCat).sort((a, b) => {
+      const ia = CANON_ORDER.indexOf(a); const ib = CANON_ORDER.indexOf(b);
+      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+    })
+  : Object.keys(byCat).sort();
+
+// Hosts that a signature matched are never also reported as unmatched, in
+// either output mode.
+const base = (() => { try { return new URL(cap.finalUrl || cap.inputUrl).host.replace(/^www\./, ''); } catch { return ''; } })();
+const unmatched = hosts.filter((h) => {
+  if (!base || h.endsWith(base) || h.includes(base.split('.')[0])) return false;
+  if (matchedNetworkHosts.has(h)) return false;
+  return true;
+});
 
 const payload = {
   target: cap.finalUrl || cap.inputUrl,
   status: cap.status,
   scannedAt: cap.scannedAt,
-  totalDetected: detected.length,
+  mode: customer ? 'customer' : 'default',
+  totalDetected: view.length,
   categories: catOrder.length,
-  detected,
+  detected: view,
   byCategory: byCat,
-  unmatchedThirdPartyHosts: hosts.filter((h) => {
-    const base = (() => { try { return new URL(cap.finalUrl || cap.inputUrl).host.replace(/^www\./, ''); } catch { return ''; } })();
-    return base && !matchedNetworkHosts.has(h) && !h.endsWith(base) && !h.includes(base.split('.')[0]);
-  }),
+  ...(customer ? { motionAdPlatforms: motionAdPlatforms.map((d) => d.name) } : {}),
+  unmatchedThirdPartyHosts: unmatched,
 };
 
 if (asJson) { console.log(JSON.stringify(payload, null, 2)); process.exit(0); }
@@ -118,8 +203,15 @@ for (const cat of catOrder) {
   lines.push(`## ${cat}`);
   for (const d of byCat[cat]) {
     const flag = d.confidence === 'high' ? '' : ' _(likely)_';
-    lines.push(`- **${d.name}**${flag}  \`${d.evidence.join(', ')}\``);
+    lines.push(customer
+      ? `- **${d.name}**${flag}`
+      : `- **${d.name}**${flag}  \`${d.evidence.join(', ')}\``);
   }
+  lines.push('');
+}
+if (customer && payload.motionAdPlatforms.length) {
+  lines.push('## Ad platforms available through Motion');
+  lines.push(payload.motionAdPlatforms.map((name) => `- **${name}**`).join('\n'));
   lines.push('');
 }
 if (payload.unmatchedThirdPartyHosts.length) {
