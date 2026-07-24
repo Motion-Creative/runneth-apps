@@ -5,24 +5,24 @@ ships as two parts that run in order.
 
 The two parts:
 
-- **Creative Attribution** - the per-creative facts Runneth works with.
+- **Creative Attributes** - the per-creative facts Runneth works with.
 - **Account Context Brain** - how Runneth analyzes those facts.
 
 The one-line model:
 
-> **The Creative Attribution gives Runneth the per-creative facts it needs. The Account Context
-> Brain tells Runneth how to analyze them.**
+> **The Creative Attributes step gives Runneth the per-creative facts it needs. The Account
+> Context Brain tells Runneth how to analyze them.**
 
-Run them in this order. Creative Attribution first: it collects raw facts without interpreting
+Run them in this order. Creative Attributes first: it collects raw facts without interpreting
 anything, and those facts give the Account Context Brain real material to work with. Account
-Context Brain second: it confirms how the team judges performance, drawing on what the attribution
-build found.
+Context Brain second: it confirms how the team judges performance, drawing on what the Creative
+Attributes step found.
 
 ---
 
 ## Where the package files live
 
-This folder holds one part per subfolder: `meta/` (the Creative Attribution playbook, the
+This folder holds one part per subfolder: `meta/` (the Creative Attributes playbook, the
 Account Context Brain package, the Meta Validation package, the Motion CLI Data-Query
 Guide, and the Cacheth Command Reference) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates), plus `knoweth/` (the organize-the-brain part that runs after the questions). This README
 covers all of them; `install-config.json` maps every file to its installed location.
@@ -51,8 +51,8 @@ package writes it to brain files.
 
 ## The two parts
 
-### Creative Attribution
-File: `meta/meta-creative-attribution-playbook.md`
+### Creative Attributes
+File: `meta/meta-creative-attributes-playbook.md`
 
 - **Job:** establish the creative content layer — one enriched record per active creative
   (identity, summary, hook, value props, transcript, AI tags) held in **Cacheth**, the local
@@ -74,7 +74,7 @@ File: `meta/meta-account-context-brain-onboarding-package.md`
 
 - **Job:** capture how the team interprets the account — what "best" means, which numbers to
   trust, how campaigns map to stages. Nine required fields confirmed with a person.
-- **Runs second.** Uses what the Creative Attribution found (especially naming decode) as
+- **Runs second.** Uses what the Creative Attributes step found (especially naming decode) as
   pre-populated proposals for confirmation, rather than starting cold.
 - **Persists to:** `/agent/brain/meta/account-context.md`
 - **Activation:** merges a read-before-performance guard into `/agent/user.md`.
@@ -98,7 +98,7 @@ File: `meta/cacheth-command-reference.md`
 
 - **Job:** the canonical contract for querying the local creative cache through the
   `motion cache` CLI — all five commands with every flag, the full-record field layout, `jq`
-  extraction recipes, and the retrieval priority order. The Creative Attribution playbook's
+  extraction recipes, and the retrieval priority order. The Creative Attributes playbook's
   compact contract points here for the detail.
 - **Not run on its own.** Reference only, not a step to execute. Brand-agnostic; carries no
   account-specific IDs.
@@ -132,12 +132,12 @@ Folder: `voc-data-pull/`
 1. **Install the package.** Staging the files does not self-run anything. Nothing in this
    package writes per-creative files to the brain — creative content lives in Cacheth and is
    surfaced through Knoweth.
-2. **Creative Attribution (Step 1).** Confirms the workspace scope, establishes the creative
+2. **Creative Attributes (Step 1).** Confirms the workspace scope, establishes the creative
    content layer (Cacheth + the query paths), detects naming patterns, and passes them to the
    Account Context Brain as provisional proposals. Writes nothing per-creative to the brain.
 3. **Activate and run the Account Context Brain (Step 2).** Merge the guard block into
    `/agent/user.md`, then run the fill-in. Confirms how the team judges performance, drawing on
-   the attribution build (if one was requested) for naming proposals and creative evidence.
+   the Creative Attributes step (if it was run) for naming proposals and creative evidence.
 4. **Set up the VoC data sync (when asked).** For each connected VoC platform, run the
    voc-data-pull skill's "Set up the recurring sync" procedure - it creates the daily sync
    routine and kicks the backfill in the background.
@@ -156,16 +156,16 @@ Folder: `voc-data-pull/`
 
 ## How the two parts relate
 
-- Creative Attribution is the material. Account Context Brain is the lens. A performance question
-  uses the Account Context Brain to decide what "best" means, then the Creative Attribution to
+- Creative Attributes are the material. Account Context Brain is the lens. A performance question
+  uses the Account Context Brain to decide what "best" means, then the creative attributes to
   reason about the specific creatives.
 - The dependency runs one way for interpretation: Account Context Brain is the authority on how
-  to analyze. But Creative Attribution runs first because it supplies real evidence the Account
-  Context Brain can draw on — naming patterns, campaign structure, creative volume.
+  to analyze. But the Creative Attributes step runs first because it supplies real evidence the
+  Account Context Brain can draw on — naming patterns, campaign structure, creative volume.
 - The Account Context Brain's read-before-performance guard forces the interpretation lens to load
-  before any performance work. The Creative Attribution is surfaced automatically through Knoweth
+  before any performance work. Creative attributes are surfaced automatically through Knoweth
   when creatives are discussed.
-- **Naming decode is the handoff point.** Creative Attribution detects provisional naming patterns
+- **Naming decode is the handoff point.** The Creative Attributes step detects provisional naming patterns
   from ad names and passes them to the Account Context Brain as proposals. Account Context Brain
   confirms or corrects them in Field 4. Once confirmed, the decode lives in the Account Context
   Brain — the single owner — and creative queries decode ad names through it at analysis time.

@@ -1,5 +1,5 @@
 # Meta Account Context: Brain Onboarding Package
-### Version 1.21 — patch on v1.2 (July 2026)
+### Version 1.22 — patch on v1.21 (July 2026)
 
 This package teaches Runneth how a customer understands their Meta ad account, so its queries,
 rankings, and insights match how the team actually thinks about the data. This package is
@@ -359,21 +359,34 @@ Captures whether the account uses naming conventions, what each level encodes, a
 each level is.
 
 **Auto-pull**
-- If Step 1 (Creative Attribution) handed over a provisional decode table, start from it
+- If Step 1 (Creative Attributes) handed over a provisional decode table, start from it
   instead of re-detecting.
 - Otherwise: pull all campaign, ad set, and ad name strings, detect structure per level, and
   propose a decoder.
 - Measure reliability per level (% of names fitting the detected pattern).
+- Detect where product/concept names live: take the product tokens found in ad names and check
+  whether the same tokens also appear in campaign and ad set names. The same product word can
+  cascade across all three levels or live at only one — that placement is an account fact, not
+  a guess.
 - Once confirmed, the decode lives in this file's saved result — it has no separate brain file.
 
 **What to understand**
 - For levels with a detected pattern: confirm what each position means.
 - For levels with no reliable pattern: confirm whether a convention exists or whether to fall
   back to creative signals and landing pages.
+- Confirm the product-name default: "When someone on your team says '[product] ads' with no
+  other qualifier, should I read that as the ad names carrying that product token, or does this
+  account structure products at the campaign level?" The confirmed answer becomes the default
+  filter level for bare product-name requests (the Data-Query Guide's name-level rules use
+  `adName` + includes until this is confirmed).
 
 **Fields** (repeat per level)
 - Level: `<campaign / ad set / ad>` | Reliability: `<AUTO: % match>` |
   Fields encoded: `<...>` | Fallback if weak: `<creative signals / URL / ask>`
+
+**Fields** (once, after the per-level entries)
+- Product/concept names live at: `<ad / ad set / campaign / multiple levels — AUTO, confirmed>` |
+  Default filter level for bare product-name asks: `<adName unless confirmed otherwise>`
 
 ## 5. Attribution model and windows
 
@@ -527,6 +540,18 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 ---
 
 # Changelog
+
+## v1.22 (July 2026) — patch: Field 4 captures where product names live
+
+**Field 4: product-name placement is now detected and confirmed.**
+The auto-pull checks whether product/concept tokens found in ad names also appear in campaign
+and ad set names, and the confirm loop asks which level a bare "[product] ads" request should
+filter. The confirmed default is saved as its own field line. This closes a live failure mode:
+treating a product name as a campaign reference by default when the account encodes products in
+ad names (or vice versa). Until confirmed, the Data-Query Guide's name-level rules default to
+`adName` with includes matching.
+
+---
 
 ## v1.21 (July 2026) — patch: spend confidence floor made mandatory
 

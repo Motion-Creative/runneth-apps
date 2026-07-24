@@ -1,6 +1,6 @@
 # Motion CLI Data-Query Guide
 
-The canonical contract for how Runneth pulls Meta, TikTok, Inspo, benchmark, and workspace-setup
+The canonical contract for how Runneth pulls Meta, Inspo, benchmark, and workspace-setup
 data through the `motion` CLI. Goal: correct query shape on the first try, every time. Grounded in
 live `motion <command> --help` output, not memory. Re-verify against live `--help` when a
 command's flags change.
@@ -24,6 +24,9 @@ command's flags change.
 7. **Check completeness before "all" / totals claims.** If `providerTotalCount > totalCount`, or
    `totalCount` hit your `--limit`, say the pull may be partial.
 8. **Omit `--limit`** unless the user asked for a bounded top-N, exact count, or sample size.
+9. **Pick the name level deliberately.** `campaignName`, `adsetName`, and `adName` are not
+   interchangeable proxies for a product or theme, even when they share a word. See "Which name
+   level to filter on" before building any name filter.
 
 ---
 
@@ -96,23 +99,52 @@ motion meta ads --grain adnames --date-range last_30d --northbeam --include-metr
 
 ---
 
-## `motion tiktok insights` — TikTok performance
+## Which name level to filter on (campaignName vs adsetName vs adName)
 
-TikTok uses `--sort-by` / `--sort-direction`, NOT Meta's `--sort topSpend` style.
+Meta accounts nest three levels — campaign (objective/budget) → ad set (audience/optimization)
+→ ad (the creative asset) — and the same product or theme word legitimately appears at any or
+all of them. A campaign named "[Product X] — Q3 Prospecting" may contain ad sets named
+"[Product X] — Broad" and ads named "ProductX_UGC_v3". The reverse also holds: a "[Product X]"
+campaign can contain creative unrelated to that product (cross-sell, seasonal add-ons), and
+[Product X] ads can run inside a campaign that never mentions it (an "Evergreen Prospecting"
+campaign, say). So no name level is a proxy for another, even when they share a word — a
+product name is a *thing the account is marketing*, and where it lives depends on how the
+account was built.
 
-- `--grain ads` (default) or `--grain adnames`
-- `--date-range` (defaults `last_30d`); note TikTok presets: `this_month` (not month_to_date), `last_week_mon_sun` (not last_week)
-- `--sort-by <metric>` + `--sort-direction asc|desc`
-- `--filter '<json-array>'` — fields: campaignName, campaignId, adsetName, adsetId, adName, adId, status, adType, adSetup, adsPerformanceState, adLength, tag, landingPageUrl, launchDate, creativeId, glossaryCategory; metric filters need `"metric":true`
-- `--metric`, `--include-metrics` (always include), `--limit`
-- `--include-associated-object-details` — for galleries / parent context
-- `--northbeam`
-- Gallery limit rule: `--grain ads --include-associated-object-details --limit max(10, 3 * displayCount)`
+Ad names in particular are structured, delimited strings built by creative teams to track
+iteration, typically `[Product/Concept]_[Format]_[Hook]_[Version]` (e.g.
+`ProductX_UGC_QuestionHook_v2`). A product or concept name is therefore a substring token
+inside a longer name, never the full name: filter with `"type":"includes"`, and expect many
+matches across formats, hooks, and versions — that is the correct result shape, not noise.
+Sibling products ([Product X] vs [Product Y]) must never bleed into each other's results, even
+when they sit under the same campaign umbrella.
 
-```
-motion tiktok insights --date-range last_30d --limit 25 --sort-by spend --sort-direction desc --include-metrics
-motion tiktok insights --grain adnames --date-range last_30d --filter '[{"field":"adName","type":"includes","value":"summer"}]' --include-metrics
-```
+Choosing the field:
+
+1. **The user's language picks the level when it names one.** "ads" (the creative pieces) →
+   `adName`; "campaign" → `campaignName`; "audience", "targeting", "ad set" → `adsetName`.
+2. **A bare product/concept name with no level word defaults to `adName` + `includes`.**
+   Product tokens are creative-team constructs, so the asset level is where they live most
+   reliably. If the account has confirmed where its product names live (Account Context Brain,
+   Field 4 naming conventions), that confirmed default overrides this heuristic.
+3. **Never silently swap levels.** If the chosen field returns zero results, say which field
+   was tried and ask before trying another level — golden rule 5 applies to fields, not just
+   dates and metrics. A quiet campaign-level fallback changes what the question means.
+4. **"Everything related to [product]" may genuinely span levels.** An OR across `adName` and
+   `campaignName` is sometimes the right read — but confirm it first, because it changes the
+   result scope significantly.
+
+Worked example — "show me all my [Product X] ads":
+
+1. "ads" is the operative word → asset level; the target field is `adName`.
+2. Resolve the token first: `motion meta filter-reference --query "[Product X]" --field adName`
+   (catches no-space / underscore / hyphen variants).
+3. Filter with includes:
+   `--filter '[{"field":"adName","type":"includes","value":"<resolved token>"}]'`.
+4. Expect many rows across formats and versions. Do not treat the result as "the [Product X]
+   campaign" — that campaign may hold unrelated ads, and [Product X] ads may live outside it.
+5. Zero rows → report that the ad-level search found nothing and ask whether this account
+   structures [Product X] at the campaign level instead. Do not pivot silently.
 
 ---
 
@@ -137,20 +169,6 @@ from the id with a valid suffix: `_count`, `_cost`, `_value`, `_rate`, `_roas`, 
 
 ---
 
-## Metric gotchas that cause mistakes
-
-- **Thumbstop:** `thumbstop_ratio` (Thumbstop Ratio, %, higher better) and `thumbstop_click_rate`
-  (Thumbstop Click Rate) are two different standard keys. Pick the one meant.
-- **Appointments:** volume is `appointments_scheduled_total`, cost is `cost_per_appointment_scheduled`.
-  `appointment_scheduled` is NOT a valid key.
-- **Pair count + cost, never derive one from the other.** Look up `metricDefinitions.<costMetric>.relatedCountMetric`
-  and request both with `--table-kpi`. A count of 0 while cost-per is non-zero = wrong key, not a data gap.
-- **Direction:** use `metricDefinitions.<key>.direction` / `isInversePerformance` for ranking direction.
-  CPA/CPC/CPM/cost-per = lower is better; ROAS/CTR/thumbstop/purchase value = higher is better.
-- **Zero/blank cost-per-conversion rows are not winners** — they mean no usable conversion signal.
-
----
-
 ## Reading the result file (roots differ by command)
 
 - `motion meta insights`: dataset at root — `.creatives[]`, `.totalCount`, `.providerTotalCount`,
@@ -158,7 +176,6 @@ from the id with a valid suffix: `_count`, `_cost`, `_value`, `_rate`, `_roas`, 
   `.creatives[].metrics.<key>`; requested KPIs at `.creatives[].tableKpiMetrics.<key>.value` /
   `.chartKpiMetrics.<key>.value`. Transcript at `.creatives[].transcript`.
 - `motion meta ads`: `{successful, data}` — `.data.grain`, `.data.summaryRows`, `.data.result`, `.data.metricTotals`.
-- `motion tiktok insights`: `.data.metricTotals` (additive only), `.data.creativeGalleryHints`, `.data.summaryRows`, `.data.result`.
 - `motion meta filter-reference`: `.candidates` at root.
 - Most others: `{successful, data}` with `.data.workspaces` / `.data.summaryRows` / `.data.result` / etc.
 
@@ -170,8 +187,6 @@ rates/costs (CTR, CPC, CPM, ROAS, CPA, thumbstop).
 ## Other data commands (quick reference)
 
 - `motion workspaces` — list orgs/workspaces (source of truth for workspace IDs)
-- `motion workspace-goal` — preferred KPI + attribution windows (not the default ranker; spend is)
-- `motion spend-threshold` — significance threshold (only when winner/proven/enough-data qualification matters)
 - `motion reports` / `motion reports --report-id <id>` — saved report configs
 - `motion brand-context --data-query "<q>"` — saved own-brand context (`--data-query` always required)
 - `motion ai-glossary` — valid tag categories/values

@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.3 — draft for review (July 2026)
+### Version 1.4 — draft for review (July 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
@@ -133,6 +133,14 @@ or adds.** These are the foundational questions, not frequent queries. The defau
 2. How is performance by campaign / product?
 3. What themes show up in our winning ads? (from AI tags and creative summaries)
 4. What are we testing right now, and what's scaling or ready to graduate?
+5. Show me all our [product] ads — using a real product or concept name from this account.
+
+Question 5 is the name-level probe: the same product word can live at the campaign, ad set,
+and ad level, and this question proves Runneth reads the right one. The answer must state
+which name level it filtered and why (per the Data-Query Guide's name-level rules and the
+Field 4 confirmed default), and must not silently treat the product as a campaign reference.
+If the customer corrects the read, the fix lands in Field 4 (naming conventions) like any
+other correction.
 
 Invite the customer to add any question that matters to them that's missing. Capture the final
 set.
@@ -153,9 +161,9 @@ Rules for the loop:
   event as purchases, but it sounds like it's booked calls, I've updated that" not "Field 2
   corrected."
 - Keep it moving. When an answer lands, confirm and go. Don't over-explain a correct read.
-- Show the work. Each answer states which filter and signal it used (naming decode, Cacheth
-  tags, live metrics) and what it couldn't confirm. The customer can't correct a read they
-  can't see.
+- Show the work. Each answer states which filter and signal it used (naming decode, which name
+  level it filtered — campaign, ad set, or ad — Cacheth tags, live metrics) and what it
+  couldn't confirm. The customer can't correct a read they can't see.
 - Every correction is logged to `/agent/brain/meta/validation.md` and applied to
   `/agent/brain/meta/account-context.md` so the fix is durable.
 
@@ -279,6 +287,13 @@ the CSM, the customer, and Runneth can all point at.
 ---
 
 # Changelog
+
+## v1.4 (July 2026) — name-level probe
+- Starter question 5 added: "Show me all our [product] ads" with a real product name from the
+  account. Probes whether Runneth filters the right name level (campaign vs ad set vs ad)
+  instead of defaulting product names to campaign references.
+- Show-the-work rule now includes which name level was filtered, so a wrong-level read is
+  visible and correctable in the loop.
 
 ## v1.3 (July 2026) — show the work
 - New loop rule: each answer states which filter and signal it used (naming decode, Cacheth tags,

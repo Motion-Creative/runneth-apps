@@ -1,4 +1,4 @@
-# Meta Creative Attribution Playbook
+# Meta Creative Attributes Playbook
 ### Step 1 of the Meta Onboarding Package
 
 **How Runneth gets per-creative facts for a Meta account — from the creative content layer
@@ -18,10 +18,10 @@ anything. Once done, it gives the Account Context Brain real material to work wi
 The one-line model:
 
 > The **Account Context Brain** tells Runneth **how to analyze** the account. The **Creative
-> Attribution** gives Runneth **the per-creative facts it needs to actually do the job** — via
-> the creative content layer, one enriched record per active creative.
+> Attributes** step gives Runneth **the per-creative facts it needs to actually do the job** —
+> via the creative content layer, one enriched record per active creative.
 
-Creative Attribution does not interpret anything. Interpretation lives in the Account Context
+The Creative Attributes step does not interpret anything. Interpretation lives in the Account Context
 Brain. This step only establishes access to what the Account Context Brain cannot tell it: the
 creative content itself.
 
@@ -105,12 +105,12 @@ never reconstruct the record by hand.
    assume a default workspace — resolve it explicitly before any pull or cache query.
 2. Open with a direct confirmation to the customer:
 
-> I'm starting the Meta Creative Attribution step for **[account name]**. Your creative content —
+> I'm starting the Meta Creative Attributes step for **[account name]**. Your creative content —
 > what each ad says, shows, and is tagged as — is already synced and searchable. What I'll do now
 > is read your ad naming conventions so I can decode them, then we'll move to Step 2 (Account
 > Context Brain) to confirm how you want to judge performance.
 
-3. Record the scope: `workspaceId` confirmed, and today's date as the "attribution as of"
+3. Record the scope: `workspaceId` confirmed, and today's date as the "attributes as of"
    timestamp.
 
 ---
@@ -132,10 +132,15 @@ never reconstruct the record by hand.
    position-based encoding, recurring prefixes, tag-like codes.
 3. If a pattern is detected, build a provisional decode table: position or segment → meaning →
    example values. Mark it **provisional**.
-4. **Pass findings to the Account Context Brain.** When the Account Context Brain runs (Step 2
+4. Note where product/concept tokens live. Each full record's `adUnits[]` (via
+   `motion cache get-creative`) carries the campaign and ad set names alongside each ad name —
+   spot-check a handful of records to see whether the product tokens found in ad names also
+   cascade into campaign or ad set names, or live at the ad level only. Record the provisional
+   placement (e.g. "product names appear in ad names and campaign names") with the decode table.
+5. **Pass findings to the Account Context Brain.** When the Account Context Brain runs (Step 2
    of the onboarding), pre-populate Field 4 (Naming conventions) with this provisional decode
-   table. The Account Context Brain confirms, corrects, or replaces it — it does not start from
-   scratch.
+   table and the product-token placement. The Account Context Brain confirms, corrects, or
+   replaces them — it does not start from scratch.
 
 If no pattern is detected, note "no naming convention detected" as the provisional finding for
 the Account Context Brain to confirm.
