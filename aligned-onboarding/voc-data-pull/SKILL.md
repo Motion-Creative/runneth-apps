@@ -3,10 +3,10 @@ name: voc-data-pull
 description: |
   Pull raw voice-of-customer data - product reviews, support conversations, surveys,
   community posts, and comments - from an available VoC platform into standardized files in
-  the org's brain, one file per item. Use when a covered VoC platform (the Step 1 table:
-  Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom,
-  Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord, YouTube) is reachable by any
-  path - OAuth
+  the org's brain, one file per item. Use when ANY VoC platform - one with a recipe
+  (Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom,
+  Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord, YouTube) or any other
+  reachable platform whose data is customer voice - is reachable by any path - OAuth
   connection, stored API key, or Motion native - and its data should land in files, or when
   the user asks to "pull the reviews", "dump the reviews", "pull support tickets", "sync
   customer conversations to files", or "run the VoC data pull".
@@ -73,9 +73,9 @@ Two connection paths exist and the pull mechanics differ:
 | Motion native | Meta ad comments | `motion meta creative-comments` (no Runneth connect involved) |
 
 The path is how this customer set the platform up, not a property of the platform: any
-covered platform may arrive as an OAuth connection **or** a stored secret, so an
+VoC platform may arrive as an OAuth connection **or** a stored secret, so an
 availability check always checks both `integrations status` and the stored secrets - for
-every covered platform, not just Okendo/Stamped (which are secrets-only because no
+every VoC platform, not just Okendo/Stamped (which are secrets-only because no
 Pipedream app exists for them).
 
 **Driving a platform from a stored secret (instead of the proxy):** the recipe's endpoints
@@ -92,6 +92,16 @@ gap, do not improvise auth.
 Exact endpoints, pagination, discovery steps, and field mappings for every platform are in
 `references/platform-recipes.md` in this skill folder. Read the recipe for the target
 platform before calling anything.
+
+**The recipe list is not the scope - VoC data is the scope.** Any other reachable platform
+whose data is customer voice (reviews, support conversations, surveys, community posts,
+comments) is in scope with no recipe at all: resolve its connection path exactly as above
+(OAuth via the `integrations` proxy, or a stored key via `secure-fetch` with the registry
+guide's base URL and auth shape), then pull it through Step 2's no-recipe path. Platforms
+whose data is not customer voice (commerce, analytics, ads infra, internal comms) stay out
+of scope regardless of reachability. Priority when both kinds are reachable: handle the
+recipe'd platforms first, then the no-recipe ones - and a platform that has a recipe is
+always pulled through its recipe, never freelanced through the no-recipe path.
 
 ## Step 2 - Pull with the platform recipe
 
@@ -117,11 +127,23 @@ stale or incomplete. Specifically:
 - Record every deviation in the run report (what the recipe said, what the API actually
   was) so the recipe gets corrected.
 
+**No recipe at all? Same job, live-first.** A VoC platform with no section in
+`references/platform-recipes.md` is pulled the same way a stale recipe is handled - from
+the live API, start to finish: find the platform's listing endpoints for its customer-voice
+data (its API docs and the registry guide are the sources), discover pagination from the
+response shape, apply the date window client-side unless a server-side bound exists, and
+map the real payload onto the unified record - `source_type` is whichever of the four
+existing types the data actually is (survey responses are `review` when rated,
+`support_conversation` when conversational), the platform's registry slug is the folder
+and `source_platform`, and anything org-specific rides in `custom`. Pull the raw data you
+find. Report it as "no recipe - live-adapted" with the calls used, so a recipe can be
+written from the run.
+
 What never flexes: the hard boundaries (read-only, PII rules, bounded windows), the output
 contract (unified record fields, file shape, id-keyed paths), and honest coverage reporting.
 The only legitimate reasons to stop are auth that fails, an API the org's plan does not
 expose, or a hard boundary - and each of those is reported as an explicit gap, never
-silently.
+silently. A missing recipe is never a reason to stop.
 
 ## Step 3 - Write the files
 
@@ -253,8 +275,9 @@ adapter is a field-mapping exercise, not design work.
 All pulling happens through one daily routine per connected platform (`voc-sync-<platform>`).
 **Setup runs when this package finishes installing (the install is the ask) or when asked
 directly** - never at any other unprompted moment. When triggered, do this for each
-available covered platform - available means the org can reach it by any path (OAuth
-connection, stored API key, or Motion native; Step 1 resolves which): run
+available VoC platform - recipe or no recipe (Step 1's scope rule), and available means
+the org can reach it by any path (OAuth connection, stored API key, or Motion native;
+Step 1 resolves which): run
 `routine list --search "voc-sync-<platform>"` - routine absence is what needs setup, not
 folder state:
 
@@ -286,8 +309,9 @@ runs; a one-off refresh beyond the daily cadence is `routine run --id <routine-i
 
 **Key-auth gate (junip, reviews_io, okendo, stamped, and any key-stored platform):** the
 key is per-customer, so before creating its routine verify access with one bounded call
-(junip: `GET /v1/stores`; reviews_io: the merchant reviews list; okendo: `GET /v1/stores`);
-if it fails, tell the user the key needs replacing and create nothing for that platform.
+(junip: `GET /v1/stores`; reviews_io: the merchant reviews list; okendo: `GET /v1/stores`;
+no-recipe platforms: the smallest listing call the registry guide or API docs name); if it
+fails, tell the user the key needs replacing and create nothing for that platform.
 
 ## Recurring sync runs
 

@@ -146,17 +146,19 @@ Folder: `voc-data-pull/`
 
 - **Job:** pull raw voice-of-customer data - product reviews, support conversations, surveys,
   community posts, and comments - from available VoC platforms into standardized files under
-  `/agent/brain/data-sources/voc/<platform>/`, one file per item. Covered: Judge.me,
-  Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom, Zendesk, Klaviyo,
-  Attentive, Gong, Hotjar, Reddit, Discord, YouTube, and Meta ad comments (the authoritative
-  table is the skill's Step 1). Any of them may be reachable by OAuth connection **or** a stored API
-  key - the connection method is how the customer set it up, never a coverage limit.
+  `/agent/brain/data-sources/voc/<platform>/`, one file per item. Recipes exist for
+  Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom,
+  Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord, YouTube, and Meta ad comments
+  (the authoritative table is the skill's Step 1) - but the scope is customer-voice data,
+  not the recipe list: any other reachable VoC platform gets pulled live-adapted, no recipe
+  needed. Any platform may be reachable by OAuth connection **or** a stored API key - the
+  connection method is how the customer set it up, never a coverage limit.
 - **Own scope rules.** The Meta-only scope rules above do not apply to this part; its
   boundaries live in `voc-data-pull/SKILL.md` (read-only against platforms, bounded
   12-month pulls, PII rules).
-- **Fires at install.** Right after this package installs, Runneth checks which covered VoC
+- **Fires at install.** Right after this package installs, Runneth checks which VoC
   platforms the org can reach - `integrations status` for OAuth connections **and** the
-  stored secrets for every covered platform (any of them may be key-stored instead of
+  stored secrets for every VoC platform (any of them may be key-stored instead of
   connected; Okendo and Stamped always are), plus the Motion connection for Meta ad
   comments - and runs the skill's "Set up the recurring sync" procedure for every reachable
   one: one daily routine per platform (`voc-sync-<platform>`, 6am) whose first run backfills

@@ -9,9 +9,11 @@ place, run the sequence below, without waiting to be asked.
 ## The install-time sequence, in order
 
 1. **Check what the org can reach.** `integrations status` for OAuth connections, plus the
-   stored secrets for **every** covered VoC platform (any platform may be key-stored
-   instead of connected), plus whether a Meta workspace is connected.
-2. **VoC first (it runs in the background).** For each reachable covered platform, run the
+   stored secrets for **every** VoC platform (any platform may be key-stored instead of
+   connected), plus whether a Meta workspace is connected. VoC scope is customer-voice
+   data, not the skill's recipe list - a reachable reviews/support/community platform with
+   no recipe still counts.
+2. **VoC first (it runs in the background).** For each reachable VoC platform, run the
    voc-data-pull skill's "Set up the recurring sync" procedure: create the
    `voc-sync-<platform>` routine and kick its first run. The 12-month backfills churn in
    the background while everything below happens. Never pull VoC data inside this
