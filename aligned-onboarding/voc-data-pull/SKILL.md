@@ -280,10 +280,11 @@ was doc-grounded (not live-verified), say which calls you verified live during t
 - **Okendo / Stamped**: need a customer API key stored as a secret before any pull.
 - **Trustpilot / Yotpo**: recipes are doc-grounded; verify grant coverage and the discovery
   step on first connect before promising data.
-- **Reddit**: recipe is doc-grounded (registry examples, unprobed), and Reddit's API caps
-  every listing at ~1000 items - full date-window coverage may be impossible; report actual
-  coverage honestly. Pull targets (subreddits, search queries) are org-specific and must be
-  confirmed before the first pull.
+- **Reddit**: recipe is doc-grounded (registry examples, unprobed). Reddit's API caps every
+  listing at ~1000 items - the coverage contract is still the full 12-month window: slice
+  the window across listings and date-bounded queries per the recipe, and report any dates
+  that remain unreachable as an explicit gap. Pull targets (subreddits, search queries) are
+  org-specific and must be confirmed before the first pull.
 - **Template deviation, pending sign-off**: the proposed unified template lists a `raw`
   (untouched payload) column; this package deliberately does not persist raw payloads in
   files - leaner files, and no platform PII stored beyond what the mapped fields carry. If

@@ -143,9 +143,13 @@ Two-step:
 - **Pagination:** cursor via fullname `after` tokens (`limit` max 100). Items are under
   `data.children[].data`; the next cursor is `data.after`; stop when `data.after` is null -
   NOT when a page looks short.
-- **Coverage cap (platform-imposed):** every listing tops out at ~1000 items total. If the
-  12-month window holds more, full coverage is impossible through the API - report the real
-  coverage (newest ~1000 per listing) instead of claiming the window is covered.
+- **Coverage contract: the full 12-month window, worked around Reddit's listing limit.**
+  Reddit's API refuses to return more than ~1000 items per listing (platform-imposed, not
+  ours). Do not accept 1000 as the coverage: slice the window instead - pull per listing
+  (subreddit new, top with time filters, search with date-bounded queries) and combine, so
+  each slice stays under the limit and the whole 12 months gets covered. Only if slicing
+  still cannot reach older in-window items, report the exact gap (dates not reachable and
+  why) instead of claiming the window is covered.
 - Date bound: none server-side on listings - `sort=new` plus client-side cutoff on
   `created_utc`.
 - Field mapping: `title` <- `title` (posts; null for comments); body <- `selftext` (posts) /

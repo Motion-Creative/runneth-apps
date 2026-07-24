@@ -63,7 +63,8 @@ Meta validation gate (workspace <workspaceId>):
 
 Do not start validation until both are true:
 
-1. **Account Context Brain is `[CONFIRMED]`.** All nine required interpretation fields signed off
+1. **Account Context Brain is `[CONFIRMED]`** - check the fields-confirmed count in the "File
+   metadata" block at the end of `/agent/brain/meta/account-context.md`. All nine required interpretation fields signed off
    by a person. If any field is still `[AUTO]` or `[FLAGGED]`, finish that first. Validating
    against a guessed lens teaches the customer the wrong thing.
 2. **The creative content layer is ready.** The workspace's creatives are in Cacheth: Knoweth

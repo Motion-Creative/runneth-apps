@@ -1,22 +1,26 @@
-# Meta Onboarding Package: Overview
+# Aligned Onboarding Package: Overview
 
-This package teaches Runneth how to understand and work inside a customer's Meta ad account. It
-ships as two parts that run in order.
+This is the onboarding bundle for a customer's brain. Installing it stages files only; one
+manual trigger runs it; routines and guard blocks keep it current afterward. Its parts do two
+jobs, in order: **land the data** (VoC pulls into brain files, the creative layer in Cacheth),
+then **teach the interpretation** (Account Context Brain, Validation) - with Knoweth
+organizing the result so retrieval stays tight.
 
-The two parts:
+The parts, and their operational nature:
 
-- **Creative Attributes** - the per-creative facts Runneth works with.
-- **Account Context Brain** - how Runneth analyzes those facts.
+- **VoC Data Pull** - background: setup once, daily routines do the work.
+- **Creative Attributes** - establishes the creative layer (Cacheth) and naming detection.
+- **Account Context Brain** - human-gated interview; autofill first, gap questions to a person.
+- **Meta Validation** - human-gated proof loop.
+- **Meta Ad Performance Analysis** - on-demand diagnostic skill; nothing self-runs.
+- **Knoweth organize** - self-gating: fires on its own conditions once content lands; do not
+  force it.
 
 The one-line model:
 
-> **The Creative Attributes step gives Runneth the per-creative facts it needs. The Account
-> Context Brain tells Runneth how to analyze them.**
-
-Run them in this order. Creative Attributes first: it collects raw facts without interpreting
-anything, and those facts give the Account Context Brain real material to work with. Account
-Context Brain second: it confirms how the team judges performance, drawing on what the Creative
-Attributes step found.
+> **The data parts give Runneth the org's raw material - customer voice and creative facts.
+> The interpretation parts teach it how this account judges that material. Knoweth holds the
+> structure so both stay findable as the brain grows.**
 
 ---
 
@@ -49,7 +53,7 @@ package writes it to brain files.
 
 ---
 
-## The two parts
+## The Meta parts in detail
 
 ### Creative Attributes
 File: `meta/meta-creative-attributes-playbook.md`
@@ -121,7 +125,7 @@ Folder: `voc-data-pull/`
   12-month pulls, PII rules).
 - **Manually triggered, like everything here.** Installing stages the skill only. When the
   onboarding run (or a person) asks to set up the VoC data sync, Runneth runs the skill's
-  "Set up the recurring sync" procedure: one daily routine per connected platform
+  "Set up the recurring sync" procedure: one daily routine per available platform
   (`voc-sync-<platform>`, 6am) whose first run backfills and whose daily runs pull only new
   items. Nothing runs just because a platform is connected.
 - **Installs to the skills root** (`/agent/.agents/skills/voc-data-pull/`), not the brain -
@@ -164,7 +168,7 @@ Folder: `meta-ad-performance-analysis/`
 3. **Activate and run the Account Context Brain (Step 2).** Merge the guard block into
    `/agent/user.md`, then run the fill-in. Confirms how the team judges performance, drawing on
    the Creative Attributes step (if it was run) for naming proposals and creative evidence.
-4. **Set up the VoC data sync (when asked).** For each connected VoC platform, run the
+4. **Set up the VoC data sync (when asked).** For each available VoC platform, run the
    voc-data-pull skill's "Set up the recurring sync" procedure - it creates the daily sync
    routine and kicks the backfill in the background.
 5. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
@@ -180,7 +184,7 @@ Folder: `meta-ad-performance-analysis/`
 
 ---
 
-## How the two parts relate
+## How the Meta parts relate
 
 - Creative Attributes are the material. Account Context Brain is the lens. A performance question
   uses the Account Context Brain to decide what "best" means, then the creative attributes to

@@ -24,9 +24,11 @@ This is the last setup step of the combined run and the first line of ongoing ma
 <!-- BEGIN runneth:knoweth-organize v2 -->
 Knoweth organize (after the questions are answered):
 - Organize the brain when all three gates hold; do not wait to be asked:
-  (1) the account interpretation is [CONFIRMED] (/agent/brain/meta/account-context.md signed off);
+  (1) the account interpretation is [CONFIRMED] - check the fields-confirmed count in the
+  "File metadata" block at the end of /agent/brain/meta/account-context.md;
   (2) content has landed: the voc-sync-<platform> backfill reports full date-window coverage (not
-  just files existing), and creatives are in Cacheth;
+  just files existing - read the latest run summary via routine history --id <routine-id>),
+  and creatives are in Cacheth;
   (3) /agent/brain/_tag-vocabulary.md does not exist - writing it is the organize step's last act,
   so its existence means done; update the file instead of re-running.
 - TODAY only three lanes are searched: global, user:<userId>, and project:<workspaceId> (the
@@ -49,7 +51,9 @@ Knoweth organize (after the questions are answered):
 Knoweth brain discipline (all writes, going forward):
 - On every save (from a pull, a conversation, or an upload), route it: raw vs compiled vs spec; the
   data-source family folder (voc -> data-sources/voc/**, meta -> /agent/brain/meta/**); tags/attributes
-  and provenance. Keep it in the global lane so it is searchable today; the folder is for human
+  and provenance. Raw VoC files keep their skill-owned format - never add tags or front-matter
+  to them; facet vocabulary goes in the compiled analysis pages that cite them. Keep it in the
+  global lane so it is searchable today; the folder is for human
   navigation, not a lane. Cacheth is the system of record for per-creative content: write a
   per-creative file only when a person explicitly asks, and treat it as a dated snapshot (the
   cache stays the retrieval source of truth for current facts). Performance metrics are pulled
@@ -211,7 +215,7 @@ Knoweth reads a TOML config (`version = 2`). The pieces that matter for lanes/pr
 - `[[lane_assignments]]` override the lane for a root-relative path glob, last match wins (e.g. `css-2026/**` -> `project:css-2026`). This is how a project or business lane is carved out of a tree.
 - `[policy]` with `default_read_lanes` and `[[policy.lane_grants]]` keyed by `user_id` and/or `project_id` (each `read = [lanes...]`, optional `write`) is the ACL: it decides which layered lanes a request can read. User/team separation lives here (grant `user:alice` only to `user_id = "alice"`).
 - `[embeddings]`, `[hybrid]`, `[resolver]` tune the search channels (checked-in default is guarded OpenAI hybrid: lexical + graph + adaptive dense, fused with RRF).
-The lane count matters because every authorized lane is scored per query; keep the set small (verify the cap). **Caveat: today only `global`, `user:<userId>`, and `project:<workspaceId>` are in the requested read set, so `[[lane_assignments]]` that create family/initiative lanes are forward-path only, using them now hides content.** Keep content in `global` plus tags until the harness layers configured lanes. The skeleton plus the metadata/tag conventions are the content the config's roots/assignments are generated from. Note the repo is migrating to the OS package format (`package.json` schema-v1, targets under `agent_brain`/`agent_skills`/`agent_tools`/`agent_apps`); the Knoweth package registers there.
+The lane count matters because every authorized lane is scored per query; keep the set small (verify the cap). **Caveat: today only `global`, `user:<userId>`, and `project:<workspaceId>` are in the requested read set, so `[[lane_assignments]]` that create family/initiative lanes are forward-path only, using them now hides content.** Keep content in `global` plus tags until the harness layers configured lanes. The skeleton plus the metadata/tag conventions are the content the config's roots/assignments are generated from.
 
 ---
 
@@ -374,3 +378,8 @@ This doc is findable reference knowledge. On its own it does not hard-enforce la
 
 ### v0.5 (July 2026) — naming decoder JSON (ACB v1.23)
 - The confirmed Meta naming decode now has an operational output: `/agent/brain/meta/naming-decoder.json`, written and owned by Account Context Field 4 (typed positions, query fields, filter patterns). The answer standard's read-the-decode-first rule, the routing list, the indexed-content list, and the skeleton all point to it alongside `account-context.md`. This is the Meta ad-name decoder, distinct from the brain-wide tag vocabulary + naming decoder at `/agent/brain/_tag-vocabulary.md`.
+
+### v1.0 (July 2026) — final
+- Guard 1 names its check sources: the fields-confirmed count in account-context.md's "File metadata" block (gate 1) and `routine history --id <routine-id>` for the backfill coverage report (gate 2).
+- Guard 2 exempts raw VoC files from save-tagging - their format is owned by the voc-data-pull skill; facet vocabulary lives in the compiled pages that cite them.
+- Repo-meta packaging note removed from the config section.
