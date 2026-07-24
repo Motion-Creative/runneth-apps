@@ -1,23 +1,23 @@
 # VoC platform pull recipes
 
 Per-platform endpoints, pagination, discovery steps, and unified-template field mappings.
-Evidence levels: **live-verified** (probed through the real Connect proxy on a dev account)
-vs **doc-grounded** (provider docs, unprobed - verify with a bounded call before promising
-data). Registry slugs are the Builder integration registry's; use them as `--app` values and
-as the `data-sources/voc/<platform>/` folder name.
+Evidence levels: **live-verified** (probed through the real Connect proxy on a real
+account), **registry-verified** (paths and mechanics confirmed in the Builder integration
+registry's curated, live-probe-informed examples - not probed on a customer account here),
+and **doc-grounded** (provider docs, unprobed - verify with a bounded call before
+promising data). Recipes are best-effort guidance, not law: the live API is the truth,
+adaptation is expected, and a stale recipe must never stop a pull (see the skill's Step 2
+mandate). Registry slugs are the Builder integration registry's; use them as `--app`
+values and as the `data-sources/voc/<platform>/` folder name.
 
 Pagination defaults for every platform: page size 100 (or the platform max), and a
 client-side date cutoff on the item's created date except where a server-side bound
-exists. Two platforms have one: Yotpo is the only *list* endpoint with a date param
-(`updated_at_min`), and Intercom has a date-boundable *search* endpoint
-(`POST /conversations/search`) - prefer those over client-side cutoffs on their platforms.
+exists - each recipe states its own date bound; prefer a server-side bound over a
+client-side cutoff wherever the recipe has one.
 
-**The date window is the coverage contract**: a pull is complete only when paging has
-reached items older than the cutoff (or the platform's last page). The 50-pages-per-run
-cap is runaway protection, not a coverage limit - if you hit it before reaching the
-cutoff, the pull is NOT complete: say so, then keep going in further batches (resuming
-from the last page) until the window is covered. Never treat a capped run as done, and
-never silently drop in-window items because of the cap.
+**The coverage contract (window, page-cap resume, "coverage stopped at" reporting) is
+owned by the skill** - `SKILL.md`'s hard boundaries and Step 4 report rules. Recipes only
+state each platform's mechanics; they never redefine coverage.
 
 ---
 
@@ -35,15 +35,18 @@ never silently drop in-window items because of the cap.
   media in `pictures[]` is not carried into the file; `source_url` <- null (the list payload
   carries no permalink).
 
-## trustpilot (Pipedream OAuth) - doc-grounded, verify on first connect
+## trustpilot (Pipedream OAuth, keys in connect modal) - registry-verified paths, verify on first connect
 
-Two-step:
+Use relative paths through the proxy (the connected account carries the API host). Two-step:
 
-1. Discovery: `GET /v1/business-units/find?name={domain}` -> `businessUnitId`
+1. Discovery: `GET /v1/business-units/find?name={domain}` (`name` = the website domain,
+   required) -> `businessUnitId`; or `GET /v1/business-units/search?query={partialName}`.
+   Resolve once and reuse.
 2. List: `GET /v1/business-units/{businessUnitId}/reviews?perPage=100&page=1` (public
-   reviews; `stars` filter available). A private-reviews variant exists at
-   `/v1/private/business-units/{businessUnitId}/reviews` - scope-dependent, verify the grant
-   on connect.
+   reviews; `perPage` max 100; `stars`, `language`, `orderBy` filters available). Private
+   reviews with consumer details live at
+   `/v1/private/business-units/{businessUnitId}/reviews` and need the business-user OAuth
+   token - verify the grant on connect.
 
 - Date bound: none - client-side cutoff.
 - Field mapping: `rating` <- `stars`; body <- `text`; `title` <- `title`;
@@ -53,26 +56,38 @@ Two-step:
 - **`product_ref` is always null**: Trustpilot core is company-level reviews. Product reviews
   are a separate API surface - verify grant coverage before using it.
 
-## yotpo (Pipedream OAuth) - doc-grounded, verify on first connect
+## yotpo (Pipedream OAuth) - API mechanics live-verified (proxy path still unverified: plan-gated connect)
 
-- Discovery: every call needs the per-account `{appKey}`. Where it comes from on a fresh
-  connect (connected-account metadata vs an API discovery call) must be verified when the
-  account exists - treat it as the first-call gap.
-- List: `GET https://api.yotpo.com/v1/apps/{appKey}/reviews?count=100&page=1` with `star={n}`
-  and `updated_at_min=YYYY-MM-DD` filters.
-- Date bound: `updated_at_min` - **the only platform here with a native date bound**.
+- Discovery: every call needs the per-account `{appKey}` - asked for in the connect modal
+  (App Key), carried by the connected account.
+- List: `GET https://api.yotpo.com/v1/apps/{appKey}/reviews?count=100&page=1`. **Reviews
+  return oldest first**; sort/direction params are silently ignored - page forward until a
+  page repeats/empties.
+- Date bound (live-verified): `since_date=YYYY-MM-DD` filters on creation date - use it for
+  backfill and incremental. `updated_at_min` does NOT work. `since_updated_at` works but
+  sorts by id ascending and mixes in older recently-edited reviews - if you use it to catch
+  edits, filter client-side for genuinely new items.
 - Field mapping: `rating` <- `score`; body <- `content`; `title` <- `title`;
   `author_name` <- `user.display_name`; `created_at` <- `created_at`; `product_ref` <- `sku`;
   `verified` <- `verified_buyer`; votes are not carried into the file; `source_url` <- null (no
   permalink in the list payload).
 
-## junip (keys-auth in Pipedream) - BLOCKED: no working key verified
+## junip (keys-auth in Pipedream) - live-verified against a customer account
 
-- The registry entry's only example is `GET /v1/stores` on `https://api.juniphq.com` (a
-  connection check). Junip's docs describe `GET /v1/product_reviews` (cursor-paginated).
-- Doc-grounded with no scope truth: start with a bounded read (one small page) before
-  promising anything. If the stored key 401s, the key is dead - route to reconnection, do
-  not retry.
+- Connect asks for the Store Key (needs-setup). Base `https://api.juniphq.com`; verify the
+  key with `GET /v1/stores` (also returns store rating average + distribution).
+- List: `GET /v1/product_reviews` (newest first) and `GET /v1/store_reviews`. **v1 only -
+  v2 paths 404 through this connection.**
+- Pagination (live-verified): cursor via `?page[after]={cursor}`, taking the value from
+  `meta.page.after`; null cursor = last page. Pages are fixed at 50 rows - page-size params
+  are ignored.
+- **No server-side date or product filter - every filter param tested is ignored.** Pull
+  pages newest-first and cut client-side on the review's created date; filter by product id
+  client-side too.
+- Field mapping: `rating` <- rating; body <- review body; `title` <- title;
+  `author_name` <- **null on payloads (display names are not returned)** - put the stable
+  customer id in `custom` instead; `created_at` <- created; `verified` <- verified-buyer
+  flag; `product_ref` <- product id; `source_url` <- null.
 
 ## okendo (secrets path - NOT in Pipedream's catalog)
 
@@ -108,8 +123,10 @@ Two-step:
   `created_datetime`; `updated_at` <- `updated_datetime`; `reply_count` <-
   `messages_count - 1` (`messages_count` includes the root message; `reply_count` counts
   messages beyond it); `custom` <- `custom_fields` (pass through as-is - this is where
-  org-specific headers like Category/Detail/Customer tier come from); `rating` is null (no
-  CSAT on the ticket object); `source_url` <- construct `https://<account domain>/app/ticket/<id>`
+  org-specific headers like Category/Detail/Customer tier come from); `rating` <- CSAT when
+  available: `GET /api/satisfaction-surveys?limit=100` returns scores and comments once
+  customers respond - join by ticket id (the ticket object itself carries no CSAT);
+  `source_url` <- construct `https://<account domain>/app/ticket/<id>`
   from the domain in the `/api/account` response - null if the domain is unknown.
 
 ## intercom (Pipedream OAuth) - live-verified. Conversations + CSAT, not reviews.
@@ -180,19 +197,112 @@ Two-step:
 
 ---
 
+## reviews_io (keys in Pipedream connect modal) - registry-verified paths. Merchant + product reviews.
+
+- Writes `review` files. Auth is a Pipedream-managed Store ID + API key; **API credentials
+  exist only on an active Plus plan** - trial and lower plans have none. Static base
+  `https://api.reviews.io`.
+- List: `GET /merchant/reviews?per_page=25&page=1` (company-level) and
+  `GET /product/review?per_page=25&page=1` (product-level, singular path; `sku={sku}` to
+  filter one product). Page until a short page.
+- Date bound: none documented - newest-first plus client-side cutoff; verify ordering on
+  first pull.
+- Field mapping (doc-grounded): `rating` <- rating; body <- review text; `title` <- title;
+  `author_name` <- reviewer name; `created_at` <- date; `product_ref` <- sku (product
+  reviews) / null (merchant); `verified`/`source_url` <- verify against a real payload.
+
+## zendesk (Pipedream OAuth) - doc-grounded, verify on first connect. Support conversations.
+
+- Writes `ticket` files. List: `GET /api/v2/tickets` (cursor pagination via
+  `page[after]`); comments per ticket via `GET /api/v2/tickets/{id}/comments`.
+- Date bound: incremental exports support `start_time`; otherwise sort by `updated_at`
+  desc with a client-side cutoff. Use `updated_at` for the re-pull bound.
+- Field mapping (doc-grounded): body <- ticket subject + comment bodies (one `###` section
+  per comment, in order); `author_name` <- requester name; `created_at` <- `created_at`;
+  `reply_count` <- comment count - 1; `rating` <- satisfaction rating when present;
+  `source_url` <- the agent-facing ticket URL.
+
+## klaviyo (Pipedream OAuth or stored key) - registry-verified. Reviews product.
+
+- Writes `review` files from Klaviyo Reviews. List:
+  `GET /api/reviews/?filter=greater-or-equal(created,<ISO>)&sort=-created` - server-side
+  date bound plus newest-first, use it for both backfill and incremental. The required
+  `revision` header is sent automatically by Builder through the Pipedream proxy - **on the
+  stored-secret path you must send it yourself** (`revision: 2026-04-15`, base
+  `https://a.klaviyo.com`, `Authorization: Klaviyo-API-Key <key>`).
+- Pagination: follow the full `links.next` URL from the response - do not build the cursor
+  yourself.
+- Field mapping (doc-grounded): `rating` <- `attributes.rating`; body <-
+  `attributes.content`; `title` <- `attributes.title`; `product_ref` <- related product id;
+  `author_name` <- `attributes.author`; `created_at` <- `attributes.created`;
+  `verified` <- `attributes.verified`; `source_url` <- null.
+
+## attentive (Pipedream OAuth or stored key) - doc-grounded, verify on first connect. SMS replies.
+
+- Writes `ticket` files (one conversation per subscriber thread). API surface for message
+  history is limited - verify what the org's plan exposes before promising data; if only
+  webhooks exist, report that as a gap rather than polling.
+- Field mapping (doc-grounded): body <- message texts in order; `author_name` <- subscriber
+  phone/name; `created_at` <- message timestamp; `rating`/`verified`/`product_ref` <- null.
+
+## gong (Pipedream OAuth, one-click) - registry-verified. Recorded customer calls.
+
+- Writes `ticket` files (one per call; the transcript is the conversation). Gong uses a
+  per-account API host - use relative `/v2/` paths through the proxy, never a hardcoded
+  domain.
+- List: `GET /v2/calls?fromDateTime=<ISO>&toDateTime=<ISO>` for the simple list; for richer
+  fields use `POST /v2/calls/extensive` with `{"filter": {"fromDateTime": ...},
+  "contentSelector": {"context": "Extended"}}` (cursor rides in the request body).
+  Transcripts: `POST /v2/calls/transcript` with `{"filter": {"callIds": [...]}}`.
+- Date bound: server-side `fromDateTime`/`toDateTime` - use for both backfill and
+  incremental.
+- Field mapping (doc-grounded): body <- transcript turns as `###` sections per speaker;
+  `author_name` <- external participant name; `created_at` <- call `started`;
+  `reply_count` <- turn count - 1; `source_url` <- call URL when exposed.
+
+## hotjar (Pipedream OAuth or stored key) - doc-grounded, verify on first connect. Surveys + feedback.
+
+- Writes `review` files (a survey/feedback response maps to the review shape: score ->
+  `rating`, response text -> body). List: survey responses endpoint per site id - verify
+  the exact path against the org's plan on first connect.
+- Field mapping (doc-grounded): `rating` <- score (normalize to the platform's scale noted
+  in `custom`); body <- open-text response; `created_at` <- response timestamp;
+  `author_name`/`verified`/`product_ref` <- null unless the survey captures them.
+
+## discord (Pipedream OAuth) - doc-grounded, verify on first connect. Community posts.
+
+- Writes `community_post` files, same shape as Reddit. Pull targets (guild + channels) are
+  org-specific and must be confirmed before the first pull. List:
+  `GET /channels/{channelId}/messages` (cursor pagination via `before`).
+- Date bound: none server-side - client-side cutoff on message timestamp.
+- Field mapping (doc-grounded): body <- `content`; `author_name` <- author username;
+  `created_at` <- `timestamp`; `reactions_total` <- sum of reaction counts;
+  `parent_ref` <- referenced message id for replies/threads; `source_url` <- message link
+  (`https://discord.com/channels/<guild>/<channel>/<message>`).
+
+## youtube (registry: `youtube_data`) - doc-grounded, verify on first connect. Video comments.
+
+- Writes `comment` files, same species as Meta ad comments. List:
+  `GET /youtube/v3/commentThreads?allThreadsRelatedToChannelId=<channelId>` (cursor
+  pagination via `pageToken`); replies ride in the thread payload or via `comments.list`.
+- Date bound: none server-side on threads - order by time and cut client-side on
+  `publishedAt`.
+- Field mapping (doc-grounded): body <- `textOriginal`; `author_name` <-
+  `authorDisplayName`; `created_at` <- `publishedAt`; `reactions_total` <- `likeCount`;
+  `reply_count` <- `totalReplyCount`; `parent_ref` <- parent comment id for replies;
+  `source_url` <- video URL + comment anchor.
+
 ## Variation summary (what actually changes per platform)
 
-| dimension | judge_me | trustpilot | yotpo | okendo | stamped |
-|---|---|---|---|---|---|
-| rating field | `rating` | `stars` | `score` | `rating` | `reviewRating` |
-| text field | `body` | `text` | `content` | `body` | `reviewMessage` |
-| product ref | Shopify product id | **none (company-level)** | `sku` | `productId` | `productId` |
-| date bound on API | none (client-side) | none (client-side) | **`updated_at_min`** | TBD | TBD |
-| pagination | page number | page number | page number | cursor | page number (doc-grounded) |
-| discovery step | none | businessUnitId | **appKey** | storeId | storeHash |
-| connection path | OAuth registry | OAuth registry | OAuth registry | **secret key** | **secret key** |
+| dimension | judge_me | trustpilot | yotpo | junip | okendo | stamped |
+|---|---|---|---|---|---|---|
+| rating field | `rating` | `stars` | `score` | `rating` | `rating` | `reviewRating` |
+| text field | `body` | `text` | `content` | `body` | `body` | `reviewMessage` |
+| product ref | Shopify product id | **none (company-level)** | `sku` | `product.remote_id` | `productId` | `productId` |
+| date bound on API | none (client-side) | none (client-side) | **`since_date`** | none (client-side) | TBD | TBD |
+| pagination | page number | page number | page number (oldest-first) | `page[after]` cursor | cursor | page number (doc-grounded) |
+| discovery step | none | businessUnitId | **appKey** | none | storeId | storeHash |
+| connection path | OAuth registry | OAuth registry | OAuth registry | **secret key** | **secret key** | **secret key** |
 
-Junip is omitted from the table: its recipe is blocked on a working key and the registry
-entry has no reviews-pull example, so there are no comparable facts to tabulate yet. The
-support platforms (Gorgias, Intercom) and Meta ad comments are covered by their own recipe
-sections above rather than this review-platform table.
+Reviews.io and the non-review platforms (support, engagement, community, Meta ad comments)
+are covered by their own recipe sections above rather than this review-platform table.

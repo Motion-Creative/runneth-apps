@@ -1,10 +1,13 @@
 # Aligned Onboarding Package: Overview
 
-This is the onboarding bundle for a customer's brain. Installing it stages files only; one
-manual trigger runs it; routines and guard blocks keep it current afterward. Its parts do two
-jobs, in order: **land the data** (VoC pulls into brain files, the creative layer in Cacheth),
-then **teach the interpretation** (Account Context Brain, Validation) - with Knoweth
-organizing the result so retrieval stays tight.
+This is the onboarding bundle for a customer's brain. Installing it is the trigger: the
+install conversation copies this folder's files to their destinations on the VM (per
+`install-config.json` - skill files to `/agent/.agents/skills/`, docs to
+`/agent/brain/aligned-onboarding/`) and immediately runs the package for everything the
+org already has connected (see "After install" below); routines and guard blocks keep it
+current afterward. Its parts do two jobs, in order: **land the data** (VoC pulls into brain
+files, the creative layer in Cacheth), then **teach the interpretation** (Account Context
+Brain, Validation) - with Knoweth organizing the result so retrieval stays tight.
 
 The parts, and their operational nature:
 
@@ -54,6 +57,11 @@ package writes it to brain files.
 ---
 
 ## The Meta parts in detail
+
+- **Fires at install.** Right after this package installs, when a Meta workspace is
+  connected, Runneth runs the Creative Attributes step and then the Account Context Brain
+  interview (autofill first, then the gap questions a human must answer) - per
+  `post-install.md`. Validation and Knoweth organize fire later from their own gates.
 
 ### Creative Attributes
 File: `meta/meta-creative-attributes-playbook.md`
@@ -136,19 +144,24 @@ File: `meta/cacheth-command-reference.md`
 
 Folder: `voc-data-pull/`
 
-- **Job:** pull raw voice-of-customer data - product reviews, support conversations, community
-  posts, and ad comments - from available VoC platforms (Judge.me, Trustpilot, Yotpo, Junip,
-  Gorgias, Intercom, Reddit, Okendo, Stamped - reachable by OAuth connection, stored API key,
-  or Motion native alike) into standardized files under
-  `/agent/brain/data-sources/voc/<platform>/`, one file per item.
+- **Job:** pull raw voice-of-customer data - product reviews, support conversations, surveys,
+  community posts, and comments - from available VoC platforms into standardized files under
+  `/agent/brain/data-sources/voc/<platform>/`, one file per item. Covered: Judge.me,
+  Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom, Zendesk, Klaviyo,
+  Attentive, Gong, Hotjar, Reddit, Discord, YouTube, and Meta ad comments (the authoritative
+  table is the skill's Step 1). Any of them may be reachable by OAuth connection **or** a stored API
+  key - the connection method is how the customer set it up, never a coverage limit.
 - **Own scope rules.** The Meta-only scope rules above do not apply to this part; its
   boundaries live in `voc-data-pull/SKILL.md` (read-only against platforms, bounded
   12-month pulls, PII rules).
-- **Manually triggered, like everything here.** Installing stages the skill only. When the
-  onboarding run (or a person) asks to set up the VoC data sync, Runneth runs the skill's
-  "Set up the recurring sync" procedure: one daily routine per available platform
-  (`voc-sync-<platform>`, 6am) whose first run backfills and whose daily runs pull only new
-  items. Nothing runs just because a platform is connected.
+- **Fires at install.** Right after this package installs, Runneth checks which covered VoC
+  platforms the org can reach - `integrations status` for OAuth connections **and** the
+  stored secrets for every covered platform (any of them may be key-stored instead of
+  connected; Okendo and Stamped always are), plus the Motion connection for Meta ad
+  comments - and runs the skill's "Set up the recurring sync" procedure for every reachable
+  one: one daily routine per platform (`voc-sync-<platform>`, 6am) whose first run backfills
+  and whose daily runs pull only new items. A platform connected later gets set up on ask -
+  nothing runs just because a platform connects.
 - **Installs to the skills root** (`/agent/.agents/skills/voc-data-pull/`), not the brain -
   see the install entries in `install-config.json`.
 
@@ -164,8 +177,8 @@ Folder: `meta-ad-performance-analysis/`
   rate, engagement, CTR outbound, conversion rate, AOV — to locate exactly where in the funnel
   the ad wins or loses. Account-agnostic: with one exception (first frame retention's 90%
   standard), everything is read against the account's own averages, never universal benchmarks.
-- **Runs on demand.** Triggered when someone asks how an ad is doing, why it is or isn't
-  working, or to compare ads. Installing only stages the skill; nothing self-runs.
+- **Runs on demand - does not fire at install.** Triggered when someone asks how an ad is
+  doing, why it is or isn't working, or to compare ads. Installing only stages the skill.
 - **What it leans on:** the scope rules above apply in full. Interpretation (winner metric,
   targets, naming decode, spend floor) comes from `/agent/brain/meta/account-context.md`,
   guard-enforced — never Motion workspace settings. Metrics are pulled live via the `motion`
@@ -177,6 +190,14 @@ Folder: `meta-ad-performance-analysis/`
   the brain - see the install entry in `install-config.json`.
 
 ---
+
+## After install: the package fires itself
+
+**Run [`post-install.md`](post-install.md) the moment this package's files land - every
+install, no exceptions.** Installing is the trigger - `install-config.json`'s `post_install`
+key, its final install entry, and this line all point at the same file, which carries the
+executable install-time sequence (reachability check, VoC sync setup, Meta context steps,
+guard merges). The run order below is the human-readable description of the same lifecycle.
 
 ## Install and run order
 

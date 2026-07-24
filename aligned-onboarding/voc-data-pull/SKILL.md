@@ -1,13 +1,15 @@
 ---
 name: voc-data-pull
 description: |
-  Pull raw voice-of-customer data - product reviews, support conversations, community posts,
-  and ad comments - from an available VoC platform into standardized files in the org's brain,
-  one file per review/ticket/post/comment. Use when a covered VoC platform (the Step 1 table:
-  Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Gorgias, Intercom, Reddit) is reachable
-  by any path - OAuth connection, stored API key, or Motion native - and its data should land
-  in files, or when the user asks to "pull the reviews", "dump the reviews", "pull support
-  tickets", "sync customer conversations to files", or "run the VoC data pull".
+  Pull raw voice-of-customer data - product reviews, support conversations, surveys,
+  community posts, and comments - from an available VoC platform into standardized files in
+  the org's brain, one file per item. Use when a covered VoC platform (the Step 1 table:
+  Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom,
+  Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord, YouTube) is reachable by any
+  path - OAuth
+  connection, stored API key, or Motion native - and its data should land in files, or when
+  the user asks to "pull the reviews", "dump the reviews", "pull support tickets", "sync
+  customer conversations to files", or "run the VoC data pull".
   Do NOT use for analyzing reviews (analyzing skill), building integration guides, or one-off
   API questions about a platform.
 ---
@@ -21,9 +23,11 @@ on these files, so shape consistency matters more than volume.
 
 ## When to use
 
-- The team or user asks to set up the VoC data sync (directly, or as part of an
-  onboarding run) -> run the "Set up the recurring sync" procedure below. Setup never
-  happens unprompted.
+- The aligned-onboarding package (the package that carries this skill) just finished
+  installing on this VM - that install is the ask, per its README's "After install"
+  section - or the team or user asks to set up the VoC data sync -> run the "Set up the
+  recurring sync" procedure below. Setup never happens at any other unprompted moment -
+  never just because a platform connects.
 - A `voc-sync-<platform>` routine run is executing (the normal path - see Recurring sync
   runs below).
 - The user asks to pull, refresh, or extend VoC data, or asks for reviews/support
@@ -40,11 +44,15 @@ the window rules below fully determine what to pull.
   through a VoC platform API.
 - **Bounded pulls, complete within the bound.** Default to the trailing 12 months; the date
   window is the coverage contract - everything inside it gets pulled, nothing outside it
-  does. Use a server-side date bound where one exists (Yotpo's `updated_at_min`, Intercom's
+  does. Use a server-side date bound where the platform's recipe names one (e.g. Yotpo's
+  `since_date`, Klaviyo's `created` filter, Gong's `fromDateTime`, Intercom's
   `POST /conversations/search`); everywhere else, page newest-first and stop once items are
-  older than the cutoff. The per-run page cap in the recipes header is runaway protection
-  only: hitting it means "pause, report, and continue in further batches until the window
-  is covered" - never "done."
+  older than the cutoff. The 50-pages-per-run cap is runaway protection only: hitting it
+  means "pause, report, and continue in further batches until the window is covered" -
+  never "done." A run that ends short of coverage states "coverage stopped at
+  <oldest covered date>" per account in its summary (Step 4), and the next run resumes
+  from that date before the normal incremental window. This section owns the coverage
+  contract; recipes only state per-platform mechanics.
 - **Raw data files are separate from integration guides.** Never write pulled data into
   `/agent/brain/integrations/<source>/` - the integration guide spec explicitly forbids raw
   dumps in guides. VoC data lives only under `/agent/brain/data-sources/voc/`.
@@ -60,9 +68,26 @@ Two connection paths exist and the pull mechanics differ:
 
 | Path | Platforms | How to call the API |
 |---|---|---|
-| Pipedream OAuth | `judge_me`, `trustpilot`, `yotpo`, `gorgias_oauth`, `intercom`, `reddit`, `junip` (keys-auth in Pipedream) | `integrations` CLI: check `integrations status --app <slug>`, pick the account with `integrations accounts --app <slug>`, then `integrations proxy --app <slug> --account <accountId> --method GET --path <path>` (or the registered app command) |
-| Stored secret (customer API key) | `okendo`, `stamped` | `secure-fetch` (`n run --url <url> --secret-key <SECRET_KEY> ...`) per `/runneth/references/secure-fetch-cli--command-contracts.md`. If no stored key exists, request one via the secret-collection flow - never ask for the key in chat. |
+| Pipedream OAuth | `judge_me`, `trustpilot`, `yotpo`, `gorgias_oauth`, `intercom`, `reddit`, `zendesk`, `klaviyo`, `attentive`, `gong`, `hotjar`, `discord`, `youtube_data`, `junip` and `reviews_io` (keys-auth in Pipedream) | `integrations` CLI: check `integrations status --app <slug>`, pick the account with `integrations accounts --app <slug>`, then `integrations proxy --app <slug> --account <accountId> --method GET --path <path>` (or the registered app command) |
+| Stored secret (customer API key) | `okendo`, `stamped` - and **any platform above whose org stores a key instead of connecting OAuth** | `secure-fetch` (`n run --url <url> --secret-key <SECRET_KEY> ...`) per `/runneth/references/secure-fetch-cli--command-contracts.md`. If no stored key exists, request one via the secret-collection flow - never ask for the key in chat. |
 | Motion native | Meta ad comments | `motion meta creative-comments` (no Runneth connect involved) |
+
+The path is how this customer set the platform up, not a property of the platform: any
+covered platform may arrive as an OAuth connection **or** a stored secret, so an
+availability check always checks both `integrations status` and the stored secrets - for
+every covered platform, not just Okendo/Stamped (which are secrets-only because no
+Pipedream app exists for them).
+
+**Driving a platform from a stored secret (instead of the proxy):** the recipe's endpoints
+and mappings stay the same, but you must supply what the proxy normally injects. Get the
+base URL, auth header shape, and platform notes from the app's registry-backed guide (the
+`integrations` CLI catalog / the registered app's guide - it exists even before a connect).
+Known proxy-injected specifics: Klaviyo's `revision` header is auto-sent only through the
+proxy - on the secrets path send it yourself (see the recipe); Gong, Gorgias, and Zendesk
+use per-account hosts - get the account's host from the customer, never guess it. A
+platform whose API only accepts OAuth tokens cannot be driven by a static key at all - the
+bounded verification call settles that per org; if it fails on the secrets path, report the
+gap, do not improvise auth.
 
 Exact endpoints, pagination, discovery steps, and field mappings for every platform are in
 `references/platform-recipes.md` in this skill folder. Read the recipe for the target
@@ -70,12 +95,33 @@ platform before calling anything.
 
 ## Step 2 - Pull with the platform recipe
 
-Follow the recipe exactly: run its discovery step first when it has one (Trustpilot
-businessUnitId, Yotpo appKey, Okendo storeId, Stamped storeHash), then page through the list
-endpoint with the recipe's pagination style, applying the date bound.
+Follow the recipe first: run its discovery step when it has one (Trustpilot businessUnitId,
+Yotpo appKey, Okendo storeId, Stamped storeHash), then page through the list endpoint with
+the recipe's pagination style, applying the date bound.
 
-For support platforms (Gorgias, Intercom), also fetch each conversation's messages so the
-file body can carry the full conversation.
+For support platforms (Gorgias, Intercom, Zendesk), also fetch each conversation's messages
+so the file body can carry the full conversation.
+
+**The data is the mandate; the recipe is guidance.** Many recipes are doc-grounded and the
+platform's live API is the truth. When reality differs from the recipe - an endpoint moved,
+a field is named differently, pagination works another way - adapt from the live payload and
+the platform's docs and **keep pulling**. Never abort or stall a pull because a recipe is
+stale or incomplete. Specifically:
+
+- A recipe field name that does not exist in the real payload -> find the equivalent field
+  and use it; if there is no equivalent, write `null` and move on.
+- An endpoint that 404s -> probe the platform's current API for the listing that returns
+  the same data; use it.
+- Unknown pagination -> discover it from the response shape (cursor, page number, next
+  link) and page it fully.
+- Record every deviation in the run report (what the recipe said, what the API actually
+  was) so the recipe gets corrected.
+
+What never flexes: the hard boundaries (read-only, PII rules, bounded windows), the output
+contract (unified record fields, file shape, id-keyed paths), and honest coverage reporting.
+The only legitimate reasons to stop are auth that fails, an API the org's plan does not
+expose, or a hard boundary - and each of those is reported as an explicit gap, never
+silently.
 
 ## Step 3 - Write the files
 
@@ -205,10 +251,10 @@ adapter is a field-mapping exercise, not design work.
 ## Set up the recurring sync
 
 All pulling happens through one daily routine per connected platform (`voc-sync-<platform>`).
-**Setup runs only when asked** (directly, or as part of an onboarding run) - never
-unprompted. When asked, do this for each available covered platform - available means the
-org can reach it by any path (OAuth connection, stored API key, or Motion native; Step 1
-resolves which): run
+**Setup runs when this package finishes installing (the install is the ask) or when asked
+directly** - never at any other unprompted moment. When triggered, do this for each
+available covered platform - available means the org can reach it by any path (OAuth
+connection, stored API key, or Motion native; Step 1 resolves which): run
 `routine list --search "voc-sync-<platform>"` - routine absence is what needs setup, not
 folder state:
 
@@ -238,9 +284,10 @@ folder state:
 **Never run the pull inside the user's conversation.** All pulling happens in the routine's
 runs; a one-off refresh beyond the daily cadence is `routine run --id <routine-id>`.
 
-**Junip gate:** junip's recipe is blocked on a dead key. Before creating `voc-sync-junip`,
-verify access with one bounded call (`GET /v1/stores`); if it fails, tell the user the key
-needs replacing and create nothing.
+**Key-auth gate (junip, reviews_io, okendo, stamped, and any key-stored platform):** the
+key is per-customer, so before creating its routine verify access with one bounded call
+(junip: `GET /v1/stores`; reviews_io: the merchant reviews list; okendo: `GET /v1/stores`);
+if it fails, tell the user the key needs replacing and create nothing for that platform.
 
 ## Recurring sync runs
 
@@ -270,21 +317,19 @@ skill flow:
 
 After the pull, report: platform, account used, date bound, item count written, folder path,
 whether the full date window was covered, and any items skipped. If a run hit the page cap,
-report the batches used and confirm coverage continued to the cutoff. If the platform recipe
+report the batches used and confirm coverage continued to the cutoff. If a run ends before
+the window is covered, state "coverage stopped at <oldest covered date>" per account in the
+run summary - the next run reads it from routine history and resumes from that date before
+applying the normal incremental window. If the platform recipe
 was doc-grounded (not live-verified), say which calls you verified live during this pull.
 
 ## Known v1 gaps - state these honestly when relevant
 
-- **Junip**: no working API key verified yet; the recipe is doc-grounded and the pull must
-  start with a bounded verification call.
-- **Okendo / Stamped**: need a customer API key stored as a secret before any pull.
-- **Trustpilot / Yotpo**: recipes are doc-grounded; verify grant coverage and the discovery
-  step on first connect before promising data.
-- **Reddit**: recipe is doc-grounded (registry examples, unprobed). Reddit's API caps every
-  listing at ~1000 items - the coverage contract is still the full 12-month window: slice
-  the window across listings and date-bounded queries per the recipe, and report any dates
-  that remain unreachable as an explicit gap. Pull targets (subreddits, search queries) are
-  org-specific and must be confirmed before the first pull.
+- **Per-platform evidence and caveats live in one place: each recipe's header and bullets
+  in `references/platform-recipes.md`** (live-verified vs registry-verified vs
+  doc-grounded, plan gates, key requirements, org-specific pull targets, API limits). Read
+  the target platform's recipe before promising data, and state its evidence level and
+  caveats honestly when relevant. Do not restate them here.
 - **Template deviation, pending sign-off**: the proposed unified template lists a `raw`
   (untouched payload) column; this package deliberately does not persist raw payloads in
   files - leaner files, and no platform PII stored beyond what the mapped fields carry. If
