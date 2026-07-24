@@ -1,19 +1,20 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.1 — draft for review (July 2026)
+### Version 1.3 — draft for review (July 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
 
 This is the third part of the Meta onboarding package. It runs after the
 **Account Context Brain** (`/agent/brain/meta/account-context.md`) and the
-**Creative Corpus** (`/agent/brain/meta/creatives/`) are in place.
+**creative content layer** (Cacheth, surfaced through Knoweth) are in place.
 
 The one-line model:
 
-> The **Account Context Brain** tells Runneth **how to analyze** the account. The **Creative
-> Corpus** gives Runneth **the attributes** to do it. **Validation** proves the two actually
-> work together by answering the customer's questions and building the artifact they'll live in.
+> The **Account Context Brain** tells Runneth **how to analyze** the account. The **creative
+> content layer** gives Runneth **the attributes** to do it. **Validation** proves the two
+> actually work together by answering the customer's questions and building the artifact they'll
+> live in.
 
 Onboarding is not done when data is connected and trained. It is done when Runneth has
 demonstrably understood the account, can answer from it, the customer has seen proof, and the
@@ -40,14 +41,14 @@ exists in `/agent/user.md`, replace it in place. Otherwise append it. Never dupl
 edit anything outside the sentinels.
 
 ```
-<!-- BEGIN runneth:meta-validation-gate v1 -->
+<!-- BEGIN runneth:meta-validation-gate v2 -->
 Meta validation gate (workspace <workspaceId>):
 
 - When the Account Context Brain (/agent/brain/meta/account-context.md) has all required fields
-  [CONFIRMED] and the Creative Corpus (/agent/brain/meta/creatives/) is built, and validation has
-  not yet been completed (/agent/brain/meta/validation.md missing or MVCE state = off), open the
-  validation experience described in the Meta Validation onboarding package. Do not wait to be
-  asked.
+  [CONFIRMED] and the creative content layer has synced (the workspace's creatives are in
+  Cacheth, surfaced through Knoweth), and validation has not yet been completed
+  (/agent/brain/meta/validation.md missing or MVCE state = off), open the validation experience
+  described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
   the customer has confirmed Runneth's answers to their starter questions, the weekly deck is
   built, live, and approved by the customer, a refresh routine keeps the deck updated on an agreed
@@ -55,7 +56,7 @@ Meta validation gate (workspace <workspaceId>):
   /agent/brain/meta/validation.md.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
-<!-- END runneth:meta-validation-gate v1 -->
+<!-- END runneth:meta-validation-gate v2 -->
 ```
 
 ## 2. Prerequisites (hard gate)
@@ -65,13 +66,13 @@ Do not start validation until both are true:
 1. **Account Context Brain is `[CONFIRMED]`.** All nine required interpretation fields signed off
    by a person. If any field is still `[AUTO]` or `[FLAGGED]`, finish that first. Validating
    against a guessed lens teaches the customer the wrong thing.
-2. **Creative Corpus is built.** Per-creative files exist under `/agent/brain/meta/creatives/`
-   for the active set.
+2. **The creative content layer is ready.** The workspace's creatives are in Cacheth: Knoweth
+   injects matching summaries into the turn, and `motion cache search-summaries` finds them.
 
 If either is missing, say so plainly and route back to that step. Do not fake a validation on an
 incomplete foundation. Routing back means telling the person what is missing — it never means
-auto-running the Creative Attribution build and storing summary files in the brain; in staging,
-creative summaries live in Cacheth and are surfaced through Knoweth.
+writing per-creative files to the brain to compensate; if the cache has not synced, the fix is
+the sync, not files.
 
 ## 3. Workspace scope
 
@@ -138,8 +139,8 @@ set.
 
 Then, one question at a time:
 
-1. **Answer it** from the Account Context Brain + Creative Corpus, using the account's own
-   interpretation (their metrics, their naming, their targets).
+1. **Answer it** from the Account Context Brain + the creative content layer, using the
+   account's own interpretation (their metrics, their naming, their targets).
 2. **Ask the confirm:** "Is that right? Am I missing anything?"
 3. **On a yes:** note the confirmed answer and move to the next question.
 4. **On a correction:** find the specific Account Context Brain field behind the miss, update it,
@@ -152,6 +153,9 @@ Rules for the loop:
   event as purchases, but it sounds like it's booked calls, I've updated that" not "Field 2
   corrected."
 - Keep it moving. When an answer lands, confirm and go. Don't over-explain a correct read.
+- Show the work. Each answer states which filter and signal it used (naming decode, Cacheth
+  tags, live metrics) and what it couldn't confirm. The customer can't correct a read they
+  can't see.
 - Every correction is logged to `/agent/brain/meta/validation.md` and applied to
   `/agent/brain/meta/account-context.md` so the fix is durable.
 
@@ -173,8 +177,9 @@ Gather:
 - **Look and feel.** MotionUI by default, playable videos, equal-size creative cards.
 
 Build it on the report component library so the layout is proven, not hand-rolled. The deck reads
-the Creative Corpus for the creative snapshots (winners, themes, spend state, graduation) and the
-Account Context Brain for how "best," "winner," and "graduated" are judged.
+the creative content layer (Cacheth, via injection or the cache CLI) for creative facts (themes,
+hooks, tags, content), live motion CLI pulls for performance (spend, winners, spend state), and
+the Account Context Brain for how "best," "winner," and "graduated" are judged.
 
 The deck is not just output. It is the proof that Runneth connected the pieces and understood them
 well enough to produce something the team will use every week.
@@ -202,8 +207,8 @@ Then update the MVCE gate below.
 
 Validation is complete, and the Minimum Viable Context Engine is on, when all five are true:
 
-1. Must-have Meta context sources are connected and set to refresh (the Account Context Brain and
-   Creative Corpus on their cadences).
+1. Must-have Meta context sources are connected and set to refresh (the Account Context Brain on
+   its cadence; the creative cache syncs itself).
 2. The customer has confirmed Runneth's answers to their starter questions.
 3. The weekly deck is built, live, and approved by the customer.
 4. A refresh routine keeps the deck updated on an agreed cadence.
@@ -252,8 +257,9 @@ confidence, worth a follow-up, not a silent pass.
 # Dependency on the other parts (one open item)
 
 - **Graduation is a required input this part leans on.** The deck's "scaling / graduated / ready
-  to graduate" snapshot needs a defined graduation rule. Today the Creative Corpus only carries
-  Spend State (scaling / holding / declining). The graduation rule must be captured as an Account
+  to graduate" snapshot needs a defined graduation rule. Today the only related signal is Spend
+  State (scaling / holding / declining), which comes from live Motion pulls — the creative content
+  layer holds no performance data. The graduation rule must be captured as an Account
   Context Brain field (fits field 6 test batching or field 9 scale rule) so the deck produces that
   snapshot consistently. Until it is captured, treat the graduated snapshot as `[FLAGGED]` and say
   the rule is still needed rather than guessing it.
@@ -273,6 +279,18 @@ the CSM, the customer, and Runneth can all point at.
 ---
 
 # Changelog
+
+## v1.3 (July 2026) — show the work
+- New loop rule: each answer states which filter and signal it used (naming decode, Cacheth tags,
+  live metrics) and what it couldn't confirm, so the customer can correct the read, not just the
+  result.
+
+## v1.2 (July 2026) — creative content layer replaces the Creative Corpus
+- The second prerequisite and the validation gate now check that the workspace's creatives are in
+  Cacheth (surfaced through Knoweth), not that per-creative files exist under
+  `/agent/brain/meta/creatives/`. Nothing in the package writes per-creative files to the brain.
+- Guard block bumped to v2 accordingly; answers and the weekly deck read the creative content
+  layer via Knoweth injection or the motion cache CLI.
 
 ## v1.1 (July 2026) — added lock-in step
 

@@ -74,8 +74,8 @@ Confirmed answers do not live in this worksheet. Runneth writes them to a durabl
 future turns read them.
 
 - Create the account's `meta` folder in the brain if it does not exist. Save the filled result
-  to `/agent/brain/meta/account-context.md`. The per-creative files from the Creative Corpus live
-  in a `creatives` subfolder beside it (`/agent/brain/meta/creatives/`).
+  to `/agent/brain/meta/account-context.md`. Per-creative content lives in Cacheth (surfaced
+  through Knoweth), not in brain files.
 
 **The saved file is a prose reference document, not the worksheet.** Capture and communication are
 two different jobs. The fields-and-statuses procedure below is how Runneth captures rigorously; the
@@ -359,9 +359,12 @@ Captures whether the account uses naming conventions, what each level encodes, a
 each level is.
 
 **Auto-pull**
-- Pull all campaign, ad set, and ad name strings.
-- Detect structure per level and propose a decoder.
+- If Step 1 (Creative Attribution) handed over a provisional decode table, start from it
+  instead of re-detecting.
+- Otherwise: pull all campaign, ad set, and ad name strings, detect structure per level, and
+  propose a decoder.
 - Measure reliability per level (% of names fitting the detected pattern).
+- Once confirmed, the decode lives in this file's saved result — it has no separate brain file.
 
 **What to understand**
 - For levels with a detected pattern: confirm what each position means.
