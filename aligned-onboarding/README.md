@@ -24,7 +24,7 @@ Attributes step found.
 
 This folder holds one part per subfolder: `meta/` (the Creative Attributes playbook, the
 Account Context Brain package, the Meta Validation package, the Motion CLI Data-Query
-Guide, and the Cacheth Command Reference) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates), plus `knoweth/` (the organize-the-brain part that runs after the questions). This README
+Guide, and the Cacheth Command Reference) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates), plus `knoweth/` (the organize-the-brain part that runs after the questions) and `meta-ad-performance-analysis/` (the single-ad performance analysis skill). This README
 covers all of them; `install-config.json` maps every file to its installed location.
 
 These instruction files are the package itself, not its output. They live in the brain
@@ -60,7 +60,8 @@ File: `meta/meta-creative-attributes-playbook.md`
   pre-filled proposals.
 - **Runs first.** Collects facts without interpreting them.
 - **Persists to:** nothing. The provisional naming decode is a handoff to the Account Context
-  Brain (Field 4), which owns it once confirmed. **No creative files** — nothing here writes
+  Brain (Field 4), which owns it once confirmed and writes the operational decoder to
+  `/agent/brain/meta/naming-decoder.json`. **No creative files** — nothing here writes
   per-creative content to the brain (Cacheth is the system of record; person-requested snapshot
   files are a separate, explicit ask).
 - **Retrieval:** Knoweth pre-context injection first (matching creative chunks arrive in the
@@ -76,7 +77,8 @@ File: `meta/meta-account-context-brain-onboarding-package.md`
   trust, how campaigns map to stages. Nine required fields confirmed with a person.
 - **Runs second.** Uses what the Creative Attributes step found (especially naming decode) as
   pre-populated proposals for confirmation, rather than starting cold.
-- **Persists to:** `/agent/brain/meta/account-context.md`
+- **Persists to:** `/agent/brain/meta/account-context.md`, plus the operational naming decoder
+  at `/agent/brain/meta/naming-decoder.json` when a convention is confirmed (Field 4 owns it).
 - **Activation:** merges a read-before-performance guard into `/agent/user.md`.
 - **Refresh:** monthly cadence plus structural-drift triggers, logged in
   `/agent/brain/meta/_changelog.md`.
@@ -127,6 +129,30 @@ Folder: `voc-data-pull/`
 
 ---
 
+## Meta Ad Performance Analysis (skill, own folder)
+
+Folder: `meta-ad-performance-analysis/`
+
+- **Job:** the diagnostic framework for reading a single ad's performance. Identify the ad's
+  primary KPI first, judge efficiency (cost per KPI or ROAS) against the account's own
+  averages, then trace the supporting metrics — first frame retention, thumbstop rate, hold
+  rate, engagement, CTR outbound, conversion rate, AOV — to locate exactly where in the funnel
+  the ad wins or loses. Account-agnostic: with one exception (first frame retention's 90%
+  standard), everything is read against the account's own averages, never universal benchmarks.
+- **Runs on demand.** Triggered when someone asks how an ad is doing, why it is or isn't
+  working, or to compare ads. Installing only stages the skill; nothing self-runs.
+- **What it leans on:** the scope rules above apply in full. Interpretation (winner metric,
+  targets, naming decode, spend floor) comes from `/agent/brain/meta/account-context.md`,
+  guard-enforced — never Motion workspace settings. Metrics are pulled live via the `motion`
+  CLI per the Data-Query Guide and never stored; name filters go through the confirmed naming
+  decode (Field 4 / `naming-decoder.json`); every pull names the workspace with
+  `--workspace-id`; per-creative content stays in Cacheth. Analyses show their work: filter
+  applied, signal read, what couldn't be confirmed.
+- **Installs to the skills root** (`/agent/.agents/skills/meta-ad-performance-analysis/`), not
+  the brain - see the install entry in `install-config.json`.
+
+---
+
 ## Install and run order
 
 1. **Install the package.** Staging the files does not self-run anything. Nothing in this
@@ -167,5 +193,6 @@ Folder: `voc-data-pull/`
   when creatives are discussed.
 - **Naming decode is the handoff point.** The Creative Attributes step detects provisional naming patterns
   from ad names and passes them to the Account Context Brain as proposals. Account Context Brain
-  confirms or corrects them in Field 4. Once confirmed, the decode lives in the Account Context
-  Brain — the single owner — and creative queries decode ad names through it at analysis time.
+  confirms or corrects them in Field 4 — the single interpretation owner — and writes the
+  operational decoder to `/agent/brain/meta/naming-decoder.json` (typed positions, query fields,
+  filter patterns). Creative queries decode ad names through it at analysis time.

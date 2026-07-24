@@ -268,7 +268,7 @@ confidence, worth a follow-up, not a silent pass.
   to graduate" snapshot needs a defined graduation rule. Today the only related signal is Spend
   State (scaling / holding / declining), which comes from live Motion pulls — the creative content
   layer holds no performance data. The graduation rule must be captured as an Account
-  Context Brain field (fits field 6 test batching or field 9 scale rule) so the deck produces that
+  Context Brain field (fits field 6 test batching or field 9 winner/cut criteria) so the deck produces that
   snapshot consistently. Until it is captured, treat the graduated snapshot as `[FLAGGED]` and say
   the rule is still needed rather than guessing it.
 - Interpretation precedence is unchanged: when the deck and the Account Context Brain disagree on

@@ -145,11 +145,13 @@ never reconstruct the record by hand.
 If no pattern is detected, note "no naming convention detected" as the provisional finding for
 the Account Context Brain to confirm.
 
-The decode is a handoff, not an artifact. Do not write it to its own brain file: once confirmed,
-it lives in `/agent/brain/meta/account-context.md` (Field 4), the single owner of account
-interpretation, and anything decoding an ad name at analysis time reads it there. Nothing in
-this playbook writes to the brain, and no `/agent/INDEX.md` entry is needed — per-creative
-content is in Cacheth, and Knoweth surfaces it without an index step.
+The provisional decode is a handoff — this playbook writes nothing to the brain, and no
+`/agent/INDEX.md` entry is needed here (per-creative content is in Cacheth, and Knoweth
+surfaces it without an index step). On confirmation, the Account Context Brain (Field 4, the
+single owner of account interpretation) saves the result in `account-context.md` and writes
+the operational decoder to `/agent/brain/meta/naming-decoder.json` — typed positions, query
+fields, and filter patterns per the Field 4 spec. Anything decoding an ad name at analysis
+time reads the decoder through Field 4.
 
 ---
 
@@ -171,6 +173,7 @@ Most accounts are single-workspace, but multi-workspace orgs are real. When the 
 than one workspace, scope the brain files per workspace:
 
 - `/agent/brain/meta/<workspace-slug>/account-context.md`
+- `/agent/brain/meta/<workspace-slug>/naming-decoder.json`
 
 The creative content layer needs no per-workspace folders: Cacheth's cache projects are already
 workspace-scoped, and every cache query runs against the resolved workspace.
@@ -182,6 +185,7 @@ workspace-scoped, and every cache query runs against the resolved workspace.
 | What | Where |
 |---|---|
 | Account Context Brain (incl. confirmed naming decode, Field 4) | `/agent/brain/meta/account-context.md` |
+| Naming decoder (Field 4's operational output) | `/agent/brain/meta/naming-decoder.json` |
 | Per-creative content | Cacheth (surfaced via Knoweth; brain files only as person-requested snapshots) |
 | Brain index | `/agent/INDEX.md` |
 | Change log | `/agent/brain/meta/_changelog.md` |

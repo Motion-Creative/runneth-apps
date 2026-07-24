@@ -1,5 +1,5 @@
 # Meta Account Context: Brain Onboarding Package
-### Version 1.22 — patch on v1.21 (July 2026)
+### Version 1.23 — patch on v1.22 (July 2026)
 
 This package teaches Runneth how a customer understands their Meta ad account, so its queries,
 rankings, and insights match how the team actually thinks about the data. This package is
@@ -74,8 +74,9 @@ Confirmed answers do not live in this worksheet. Runneth writes them to a durabl
 future turns read them.
 
 - Create the account's `meta` folder in the brain if it does not exist. Save the filled result
-  to `/agent/brain/meta/account-context.md`. Per-creative content lives in Cacheth (surfaced
-  through Knoweth), not in brain files.
+  to `/agent/brain/meta/account-context.md`. If a naming convention was confirmed, the
+  operational decoder lives beside it at `/agent/brain/meta/naming-decoder.json` (Field 4 owns
+  it). Per-creative content lives in Cacheth (surfaced through Knoweth), not in brain files.
 
 **The saved file is a prose reference document, not the worksheet.** Capture and communication are
 two different jobs. The fields-and-statuses procedure below is how Runneth captures rigorously; the
@@ -238,7 +239,7 @@ answers which field and what to read from the result.
 | 6. Account structure | `motion meta ads --grain ads --include-associated-objects` | budget level (CBO vs ABO); ad set counts |
 | 7. Funnel map | `motion meta ads --grain ads`; `motion meta insights` campaign names on rows | campaign-to-stage grouping; flag agency-managed or ASC campaigns |
 | 8. Creative performance metrics | `motion meta insights --date-range last_365d --include-metrics --table-kpi <keys>` | account averages for CPA, thumbstop, hold rate, CTR; video-only for engagement metrics |
-| 9. Targets, thresholds, decision rules | `motion meta insights --include-metrics --table-kpi <cost-per key>` | reference CPA; propose spend confidence floor at ~5x target |
+| 9. Targets, thresholds, decision rules | `motion meta insights --include-metrics --table-kpi <cost-per key>` | reference CPA baseline; surface material variation across product lines / campaign types |
 
 ---
 
@@ -355,23 +356,26 @@ be surprised by this? If not, leave it out.
 
 Status: `[EMPTY]`
 
-Captures whether the account uses naming conventions, what each level encodes, and how reliable
-each level is.
+Captures whether the account uses naming conventions, what each level encodes, and how Runneth
+should use that understanding to answer any user query about a creative segment, creator,
+product, or campaign. The output of this field is not just a record of what names mean — it is
+an operational decoder that tells Runneth how to translate any user request into the correct
+query.
 
 **Auto-pull**
 - If Step 1 (Creative Attributes) handed over a provisional decode table, start from it
   instead of re-detecting.
-- Otherwise: pull all campaign, ad set, and ad name strings, detect structure per level, and
-  propose a decoder.
+- Otherwise: pull all campaign, ad set, and ad name strings across the account, detect
+  structure per level, and propose a decoder.
 - Measure reliability per level (% of names fitting the detected pattern).
 - Detect where product/concept names live: take the product tokens found in ad names and check
   whether the same tokens also appear in campaign and ad set names. The same product word can
   cascade across all three levels or live at only one — that placement is an account fact, not
   a guess.
-- Once confirmed, the decode lives in this file's saved result — it has no separate brain file.
 
 **What to understand**
-- For levels with a detected pattern: confirm what each position means.
+- For levels with a detected pattern: confirm what each position means, what type of identifier
+  it is, and which Meta query field it maps to.
 - For levels with no reliable pattern: confirm whether a convention exists or whether to fall
   back to creative signals and landing pages.
 - Confirm the product-name default: "When someone on your team says '[product] ads' with no
@@ -380,13 +384,92 @@ each level is.
   filter level for bare product-name requests (the Data-Query Guide's name-level rules use
   `adName` + includes until this is confirmed).
 
+**Required output: the naming decoder JSON file**
+
+This field owns the account's naming interpretation; its operational output is a separate JSON
+decoder saved at `/agent/brain/meta/naming-decoder.json`. Do not embed the full decoder in
+`account-context.md` — it is too large for accounts with structured naming conventions.
+Reference it from `account-context.md` with a one-line note and a path link. The decoder is
+written and updated only through this field's confirmation; appending newly observed values to
+`known_values` is routine maintenance, structural changes go through re-confirmation.
+
+The decoder must be indexed in `/agent/INDEX.md` with aliases: naming decoder, ad name decoder,
+naming convention, content program values, filter guide, creative identity.
+
+**JSON schema:**
+
+```json
+{
+  "account": "<account name>",
+  "workspace_id": "<workspaceId>",
+  "as_of": "<YYYY-MM-DD>",
+  "delimiter": "_",
+  "format_string": "<full position template, e.g. {creative-id}_{content-program}_...>",
+  "positions": [
+    {
+      "position": <N>,
+      "name": "<position name>",
+      "type": "<segment_filter | context_only | unique_id | metadata_do_not_filter>",
+      "description": "<what this position represents>",
+      "query_field": "<adName | adsetName | campaignName | launchDate | null>",
+      "filter_pattern": "<_VALUE_ | null>",
+      "known_values": ["<value1>", "<value2>"],
+      "pattern_format": "<for metadata positions: the pattern, e.g. {id}-{N}RLP>",
+      "examples": ["<example1>", "<example2>"],
+      "notes": "<anything that would cause false positives or needs human attention>"
+    }
+  ]
+}
+```
+
+**Type definitions and enumeration rules:**
+
+- `segment_filter` — a discrete value the user would ask for by name. Filter using `_VALUE_` in
+  `adName`. Enumerate all known values as a full array. New values in this position follow the
+  same `_VALUE_` pattern automatically. Example positions: content program, product line, product,
+  funnel stage, format, market.
+- `context_only` — human-readable text embedded in the name, not used as a filter. Set
+  `known_values` to null. Set `filter_pattern` to null. Add a note explaining what this position
+  contains. Example positions: visual description slug, hook slug, video score.
+- `unique_id` — identifies a specific creative. Set `known_values` to null. Use for direct ad
+  lookup only, not segmentation. Example: creative ID with variant suffix.
+- `metadata_do_not_filter` — encodes campaign or LP metadata. Often contains strings that look
+  like segment values but are not. Set `known_values` to null. Document `pattern_format` and 2–3
+  examples. Add a note naming the segment values it may contain and explaining why filtering by
+  this position produces false positives. Example: landing page reference.
+
+**Ad name structure — two parts:**
+Ad names in structured accounts are compound strings. The creative identity fields are
+underscore-delimited and end before the landing page reference. The landing page reference
+uses hyphens as its internal delimiter and occupies the second-to-last position. The launch
+date is last. Mark the LP reference position as `metadata_do_not_filter` in the decoder.
+
+**LP reference — detect and record the pattern:**
+Common formats: `{id}-{N}RLP` (round N landing page), `{id}-LP` (landing page),
+`{id}-CAP` (campaign-specific page). The identifier prefix often matches a content program or
+campaign name. Document this in `pattern_format` and `notes` so future queries never treat the
+LP reference as a proxy for creative identity.
+
+**New value rule:**
+When a new value appears in a known position, read its position number and type from the decoder.
+`segment_filter` → filter `_VALUE_` in `adName` and append the value to `known_values`.
+`context_only` → no action, context only. `metadata_do_not_filter` → do not filter. The decoder
+makes this determination automatic without needing a human to re-explain the convention.
+
+**Ad set and campaign requests:**
+When a user asks for ads by ad set or campaign, use `adsetName` or `campaignName` — not `adName`.
+The LP reference embedded in `adName` is not the same as the ad set name even when they share
+the same identifier string.
+
 **Fields** (repeat per level)
 - Level: `<campaign / ad set / ad>` | Reliability: `<AUTO: % match>` |
-  Fields encoded: `<...>` | Fallback if weak: `<creative signals / URL / ask>`
+  Decoder: `<naming-decoder.json positions for this level>` |
+  Fallback if weak: `<creative signals / URL / ask>`
 
 **Fields** (once, after the per-level entries)
 - Product/concept names live at: `<ad / ad set / campaign / multiple levels — AUTO, confirmed>` |
   Default filter level for bare product-name asks: `<adName unless confirmed otherwise>`
+- Decoder file: `</agent/brain/meta/naming-decoder.json — written and indexed | not needed (no convention)>`
 
 ## 5. Attribution model and windows
 
@@ -460,44 +543,61 @@ Status: `[EMPTY]`
 
 Status: `[EMPTY]`
 
+Captures how the account judges performance and what makes something a winner or a cut.
+The goal is a simple operational reference — not an exhaustive ruleset. Runneth applies
+judgment to edge cases; this field covers the four things that need to be captured explicitly.
+
 **Auto-pull**
-- Pull current cost-per-event as a reference.
-- Propose a spend confidence floor at ~5x the estimated CPA target.
-- Every spend threshold must state its time window. Flag it if the team hasn't specified one.
+- Pull current CPA (or equivalent attribution tool metric) across the account as a reference baseline.
+- If variation across product lines or campaign types is material, surface it anchored in the
+  data before asking for targets: "I can see CPA ranges from roughly $X for [A] to $Y for [B] —
+  does your target account for that difference?"
 
-**What to understand**
-- Target CPA (or the equivalent attribution tool metric), minimum spend before trusting a
-  result, and scale/cut rules. Anchor on pulled costs so targets are set against reality.
-- Before asking, inspect the pulled performance data for CPA (or attribution metric) variation
-  across product lines, funnel stages, or campaign types. If variation is material, surface it
-  anchored in the data: "I can see CPA ranges from roughly $X for [product/campaign A] to $Y
-  for [product/campaign B] — does your target account for that difference?" If the data shows
-  no material variation across products or campaign types, you can suggest a single blended
-  target may be reasonable and ask them to confirm.
-- Do not accept a single number as the complete answer for accounts with multiple product lines
-  or funnel structures. Ask explicitly whether the target varies by product, funnel stage, or
-  campaign type. If it does vary, capture each tier separately.
+**Four things to capture:**
 
-**Spend confidence floor — required, always ask, cannot be skipped:**
-Ask every time, even when other targets are confirmed: "How much spend does a creative need
-before you'd trust its CPA result, and is that a lifetime number or within a set window? Does
-that threshold vary by product line or campaign type?"
+**1. Ranking metric**
+What metric to sort by when answering any performance request. Default: the attribution tool's
+primary CPA metric, ascending (lower is better). Confirm whether this varies by product line or
+campaign type — if it does, capture each separately.
 
-If the answer is not given, the spend confidence floor is unconfirmed. Write it into the
-`## Still confirming` section of the saved brain file with this exact note:
+**2. CPA target**
+The reference point for judging whether a creative's CPA is good. Used as commentary, not a
+filter. Capture per product line when accounts have multiple product lines with different economics.
+If no explicit target exists, propose the account's own historical average as the reference.
 
-> **Spend confidence floor:** Not confirmed. This blocks any winner or cut call. Before calling
-> any creative a winner or a cut, ask: "How much spend in what window before you trust a result —
-> and does that vary by product line or campaign type?"
+**3. Winner/cut criteria**
+What makes something a winner or a cut. Apply these ONLY when a user explicitly asks a
+winner/cut question ("is this a winner?", "what should we cut?", "what's proven?", "what's
+ready to scale?"). For all other queries — ranking, totals, window performance, segment views —
+show the data as asked without applying these criteria.
 
-Do not omit this. A missing spend floor means the benchmark rule (campaign median) is
-unactionable, because any creative can look like a winner on $50 of spend. Every performance
-answer that could imply a winner or cut must surface this gap until the floor is confirmed.
+Capture:
+- **Spend floor:** How much spend before trusting a result. Ask explicitly whether this is
+  a lifetime number or a within-window number — the answer changes how the extra spend pull works.
+  If the account does not track lifetime spend or doesn't care about it, a window-based floor
+  is fine. Getting lifetime spend requires a separate wider-range pull; only do it when the
+  account tracks lifetime tiers and the user is asking a winner/cut question.
+- **Minimum days:** How many days before any decision is valid.
+- **Tier labels** (optional): If the account uses named tiers (e.g., Legend / Scale / Kill),
+  capture the spend thresholds for each. If not, skip — a spend floor and minimum days is enough.
+  When tiers and window are confirmed, write the usage rule into the saved brain file: rank by
+  the attribution CPA metric ascending within the requested window first, then apply tier labels
+  after ranking based on lifetime spend — not window spend. Tiers are classification labels,
+  never ranking criteria or pre-filters.
 
-**Fields** (repeat per product/funnel/campaign scope as confirmed)
-- Scope: `<product / funnel stage / campaign type>` | Target CPA (or attribution metric):
-  `<...>` | Spend confidence floor: `<AUTO proposal, ~5x target>` | Spend window: `<lifetime |
-  in-window: N days>` | Scale rule: `<...>` | Cut rule: `<...>`
+If the spend floor is not confirmed, write it into a `## Still confirming` section of the saved
+brain file and flag every winner/cut answer until it is resolved.
+
+**4. Default reporting window**
+What window to use when the user doesn't specify one. Capture the cadence they normally report
+on (e.g., last 14 days, last 7 days) so Runneth doesn't have to guess.
+
+**Fields**
+- Ranking metric: `<attribution CPA metric, ascending>` | Varies by product: `<yes / no>`
+- CPA target: `<per product line>` | Reference: `<target or historical average>`
+- Spend floor: `<amount>` | Window: `<lifetime | in-window: N days>` | Min days: `<N>`
+- Tier labels: `<Legend: $X+ / Scale: $Y-$X / Kill: <$Y — or: not used>`
+- Default reporting window: `<last N days>`
 
 ---
 
@@ -540,6 +640,32 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 ---
 
 # Changelog
+
+## v1.23 (July 2026) — naming decoder JSON and Field 9 restructure (merged from parallel v1.22 work)
+
+Two changes from live validation QA feedback, authored in parallel with v1.22 and merged here:
+
+**Field 4: Naming convention now requires an operational decoder file and LP reference decode.**
+The confirmed decode is written to `/agent/brain/meta/naming-decoder.json` (typed positions:
+`segment_filter` / `context_only` / `unique_id` / `metadata_do_not_filter`, each mapped to its
+Meta query field), indexed in `/agent/INDEX.md`, and referenced from `account-context.md` — not
+embedded in it. Field 4 remains the interpretation owner; the decoder is its operational
+appendix. Added the landing-page reference decode (second-to-last position, formats RLP / LP /
+CAP, marked do-not-filter — it often contains the same strings as content program codes, which
+causes false positives under bare substring matching) and the filter translation rules: wrap
+creative identity values in underscores when filtering `adName` (`_MKBHD_` not `MKBHD`), and use
+`adsetName` / `campaignName` for ad set and campaign requests, never `adName`.
+
+**Field 9: restructured around four captures with a winner/cut scope rule.**
+Ranking metric, CPA target (commentary, not a filter), winner/cut criteria (applied only when a
+user explicitly asks a winner/cut question — all other queries show the data as asked), and
+default reporting window. Spend tiers gained the operational usage rule: rank by the attribution
+CPA metric ascending within the requested window first, apply tier labels after ranking based on
+lifetime spend — tiers are classification labels, not pre-filters. Supersedes v1.21's
+always-ask spend-floor script: the floor is still captured and an unconfirmed floor still flags
+every winner/cut answer, but it no longer blocks with a mandatory verbatim note.
+
+---
 
 ## v1.22 (July 2026) — patch: Field 4 captures where product names live
 

@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "aligned-onboarding",
-  "version": "2.3.0",
-  "description": "The Meta onboarding package, v2. Stages six instruction docs into the brain: the package overview, the Creative Attributes playbook, the Account Context Brain onboarding package (v1.22), the Meta Validation onboarding package (v1.4), the Motion CLI data-query guide, and the Cacheth command reference. Installing only stages files; nothing self-runs. Per-creative content lives in Cacheth (the local creative cache) and is surfaced through Knoweth; nothing in this package writes per-creative files to the brain. No corpus-search dependency. Meta only, one workspace at a time. Also carries the VoC Data Pull part (voc-data-pull/): a skill installed to the skills root that, when setup is requested, creates one daily sync routine per connected VoC platform pulling reviews, support conversations, community posts, and ad comments into /agent/brain/data-sources/voc/<platform>/. Nothing self-runs. Also carries the Knoweth organize part (knoweth/): after the questions are answered it organizes the brain so retrieval stays tight and sets the standing save + maintenance discipline.",
+  "version": "2.5.0",
+  "description": "The Meta onboarding package, v2. Stages six instruction docs into the brain: the package overview, the Creative Attributes playbook, the Account Context Brain onboarding package (v1.23), the Meta Validation onboarding package (v1.4), the Motion CLI data-query guide, and the Cacheth command reference. Installing only stages files; nothing self-runs. Per-creative content lives in Cacheth (the local creative cache) and is surfaced through Knoweth; nothing in this package writes per-creative files to the brain. No corpus-search dependency. Meta only, one workspace at a time. Also carries the VoC Data Pull part (voc-data-pull/): a skill installed to the skills root that, when setup is requested, creates one daily sync routine per connected VoC platform pulling reviews, support conversations, community posts, and ad comments into /agent/brain/data-sources/voc/<platform>/. Nothing self-runs. Also carries the Knoweth organize part (knoweth/): after the questions are answered it organizes the brain so retrieval stays tight and sets the standing save + maintenance discipline.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -34,7 +34,7 @@
       "from": "meta/meta-account-context-brain-onboarding-package.md",
       "to": "/agent/brain/aligned-onboarding/meta-account-context-brain-onboarding-package.md",
       "on_exists": "overwrite",
-      "purpose": "Step 2: the Account Context Brain fill-in package (v1.22). Nine required interpretation fields, the guard block for /agent/user.md, and the prose output shape saved to /agent/brain/meta/account-context.md."
+      "purpose": "Step 2: the Account Context Brain fill-in package (v1.23). Nine required interpretation fields, the guard block for /agent/user.md, the prose output shape saved to /agent/brain/meta/account-context.md, and Field 4's operational naming decoder written to /agent/brain/meta/naming-decoder.json."
     },
     {
       "from": "meta/meta-validation-onboarding-package.md",
@@ -95,9 +95,27 @@
       "to": "/agent/brain/aligned-onboarding/knoweth-organize-onboarding-package.md",
       "on_exists": "overwrite",
       "purpose": "Knoweth organize part: after the account questions are answered, organize the brain (keep shared content in the global lane, make it findable with tags + a naming decoder) and set the standing save + maintenance guard blocks. Today only global, the user lane, and the workspace lane are queried; data-source-family lanes are a documented forward path."
+    },
+    {
+      "from": "meta-ad-performance-analysis/SKILL.md",
+      "to": "/agent/.agents/skills/meta-ad-performance-analysis/SKILL.md",
+      "on_exists": "overwrite",
+      "purpose": "Meta Ad Performance Analysis skill: the single-ad diagnostic framework — identify the primary KPI, read cost-per/ROAS against the account's own averages, then trace the funnel (first frame retention, thumbstop, hold rate, engagement, CTR outbound, conversion rate, AOV) to locate where the ad wins or loses. Grounded in account-context.md (guard-enforced), live motion CLI pulls only, explicit --workspace-id, and the naming decode for any name filter."
     }
   ],
   "changelog": [
+    {
+      "version": "2.5.0",
+      "date": "2026-07-24",
+      "type": "minor",
+      "notes": "Merged Jose's parallel Account Context Brain work (authored as v1.22, landed as v1.23). Field 4 now writes an operational naming decoder to /agent/brain/meta/naming-decoder.json — typed positions (segment_filter / context_only / unique_id / metadata_do_not_filter) mapped to Meta query fields, with the LP-reference decode and the _VALUE_ filter-translation rules — owned by Field 4 and referenced from account-context.md rather than embedded in it. Field 9 restructured around four captures: ranking metric, CPA target (commentary, not a filter), winner/cut criteria applied only to explicit winner/cut questions (spend floor, minimum days, optional tier labels with the rank-then-classify usage rule), and the default reporting window; supersedes v1.21's mandatory always-ask spend-floor script. Playbook, README, Knoweth answer standard, skeleton, and validation references updated to point at the decoder."
+    },
+    {
+      "version": "2.4.0",
+      "date": "2026-07-24",
+      "type": "minor",
+      "notes": "Added the Meta Ad Performance Analysis skill (meta-ad-performance-analysis/SKILL.md, installed to the skills root): a generalized framework for reading a single ad's performance — primary KPI first, efficiency (cost-per or ROAS) against the account's own averages, then supporting metrics (first frame retention, thumbstop, hold rate, engagement, CTR outbound, conversion rate, AOV) to locate where in the funnel the ad wins or loses. Reconciled to package contracts on staging: account-context.md is the interpretation source (never Motion workspace settings), metrics are pulled live via the motion CLI and never stored, name filters go through the confirmed naming decode, every pull names the workspace, and analyses show their work. Skill addition only; no changes to existing parts."
+    },
     {
       "version": "2.3.0",
       "date": "2026-07-24",
