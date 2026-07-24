@@ -266,6 +266,19 @@ const BRAIN_CHECKLIST_FIELD_KEYS = new Set(BRAIN_CHECKLIST_SECTIONS.map((s) => s
 const BRAIN_CHECKLIST_MAX_TOTAL_BYTES = 25 * 1024 * 1024
 
 server.post('/api/brain-checklist', async (req, reply) => {
+  // Uploads temporarily paused while the memory pipeline fix ships (approved by Kyra, 2026-07-24).
+  // Backstops the removed upload tab: even a cached page or a #checklist deep link cannot submit
+  // and risk losing a customer's files. Re-enable with BRAIN_CHECKLIST_PAUSED=0 (or remove this
+  // block) once the fix has landed.
+  const UPLOADS_PAUSED = process.env.BRAIN_CHECKLIST_PAUSED !== '0'
+  if (UPLOADS_PAUSED) {
+    reply.code(503)
+    return {
+      error: 'paused',
+      message: 'Uploads are temporarily paused while we ship an improvement to how your files are saved. Your CSM will follow up, or email support@motionapp.com and we can take it from there.',
+    }
+  }
+
   if (!req.isMultipart()) {
     reply.code(400)
     return { error: 'invalid_request', message: 'Expected multipart/form-data.' }
