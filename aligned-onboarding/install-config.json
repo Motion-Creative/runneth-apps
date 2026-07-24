@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "aligned-onboarding",
-  "version": "2.1.0",
-  "description": "The Meta onboarding package, v2. Stages five instruction docs into the brain: the package overview, the Creative Attribution playbook, the Account Context Brain onboarding package (v1.21), the Meta Validation onboarding package (v1.1), and the Motion CLI data-query guide. Installing only stages files; nothing self-runs. The Creative Attribution build runs only on an explicit request from a person and must never auto-grab creatives and store summary files in the brain: in staging, per-creative summaries live in Cacheth and are surfaced through Knoweth. No corpus-search dependency. Meta only, one workspace at a time. Also carries the VoC Data Pull part (voc-data-pull/): a skill installed to the skills root that, when setup is requested, creates one daily sync routine per connected VoC platform pulling reviews, support conversations, community posts, and ad comments into /agent/brain/data-sources/voc/<platform>/. Nothing self-runs.",
+  "version": "2.3.0",
+  "description": "The Meta onboarding package, v2. Stages six instruction docs into the brain: the package overview, the Creative Attribution playbook, the Account Context Brain onboarding package (v1.21), the Meta Validation onboarding package (v1.3), the Motion CLI data-query guide, and the Cacheth command reference. Installing only stages files; nothing self-runs. Per-creative content lives in Cacheth (the local creative cache) and is surfaced through Knoweth; nothing in this package writes per-creative files to the brain. No corpus-search dependency. Meta only, one workspace at a time. Also carries the VoC Data Pull part (voc-data-pull/): a skill installed to the skills root that, when setup is requested, creates one daily sync routine per connected VoC platform pulling reviews, support conversations, community posts, and ad comments into /agent/brain/data-sources/voc/<platform>/. Nothing self-runs. Also carries the Knoweth organize part (knoweth/): after the questions are answered it organizes the brain so retrieval stays tight and sets the standing save + maintenance discipline.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -22,13 +22,13 @@
       "from": "README.md",
       "to": "/agent/brain/aligned-onboarding/README.md",
       "on_exists": "overwrite",
-      "purpose": "Package overview: the two parts, their run order, and the staging deployment rule that the Creative Attribution build never runs automatically."
+      "purpose": "Package overview: the parts, their run order, and the scope rules. Creative content ownership: Cacheth is the system of record; nothing in the package writes per-creative files to the brain."
     },
     {
       "from": "meta/meta-creative-attribution-playbook.md",
       "to": "/agent/brain/aligned-onboarding/meta-creative-attribution-playbook.md",
       "on_exists": "overwrite",
-      "purpose": "Step 1 (explicit request only): how to build and maintain one enriched Markdown record per active creative under /agent/brain/meta/creatives/. Never auto-run; in staging, creative summaries live in Cacheth and are surfaced through Knoweth."
+      "purpose": "Step 1: the creative content layer — what Cacheth holds per creative and how to query it (Knoweth pre-context injection first, then the motion cache CLI) — plus provisional naming-pattern detection passed to the Account Context Brain. Writes no per-creative files to the brain."
     },
     {
       "from": "meta/meta-account-context-brain-onboarding-package.md",
@@ -40,13 +40,19 @@
       "from": "meta/meta-validation-onboarding-package.md",
       "to": "/agent/brain/aligned-onboarding/meta-validation-onboarding-package.md",
       "on_exists": "overwrite",
-      "purpose": "Step 3: the validation experience (v1.1). Answer-and-confirm loop, weekly deck build, lock-in (deck approval, refresh routine, Slack), and the MVCE gate saved to /agent/brain/meta/validation.md."
+      "purpose": "Step 3: the validation experience (v1.3). Answer-and-confirm loop with the show-the-work rule, weekly deck build, lock-in (deck approval, refresh routine, Slack), and the MVCE gate saved to /agent/brain/meta/validation.md."
     },
     {
       "from": "meta/motion-cli-data-query-guide.md",
       "to": "/agent/brain/aligned-onboarding/motion-cli-data-query-guide.md",
       "on_exists": "overwrite",
       "purpose": "Supporting reference: the canonical contract for pulling Meta data through the motion CLI. Brand-agnostic, carries no account IDs."
+    },
+    {
+      "from": "meta/cacheth-command-reference.md",
+      "to": "/agent/brain/aligned-onboarding/cacheth-command-reference.md",
+      "on_exists": "overwrite",
+      "purpose": "Supporting reference: the canonical contract for querying the local creative cache (Cacheth) through the motion cache CLI. All five commands with every flag, the full-record field layout, jq extraction recipes, and the retrieval priority order. Reference only, not a step to execute. Brand-agnostic, carries no account IDs."
     },
     {
       "from": "voc-data-pull/SKILL.md",
@@ -83,9 +89,27 @@
       "to": "/agent/.agents/skills/voc-data-pull/templates/community-post.md",
       "on_exists": "overwrite",
       "purpose": "Copyable file skeleton for community-post output files."
+    },
+    {
+      "from": "knoweth/knoweth-organize-onboarding-package.md",
+      "to": "/agent/brain/aligned-onboarding/knoweth-organize-onboarding-package.md",
+      "on_exists": "overwrite",
+      "purpose": "Knoweth organize part: after the account questions are answered, organize the brain (keep shared content in the global lane, make it findable with tags + a naming decoder) and set the standing save + maintenance guard blocks. Today only global, the user lane, and the workspace lane are queried; data-source-family lanes are a documented forward path."
     }
   ],
   "changelog": [
+    {
+      "version": "2.3.0",
+      "date": "2026-07-24",
+      "type": "minor",
+      "notes": "Removed the per-creative-files model everywhere: creative content lives in Cacheth (the local creative cache) and is queried via Knoweth pre-context injection first, then the motion cache CLI (search-summaries / get-creative; local, no API call). The Creative Attribution playbook is now the creative-content-layer contract plus naming decode. Validation gates on cache coverage instead of files under /agent/brain/meta/creatives/. The naming decode is a handoff, not an artifact: detected provisionally in Step 1 and folded into account-context.md (Field 4) on confirmation — no separate taxonomy file. Performance metrics are pulled live via the motion CLI, never stored. Staged the Cacheth Command Reference (meta/cacheth-command-reference.md) beside the Data-Query Guide as the flag-level contract for the motion cache CLI."
+    },
+    {
+      "version": "2.2.0",
+      "date": "2026-07-23",
+      "type": "minor",
+      "notes": "Added the Knoweth organize part (knoweth/): after the account questions are answered, organize the brain so retrieval stays tight, plus a standing save + maintenance contract. Grounded in the real retrieval wiring - only global, user:<userId>, and project:<workspaceId> (the workspace) are queried today, so shared content stays in the global lane and is sliced by tags; data-source-family lanes are a documented forward path gated on a harness change, not shipped."
+    },
     {
       "version": "2.1.0",
       "date": "2026-07-23",

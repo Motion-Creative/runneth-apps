@@ -1,326 +1,174 @@
 # Meta Creative Attribution Playbook
 ### Step 1 of the Meta Onboarding Package
 
-**How Runneth builds and maintains a per-creative attribution record for a Meta account.**
+**How Runneth gets per-creative facts for a Meta account — from the creative content layer
+(Cacheth), not from brain files — and detects the account's naming conventions.**
 
 This is Step 1 of the Meta onboarding package. It runs before the Account Context Brain because
-it collects raw creative facts — content, hooks, tags, transcripts, naming — without interpreting
-them. Once built, it gives the Account Context Brain real material to work with.
+it establishes where creative facts come from and detects naming patterns — without interpreting
+anything. Once done, it gives the Account Context Brain real material to work with.
 
-> **Deployment note (staging): do not auto-build creative files in the brain.**
-> In staging, per-creative summaries live in **Cacheth** and are surfaced through **Knoweth**.
-> Installing this package must never trigger this playbook on its own, and nothing in this file
-> (including the Maintenance section) runs automatically. Do not auto-pull creatives and write
-> summary files under `/agent/brain/meta/creatives/`. Run this playbook only when a person
-> explicitly asks for brain-stored attribution files for a workspace.
+> **Cacheth is the system of record for per-creative content.**
+> Per-creative content (summaries, hooks, transcripts, AI tags) lives in **Cacheth**, the local
+> creative cache, and is surfaced through **Knoweth**. This playbook writes no creative files,
+> and nothing in the package does so on its own. Runneth saves a creative file to the brain only
+> when a person explicitly asks for one — a dated snapshot that will not stay synced with the
+> cache. When later citing such a file, prefer the cache for current facts.
 
 The one-line model:
 
 > The **Account Context Brain** tells Runneth **how to analyze** the account. The **Creative
-> Attribution** gives Runneth **the per-creative facts it needs to actually do the job**: one
-> enriched record per active creative.
+> Attribution** gives Runneth **the per-creative facts it needs to actually do the job** — via
+> the creative content layer, one enriched record per active creative.
 
 Creative Attribution does not interpret anything. Interpretation lives in the Account Context
-Brain. This step only pulls from Motion what the Account Context Brain cannot tell it: the
+Brain. This step only establishes access to what the Account Context Brain cannot tell it: the
 creative content itself.
 
 ---
 
 ## What this produces
 
-- **Individual creative Markdown files**, one per active creative, with identity, summary, hook,
-  value props, transcript, AI tags, and naming.
-- An optional **tagging taxonomy** file, only if a naming convention is detected.
-- These files are automatically retrievable through Knoweth. Writing them is the index step.
+- A working **creative content layer**: Runneth knows what Cacheth holds and how to query it.
+- A provisional **naming decode**, handed to the Account Context Brain as Field 4 proposals.
+  Once confirmed, the decode lives in `/agent/brain/meta/account-context.md` — this step
+  persists nothing itself.
+- **No creative files** — nothing here writes per-creative content to the brain (Cacheth is the
+  system of record; person-requested snapshot files are a separate, explicit ask).
 
 ---
 
-## Step 1 - Start the onboarding
+## The creative content layer: what Cacheth holds and how to query it
 
-This step confirms the account scope and opens the attribution build with the customer.
+Cacheth syncs each workspace's creative records from Motion automatically. A full record
+(`motion cache get-creative`) holds:
 
-1. Get the target `workspaceId`. Use `motion workspaces` if it is not already known.
-2. Pull window defaults to `last_365d`. Only change this if the customer asks.
-3. Open with a direct confirmation to the customer:
+- **Identity:** creative ID, workspace ID, origin, format, launch date, media URL.
+- **Ad units:** every ad running the creative — ad / ad set / campaign IDs and names, active
+  status, thumbnails, and the primary ad copy.
+- **Glossary tags with definitions:** asset type, visual format, messaging angle, hook tactic,
+  intended audience, seasonality, offer type.
+- **Transcript** (video only): full text plus timed segments, language, duration.
+- **Summary sections:** ad description and format; spoken / text-overlay / visual hooks with
+  timestamps; a creative breakdown (scene-by-scene storyline, point of view, visuals, people,
+  music, fonts); messaging and positioning (features, benefits, value props, pain points, CTA,
+  offer, funnel stage); and emotional and audience insight (emotions with intensities,
+  persuasion tactics, cultural context, intended audience).
+- **Per-layer freshness timestamps:** when inventory, ad units, summary, transcript, and
+  glossary were each last hydrated. Cite these when freshness matters to an answer.
 
-> I'm starting the Meta Creative Attribution build for **[account name]**. This pulls every active
-> creative from your account and builds a searchable record of what each one says, shows, and is
-> tagged as — the foundation for every performance read and creative recommendation going forward.
->
-> I'll pull the last 12 months by default. This is Step 1 of your Meta onboarding. Once this is
-> done, we'll move to Step 2 (Account Context Brain) to confirm how you want to judge performance.
+What it does **not** hold: performance metrics or spend state. Those are always pulled live
+through the motion CLI per the Data-Query Guide.
 
-4. Record the scope:
-   - `workspaceId`: confirmed
-   - Pull window: `last_365d` (or customer-specified)
-   - Pull date: today's date as the "attribution as of" timestamp
+Runneth reaches this content two ways, cheapest first:
 
-No Account Context Brain is needed to run this step. Naming decodes are handled provisionally
-in Step 3. Spend state is read directly from Motion.
+1. **Knoweth pre-context injection (passive, first priority).** Before every turn, Knoweth
+   resolves the incoming query against the local index and injects matching creative chunks into
+   the "Knoweth Pre-LLM Context" block. If the injected context answers the question, answer
+   from it — no tool call.
+2. **motion cache CLI (active, when injection is not enough).** Local, no API call:
+   - `motion cache search-summaries --query "<text>" [--limit <n>]` — text search across ad
+     names, ad copy, and summary content. Each match carries `creativeId`, `adNames[]`, an
+     excerpt, and a relevance score — not the full record; follow up with `get-creative` for
+     that.
+   - `motion cache get-creative --creative-id <id>` — the complete record for one creative,
+     including `adUnits[].adName`. Always the full record (no section filtering); extract the
+     layer you need from the result file with `jq`.
+   - `motion cache export-summaries --format jsonl` — the whole synced corpus, one record per
+     creative, each carrying its `adNames[]`. `--format` is required (`duckdb` is the
+     alternative when SQL-style queries suit a large corpus). The bulk path when the question
+     spans the full account rather than a search match.
+   - `motion cache status` — when the cache last synced and how many creatives it holds.
+   - `motion cache refresh` — trigger a fresh sync from Motion to pull in newly launched
+     creatives or updated summaries (the one cache command that reaches out to Motion).
 
----
+   Every cache command accepts `--workspace-id <id>`; pass it explicitly per the Step 1 scope
+   rule. All of these write their output to a file under `./workdir/` and return a pointer plus
+   compact metadata; read the file with `jq`. Those result files are query scratch, not brain
+   content.
 
-## Step 2 - Pull the creative attribution from Motion
+   Flag-level detail, the full-record field layout, and `jq` extraction recipes live in the
+   Cacheth Command Reference (`/agent/brain/aligned-onboarding/cacheth-command-reference.md`),
+   installed beside the Data-Query Guide.
 
-### 2a. Identity pull
-
-Run this first. No summaries, no glossary. Returns every creative's identity, format, launch
-date, status, spend state, campaign, and ad set. Completes quickly even for large accounts.
-
-```
-motion meta insights --date-range last_365d --include-metrics --workspace-id <workspaceId>
-```
-
-Inspect the returned file with `jq`:
-- Check `totalCount` vs `providerTotalCount`. If they differ, the pull is partial.
-- Check `.creatives[0]` to confirm `id`, `adName`, `campaignName`, `adsetName`, `launchDate`,
-  `isActive`, `spendState`, and `format` are populated.
-- Note `.adsWithoutCreativeAsset`. These are spend-bearing ads with no synced creative. Skip them.
-
-**Save all creative IDs from this pull.** You need them for the enrichment batches.
-
-### 2b. Enrichment pull
-
-Adds summaries and AI tags to the creative IDs from 2a. Run in batches of 50 IDs per call using
-Python subprocess. Do not attempt on the full account without batching.
-
-```python
-import json, subprocess
-
-with open('./workdir/corpus_ids.json') as f:
-    batches = json.load(f)['batches']
-
-all_enriched = {}
-for batch in batches:
-    cmd = ['motion', 'meta', 'insights',
-           '--scope', 'creative-asset-id',
-           '--date-range', 'last_365d',
-           '--summary-sections', 'adDescription',
-           '--summary-sections', 'hookOrHeadline',
-           '--summary-sections', 'messagingAndPositioning',
-           '--glossary-category', 'visual-format',
-           '--glossary-category', 'messaging-angle',
-           '--glossary-category', 'hook-tactic',
-           '--glossary-category', 'intended-audience',
-           '--workspace-id', '<workspaceId>']
-    for cid in batch:
-        cmd += ['--creative-asset-id', cid]
-    result = subprocess.run(cmd, capture_output=True, text=True, timeout=90)
-    envelope = json.loads(result.stdout)
-    if envelope.get('successful') and envelope.get('file'):
-        with open(envelope['file']) as f:
-            data = json.load(f)
-        for c in data.get('creatives', []):
-            if c.get('id') and (c.get('summary') or c.get('glossaryTags')):
-                all_enriched[c['id']] = {
-                    'summary': c.get('summary') or {},
-                    'glossaryTags': c.get('glossaryTags') or []
-                }
-```
-
-50 IDs per batch is the reliable limit. Larger batches time out on high-spend creatives.
-
-### 2c. Transcript pull
-
-Transcripts are pulled scoped, not in bulk. Two passes:
-
-1. **Top-spend videos** (end of the initial build): run a scoped transcript call covering the top
-   50 video creatives by spend.
-2. **On demand** for any specific creative later:
-
-```
-motion meta insights --scope creative-asset-id --creative-asset-id <id> \
-  --include-transcript --date-range last_365d --workspace-id <workspaceId>
-```
-
-Only video creatives return a transcript. If a creative returns no transcript, record `"none"`.
-Do not leave the field blank.
+Freshness is the sync's job, not Runneth's: the cache bootstraps per workspace and keeps
+hydrating in the background. If a creative seems to be missing, check `motion cache status` and
+run `motion cache refresh`; if it is still absent, the live path is `motion meta insights
+--summary-sections` per the Data-Query Guide (the same path that owns performance metrics) —
+never reconstruct the record by hand.
 
 ---
 
-## Step 3 - Provisional naming decode
+## Step 1 — Confirm the scope
 
-The identity pull (Step 2a) returns all ad names across the account. Use them to detect naming
-patterns before writing any creative files.
+1. Get the target `workspaceId`. Use `motion workspaces` if it is not already known. Never
+   assume a default workspace — resolve it explicitly before any pull or cache query.
+2. Open with a direct confirmation to the customer:
 
-1. Pull the full set of `adName` values from the identity pull result.
-2. Look for structure: delimiters (underscores, hyphens, pipes), position-based encoding,
-   recurring prefixes, tag-like codes.
+> I'm starting the Meta Creative Attribution step for **[account name]**. Your creative content —
+> what each ad says, shows, and is tagged as — is already synced and searchable. What I'll do now
+> is read your ad naming conventions so I can decode them, then we'll move to Step 2 (Account
+> Context Brain) to confirm how you want to judge performance.
+
+3. Record the scope: `workspaceId` confirmed, and today's date as the "attribution as of"
+   timestamp.
+
+---
+
+## Step 2 — Provisional naming decode
+
+1. Export the synced corpus and extract the full ad-name list (local, no API call):
+
+   ```
+   motion cache export-summaries --format jsonl
+   ```
+
+   One record per creative, each carrying its associated ad names — extract them with
+   `jq -r '.adNames[]?'` on the returned file (a creative served in several ads carries that
+   many names). If the cache is still bootstrapping the workspace, the list may be incomplete —
+   `motion cache status` shows the sync state; run `motion cache refresh` and re-run the decode
+   once the sync settles. The export file is `./workdir/` scratch, not brain content.
+2. Look for structure in the `adName` values: delimiters (underscores, hyphens, pipes),
+   position-based encoding, recurring prefixes, tag-like codes.
 3. If a pattern is detected, build a provisional decode table: position or segment → meaning →
    example values. Mark it **provisional**.
-4. Use the provisional decode when writing creative files in Step 5. Mark decoded fields
-   provisional in each file.
+4. **Pass findings to the Account Context Brain.** When the Account Context Brain runs (Step 2
+   of the onboarding), pre-populate Field 4 (Naming conventions) with this provisional decode
+   table. The Account Context Brain confirms, corrects, or replaces it — it does not start from
+   scratch.
 
-**Pass findings to the Account Context Brain.** When the Account Context Brain runs (Step 2 of
-the onboarding), pre-populate Field 4 (Naming conventions) with this provisional decode table.
-The Account Context Brain confirms, corrects, or replaces it — it does not start from scratch.
+If no pattern is detected, note "no naming convention detected" as the provisional finding for
+the Account Context Brain to confirm.
 
-If no pattern is detected, record ad names raw in each creative file and note "no naming
-convention detected" as the provisional finding for the Account Context Brain to confirm.
-
----
-
-## Step 4 - Tagging taxonomy
-
-Create this file only if a naming convention was detected in Step 3.
-
-**Location:** `/agent/brain/meta/creatives/_tagging-taxonomy.md`
-
-Contents: the provisional naming table (segment or position → meaning → example values) plus
-the standard creative MD template from Step 5. Mark the naming table as provisional until the
-Account Context Brain confirms it. The underscore prefix keeps it at the top of the folder and
-signals it is a reference file, not a creative.
-
-Skip this step entirely if no naming convention was detected.
-
----
-
-## Step 5 - Generate individual creative MD files
-
-One file per creative.
-
-**File naming:** match the ad name exactly, `.md` extension. Replace slashes and special
-characters with hyphens. Truncate to 200 characters before the `.md` extension. When two
-creatives share the same ad name, append the last 6 characters of the `source_id` as a suffix
-to prevent overwrites.
-
-**Location:** `/agent/brain/meta/creatives/<AdName>.md`
-
-**Template:**
-
-```markdown
----
-title: <Creative Name>
-brand: <brand / ad account>
-workspace: <workspaceId>
-source_id: <Motion creative ID>
-format: <Video | Image | Carousel>
-event_at: <launch date>
-is_active: <true | false>
-spend_state: <scaling | holding | declining | unknown>
----
-
-# <Creative Name>
-
-## Identity
-- Motion ID, Format, Launch Date, Status, Spend State, Campaign, Ad Set
-
-## Naming Convention
-- Decoded fields using the provisional naming table (if one was detected), or the raw ad name.
-- Mark decoded values as provisional until the Account Context Brain confirms them.
-- For @handle UGC or influencer creatives that fall outside the naming convention, note that
-  explicitly.
-
-## Creative Summary
-- From Motion's adDescription summary section.
-
-## Hook
-- From Motion's hookOrHeadline summary section: spoken hook, text overlay, visual hook.
-
-## Transcript
-- From Motion's creative.transcript (video only). Write "none" if not returned.
-
-## Value Propositions
-- From Motion's messagingAndPositioning summary section.
-
-## AI Tags (Motion Glossary)
-- All tags Motion returns, grouped by category, using Motion's own definitions.
-- If no tags were returned for this creative, say so explicitly.
-```
-
-**Spend State** comes from Motion's `spendState` field on the creative row. Use it directly.
-Do not re-derive from spend numbers.
-
-**What to skip:**
-- Metrics (spend, ROAS, CPA, CTR, hold rate). They change on every pull.
-- `adsWithoutCreativeAsset` rows. No creative content to enrich.
-- Internal notes, CLI commands, or tool-calling mechanics. These files are account content.
-
----
-
-## Step 6 - Make it retrievable
-
-Writing the files under `/agent/brain/meta/creatives/` is the index step. Knoweth picks them up
-automatically for everyday recall. No separate index command is needed.
-
-If these files need a specific Knoweth lane or read scope, set that once with `ContextConfig`.
-
----
-
-## Step 7 - Update the brain index
-
-Add two entries to `/agent/INDEX.md`:
-
-**1. The creatives folder**
-```
-- path: /agent/brain/meta/creatives/
-  aliases: creative attribution, creative library, [account] creatives, per-creative files,
-           creative tags, meta account attributes
-  note: Per-creative MD files for [account] as of [date]. Identity, format, launch date,
-        spend state, campaign, provisional naming decode, summaries, hooks, value props, and
-        Motion AI glossary tags. No metrics. Interpretation source of truth is account-context.md.
-  created: [date]
-  updated: [date]
-```
-
-**2. The tagging taxonomy** (only if created)
-```
-- path: /agent/brain/meta/creatives/_tagging-taxonomy.md
-  aliases: tagging taxonomy, naming convention, creative template, ad name decoder
-  note: Provisional naming decode for [account]. Confirmed by Account Context Brain Field 4.
-  created: [date]
-  updated: [date]
-```
+The decode is a handoff, not an artifact. Do not write it to its own brain file: once confirmed,
+it lives in `/agent/brain/meta/account-context.md` (Field 4), the single owner of account
+interpretation, and anything decoding an ad name at analysis time reads it there. Nothing in
+this playbook writes to the brain, and no `/agent/INDEX.md` entry is needed — per-creative
+content is in Cacheth, and Knoweth surfaces it without an index step.
 
 ---
 
 ## Maintenance
 
-Maintenance applies only where a person explicitly requested the attribution build for this
-workspace. It is not a standing routine that installs with the package; do not schedule or run it
-otherwise.
-
-### Daily
-
-1. Pull recent launches:
-   ```
-   motion meta insights --date-range last_7d --include-metrics --workspace-id <workspaceId>
-   ```
-2. Compare returned creative IDs against existing files in `/agent/brain/meta/creatives/`.
-3. For each new ID: generate its MD file using the batched enrichment approach (Step 2b, 50 IDs
-   per batch).
-4. For new video creatives: run a scoped transcript pull if spoken content is needed.
-5. Update the `updated` date on the creatives folder entry in `/agent/INDEX.md`. Append a
-   one-line note to `/agent/brain/meta/_changelog.md`.
-
-**What you do not touch daily:**
-- Summaries, glossary tags, and naming fields are stable once set. Re-pull only if Motion
-  re-ran its AI pipeline on a creative.
-- Existing files do not need regeneration unless the naming convention changes.
-
-### Event-triggered
+There is nothing per-creative to maintain: the cache syncs itself, and new launches appear in it
+automatically. What remains is event-triggered:
 
 | Event | What to do |
 |---|---|
-| Account Context Brain confirms or corrects naming decode | Update the taxonomy file and re-decode affected creative files |
-| Campaign structure changes | Update the Identity section on affected files |
-| A creative's Spend State changes materially | Update its Spend State field |
-| Motion re-tags or re-transcribes a creative | Re-pull and refresh that file's AI Tags or Transcript |
+| The account's naming convention changes | Re-run the naming decode (Step 2) and route the new provisional table through Field 4 |
 | A new workspace is added | Run this playbook for that workspace first, then the Account Context Brain |
 
 ---
 
 ## Multi-workspace
 
-Most accounts are single-workspace, but multi-workspace orgs are real. When the brain holds
-more than one workspace, scope per workspace to prevent file collisions:
+Most accounts are single-workspace, but multi-workspace orgs are real. When the brain holds more
+than one workspace, scope the brain files per workspace:
 
 - `/agent/brain/meta/<workspace-slug>/account-context.md`
-- `/agent/brain/meta/<workspace-slug>/creatives/`
-- `/agent/brain/meta/<workspace-slug>/creatives/_tagging-taxonomy.md`
 
-Index with workspace-scoped aliases in `/agent/INDEX.md`. If you use Knoweth lanes to separate
-workspaces, set the lane once with `ContextConfig`.
+The creative content layer needs no per-workspace folders: Cacheth's cache projects are already
+workspace-scoped, and every cache query runs against the resolved workspace.
 
 ---
 
@@ -328,15 +176,15 @@ workspaces, set the lane once with `ContextConfig`.
 
 | What | Where |
 |---|---|
-| Account Context Brain | `/agent/brain/meta/account-context.md` |
-| Individual creative files | `/agent/brain/meta/creatives/<AdName>.md` |
-| Tagging taxonomy (optional) | `/agent/brain/meta/creatives/_tagging-taxonomy.md` |
+| Account Context Brain (incl. confirmed naming decode, Field 4) | `/agent/brain/meta/account-context.md` |
+| Per-creative content | Cacheth (surfaced via Knoweth; brain files only as person-requested snapshots) |
 | Brain index | `/agent/INDEX.md` |
 | Change log | `/agent/brain/meta/_changelog.md` |
 
 | What | Command / approach |
 |---|---|
-| Identity pull | `motion meta insights --date-range last_365d --include-metrics --workspace-id <id>` |
-| Enrichment pull | Python subprocess, 50 IDs per batch, `--scope creative-asset-id`, `--glossary-category` per dimension |
-| Transcript (scoped) | `motion meta insights --scope creative-asset-id --creative-asset-id <id> --include-transcript --date-range last_365d --workspace-id <id>` |
-| Daily new launches | `motion meta insights --date-range last_7d --include-metrics --workspace-id <id>` |
+| Creative lookup (passive) | Knoweth pre-context injection — answer from injected chunks when sufficient |
+| Creative search (active) | `motion cache search-summaries --query "<text>"` (local, no API call) |
+| One creative's full record | `motion cache get-creative --creative-id <id>` (local, no API call) |
+| Full corpus / naming decode | `motion cache export-summaries --format jsonl` + `jq -r '.adNames[]?'` (local, no API call) |
+| Cache freshness / re-sync | `motion cache status` (local) / `motion cache refresh` (syncs from Motion) |
