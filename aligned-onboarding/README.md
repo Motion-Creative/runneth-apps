@@ -39,7 +39,7 @@ package writes it to brain files.
 
 ---
 
-## Scope rules (apply to both parts)
+## Scope rules (apply to every Meta step)
 
 - **Meta only.** Never look for or pull other ad platforms (TikTok, LinkedIn, YouTube).
 - **Ignore Motion workspace settings.** Treat workspace goal, preferred KPI, spend threshold, and
@@ -78,7 +78,9 @@ File: `meta/meta-creative-attributes-playbook.md`
 File: `meta/meta-account-context-brain-onboarding-package.md`
 
 - **Job:** capture how the team interprets the account — what "best" means, which numbers to
-  trust, how campaigns map to stages. Nine required fields confirmed with a person.
+  trust, how campaigns map to stages. Nine required fields confirmed with a person, plus
+  Field 10 (the deck spec: reporting structure and marketing calendar, synthesized from
+  confirmed fields) — it gates the validation deck, not the question loop.
 - **Runs second.** Uses what the Creative Attributes step found (especially naming decode) as
   pre-populated proposals for confirmation, rather than starting cold.
 - **Persists to:** `/agent/brain/meta/account-context.md`, plus the operational naming decoder
@@ -87,13 +89,32 @@ File: `meta/meta-account-context-brain-onboarding-package.md`
 - **Refresh:** monthly cadence plus structural-drift triggers, logged in
   `/agent/brain/meta/_changelog.md`.
 
+### Meta Validation
+File: `meta/meta-validation-onboarding-package.md`
+
+- **Job:** prove Runneth understood the account. The answer-and-confirm loop on the customer's
+  starter questions (including the name-level probe: "show me all our [product] ads," with the
+  filtered name level shown), the weekly deck build pre-filled from the Field 10 deck spec (no
+  deck without it; questions-only customers never need it), lock-in (deck approval, refresh
+  routine, Slack), and the MVCE gate.
+- **Runs third, gated.** Starts only when all nine Account Context Brain fields are confirmed
+  and the workspace's creatives are in Cacheth (cache coverage, not files). Every correction in
+  the loop heals the specific Account Context Brain field behind it — never move past a wrong
+  answer.
+- **Persists to:** `/agent/brain/meta/validation.md` (confirmed answers, corrections, deck
+  route, lock-in state, MVCE block).
+- **Activation:** merges the `runneth:meta-validation-gate` guard block into `/agent/user.md`;
+  once merged, the trigger fires on its own when the prerequisites are met.
+- **Re-validation:** re-run the affected questions when the account changes in a way that could
+  break an answer (new north-star metric, naming-system change, new product line).
+
 ---
 
 ### Motion CLI Data-Query Guide (supporting reference)
 File: `meta/motion-cli-data-query-guide.md`
 
 - **Job:** the canonical contract for how Runneth pulls Meta data through the `motion` CLI, so
-  queries come out right on the first try. Both parts lean on it for their pulls.
+  queries come out right on the first try. Every Meta step leans on it for its pulls.
 - **Not run on its own.** Reference only, not a step to execute. Brand-agnostic; carries no
   account-specific IDs.
 
@@ -168,19 +189,25 @@ Folder: `meta-ad-performance-analysis/`
 3. **Activate and run the Account Context Brain (Step 2).** Merge the guard block into
    `/agent/user.md`, then run the fill-in. Confirms how the team judges performance, drawing on
    the Creative Attributes step (if it was run) for naming proposals and creative evidence.
-4. **Set up the VoC data sync (when asked).** For each available VoC platform, run the
+4. **Activate and run Meta Validation (Step 3).** Merge the validation-gate guard block into
+   `/agent/user.md`; once the Account Context Brain is fully confirmed and the cache has synced,
+   the gate opens the validation experience on its own: the answer-and-confirm loop, the weekly
+   deck, lock-in, and the MVCE gate. Onboarding is done when MVCE is on, not when data is
+   connected.
+5. **Set up the VoC data sync (when asked).** For each available VoC platform, run the
    voc-data-pull skill's "Set up the recurring sync" procedure - it creates the daily sync
    routine and kicks the backfill in the background.
-5. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
+6. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
    confirmed and data-source content has landed, organize the brain: keep shared content in the
    global lane and make it findable with tags and a naming decoder, and merge both the
    `runneth:knoweth-organize` and `runneth:knoweth-brain` guard blocks into /agent/user.md (per the
    MERGE INSTRUCTIONS in that doc) so the organize trigger fires and save-routing/maintenance stay on. Do not carve data-source-family or
    initiative lanes today; only global, the user lane, and the workspace lane are queried. See
    knoweth/knoweth-organize-onboarding-package.md.
-6. **Keep everything current.** Creative content stays current through the Cacheth sync
-   automatically. Account Context Brain on monthly cadence and structural-drift triggers. VoC
-   data refreshes itself through its daily routines once set up.
+7. **Keep everything current.** Creative content stays current through the Cacheth sync
+   automatically. Account Context Brain on monthly cadence and structural-drift triggers. The
+   weekly deck regenerates on the refresh routine agreed at lock-in. VoC data refreshes itself
+   through its daily routines once set up.
 
 ---
 
@@ -189,6 +216,10 @@ Folder: `meta-ad-performance-analysis/`
 - Creative Attributes are the material. Account Context Brain is the lens. A performance question
   uses the Account Context Brain to decide what "best" means, then the creative attributes to
   reason about the specific creatives.
+- Meta Validation is the catch. The first two steps are only proven when the customer confirms
+  Runneth's answers and approves the deck built from them; every correction in the loop lands in
+  the specific Account Context Brain field behind it, so validating and healing the context are
+  the same motion.
 - The dependency runs one way for interpretation: Account Context Brain is the authority on how
   to analyze. But the Creative Attributes step runs first because it supplies real evidence the
   Account Context Brain can draw on — naming patterns, campaign structure, creative volume.

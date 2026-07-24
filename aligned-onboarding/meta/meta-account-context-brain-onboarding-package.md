@@ -1,5 +1,5 @@
 # Meta Account Context: Brain Onboarding Package
-### Version 1.23 — patch on v1.22 (July 2026)
+### Version 1.24 — patch on v1.23 (July 2026)
 
 This package teaches Runneth how a customer understands their Meta ad account, so its queries,
 rankings, and insights match how the team actually thinks about the data. This package is
@@ -240,12 +240,17 @@ answers which field and what to read from the result.
 | 7. Funnel map | `motion meta ads --grain ads`; `motion meta insights` campaign names on rows | campaign-to-stage grouping; flag agency-managed or ASC campaigns |
 | 8. Creative performance metrics | `motion meta insights --date-range last_365d --include-metrics --table-kpi <keys>` | account averages for CPA, thumbstop, hold rate, CTR; video-only for engagement metrics |
 | 9. Targets, thresholds, decision rules | `motion meta insights --include-metrics --table-kpi <cost-per key>` | reference CPA baseline; surface material variation across product lines / campaign types |
+| 10. Reporting structure and marketing calendar (deck spec) | No new pull — synthesize from Fields 4, 7, and 9 once confirmed | marketing calendar from the decoder's campaign-type and launch-date positions; reporting structure from confirmed fields |
 
 ---
 
 # Required context fields
 
 All nine fields are required. Runneth auto-pulls every one of them. There is no optional set.
+
+Field 10 is the one addition outside that set: the deck spec. It is not required to start
+validation — the question loop runs on the nine — but no deck is built without it (see
+Field 10).
 
 ## 1. Sources of truth
 
@@ -599,6 +604,80 @@ on (e.g., last 14 days, last 7 days) so Runneth doesn't have to guess.
 - Tier labels: `<Legend: $X+ / Scale: $Y-$X / Kill: <$Y — or: not used>`
 - Default reporting window: `<last N days>`
 
+## 10. Reporting structure and marketing calendar (the deck spec)
+
+Status: `[EMPTY]`
+
+**This field is the deck gate, not a validation gate.** The validation question loop runs
+without it, but no deck is built until it is confirmed: the weekly deck's structure, cadence,
+and exclusions come from here. If validation reaches the deck build and this field is not yet
+confirmed, run its two beats right there — it synthesizes from already-confirmed fields, so it
+costs two questions, not a re-interview.
+
+This field solves three root problems: (1) the reporting picture is scattered across Fields 4,
+7, and 9 but never synthesized — without this field, Runneth asks the customer to explain their
+reporting from scratch; (2) the marketing calendar is embedded in the naming convention data
+but never surfaced proactively — without this field, Runneth has no seasonal context; (3) the
+validation deck has no spec — without this field, the "build the weekly deck" step in
+validation starts with a blank sheet.
+
+Run this field last. It synthesizes from other fields and requires Fields 4, 7, and 9 to be
+confirmed before it runs.
+
+**Auto-detect (no new Motion pull needed)**
+
+*Reporting structure — synthesize from confirmed fields:*
+- Cadence: from Field 9 (default reporting window)
+- Exclusions: from Fields 7 and 9 (excluded campaigns and report exclusions)
+- Performance slice: from the naming decoder (product line, content program, funnel stage,
+  campaign type) and Field 7 (campaign-to-stage map)
+- Breakdowns: from any confirmed product-level reporting rules
+
+*Marketing calendar — detect from the naming convention pull:*
+- Use the campaign-type and launch-date positions from the account's naming decoder, where the
+  decoder carries them. Positions vary by account — read them from `naming-decoder.json`, never
+  assume an offset.
+- Group by campaign type and earliest detected launch date to propose a seasonal calendar.
+- Do not run a new Motion pull; the data is already in the naming convention pull. If the
+  decoder carries no campaign-type or launch-date positions, say so and ask for the calendar
+  directly instead of proposing a detected one.
+
+**What to present**
+
+Present in two beats, back to back.
+
+*Beat 1 — Marketing calendar (auto-detected):* State what was detected. Propose the calendar
+with the detected campaign types and their launch windows. Then ask one question: whether there
+is anything coming up not yet visible in the account.
+
+*Beat 2 — Reporting structure (auto-synthesized):* Present the synthesized picture as a
+bulleted summary, then propose the four standard report sections as the starting deck
+structure. Then ask one question: whether this matches the full picture and what the ideal
+report would add.
+
+The four standard sections to propose for every account, adapted to the account's data:
+1. Top ads of the period — by funnel stage or by campaign
+2. Performance by the account's second dimension (usually product)
+3. Active seasonal campaign performance — whatever is running in the detected calendar
+4. Performance breakdown by naming convention dimensions — content program, format, offer
+   level, funnel stage. This is the creative team's signal layer: which buckets are winning
+   and which are not, derived automatically from the naming decoder.
+
+These four sections are a starting hypothesis, not a fixed template. Present them, let the
+customer confirm or reshape.
+
+**Why two questions, not one:** the marketing calendar and the reporting structure are separate
+confirmations. The calendar question is about completeness of external context. The reporting
+question is about the deck spec. Combining them into one question loses precision. Keep them as
+two beats in sequence.
+
+**Fields (saved output — feeds the validation deck build directly)**
+- Marketing calendar: `<campaign_type | launch_window | confirmed: yes/pending | notes>`
+- Reporting cadence: `<every N days>`
+- Reporting exclusions: `<confirmed list>`
+- Deck sections: `<1. top ads | 2. by [dimension] | 3. seasonal | 4. naming breakdown>`
+- Confirmed or open: `<what the customer confirmed vs what is still pending>`
+
 ---
 
 # Derived capabilities (not filled, enabled)
@@ -628,10 +707,13 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 7. Funnel map: "Which of our campaigns are top-of-funnel versus closing, and which matter most?"
 8. Creative metrics: "Is this video's hook working?"
 9. Targets and thresholds: "Is this ad a winner yet?"
+10. Reporting structure and calendar: "What should this week's report cover, and what's coming
+    up on the marketing calendar?"
 
 ## Overall status
 
 - Fields confirmed: `<count>` / 9
+- Field 10 (deck spec): `<confirmed | pending — no deck build until confirmed>`
 - Flagged fields needing the customer: `<list>`
 - Written to: `/agent/brain/meta/account-context.md`
 - Indexed in `/agent/INDEX.md`: `<yes | no>`
@@ -640,6 +722,28 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 ---
 
 # Changelog
+
+## v1.24 (July 2026) — Field 10: Reporting structure and marketing calendar (the deck spec)
+
+Added Field 10, synthesized from Fields 4, 7, and 9 once they are confirmed — no new Motion
+pull. It solves three root problems: reporting context was scattered across Fields 4, 7, and 9
+but never synthesized (Runneth was asking customers to explain their reporting from scratch);
+the marketing calendar was embedded in the naming convention data but never surfaced
+proactively; and the validation deck had no spec, so the "build the weekly deck" step started
+with a blank sheet.
+
+Two beats, one question each: an auto-detected marketing calendar (from the decoder's
+campaign-type and launch-date positions, when the account's decoder carries them), then the
+auto-synthesized reporting structure with four standard deck sections proposed as a starting
+hypothesis (top ads of the period, performance by second dimension, active seasonal campaigns,
+breakdown by naming convention dimensions).
+
+**Scope rule: Field 10 gates the deck, not validation.** It is not one of the nine required
+interpretation fields — the validation question loop runs without it — but no deck is built
+until it is confirmed. If the deck build is reached first, Field 10's two beats run on the
+spot. Its saved output feeds the validation deck build directly.
+
+---
 
 ## v1.23 (July 2026) — naming decoder JSON and Field 9 restructure (merged from parallel v1.22 work)
 

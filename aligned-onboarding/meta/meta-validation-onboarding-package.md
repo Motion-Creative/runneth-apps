@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.4 — draft for review (July 2026)
+### Version 1.5 — draft for review (July 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
@@ -116,8 +116,13 @@ Once the gate fires, Runneth opens in plain language. The intent, in Runneth's o
 
 Then offer the two doors, back to back:
 
-- **Deck-first:** "Do you already have a weekly deck you share with your team? Send it over and
-  I'll recreate it inside Runneth, then we'll pressure-test the numbers together."
+- **Deck-first:** read Field 10 (the deck spec in `account-context.md`) before offering this
+  door. If Field 10 is confirmed, lead with what's already known: "Based on your account
+  context, I have a deck spec ready — [the confirmed sections, cadence, and exclusions from
+  Field 10]. I can build it now. If you have an existing deck you'd like me to match for look
+  and feel, share it and I'll use that as the visual reference." If Field 10 is not yet
+  confirmed, say so and run its two beats first (they synthesize from already-confirmed fields
+  — two questions, no new pull), then build.
 - **Questions-first:** "Or, here's the list of questions I can already answer for you today. We
   can start there and confirm I'm reading the account the way you do."
 
@@ -142,6 +147,14 @@ which name level it filtered and why (per the Data-Query Guide's name-level rule
 Field 4 confirmed default), and must not silently treat the product as a campaign reference.
 If the customer corrects the read, the fix lands in Field 4 (naming conventions) like any
 other correction.
+
+**When Field 10 is confirmed, anchor questions 2 and 4 in what's already known:**
+- Question 2: replace "by campaign / product" with the confirmed reporting dimensions from
+  Field 10. If the account slices by product, ask about the real product lines by name ("How
+  is [product line A] performing vs [product line B]?") — never generically.
+- Question 4: reference active seasonal campaigns from the Field 10 marketing calendar. If a
+  campaign is currently running or approaching, name it ("[seasonal campaign] is active and
+  [next one] is coming up — how are those tracking against your expectations?").
 
 Invite the customer to add any question that matters to them that's missing. Capture the final
 set.
@@ -170,25 +183,32 @@ Rules for the loop:
 
 ## Step 3 — Build the weekly deck (the artifact)
 
-Once the questions are confirmed, move to the deck:
+**The deck is gated on Field 10.** Read Field 10 (the deck spec) before gathering anything. If
+it is confirmed, the deck's structure, cadence, and exclusions are already known — pre-fill
+from it and do not re-ask. If it is not confirmed, run Field 10's two beats right here (they
+synthesize from already-confirmed fields — two questions, no new pull), then build. No deck is
+built without a confirmed Field 10. A customer who only wants the question loop can skip the
+deck — and Field 10 — entirely.
 
-> "Now the fun part. I'd love to build the weekly deck your team will actually look at. Do you
-> have a reference I can match? Or just describe what you want, which snapshots, how it should
-> look, and I'll build it."
+Then move to the deck:
 
-Gather:
+> "Now the fun part. I have your deck spec ready — [the confirmed sections from Field 10]. I'm
+> going to build it now. The one thing I still need: do you have an existing deck you'd like me
+> to match for look and feel? If not, I'll use the Motion default."
 
-- **Reference or description.** An existing deck to recreate, or a written description.
-- **Snapshots.** The data views they want (e.g. top creatives by spend with CPA / thumbstop /
-  hold rate / outbound CTR, per-product slices, a testing/graduated section, a winners + graduated
-  summary with iteration ideas).
-- **Controls.** Date behavior (custom range plus Last 7 / 14 / 30 days is the common ask).
+Gather only what Field 10 does not already answer:
+
+- **Visual reference (if any).** An existing deck to match for look and feel only — not for
+  structure. Structure comes from Field 10.
 - **Look and feel.** MotionUI by default, playable videos, equal-size creative cards.
 
-Build it on the report component library so the layout is proven, not hand-rolled. The deck reads
-the creative content layer (Cacheth, via injection or the cache CLI) for creative facts (themes,
-hooks, tags, content), live motion CLI pulls for performance (spend, winners, spend state), and
-the Account Context Brain for how "best," "winner," and "graduated" are judged.
+Do not re-gather sections, snapshots, or date controls — Field 10 already answered them.
+
+Build it on the report component library so the layout is proven, not hand-rolled. The deck
+reads Field 10 for its structure and sections, the creative content layer (Cacheth, via
+injection or the cache CLI) for creative facts (themes, hooks, tags, content), live motion CLI
+pulls for performance (spend, winners, spend state), and the Account Context Brain for how
+"best," "winner," and "graduated" are judged.
 
 The deck is not just output. It is the proof that Runneth connected the pieces and understood them
 well enough to produce something the team will use every week.
@@ -240,6 +260,9 @@ slack_connected: <yes | no>
 ```
 
 MVCE is binary. If any of the five is not true, the state is `off` and validation is not done.
+A questions-only customer can run the answer-and-confirm loop indefinitely without Field 10 or
+a deck — but MVCE stays off until the deck is built and approved, which requires the Field 10
+spec first.
 
 ---
 
@@ -288,6 +311,20 @@ the CSM, the customer, and Runneth can all point at.
 ---
 
 # Changelog
+
+## v1.5 (July 2026) — deck build reads Field 10 (the deck spec)
+- The deck is now gated on Account Context Field 10 (reporting structure and marketing
+  calendar): no deck without a confirmed spec. Step 3 pre-fills structure, cadence, and
+  exclusions from it and stops re-gathering sections, snapshots, and date controls; if
+  Field 10 is unconfirmed at deck time, its two beats run on the spot (two questions, no new
+  pull).
+- The deck-first door leads with the ready spec when Field 10 is confirmed, asking only for a
+  visual look-and-feel reference.
+- Questions 2 and 4 anchor in the confirmed reporting dimensions and the marketing calendar
+  when Field 10 is confirmed, instead of generic phrasing.
+- Validation start is unchanged: the question loop still gates on the nine required fields and
+  cache sync only. A questions-only customer never needs Field 10; MVCE still requires the
+  approved deck.
 
 ## v1.4 (July 2026) — name-level probe
 - Starter question 5 added: "Show me all our [product] ads" with a real product name from the
