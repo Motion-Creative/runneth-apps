@@ -2,6 +2,17 @@
 
 Repo-side history of the package. Not staged to the VM.
 
+## 2.8.2 - 2026-07-26
+
+Post-install is now mechanical wherever content already exists as staged bytes. The guard
+merge runs as one python pass (read user.md + the four staged guard files, substitute
+workspaceId, splice by sentinel, write back) with a verify-then-single-Write fallback only
+if the sandbox rejects the scripted write - no more regenerating the whole user.md through
+the model. Every VoC routine created at install gets its first run kicked and checked off;
+canceled routines from prior installs are terminal and never resumed. All INDEX.md and
+existing-file updates go read-then-write-whole (the edit/patch tool fails validation on
+staging VMs).
+
 ## 2.8.1 - 2026-07-26
 
 Post-install now fires reliably on the first turn after install. The package manager loads
