@@ -15,6 +15,17 @@ old `install-config.json`) and the **installer lane** (this branch,
 `eric/aligned-onboarding-make-fasteth` - the package-manager migration). 2.12.0 unifies
 them; each lane's own entries are kept below under its heading.
 
+### 2.12.1 - 2026-07-24
+
+The EPERM install-recovery recipe is now written down instead of improvised. The README's
+install section documents the exact mechanical recovery for the known mounted-filesystem
+chmod bug: copy staged files from the operation directory to their targets, write the
+`installed.json` entry with its `resources` array copied verbatim from the operation
+manifest (the full field set - a trimmed projection fails CLI validation and stalls the
+install), then confirm with `package status`. Codified from live run evidence: the run that
+improvised a stripped `installed.json` schema lost ~110 seconds to failed `package` calls
+and a recompose.
+
 ### 2.12.0 - 2026-07-24
 
 Unification. This version contains everything from both lanes: the content lane's
