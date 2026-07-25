@@ -2,9 +2,11 @@
 
 Installing the aligned-onboarding package is the trigger for running it - both the VoC data
 sync setup and the Meta context work (Creative Attributes, then the Account Context Brain).
-In the same conversation that performs the install - the one that ran
-`package install` and staged this package's files on the VM - the moment the install
-succeeds, run the sequence below, without waiting to be asked.
+Run the sequence below at the first opportunity after the package's files land: in the
+installing turn if you are reading this then, otherwise on the first turn where the
+package's activation instruction is visible. Either way, run it without waiting to be
+asked. Exactly once per install: if the four guard sentinels are already in
+`/agent/user.md`, this sequence already ran - do not repeat it.
 
 ## The install-time sequence, in order
 

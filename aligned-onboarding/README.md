@@ -40,7 +40,9 @@ Never copy files by hand - the package manager stages everything in one call:
 
 1. If you were given a pull-request URL, resolve it to its head branch first:
    `gh pr view <pr-url> --json headRefName`.
-2. Run: `package install https://github.com/Motion-Creative/runneth-apps/tree/<branch>/aligned-onboarding`
+2. Run: `package install "github:Motion-Creative/runneth-apps/aligned-onboarding#<branch>"`.
+   Always use this `github:` ref form - the `https://github.com/.../tree/<branch>/...` URL
+   form misparses branch names that contain `/` and fails with a 422.
 3. The moment the install succeeds, run [`post-install.md`](post-install.md)
    (staged at `/agent/brain/aligned-onboarding/post-install.md`) in the same conversation.
 
@@ -209,8 +211,10 @@ Folder: `meta-ad-performance-analysis/`
 install, no exceptions.** Installing is the trigger - the manifest's `activation` package
 instruction, the staged post-install doc, and this line all point at the same file, which
 carries the executable install-time sequence (reachability check, VoC sync setup, guard
-merges, Meta context steps). The run order below is the human-readable description of the
-same lifecycle.
+merges, Meta context steps). If the installing turn ends without running it (the package
+manager itself never runs setup), the activation instruction fires it on the first turn
+after install instead - the guard sentinels in `/agent/user.md` are the ran-already marker.
+The run order below is the human-readable description of the same lifecycle.
 
 ## Install and run order
 

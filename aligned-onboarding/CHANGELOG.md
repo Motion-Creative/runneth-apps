@@ -2,6 +2,17 @@
 
 Repo-side history of the package. Not staged to the VM.
 
+## 2.8.1 - 2026-07-26
+
+Post-install now fires reliably on the first turn after install. The package manager loads
+`package_instruction` resources as prompt context for the turns after install (it never runs
+setup itself), so the activation instruction is rewritten for that moment: it checks
+`/agent/user.md` for the `runneth:account-context-guard` sentinel and, when absent, runs the
+post-install sequence before anything else. The guard sentinels double as the ran-already
+marker, so activation is idempotent across turns. Install docs now mandate the
+`github:owner/repo/path#branch` ref form - the `tree/<branch>` URL form misparses branch
+names containing `/` and 422s.
+
 ## 2.8.0 - 2026-07-26
 
 Deterministic install. Replaced `install-config.json` with a real `package.json` manifest so
