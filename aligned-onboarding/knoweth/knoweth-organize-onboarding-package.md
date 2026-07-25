@@ -82,6 +82,16 @@ If any is missing, activation is incomplete; finish it before calling the packag
 ### Prerequisites (hard gate)
 Do not set up lanes until Guard 1's gates 1 and 2 hold: the account interpretation is `[CONFIRMED]`, and content has landed complete (the VoC backfill reports full date-window coverage - a mid-backfill folder has files but has not "landed"). Lanes describe what is actually in the brain, so laning before content produces empty or wrong scopes. If either is missing, say what is missing and route back; never fake it.
 
+**Gate 2 fallback — VoC data without a sync routine.** If VoC content landed outside the
+voc-data-pull skill (synced externally), the `routine history` coverage report does not exist
+and gate 2 would wait forever. Verify coverage directly from the files instead: for each
+platform folder under `/agent/brain/data-sources/voc/`, read the oldest and newest item dates
+and confirm the range spans the intended pull window with recent items present. Two honesty
+rules: this is a weaker signal than the backfill report (a partial pull can look complete on
+date range alone), so record that the check was file-based; and data without a routine is not
+staying current, so passing the gate this way comes with an offer to set up the sync routine
+— it clears the organize step, not the missing sync.
+
 ### Scope
 Cross-cutting: every data-source family and every future write, not one platform. The per-source packages own their own folder conventions and how-to docs; Knoweth owns the layer above them (lanes, the retrieval contract, save routing, maintenance) and the **lane -> path map** that names each family's real root. One owner per fact; Knoweth points down to the source packages rather than restating their paths.
 
@@ -352,34 +362,6 @@ Verify against the live configuration before finalizing: the lane cap, the confi
 This doc is findable reference knowledge. On its own it does not hard-enforce lanes or save-routing; the two `/agent/user.md` guard blocks are what make the lane-setup trigger fire and the save/maintenance discipline always-on, and that merge is admin-gated. The enforceable artifact is the Knoweth lane config; the guard blocks are the standing behavior; this doc is the human-readable contract the CSM, the customer, and Runneth can all point at. Without the guard merge, the method is followed by hand and drifts; with it, it holds.
 
 ## Changelog
-### v0.1 (July 2026) — first draft aligned to the packages
-- Reframed the front to the Aligned Onboarding house style: version, one-line model, activation guard blocks, hard-gate prerequisites, scope, persistence, honesty section.
-- Two sentinel guard blocks: `runneth:knoweth-organize` (post-questions organize) and `runneth:knoweth-brain` (standing save + maintenance).
 
-### v0.2 (July 2026) — corrected to the real retrieval wiring
-- Traced the harness: the requested read set is `[user:<userId>, project:<workspaceId>, global]`; `project` is the workspace, and family/custom lanes are not queried today.
-- Reframed the lane model (section 4) to: everything in `global` + tags today; `user:` for isolation; workspace project is automatic; family lanes are a documented forward path gated on a harness change (option B).
-- Guard 1 renamed lanes-setup -> organize (tags + naming decoder, not family lanes).
-- Positioned as the last setup step of the combined run and the first line of ongoing maintenance; sequencing of lanes vs validation flagged for the package owner.
-- Body (two-layer model, retrieval, lanes, front-matter, save routing, self-organization, packaging) unchanged.
-
-### v0.3 (July 2026) — review notes resolved
-- VoC raw format, folders, and schema now defer to the voc-data-pull skill (one owner per fact); front-matter applies to compiled pages only; the compiled `<platform>-context.md` moved out of the items-only platform folders.
-- Guard 1 (v2): `/agent/brain/_tag-vocabulary.md` existence is the durable done-marker (no double-fire); "content landed" requires the VoC backfill's coverage-complete report, not file existence.
-- Cacheth is an assumed primitive: the deployment-dependent "files by default, Cacheth where flagged in" mode is removed. Nothing in the package writes per-creative files; ones in the brain exist only by a person's explicit ask (dated snapshots; the cache is the retrieval source of truth), and the sweep asks the person before archiving unknown-provenance files rather than moving them silently (gotchas, repair checklist, and the Guard 2 (v2) maintenance sweep). Counteth is NOT assumed: performance metrics are pulled live via the motion CLI (per the Motion CLI Data-Query Guide), never stored.
-- Run order single-sourced in the package README; stale facts fixed (VoC setup is manual; the manifest is `package.json`).
-- Verified: the lane model matches agent-builder's `resolveKnowethReadLanes`; the family-lane forward path is gated on it layering configured lanes (PDEC-9225).
-- Made explicit that the winner metric / interpretation always comes from `account-context.md` (per the account-context guard), never from Motion workspace settings the CLI can return (answer standard, worked example).
-
-### v0.4 (July 2026) — answer standard upgraded
-- Filter rules: read the naming decode (`account-context.md` Field 4, its only home) before any name-based filter; match the signal to the question (structural questions -> campaign/ad-set names via the decode; creative questions -> Cacheth tags and content); cross-check when both carry the signal and say so when they disagree.
-- Performance and VoC framed as one system (performance shows what is winning, VoC explains why, ad comments connect the two), with a routing example.
-- Show-the-work standard: analytical answers state the filter applied, the signal read (with Cacheth per-layer freshness when it matters), and what could not be confirmed.
-
-### v0.5 (July 2026) — naming decoder JSON (ACB v1.23)
-- The confirmed Meta naming decode now has an operational output: `/agent/brain/meta/naming-decoder.json`, written and owned by Account Context Field 4 (typed positions, query fields, filter patterns). The answer standard's read-the-decode-first rule, the routing list, the indexed-content list, and the skeleton all point to it alongside `account-context.md`. This is the Meta ad-name decoder, distinct from the brain-wide tag vocabulary + naming decoder at `/agent/brain/_tag-vocabulary.md`.
-
-### v1.0 (July 2026) — final
-- Guard 1 names its check sources: the fields-confirmed count in account-context.md's "File metadata" block (gate 1) and `routine history --id <routine-id>` for the backfill coverage report (gate 2).
-- Guard 2 exempts raw VoC files from save-tagging - their format is owned by the voc-data-pull skill; facet vocabulary lives in the compiled pages that cite them.
-- Repo-meta packaging note removed from the config section.
+Maintained in the package repo at `aligned-onboarding/CHANGELOG.md` — not staged to
+customer brains.
