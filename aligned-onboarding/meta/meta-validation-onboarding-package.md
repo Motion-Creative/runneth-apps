@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.6 — draft for review (July 2026)
+### Version 1.8 — draft for review (July 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
@@ -100,6 +100,13 @@ Write it as a plain-language reference document, the way a sharp analyst would h
 to a teammate. State conclusions, not statuses. Index it in `/agent/INDEX.md` with aliases
 (validation, MVCE, weekly deck, starter questions, onboarding proof) and a one-line note.
 
+**Write it incrementally, not at the end.** Update `validation.md` after every confirmed
+answer and every correction — never hold the record for a closing step. An interrupted
+validation must leave a readable trail of exactly where it stopped. On re-entry (the gate
+re-fires whenever `validation.md` is missing or MVCE is off), read the record first and
+resume at the first unconfirmed question — never restart a loop the customer has already
+half-finished.
+
 ---
 
 # The validation experience
@@ -138,8 +145,18 @@ or adds.** These are the foundational questions, not frequent queries. The defau
 1. What are our top winning ads this week?
 2. How is performance by campaign / product?
 3. What themes show up in our winning ads? (from AI tags and creative summaries)
-4. What are we testing right now, and what's scaling or ready to graduate?
+4. What are we testing right now, and what's ready to scale?
 5. Show me all our [product] ads — using a real product or concept name from this account.
+
+Question 4 speaks the account's language and reads its structure. "Ready to scale" is the
+neutral default — if the team has its own word for the testing-to-scaling transition
+(graduate, promote, move to evergreen), it is captured with Fields 6 and 9 and the question
+uses their word. Read Field 7 before answering: when campaigns are split by purpose, testing
+vs scaling reads from the campaign level. When one shared creative pool serves every
+campaign, say so plainly — pull by campaign name, report what each campaign is doing, and
+note that a testing-to-scaling rule for creatives is not yet defined if the team wants that
+tracked (see the dependency note at the end of this package). Deflecting the question is the
+only wrong answer.
 
 Question 5 is the name-level probe: the same product word can live at the campaign, ad set,
 and ad level, and this question proves Runneth reads the right one. The answer must state
@@ -182,6 +199,12 @@ Rules for the loop:
   per the Data-Query Guide's presenting-creatives contract: media rendered from each
   creative's Cacheth `url`, names decoded through the naming decoder — never a raw delimited
   ad name as the label.
+- Register is a correctable read too. "I just wanted the table" or "why didn't you explain
+  that?" is a correction like any other: adjust, and if it reflects how this team likes their
+  answers (numbers first; interpretation always; offer before delivering), write it as a
+  one-line answer-register note in account-context.md's "at a glance" section — the guard
+  makes every future performance answer load it. See the Data-Query Guide's answering
+  posture.
 - Every correction is logged to `/agent/brain/meta/validation.md` and applied to
   `/agent/brain/meta/account-context.md` so the fix is durable.
 
@@ -212,7 +235,7 @@ Build it on the report component library so the layout is proven, not hand-rolle
 reads Field 10 for its structure and sections, the creative content layer (Cacheth, via
 injection or the cache CLI) for creative facts (themes, hooks, tags, content), live motion CLI
 pulls for performance (spend, winners, spend state), and the Account Context Brain for how
-"best," "winner," and "graduated" are judged.
+"best," "winner," and "ready to scale" are judged.
 
 The deck is not just output. It is the proof that Runneth connected the pieces and understood them
 well enough to produce something the team will use every week.
@@ -268,6 +291,13 @@ A questions-only customer can run the answer-and-confirm loop indefinitely witho
 a deck — but MVCE stays off until the deck is built and approved, which requires the Field 10
 spec first.
 
+**When MVCE flips on, pass the baton.** Validation's last act is pointing at the Knoweth
+organize part (`knoweth-organize-onboarding-package.md`, staged beside this doc): its gates
+open the organize step once the account questions are answered and content has landed. Check
+that its guard blocks (`runneth:knoweth-organize`, `runneth:knoweth-brain`) are merged into
+`/agent/user.md` per that doc's MERGE INSTRUCTIONS; if they are not, offer the merge now.
+Onboarding is not handed off until the organize layer is active.
+
 ---
 
 # Success signal
@@ -292,13 +322,14 @@ confidence, worth a follow-up, not a silent pass.
 
 # Dependency on the other parts (one open item)
 
-- **Graduation is a required input this part leans on.** The deck's "scaling / graduated / ready
-  to graduate" snapshot needs a defined graduation rule. Today the only related signal is Spend
-  State (scaling / holding / declining), which comes from live Motion pulls — the creative content
-  layer holds no performance data. The graduation rule must be captured as an Account
-  Context Brain field (fits field 6 test batching or field 9 winner/cut criteria) so the deck produces that
-  snapshot consistently. Until it is captured, treat the graduated snapshot as `[FLAGGED]` and say
-  the rule is still needed rather than guessing it.
+- **The testing-to-scaling rule is a required input this part leans on.** The deck's
+  "testing / scaling / ready to scale" snapshot needs a defined rule for when a creative moves
+  from testing to scaling (some teams call this graduating — use the account's own word).
+  Today the only related signal is Spend State (scaling / holding / declining), which comes
+  from live Motion pulls — the creative content layer holds no performance data. The rule must
+  be captured as an Account Context Brain field (fits field 6 test batching or field 9
+  winner/cut criteria) so the deck produces that snapshot consistently. Until it is captured,
+  treat that snapshot as `[FLAGGED]` and say the rule is still needed rather than guessing it.
 - Interpretation precedence is unchanged: when the deck and the Account Context Brain disagree on
   what "best" or "winner" means, the Account Context Brain wins.
 
@@ -316,59 +347,5 @@ the CSM, the customer, and Runneth can all point at.
 
 # Changelog
 
-## v1.6 (July 2026) — show the creatives
-- New loop rule: answers referencing specific creatives present them as a gallery (media from
-  the Cacheth record's `url`, names decoded through the naming decoder) per the Data-Query
-  Guide's presenting-creatives contract. Raw delimited ad names are filter keys, not labels.
-
-## v1.5 (July 2026) — deck build reads Field 10 (the deck spec)
-- The deck is now gated on Account Context Field 10 (reporting structure and marketing
-  calendar): no deck without a confirmed spec. Step 3 pre-fills structure, cadence, and
-  exclusions from it and stops re-gathering sections, snapshots, and date controls; if
-  Field 10 is unconfirmed at deck time, its two beats run on the spot (two questions, no new
-  pull).
-- The deck-first door leads with the ready spec when Field 10 is confirmed, asking only for a
-  visual look-and-feel reference.
-- Questions 2 and 4 anchor in the confirmed reporting dimensions and the marketing calendar
-  when Field 10 is confirmed, instead of generic phrasing.
-- Validation start is unchanged: the question loop still gates on the nine required fields and
-  cache sync only. A questions-only customer never needs Field 10; MVCE still requires the
-  approved deck.
-
-## v1.4 (July 2026) — name-level probe
-- Starter question 5 added: "Show me all our [product] ads" with a real product name from the
-  account. Probes whether Runneth filters the right name level (campaign vs ad set vs ad)
-  instead of defaulting product names to campaign references.
-- Show-the-work rule now includes which name level was filtered, so a wrong-level read is
-  visible and correctable in the loop.
-
-## v1.3 (July 2026) — show the work
-- New loop rule: each answer states which filter and signal it used (naming decode, Cacheth tags,
-  live metrics) and what it couldn't confirm, so the customer can correct the read, not just the
-  result.
-
-## v1.2 (July 2026) — creative content layer replaces the Creative Corpus
-- The second prerequisite and the validation gate now check that the workspace's creatives are in
-  Cacheth (surfaced through Knoweth), not that per-creative files exist under
-  `/agent/brain/meta/creatives/`. Nothing in the package writes per-creative files to the brain.
-- Guard block bumped to v2 accordingly; answers and the weekly deck read the creative content
-  layer via Knoweth injection or the motion cache CLI.
-
-## v1.1 (July 2026) — added lock-in step
-
-- New Step 4 "Lock it in": deck approval, refresh routine, Slack connection. Onboarding is not
-  complete until all three are done.
-- MVCE gate expanded from 3 conditions to 5: added deck approval, refresh routine, Slack
-  connection.
-- Validation record now captures `weekly_deck_approved`, `refresh_routine_id`,
-  `refresh_cadence`, and `slack_connected`.
-- Guard block updated to reflect the five-condition completion gate.
-
-## v1.0 (July 2026) — initial draft
-
-- New third part of the Meta onboarding package: turns "connected + trained" into "validated."
-- Meta-only, no competitors. Runneth proposes the starter questions; the customer confirms or adds.
-- Two entry doors (deck-first or questions-first) that converge on the same answer-and-confirm loop.
-- The loop heals the Account Context Brain on every correction.
-- The weekly deck is the MVCE proof artifact, built on the report component library.
-- Flags graduation as a required Account Context Brain field the deck depends on.
+Maintained in the package repo at `aligned-onboarding/CHANGELOG.md` — not staged to
+customer brains.

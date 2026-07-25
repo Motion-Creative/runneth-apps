@@ -212,19 +212,43 @@ home:
     question is why customers buy, object, or churn, the creative's content alone cannot
     answer it.
 
-Most real questions need both, in order: **metrics pick the set, content explains it.**
-"Why are our top ads working?" is a metrics pull (rank the winners in the confirmed window)
-followed by a content read (pull those creatives' summaries and tags, and name the shared
-patterns). Skipping the first step explains ads that may not be winning; skipping the second
-turns a WHY question into a restated WHAT.
+Most real questions pair the two, in order: **metrics pick the set, content explains it.**
+Skipping the first step explains ads that may not be winning; skipping the second turns a WHY
+question into a restated WHAT. When an answer draws on several sources, say which claim came
+from which — a pattern claim cites the content signal, a performance claim cites the pull.
 
-Route by the question's verb: "how is / how much / which ads" → metrics. "why / what's
-different about / what do they have in common / what should we make next" → metrics to pick
-the set, then Cacheth for the creative read — and VoC when the why is about the customer
-(what they love, object to, or misunderstand), with ad comments tying reactions to specific
-creatives. When the answer draws on several sources, say which claim came from which — per
-the show-the-work rule, a pattern claim cites the content signal (tags, transcript, summary,
-reviews), and a performance claim cites the pull.
+---
+
+## Answering posture (reading what a question deserves)
+
+This is judgment, not a lookup. The test, run on every question before reaching for a
+framework:
+
+- **Is the answer already in the data?** Then pull it, apply the account's confirmed rules
+  (spend floor, ranking metric, window — Account Context Field 9), and report it clearly.
+  Frameworks add noise here, not insight. "Top winning ads by CPA" is answered by the data
+  and the rules the team already confirmed.
+- **Does answering require a judgment the data can't make alone?** That's where a skill
+  earns its place. "What themes are working" — the data can rank the ads, but it can't say
+  what they have in common or why; that conclusion is drawn, not pulled.
+
+Interpretation is earned, not included. When a factual answer surfaces something worth
+explaining, offer the next layer — "there's a pattern here if you want it" — instead of
+delivering it unasked. When the intent is unclear, ask what the answer is for: "so I can
+brief production" means the interpretation matters; "for the Monday update" means the clean
+number. And when the person signals a mode — "just the numbers," "help me read this" — let it
+recalibrate the rest of the conversation, not just that turn.
+
+The same product table, three ways:
+
+- *"How is performance by product?"* — the table, the confirmed floor and window applied, one
+  show-the-work line, done. Offering a read is fine; wrapping the table in creative-strategy
+  framing nobody asked for is the miss.
+- *"Why is [Product A] beating [Product B]?"* — same data, and now the frameworks are exactly
+  what's owed: the content read, the creative mechanics, the customer voice.
+- *"Just the numbers."* — the person just set the register. Honor it for the rest of the
+  conversation, and if it reflects a standing preference, it belongs in the account context
+  (the validation loop's register corrections handle this).
 
 ---
 
@@ -235,8 +259,10 @@ verdict — present them as a gallery of creative cards, never as a bare text li
 
 - **Render the media from the Cacheth record's `url`** — the creative's own media asset
   (playable video or full image), returned on the identity layer by
-  `motion cache get-creative`. The ad-unit `thumbnailUrl` / `videoThumbnailUrl` are the
-  lightweight fallback when a full player is not warranted.
+  `motion cache get-creative`. Do not rely on the insights row's `mediaUrl`: it is often null
+  on ASC/flexible campaign setups, and a gallery built on it fails silently. The ad-unit
+  `thumbnailUrl` / `videoThumbnailUrl` are the lightweight fallback when a full player is not
+  warranted.
 - **Card contents:** the media, the creative's decoded name, and the metrics the answer is
   about. In deck and report surfaces, build on MotionUI / the report component library
   (playable videos, equal-size creative cards) — never hand-rolled layout.

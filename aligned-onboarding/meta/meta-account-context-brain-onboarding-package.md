@@ -1,5 +1,5 @@
 # Meta Account Context: Brain Onboarding Package
-### Version 1.26 — patch on v1.25 (July 2026)
+### Version 1.27 — patch on v1.26 (July 2026)
 
 This package teaches Runneth how a customer understands their Meta ad account, so its queries,
 rankings, and insights match how the team actually thinks about the data. This package is
@@ -90,7 +90,9 @@ per-product targets with the team), not as flag noise. Use this order:
 2. **One short intro paragraph, in plain language:** what this file is, that Runneth reads it
    before any Meta performance work for this account, and how to read the field statuses.
 3. **At a glance:** a few bullets a human can skim: last refreshed, confidence, fields confirmed
-   (count / 9), and any open flags.
+   (count / 9), and any open flags. Once learned, this is also where the one-line
+   answer-register note lives (how this team likes their answers — e.g. "numbers first,
+   interpretation on request"), written by the validation loop's register corrections.
 4. **The nine fields**, in order.
 5. **The deck spec (only once Field 10 is confirmed):** a short section carrying Field 10's
    saved output — marketing calendar, reporting cadence, exclusions, and deck sections — in the
@@ -798,157 +800,5 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 
 # Changelog
 
-## v1.26 (July 2026) — required output schema for the fill-in presentation
-
-The fill-in conversation now has one declared structural contract, placed between Steps 1
-and 2: three parts in order (opening frame, field sections, closing TLDR), a literal
-skeleton, and a pre-send checklist. Structure only — content stays account-specific.
-Reconciliations with existing rules: settled fields get no question; the Fields 1–3
-consolidation counts as one section; the one-question-per-section default allows two only
-for a sanctioned two-beat section (Field 10, when its beats run in this conversation).
-Steps 2–4 now point at the schema instead of restating its rules. The schema governs the
-one full fill-in presentation; follow-up turns, corrections, and refresh runs are exempt.
-
-## v1.25 (July 2026) — patch: Field 10 wired into the fill-in flow and the saved file
-
-Two gaps from the v1.24 merge closed: the saved-file order now carries a deck-spec section
-(written only once Field 10 is confirmed; the validation deck build reads it from
-account-context.md), and the fill-in procedure gains Step 5 — once Fields 4, 7, and 9 are
-confirmed, offer Field 10's two beats on the spot, or defer them to deck time. No behavior
-change to the scope rule: Field 10 still gates the deck, not the question loop.
-
-## v1.24 (July 2026) — Field 10: Reporting structure and marketing calendar (the deck spec)
-
-Added Field 10, synthesized from Fields 4, 7, and 9 once they are confirmed — no new Motion
-pull. It solves three root problems: reporting context was scattered across Fields 4, 7, and 9
-but never synthesized (Runneth was asking customers to explain their reporting from scratch);
-the marketing calendar was embedded in the naming convention data but never surfaced
-proactively; and the validation deck had no spec, so the "build the weekly deck" step started
-with a blank sheet.
-
-Two beats, one question each: an auto-detected marketing calendar (from the decoder's
-campaign-type and launch-date positions, when the account's decoder carries them), then the
-auto-synthesized reporting structure with four standard deck sections proposed as a starting
-hypothesis (top ads of the period, performance by second dimension, active seasonal campaigns,
-breakdown by naming convention dimensions).
-
-**Scope rule: Field 10 gates the deck, not validation.** It is not one of the nine required
-interpretation fields — the validation question loop runs without it — but no deck is built
-until it is confirmed. If the deck build is reached first, Field 10's two beats run on the
-spot. Its saved output feeds the validation deck build directly.
-
----
-
-## v1.23 (July 2026) — naming decoder JSON and Field 9 restructure (merged from parallel v1.22 work)
-
-Two changes from live validation QA feedback, authored in parallel with v1.22 and merged here:
-
-**Field 4: Naming convention now requires an operational decoder file and LP reference decode.**
-The confirmed decode is written to `/agent/brain/meta/naming-decoder.json` (typed positions:
-`segment_filter` / `context_only` / `unique_id` / `metadata_do_not_filter`, each mapped to its
-Meta query field), indexed in `/agent/INDEX.md`, and referenced from `account-context.md` — not
-embedded in it. Field 4 remains the interpretation owner; the decoder is its operational
-appendix. Added the landing-page reference decode (second-to-last position, formats RLP / LP /
-CAP, marked do-not-filter — it often contains the same strings as content program codes, which
-causes false positives under bare substring matching) and the filter translation rules: wrap
-creative identity values in underscores when filtering `adName` (`_MKBHD_` not `MKBHD`), and use
-`adsetName` / `campaignName` for ad set and campaign requests, never `adName`.
-
-**Field 9: restructured around four captures with a winner/cut scope rule.**
-Ranking metric, CPA target (commentary, not a filter), winner/cut criteria (applied only when a
-user explicitly asks a winner/cut question — all other queries show the data as asked), and
-default reporting window. Spend tiers gained the operational usage rule: rank by the attribution
-CPA metric ascending within the requested window first, apply tier labels after ranking based on
-lifetime spend — tiers are classification labels, not pre-filters. Supersedes v1.21's
-always-ask spend-floor script: the floor is still captured and an unconfirmed floor still flags
-every winner/cut answer, but it no longer blocks with a mandatory verbatim note.
-
----
-
-## v1.22 (July 2026) — patch: Field 4 captures where product names live
-
-**Field 4: product-name placement is now detected and confirmed.**
-The auto-pull checks whether product/concept tokens found in ad names also appear in campaign
-and ad set names, and the confirm loop asks which level a bare "[product] ads" request should
-filter. The confirmed default is saved as its own field line. This closes a live failure mode:
-treating a product name as a campaign reference by default when the account encodes products in
-ad names (or vice versa). Until confirmed, the Data-Query Guide's name-level rules default to
-`adName` with includes matching.
-
----
-
-## v1.21 (July 2026) — patch: spend confidence floor made mandatory
-
-One change from third live run feedback:
-
-**Field 9: Spend confidence floor is now a required, non-skippable ask.**
-Added explicit instruction to always ask for the spend confidence floor, ask whether it varies
-by product line or campaign type, and if the answer is not given, write it into the
-`## Still confirming` section of the saved brain file with a specific note that blocks any
-winner or cut call until it is confirmed. A missing spend floor makes the campaign-median
-benchmark unactionable — any creative can look like a winner on $50 of spend.
-
----
-
-## v1.2 (July 2026) — updated from second live run feedback
-
-Six changes based on feedback from the second live onboarding run, plus two refinements:
-
-**1. Field 1: Third-party attribution tool is source of truth, not a tie-breaker**
-When an attribution tool returns real data, it wins. Ask which specific metric keys from that
-tool are returning real values (resolved via metric-reference for labels), and surface those
-exact keys in the question — not generic category descriptions. The saved brain file must
-explicitly name the attribution tool as the source of truth.
-
-**2. Fields 1–3 consolidation rule when attribution tool is confirmed**
-When an attribution tool is present, fields 1, 2, and 3 collapse into one question about
-which of its returning metrics the team judges on. Gotcha observations still surface as
-observations only. In-platform Meta metrics are never proposed as alternatives.
-
-**3. Field 2: Skip Meta pixel event hierarchy when attribution tool is confirmed**
-North-star question moves to the attribution tool's metrics. Supplemental Meta signal is
-creative engagement only (thumbstop, CTR, hold rate).
-
-**4. Field 3: Remove "is this intentional?" framing universally; add gotcha definition and never-flag list**
-Sub-1 ROAS: if attribution tool present, note it as observation only. If not, ask what metric
-they are hitting a target against. Added explicit definition of what qualifies as a gotcha
-(unexpected, non-obvious, would surprise a solid Meta practitioner) and a "never flag these"
-list: video metrics on images, catalog fields missing, null names on flex/catalog formats,
-zero conversions on non-conversion objectives, null for unrequested table KPIs, sub-1 ROAS
-when attribution tool is present.
-
-**5. Field 8: Broaden the creative metrics question**
-Open question: "What's your goal on thumbstop, and are there other creative metrics you judge
-on?" Anchor in pulled averages for each metric surfaced.
-
-**6. Field 9: Add target hierarchy specificity and data-anchored probe**
-Inspect pulled CPA variation before asking. Surface material variation anchored in the data.
-Capture targets by scope (product, funnel stage, campaign type) when they differ.
-
----
-
-## v1.1 (July 2026) — updated from first live run
-
-Three changes based on feedback from the first live onboarding run:
-
-**1. Opening frame added (Step 2, new)**
-The original package had no opening frame. Every fill-in output must now open with a "What do
-you know about me?" section before the nine fields. Two beats: brand story from
-`motion brand-context` (not inferred from ad names), then Meta account findings. 4–6 sentences.
-
-**2. Brand context pull added as Step 0 (required)**
-`motion brand-context` is now a required first step before any field pulls. The original package
-did not specify this, leading to brand identity being inferred from ad names. This is now a
-hard requirement — the opening frame must come from brand context.
-
-**3. Sources of truth — third-party attribution rule (Field 1)**
-The original package did not specify what to do when a third-party attribution tool returns null.
-The new rule: if it returns null, do not mention the tool by name. Ask only whether Meta is the
-source of truth or whether an attribution platform should be integrated. If it returns real data,
-name it and ask which tool wins when numbers disagree.
-
-**4. Closing TLDR added (Step 4, new)**
-The original package had no closing TLDR requirement. Every fill-in output must now end with a
-numbered list of every open question, one line each, with a "Just answer what you know" prompt.
-This is the most important UX moment — the customer should not have to scroll back through nine
-sections to find their questions.
+Maintained in the package repo at `aligned-onboarding/CHANGELOG.md` — not staged to
+customer brains.
