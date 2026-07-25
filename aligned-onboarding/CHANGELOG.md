@@ -2,6 +2,18 @@
 
 Repo-side history of the package. Not staged to the VM.
 
+## 2.8.3 - 2026-07-26
+
+The package is now a real indexed package: registered in the repo root `package-index.json`
+(source `backend-github` at `main`, `installPolicy: manual`, `updatePolicy: auto`,
+`uninstallPolicy: allowed`), so the canonical install path is
+`package intent add-optional aligned-onboarding` + `package sync` - durable intent across VM
+rebuilds, backend-cached artifacts, fleet auto-updates, clean uninstall. Explicit
+`package install "github:...#<branch>"` stays the branch-testing path. The manifest
+description is compacted (the index entry must mirror it verbatim). Guard MERGE
+INSTRUCTIONS now require byte-for-byte copies from the staged guard files - never
+paraphrased. Root README stops calling this folder a compatibility exception.
+
 ## 2.8.2 - 2026-07-26
 
 Post-install is now mechanical wherever content already exists as staged bytes. The guard

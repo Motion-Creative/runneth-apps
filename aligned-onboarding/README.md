@@ -36,15 +36,27 @@ covers all of them; `package.json` (the package manifest) maps every file to its
 
 ### How to install (exact procedure)
 
-Never copy files by hand - the package manager stages everything in one call:
+Never copy files by hand - the package manager stages everything.
+
+The canonical path (the package is registered in the repo's `package-index.json`, which
+VMs read from `main`):
+
+1. Run `package intent add-optional aligned-onboarding` - this records durable intent, so
+   VM rebuilds reinstall the package automatically.
+2. Run `package sync` - this installs it from the index (backend-cached artifacts) and,
+   with `updatePolicy: auto`, keeps it updated fleet-wide after that.
+
+Branch testing only (the version on `main` is not what you were asked to install, e.g. a
+PR or branch reference):
 
 1. If you were given a pull-request URL, resolve it to its head branch first:
    `gh pr view <pr-url> --json headRefName`.
 2. Run: `package install "github:Motion-Creative/runneth-apps/aligned-onboarding#<branch>"`.
    Always use this `github:` ref form - the `https://github.com/.../tree/<branch>/...` URL
    form misparses branch names that contain `/` and fails with a 422.
-3. The moment the install succeeds, run [`post-install.md`](post-install.md)
-   (staged at `/agent/brain/aligned-onboarding/post-install.md`) in the same conversation.
+
+Either way: the moment the install succeeds, run [`post-install.md`](post-install.md)
+(staged at `/agent/brain/aligned-onboarding/post-install.md`) in the same conversation.
 
 These instruction files are the package itself, not its output. They live in the brain
 outside the `meta` folder structure. The brain's `meta` folder holds only what Runneth
