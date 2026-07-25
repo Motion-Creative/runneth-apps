@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "id": "aligned-onboarding",
+  "name": "Aligned Onboarding",
+  "version": "1.1.0",
+  "description": "Teaches Runneth how a customer reads their Meta ad account, captures customer-specific report/dashboard setup, and builds a creative corpus for grounded Meta performance work.",
+  "updatePolicy": "manual",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "aligned-onboarding-skill",
+      "type": "file",
+      "sourcePath": "SKILL.md",
+      "target": {
+        "root": "agent_skills",
+        "path": "aligned-onboarding/SKILL.md"
+      },
+      "executable": false
+    },
+    {
+      "id": "aligned-onboarding-readme",
+      "type": "file",
+      "sourcePath": "README.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/README.md"
+      },
+      "executable": false
+    },
+    {
+      "id": "aligned-onboarding-account-context-brain",
+      "type": "file",
+      "sourcePath": "account-context-brain.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/account-context-brain.md"
+      },
+      "executable": false
+    },
+    {
+      "id": "aligned-onboarding-report-dashboard-setup",
+      "type": "file",
+      "sourcePath": "report-dashboard-setup.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/report-dashboard-setup.md"
+      },
+      "executable": false
+    },
+    {
+      "id": "aligned-onboarding-creative-corpus-playbook",
+      "type": "file",
+      "sourcePath": "creative-corpus-playbook.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/creative-corpus-playbook.md"
+      },
+      "executable": false
+    },
+    {
+      "id": "aligned-onboarding-motion-cli-data-query-guide",
+      "type": "file",
+      "sourcePath": "motion-cli-data-query-guide.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/motion-cli-data-query-guide.md"
+      },
+      "executable": false
+    }
+  ]
+}
