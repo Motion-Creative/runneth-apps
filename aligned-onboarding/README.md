@@ -73,6 +73,10 @@ placement failed), recover mechanically from the operation directory under
    (`contentSha256`, `executable`, `id`, `sourcePath`, `target`, `targetPath`, `type`),
    never a trimmed-down projection. The CLI validates the full shape; every later
    `package` command fails on a partial entry.
+   **If you cannot copy the resource entries verbatim from the operation manifest, do
+   NOT write `installed.json` at all.** A partial entry is far worse than a missing
+   one: the harness strictly parses this file before every turn, so one malformed
+   entry permanently breaks every conversation on this VM with no way to self-repair.
 3. Run `package status` to confirm the install is recognized, then continue.
 
 Either way: the moment the install succeeds, run [`post-install.md`](post-install.md)
