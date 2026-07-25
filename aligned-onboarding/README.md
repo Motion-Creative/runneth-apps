@@ -90,11 +90,12 @@ File: `creative-corpus-playbook.md`
   value props, transcript, AI tags, naming), the attributes Runneth uses to do the analysis the
   Account Context Brain defines.
 - **How it runs:** reads what the Account Context Brain already knows, then pulls from Motion only
-  what the Account Context Brain cannot tell it (the creative content itself). Knoweth picks up the
-  files automatically; corpus-search can be installed as the optional filterable supplement.
+  what the Account Context Brain cannot tell it (the creative content itself). Default Brain
+  retrieval picks up the files automatically; corpus-search can be installed as the optional
+  filterable supplement.
 - **Persists to:** individual creative Markdown files under `/agent/brain/meta/creatives/`, plus an
   optional tagging taxonomy at `/agent/brain/meta/creatives/_tagging-taxonomy.md`.
-- **Retrieval:** automatic through Knoweth. Writing the file is the index step.
+- **Retrieval:** automatic through default Brain retrieval. Writing the file is the index step.
 - **Maintenance:** daily and event-triggered updates as creatives change.
 
 ---
@@ -111,10 +112,9 @@ File: `motion-cli-data-query-guide.md`
 ### corpus-search (optional companion tool)
 Source: `Motion-Creative/runneth-apps/corpus-search`
 
-The package reuses **corpus-search**, a local hybrid-retrieval CLI, to **supplement** Knoweth (not
-replace it). Knoweth stays the default: everything written under `/agent/brain/` is surfaced
-automatically as pre-context. Reach for corpus-search when you need deliberate, filterable search
-over a lot of raw text.
+The package reuses **corpus-search**, a local retrieval CLI, to supplement default Brain retrieval
+when deliberate, filterable search over a lot of raw text is needed. Saved Brain files remain the
+default context source.
 
 **corpus-search is a general raw-text retrieval layer, not a creative-only tool.** The Creative
 Corpus is one source it indexes; it is meant to hold any high-volume raw text the brain accumulates,
@@ -124,9 +124,8 @@ similar. Everything shares one index, kept separate by the `kind` tag (`creative
 
 - **Install:** stage it under `/agent/tools/corpus-search/`, then run
   `bash /agent/tools/corpus-search/install.sh` and resolve its checklist.
-- **Requires `OPENAI_API_KEY`** reachable in the workspace for embeddings. If the checklist flags it
-  as missing, request it securely (host `api.openai.com`), never pasted into chat. Some workspaces
-  pre-provision it.
+- **Credentials:** if the checklist flags a missing credential, request it securely and never ask for
+  it to be pasted into chat. Some workspaces pre-provision it.
 - **Register sources by kind:** for this package, add `/agent/brain/meta/creatives` to
   corpus-search's `sources.json` with `kind: creative`. Register other raw-text folders (reviews,
   voice-of-customer, transcripts) the same way under their own `kind` so `refresh` keeps them all
@@ -144,16 +143,17 @@ similar. Everything shares one index, kept separate by the `kind` tag (`creative
 4. **Run Report Dashboard Setup.** Read `/agent/brain/meta/account-context.md`, capture the team's
    reporting preferences, write `/agent/brain/meta/report-dashboard-context.md`, and index it in
    `/agent/INDEX.md`.
-5. **Install corpus-search.** Run `bash /agent/tools/corpus-search/install.sh`, resolve its
-   checklist (including `OPENAI_API_KEY`), and register `/agent/brain/meta/creatives` as a source
-   with `kind: creative`. One-time; can happen before or after the corpus is built.
+5. **Install corpus-search when deliberate filterable search is needed.** Run
+   `bash /agent/tools/corpus-search/install.sh`, resolve its checklist, and register
+   `/agent/brain/meta/creatives` as a source with `kind: creative`. One-time; can happen before or
+   after the corpus is built.
 6. **Build the Creative Corpus.** With the Account Context Brain in place, generate the per-creative
    attribute files (each with its frontmatter). The Creative Corpus reads the Account Context Brain
    for interpretation and the Report Dashboard Setup when report surfaces need creative evidence
-   rules. Then index the folder into corpus-search so filterable search is available.
+   rules. If corpus-search is installed, refresh that source so filterable search is available.
 7. **Keep all three current.** The Account Context Brain on its refresh cadence, Report Dashboard
    Setup when report preferences or saved reports change, the Creative Corpus on daily and
-   event-triggered maintenance, and refresh the corpus-search index on that same cadence.
+   event-triggered maintenance, and refresh corpus-search on that same cadence when it is installed.
 
 ---
 
@@ -165,6 +165,7 @@ similar. Everything shares one index, kept separate by the `kind` tag (`creative
   belong on the surface, then the Creative Corpus to reason about the specific creatives.
 - The Account Context Brain's read-before-performance guard is what forces the lens to be loaded
   before any performance work. Report Dashboard Setup adds the read-before-reporting preferences.
-  The Creative Corpus is surfaced automatically through Knoweth when creatives are discussed.
+  The Creative Corpus is surfaced automatically by default Brain retrieval when creatives are
+  discussed.
 - The dependency runs one way: Report Dashboard Setup and Creative Corpus read the Account Context
   Brain. The Account Context Brain never depends on the other two.

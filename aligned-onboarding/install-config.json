@@ -40,7 +40,7 @@
       "from": "report-dashboard-setup.md",
       "to": "/agent/brain/aligned-onboarding/report-dashboard-setup.md",
       "on_exists": "overwrite",
-      "purpose": "The Report Dashboard Setup package: customer-specific standard views, saved-report trust, source-of-truth rules, metrics, thresholds, date windows, taxonomy, creative evidence, visual standards, cadence, and validation dashboard captured as /agent/brain/meta/report-dashboard-context.md."
+      "purpose": "The Report Dashboard Setup package: customer-specific standard views, saved-report trust, source-of-truth rules, metrics, thresholds, date windows, taxonomy, creative evidence, visual standards, cadence, and validation surface captured as /agent/brain/meta/report-dashboard-context.md."
     },
     {
       "from": "creative-corpus-playbook.md",
@@ -60,13 +60,13 @@
       "version": "1.1.0",
       "date": "2026-07-25",
       "type": "minor",
-      "notes": "Adds Report Dashboard Setup as the customer-owned reporting companion to Account Context Brain. It captures standard views, trusted saved reports and attribution sources, metric labels, thresholds, date windows, taxonomy, creative evidence, visual and delivery standards, and the validation dashboard into /agent/brain/meta/report-dashboard-context.md. The package now stages four procedure/reference docs and activates both performance and reporting guards."
+      "notes": "Adds Report Dashboard Setup as the customer-owned reporting companion to Account Context Brain. It captures standard views, trusted saved reports and attribution sources, metric labels, thresholds, date windows, taxonomy, creative evidence, visual and delivery standards, and the validation surface into /agent/brain/meta/report-dashboard-context.md. The package now stages four procedure/reference docs and activates both performance and reporting guards."
     },
     {
       "version": "1.0.0",
       "date": "2026-07-21",
       "type": "major",
-      "notes": "Initial release. Aligned Onboarding teaches Runneth how a customer reads their Meta ad account and then builds a per-creative corpus off that lens. It ships two parts: the Account Context Brain (nine interpretation fields Runneth auto-pulls, confirms with a person, validates, and flags, then saves as a plain-language reference at /agent/brain/meta/account-context.md) and the Creative Corpus playbook (one enriched Markdown record per active creative with identity, summary, hook, transcript, value props, and Motion AI tags, under /agent/brain/meta/creatives/). A supporting Motion CLI data-query guide keeps the auto-pulls correct on the first try. Activation merges a workspace-scoped read-before-performance guard into /agent/user.md so the lens is loaded before any Meta performance work, and treats Motion workspace settings (goal, preferred KPI, spend threshold, attribution config) as if they do not exist. Meta only, one workspace at a time. Retrieval is automatic through Knoweth; the corpus-search tool is fetched from the library only if absent for deliberate filterable search, never bundled or clobbered."
+      "notes": "Initial release. Aligned Onboarding teaches Runneth how a customer reads their Meta ad account and then builds a per-creative corpus off that lens. It ships two parts: the Account Context Brain (nine interpretation fields Runneth auto-pulls, confirms with a person, validates, and flags, then saves as a plain-language reference at /agent/brain/meta/account-context.md) and the Creative Corpus playbook (one enriched Markdown record per active creative with identity, summary, hook, transcript, value props, and Motion AI tags, under /agent/brain/meta/creatives/). A supporting Motion CLI data-query guide keeps the auto-pulls correct on the first try. Activation merges a workspace-scoped read-before-performance guard into /agent/user.md so the lens is loaded before any Meta performance work, and treats Motion workspace settings (goal, preferred KPI, spend threshold, attribution config) as if they do not exist. Meta only, one workspace at a time. Default Brain retrieval handles ordinary recall; the corpus-search tool is fetched from the library only if absent for deliberate filterable search, never bundled or clobbered."
     }
   ]
 }

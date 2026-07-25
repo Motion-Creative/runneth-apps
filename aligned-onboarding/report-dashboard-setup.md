@@ -31,6 +31,8 @@ Report dashboard context guard (workspace <workspaceId>):
 
 - Before building, updating, scheduling, or refreshing a Meta report, dashboard, app, tracker,
   readout, or weekly deck source for this account, read /agent/brain/meta/account-context.md.
+- Treat report, dashboard, app, tracker, readout, and deck as compatible surface words. Preserve the
+  person's term when naming the deliverable instead of forcing `dashboard`.
 - If /agent/brain/meta/report-dashboard-context.md exists, read it before choosing report defaults,
   source-of-truth rules, metric order, thresholds, taxonomy, creative evidence, visual treatment, or
   delivery cadence.
@@ -67,7 +69,8 @@ Create `/agent/brain/meta/report-dashboard-context.md`. The saved file is a pros
 not a worksheet. Write it the way a sharp CSM or analyst would explain the customer's reporting
 preferences to a new teammate.
 
-The saved file must include:
+The saved file should include these sections. Leave unknowns in **Still confirming** instead of
+inventing values.
 
 1. **Title:** `# <Ad account> - Report Dashboard Context`
 2. **One short intro paragraph:** what this file governs and that Runneth reads it before report,
@@ -87,8 +90,8 @@ The saved file must include:
    drilldowns, and how missing media is shown.
 10. **Visual and delivery standards:** Motion-like treatment, dashboard density, brand/reporting
     style, cadence, delivery destination, and review flow.
-11. **Validation dashboard:** the first dashboard or report that proves Runneth understands the
-    account.
+11. **Validation surface:** the first report, dashboard, app, tracker, readout, or deck that proves
+    Runneth understands the account.
 12. **Still confirming:** open choices and who should answer them.
 13. **File metadata:** fenced YAML at the bottom for refresh routines.
 
@@ -120,7 +123,7 @@ State what to do when Motion and the customer's Runneth setup disagree.>
 fatigued, or needs review. Include the time window each rule uses.>
 
 ## Date windows and cadence
-<Default dashboard controls, weekly comparison behavior, long-lookback rules, timezone, and routine
+<Default controls, weekly comparison behavior, long-lookback rules, timezone, and routine
 cadence or delivery destination.>
 
 ## Taxonomy and grouping
@@ -134,9 +137,9 @@ and how to handle missing media.>
 ## Visual and delivery standards
 <Motion-like reporting expectations, density, brand/report style, destinations, and review steps.>
 
-## Validation dashboard
-<The dashboard or readout that proves onboarding worked. Include the exact prompt or business
-question to test.>
+## Validation surface
+<The report, dashboard, app, tracker, readout, or deck that proves onboarding worked. Include the
+exact prompt or business question to test.>
 
 ## Still confirming
 - <Open question>
@@ -167,7 +170,7 @@ Work through these fields:
 
 Understand which repeatable views the customer expects and what each view is for.
 
-Default archetypes to confirm:
+Starter archetypes to confirm:
 
 - **Top Ads:** top creative cards plus a comparison table. Usually answers what to scale, remix, or
   inspect next.
@@ -178,7 +181,7 @@ Default archetypes to confirm:
 
 Ask what else belongs here. Do not force every customer into all four views.
 
-Validation question: "If someone asks for your weekly reporting dashboard, which view should Runneth
+Validation question: "If someone asks for your weekly reporting surface, which view should Runneth
 build first?"
 
 ### Field 2 - Trusted Sources And Saved Reports
@@ -198,7 +201,7 @@ Capture source rules in business terms:
 - State what not to use when the customer distrusts a metric or report.
 
 Validation question: "When Meta and the trusted attribution source disagree, which one decides the
-dashboard?"
+reporting surface?"
 
 ### Field 3 - Metrics And Decision Rules
 
@@ -243,7 +246,7 @@ Common windows:
 - previous week comparison
 - long lookback for hit-rate or archive reads
 
-Record the timezone and whether recurring dashboards should post to Slack, become a saved app, feed a
+Record the timezone and whether recurring reporting should post to Slack, become a saved app, feed a
 deck, or stay in chat until reviewed.
 
 Validation question: "What should Runneth compare against when someone asks for the weekly report?"
@@ -270,9 +273,9 @@ to which product?"
 
 ### Field 6 - Creative Evidence
 
-Capture what makes a dashboard feel usable to this team.
+Capture what makes a reporting surface feel usable to this team.
 
-Recommended defaults:
+Starter defaults to confirm:
 
 - Show playable videos when video URLs exist.
 - Use still previews when playable video is unavailable.
@@ -282,7 +285,7 @@ Recommended defaults:
 - Show missing media, missing metrics, and partial pulls as visible caveats.
 
 Validation question: "What has to be visible on every creative card for your team to trust the
-dashboard?"
+reporting surface?"
 
 ### Field 7 - Visual And Delivery Standards
 
@@ -300,26 +303,27 @@ Examples:
 Do not save internal component names, open PR notes, or package implementation details here. Save the
 customer-visible expectation.
 
-Validation question: "What would make this dashboard feel wrong even if the numbers were correct?"
+Validation question: "What would make this reporting surface feel wrong even if the numbers were
+correct?"
 
-### Field 8 - Validation Dashboard
+### Field 8 - Validation Surface
 
-Pick one dashboard as the validation artifact for onboarding. The dashboard proves Runneth has the
-right sources, metric interpretation, taxonomy, creative evidence, and visual standard.
+Pick one report, dashboard, app, tracker, readout, or deck as the validation artifact for onboarding.
+The surface proves Runneth has the right sources, metric interpretation, taxonomy, creative
+evidence, and visual standard.
 
-Use the customer's own must-have business questions first. If none are known yet, start with one of
-these:
+Use the customer's own must-have business questions first. If none are known yet, offer a small
+starter menu like this and have the team pick or revise one:
 
-- "Build a top ads dashboard with custom dates plus last 7, 14, and 30 days. Show the top 10
-  creatives sorted by spend with spend, CPA, thumbstop rate, hold rate, and outbound CTR."
-- "Create a comparative report showing campaign performance in one section and overall insights
-  compared to the previous week."
-- "Build a launch analysis dashboard for newly launched ads by product, with product performance and
-  top ads by product."
-- "Show account-wide hit rate over the last 90 days. A hit means at least 3K spend and at least 0.5x
-  ROAS."
+- "Build our trusted top-creative readout with the date windows, ranking metric, supporting metrics,
+  and creative evidence our team uses."
+- "Create a comparative report using our trusted grouping and comparison rules."
+- "Build a launch-analysis surface for newly launched ads using our graduation or review rules."
+- "Show account-wide hit rate using our confirmed hit definition, confidence threshold, and
+  lookback."
 
-Validation question: "Which dashboard would prove to you that Runneth understands this account?"
+Validation question: "Which report, app, or dashboard would prove to you that Runneth understands
+this account?"
 
 ---
 
@@ -333,9 +337,13 @@ Validation question: "Which dashboard would prove to you that Runneth understand
 - Do not treat a saved Motion report as trusted just because it exists. Record why the customer uses
   it.
 - Do not let a generic report archetype override a customer-specific rule.
+- Do not record starter views, date windows, media treatment, or validation surfaces as confirmed
+  customer truth unless the team confirms them or a trusted saved report proves them.
+- Preserve the customer's surface word in visible work. If they ask for an app, report, tracker,
+  readout, or deck, do not rename it to a dashboard unless they do.
 - Do not store this setup under `/agent/workspaces/<workspaceId>/...`; this package writes customer
   setup into the visible Brain under `/agent/brain/meta/`.
-- Do not make the app itself the only source of dashboard truth. Apps should render data and criteria
+- Do not make the app itself the only source of reporting truth. Apps should render data and criteria
   that are saved separately and auditable.
 
 ---
@@ -347,9 +355,9 @@ Refresh this setup when:
 - the customer corrects a report or dashboard
 - the trusted saved Motion reports change
 - a source of truth changes
-- a weekly dashboard becomes recurring
+- a weekly report, dashboard, app, tracker, readout, or deck becomes recurring
 - a new product, campaign taxonomy, market, or attribution rule becomes important
-- the validation dashboard fails because Runneth picked the wrong source, metric, grouping, or
+- the validation surface fails because Runneth picked the wrong source, metric, grouping, or
   evidence shape
 
 Append every refresh to `/agent/brain/meta/_changelog.md`.

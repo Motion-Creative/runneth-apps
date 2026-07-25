@@ -77,14 +77,15 @@ procedures live in the staged docs and are the source of truth for each step:
    Motion report metadata and existing app or routine registry entries when available, confirm the
    team's reporting preferences with a person, then write the prose result to
    `/agent/brain/meta/report-dashboard-context.md` and index it in `/agent/INDEX.md`.
-5. **Reuse corpus-search (optional but recommended).** If `/agent/tools/corpus-search/` is not
-   already present, fetch corpus-search from the public library and install it per its own
-   install-config; never clobber a customized copy. It supplements Knoweth for deliberate,
-   filterable search. Register `/agent/brain/meta/creatives` as a source with `kind: creative`.
+5. **Reuse corpus-search when deliberate filterable search is needed.** If
+   `/agent/tools/corpus-search/` is not already present, fetch corpus-search from the public library
+   and install it per its own install-config; never clobber a customized copy. It supplements default
+   Brain retrieval for deliberate, filterable search. Register `/agent/brain/meta/creatives` as a
+   source with `kind: creative`.
 6. **Build the Creative Corpus.** Follow `creative-corpus-playbook.md`: read what the Account
    Context Brain already knows, pull only the creative content from Motion, and write one enriched
-   Markdown file per active creative under `/agent/brain/meta/creatives/`. Writing the files is the
-   index step for Knoweth; index the corpus-search source too if installed.
+   Markdown file per active creative under `/agent/brain/meta/creatives/`. Writing the files makes
+   them available to default Brain retrieval; refresh the corpus-search source too if installed.
 7. **Keep all three current.** Account Context Brain on a monthly-plus-drift cadence, Report
    Dashboard Setup when reporting preferences or saved reports change, and Creative Corpus on daily
    and event-triggered maintenance. Log every refresh in `/agent/brain/meta/_changelog.md`.

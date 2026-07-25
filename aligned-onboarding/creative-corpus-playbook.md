@@ -30,11 +30,10 @@ The output is:
 
 - **Individual creative Markdown files**, one per active creative, with identity, summary, hook,
   value props, transcript, AI tags, and naming.
-- An optional thin **tagging taxonomy** file, only if the Account Context Brain has a decoded
-  naming convention to
-  project.
-- These files are automatically retrievable through **Knoweth**. There is no separate corpus
-  index to build.
+- An optional thin **tagging taxonomy** file, only if the Account Context Brain has a decoded naming
+  convention to project.
+- These files are available through default Brain retrieval. There is no separate package-owned
+  corpus index to build for ordinary recall.
 
 Report and dashboard builds use these files for stable creative context, not for current
 performance. If `/agent/brain/meta/report-dashboard-context.md` asks for playable videos,
@@ -42,23 +41,22 @@ same-size creative cards, transcript snippets, or specific evidence columns, sat
 requirements from this corpus where possible and show visible caveats when media or transcripts are
 missing.
 
-## How retrieval works here (Knoweth first, corpus-search to supplement)
+## How retrieval works here (default Brain retrieval first, corpus-search to supplement)
 
-Runneth already has Knoweth, its local retrieval layer. Any Markdown written under
-`/agent/brain/` in a readable lane is automatically chunked, indexed, and surfaced as
-pre-context in future turns. Knoweth is the default and needs no setup:
+Runneth can surface readable Markdown under `/agent/brain/` as saved context in future turns. Treat
+default Brain retrieval as the ordinary path and do not add a separate creative index just to make
+these files searchable:
 
-- Writing the file under `/agent/brain/meta/creatives/` is the index step. No manual `index`,
-  `embed`, or `refresh` needed for Knoweth to surface it.
+- Writing the file under `/agent/brain/meta/creatives/` is the package's index step. No manual
+  package-level `index`, `embed`, or `refresh` is needed for ordinary Brain recall.
 - To confirm a file is discoverable, reference its topic in a later turn, or list the folder.
 - Use `ContextConfig` only if these files need a specific lane (for example a workspace lane).
 
-**corpus-search supplements Knoweth** for this package. It ships alongside (see the README for
-install) and is the right tool when you need structured, filterable search over the creative files:
-by `kind`, brand, field, or a specific intent across the whole corpus, rather than the automatic
-pre-context Knoweth surfaces. Knoweth stays the default for everyday recall; reach for corpus-search
-when you need to query the corpus deliberately. corpus-search requires its own index step (below);
-Knoweth does not.
+**corpus-search supplements default Brain retrieval** for this package. It ships alongside (see the
+README for install) and is the right tool when you need structured, filterable search over the
+creative files: by `kind`, brand, field, or a specific intent across the whole corpus. Default Brain
+retrieval stays the ordinary path for everyday recall; reach for corpus-search when you need to
+query the corpus deliberately. corpus-search requires its own index step below.
 
 ---
 
@@ -190,8 +188,8 @@ duration_s: <video length in seconds - video only>
 `source_id` is the Motion creative ID and makes re-indexing idempotent (an update replaces the
 record instead of duplicating it). Keep each part under its own `##` heading, because corpus-search
 chunks by header: that keeps the hook, transcript, value props, and tags independently searchable.
-Knoweth reads the same file with no frontmatter required; the frontmatter exists purely to make
-corpus-search filtering work.
+Default Brain retrieval can use the same file without requiring this frontmatter; the frontmatter
+exists to make corpus-search filtering work.
 
 **What to skip:**
 - Metrics (spend, ROAS, CTR): they change constantly; summaries, transcripts, and tags do not.
@@ -209,17 +207,17 @@ the thresholds already in the Account Context Brain (do not re-fetch the workspa
 
 ## Step 5 - Make it retrievable
 
-Writing the files under `/agent/brain/meta/creatives/` is the index step for Knoweth, which picks
-them up automatically for everyday recall.
+Writing the files under `/agent/brain/meta/creatives/` makes them available for ordinary Brain
+recall.
 
-- For Knoweth: nothing else to run. If the files need a specific lane or read scope, set that once
-  with `ContextConfig`. To sanity-check, reference a creative topic in a later turn or list the
-  folder.
+- For default Brain retrieval: nothing else to run. If the files need a specific lane or read scope,
+  set that once with `ContextConfig`. To sanity-check, reference a creative topic in a later turn or
+  list the folder.
 - For corpus-search (the supplement): register `/agent/brain/meta/creatives` as an enabled source in
   corpus-search's `sources.json` with `kind: creative` during install, so its `refresh` keeps the
   folder current automatically. To index on demand: `bash /agent/tools/corpus-search/corpus-search.sh
   index markdown --source /agent/brain/meta/creatives --kind creative`. Re-runs are idempotent,
-  deduped by `source_id`. This step is only for corpus-search; Knoweth needs no index.
+  deduped by `source_id`. This step is only for corpus-search.
 
 ---
 
@@ -258,8 +256,8 @@ retired from the account.
 2. Compare returned creative IDs against existing files in `/agent/brain/meta/creatives/`.
 3. For each new ID, generate its MD file (run the scoped transcript pass if the inline transcript
    came back empty).
-4. Knoweth picks up the new files automatically. For corpus-search, run its refresh so filterable
-   search stays current: `bash /agent/tools/corpus-search/corpus-search.sh refresh`.
+4. Default Brain retrieval picks up the new files automatically. For corpus-search, run its refresh
+   so filterable search stays current: `bash /agent/tools/corpus-search/corpus-search.sh refresh`.
 5. Update the `updated` date on the creatives folder entry in `/agent/INDEX.md`, and append a
    one-line note to the `meta` folder `_changelog.md` (same convention the Account Context Brain uses).
 
@@ -294,7 +292,7 @@ holds more than one workspace, scope per workspace so entries do not collide:
 - `/agent/brain/meta/<workspace-slug>/creatives/`
 - `/agent/brain/meta/<workspace-slug>/creatives/_tagging-taxonomy.md`
 - Index with workspace-scoped aliases in `/agent/INDEX.md`.
-- If you use Knoweth lanes to separate workspaces, set the lane once with `ContextConfig`.
+- If you use retrieval lanes to separate workspaces, set the lane once with `ContextConfig`.
 
 ---
 
@@ -330,6 +328,6 @@ holds more than one workspace, scope per workspace so entries do not collide:
 | Transcript-only backfill | `motion meta insights --scope creative-asset-id --creative-asset-id <id> --include-transcript --date-range last_365d --workspace-id <workspaceId>` |
 | Pull recent launches | `motion meta insights --date-range last_7d --include-glossary --include-metrics --include-transcript --workspace-id <workspaceId>` |
 
-Default window is `last_365d` unless the account or the person overrides it. Knoweth handles default
-retrieval over the brain automatically. corpus-search is the optional filterable supplement for
-deliberate corpus queries and has its own install/refresh commands.
+Default window is `last_365d` unless the account or the person overrides it. Default Brain
+retrieval handles ordinary recall automatically. corpus-search is the optional filterable supplement
+for deliberate corpus queries and has its own install/refresh commands.
