@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "aligned-onboarding",
-  "version": "2.7.0",
-  "description": "INSTALLER: after copying these files to the VM, immediately run post-install.md in this folder - installing is the trigger; do not wait to be asked. The Meta onboarding package, v2. Stages six instruction docs into the brain: the package overview, the Creative Attributes playbook, the Account Context Brain onboarding package (v1.24), the Meta Validation onboarding package (v1.5), the Motion CLI data-query guide, and the Cacheth command reference. Install copies these files to the VM and then fires the post-install run (post-install below); outside that run, nothing self-runs. Per-creative content lives in Cacheth (the local creative cache) and is surfaced through Knoweth; nothing in this package writes per-creative files to the brain. No corpus-search dependency. Meta only, one workspace at a time. Also carries the VoC Data Pull part (voc-data-pull/): a skill installed to the skills root that, at post-install (or on request), creates one daily sync routine per reachable VoC platform pulling reviews, support conversations, community posts, and ad comments into /agent/brain/data-sources/voc/<platform>/. Also carries the Knoweth organize part (knoweth/): after the questions are answered it organizes the brain so retrieval stays tight and sets the standing save + maintenance discipline.",
+  "version": "2.9.0",
+  "description": "INSTALLER: after copying these files to the VM, immediately run post-install.md in this folder - installing is the trigger; do not wait to be asked. The Meta onboarding package, v2. Stages six instruction docs into the brain: the package overview, the Creative Attributes playbook, the Account Context Brain onboarding package (v1.26), the Meta Validation onboarding package (v1.6), the Motion CLI data-query guide, and the Cacheth command reference. Install copies these files to the VM and then fires the post-install run (post-install below); outside that run, nothing self-runs. Per-creative content lives in Cacheth (the local creative cache) and is surfaced through Knoweth; nothing in this package writes per-creative files to the brain. No corpus-search dependency. Meta only, one workspace at a time. Also carries the VoC Data Pull part (voc-data-pull/): a skill installed to the skills root that, at post-install (or on request), creates one daily sync routine per reachable VoC platform pulling reviews, support conversations, community posts, and ad comments into /agent/brain/data-sources/voc/<platform>/. Also carries the Knoweth organize part (knoweth/): after the questions are answered it organizes the brain so retrieval stays tight and sets the standing save + maintenance discipline.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -34,19 +34,19 @@
       "from": "meta/meta-account-context-brain-onboarding-package.md",
       "to": "/agent/brain/aligned-onboarding/meta-account-context-brain-onboarding-package.md",
       "on_exists": "overwrite",
-      "purpose": "Step 2: the Account Context Brain fill-in package (v1.24). Nine required interpretation fields plus Field 10 (the deck spec — synthesized from Fields 4, 7, and 9; gates the validation deck, not the question loop), the guard block for /agent/user.md, the prose output shape saved to /agent/brain/meta/account-context.md, and Field 4's operational naming decoder written to /agent/brain/meta/naming-decoder.json."
+      "purpose": "Step 2: the Account Context Brain fill-in package (v1.26). Nine required interpretation fields plus Field 10 (the deck spec — synthesized from Fields 4, 7, and 9; gates the validation deck, not the question loop; offered as fill-in Step 5 once its inputs confirm and saved as the deck-spec section of account-context.md), the required output schema for the fill-in presentation (three parts — opening frame, field sections, closing TLDR — with a literal skeleton and pre-send checklist; structure fixed, content account-specific), the guard block for /agent/user.md, the prose output shape saved to /agent/brain/meta/account-context.md, and Field 4's operational naming decoder written to /agent/brain/meta/naming-decoder.json."
     },
     {
       "from": "meta/meta-validation-onboarding-package.md",
       "to": "/agent/brain/aligned-onboarding/meta-validation-onboarding-package.md",
       "on_exists": "overwrite",
-      "purpose": "Step 3: the validation experience (v1.5). Answer-and-confirm loop with the show-the-work rule, weekly deck build pre-filled from the Field 10 deck spec (no deck without it; the question loop needs only the nine fields), lock-in (deck approval, refresh routine, Slack), and the MVCE gate saved to /agent/brain/meta/validation.md."
+      "purpose": "Step 3: the validation experience (v1.6). Answer-and-confirm loop with the show-the-work and show-the-creatives rules, weekly deck build pre-filled from the Field 10 deck spec (no deck without it; the question loop needs only the nine fields), lock-in (deck approval, refresh routine, Slack), and the MVCE gate saved to /agent/brain/meta/validation.md."
     },
     {
       "from": "meta/motion-cli-data-query-guide.md",
       "to": "/agent/brain/aligned-onboarding/motion-cli-data-query-guide.md",
       "on_exists": "overwrite",
-      "purpose": "Supporting reference: the canonical contract for pulling Meta data through the motion CLI. Brand-agnostic, carries no account IDs."
+      "purpose": "Supporting reference: the canonical contract for pulling Meta data through the motion CLI, including the WHAT-vs-WHY split (live metrics answer what; Cacheth creative content answers why from the creative side and VoC from the customer side, with ad comments bridging the two; most questions pair them — metrics pick the set, content explains it). Brand-agnostic, carries no account IDs."
     },
     {
       "from": "meta/cacheth-command-reference.md",
@@ -100,7 +100,7 @@
       "from": "meta-ad-performance-analysis/SKILL.md",
       "to": "/agent/.agents/skills/meta-ad-performance-analysis/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Meta Ad Performance Analysis skill: the single-ad diagnostic framework — identify the primary KPI, read cost-per/ROAS against the account's own averages, then trace the funnel (first frame retention, thumbstop, hold rate, engagement, CTR outbound, conversion rate, AOV) to locate where the ad wins or loses. Grounded in account-context.md (guard-enforced), live motion CLI pulls only, explicit --workspace-id, and the naming decode for any name filter."
+      "purpose": "Meta Ad Performance Analysis skill: the diagnostic framework for Meta ad performance — one ad, a set of ads, or the account in general. Identify the primary KPI, read cost-per/ROAS against the account's own averages, then trace the funnel (first frame retention, thumbstop, hold rate, engagement, CTR outbound, conversion rate, AOV) to locate where an ad wins or loses; across many ads, group by optimization goal and rank by primary-KPI efficiency before diagnosing. Output renders analyzed ads as a gallery with decoder-normalized names. Grounded in account-context.md (guard-enforced), live motion CLI pulls only, explicit --workspace-id, and the naming decode for any name filter."
     },
     {
       "from": "post-install.md",
@@ -118,6 +118,30 @@
     }
   ],
   "changelog": [
+    {
+      "version": "2.9.0",
+      "date": "2026-07-24",
+      "type": "minor",
+      "notes": "Added the WHAT-vs-WHY evidence contract to the Data-Query Guide (golden rule 10 plus a dedicated section): live metric pulls answer WHAT (what's spending, winning, where the funnel drops off) and never explain themselves; WHY has two sides — Cacheth creative content (summaries, hooks, transcripts, AI tags via Knoweth injection or the motion cache CLI) is the creative side and never carries performance (a number stated from cached content is fabrication), and VoC (reviews, support conversations, community posts, ad comments under data-sources/voc/) is the customer side, with ad comments bridging performance and customer voice on the same creatives. Most questions pair them in order: metrics pick the set, content explains it; answers drawing on several sources say which claim came from which. Routing is by the question's verb (how/how much/which → metrics; why/what's different/what's in common → metrics then Cacheth, plus VoC when the why is about the customer). The Meta Ad Performance Analysis skill's analysis flow gains step 7: tie every funnel diagnosis to what the creative actually says and shows, never inferring the why from numbers alone. Mirrors the Knoweth answer standard's what-is-winning/why framing."
+    },
+    {
+      "version": "2.8.2",
+      "date": "2026-07-24",
+      "type": "patch",
+      "notes": "ACB v1.26: declared a required output schema for the fill-in presentation — three parts in fixed order (opening frame: 4–6 sentences of prose; field sections: one per field in field order with bold plain-language headings and at most one bold question as each section's last line, settled fields getting none, the Fields 1–3 consolidation counting as one section, two questions only for a sanctioned two-beat section; closing TLDR: every open question in appearance order under 'Questions for you:' with the verbatim closing line). Includes a literal skeleton and a pre-send checklist. Structure only — content stays account-specific; follow-ups, corrections, and refresh runs are exempt. Steps 2–4 slimmed to point at the schema instead of restating its rules."
+    },
+    {
+      "version": "2.8.1",
+      "date": "2026-07-24",
+      "type": "patch",
+      "notes": "Audit cleanup. ACB v1.25: the saved account-context.md now carries a deck-spec section once Field 10 is confirmed (the validation deck build reads it from there), and the fill-in procedure gains Step 5 — offer Field 10's two beats once Fields 4, 7, and 9 confirm, or defer to deck time; Field 10 still gates the deck, not the question loop. README no longer labels the Meta Ad Performance Analysis skill single-ad (it covers one ad, a set, or the account's ads in general). Data-Query Guide intro drops the stale workspace-setup category (workspace-goal and spend-threshold were removed; motion workspaces remains listed as the workspace-ID resolver)."
+    },
+    {
+      "version": "2.8.0",
+      "date": "2026-07-24",
+      "type": "minor",
+      "notes": "Added the presenting-creatives contract to the Data-Query Guide: answers referencing specific creatives render them as a gallery of creative cards (media from the Cacheth record's url — playable video or image — with ad-unit thumbnails as fallback; MotionUI / report component library in deck surfaces), and ad names are always normalized on display through naming-decoder.json (raw delimited names are filter keys, not labels; display-side mirror of the decode-before-filtering rule). Validation (v1.6) adds the show-the-creatives loop rule. The Meta Ad Performance Analysis skill's trigger broadened from single-ad to ads analysis in general ('how are our ads doing', top-N, comparisons) with a new Analyzing Across Ads section: group by optimization goal, rank by primary-KPI efficiency in the confirmed window, winner/cut criteria only on explicit winner/cut questions, then per-ad funnel diagnosis; output presents analyzed ads as a gallery with decoder-normalized names."
+    },
     {
       "version": "2.7.0",
       "date": "2026-07-24",

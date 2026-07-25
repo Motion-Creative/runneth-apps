@@ -31,7 +31,7 @@ The one-line model:
 
 This folder holds one part per subfolder: `meta/` (the Creative Attributes playbook, the
 Account Context Brain package, the Meta Validation package, the Motion CLI Data-Query
-Guide, and the Cacheth Command Reference) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates), plus `knoweth/` (the organize-the-brain part that runs after the questions) and `meta-ad-performance-analysis/` (the single-ad performance analysis skill). This README
+Guide, and the Cacheth Command Reference) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates), plus `knoweth/` (the organize-the-brain part that runs after the questions) and `meta-ad-performance-analysis/` (the ad performance analysis skill). This README
 covers all of them; `install-config.json` maps every file to its installed location.
 
 These instruction files are the package itself, not its output. They live in the brain
@@ -173,14 +173,17 @@ Folder: `voc-data-pull/`
 
 Folder: `meta-ad-performance-analysis/`
 
-- **Job:** the diagnostic framework for reading a single ad's performance. Identify the ad's
-  primary KPI first, judge efficiency (cost per KPI or ROAS) against the account's own
-  averages, then trace the supporting metrics — first frame retention, thumbstop rate, hold
-  rate, engagement, CTR outbound, conversion rate, AOV — to locate exactly where in the funnel
-  the ad wins or loses. Account-agnostic: with one exception (first frame retention's 90%
-  standard), everything is read against the account's own averages, never universal benchmarks.
-- **Runs on demand - does not fire at install.** Triggered when someone asks how an ad is
-  doing, why it is or isn't working, or to compare ads. Installing only stages the skill.
+- **Job:** the diagnostic framework for reading Meta ad performance — one ad, a set of ads, or
+  the account's ads in general. Identify the primary KPI first, judge efficiency (cost per KPI
+  or ROAS) against the account's own averages, then trace the supporting metrics — first frame
+  retention, thumbstop rate, hold rate, engagement, CTR outbound, conversion rate, AOV — to
+  locate exactly where in the funnel an ad wins or loses. Across many ads: group by
+  optimization goal, rank by primary-KPI efficiency, then diagnose the ads worth explaining.
+  Account-agnostic: with one exception (first frame retention's 90% standard), everything is
+  read against the account's own averages, never universal benchmarks.
+- **Runs on demand - does not fire at install.** Triggered when someone asks how their ads —
+  or one ad — are doing, why something is or isn't working, or to compare ads. Installing only
+  stages the skill.
 - **What it leans on:** the scope rules above apply in full. Interpretation (winner metric,
   targets, naming decode, spend floor) comes from `/agent/brain/meta/account-context.md`,
   guard-enforced — never Motion workspace settings. Metrics are pulled live via the `motion`
