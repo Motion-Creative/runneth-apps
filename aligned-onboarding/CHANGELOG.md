@@ -2,6 +2,20 @@
 
 Repo-side history of the package. Not staged to the VM.
 
+## 2.8.4 - 2026-07-26
+
+Guard merge rewritten for how the VM actually works: `/agent/user.md` is walled off from
+Bash (reads and writes both refused), so the scripted python pass is gone. The merge is now
+one file-write-tool Write composed from the system-prompt copy of user.md plus the four
+staged guard files (byte-for-byte, workspaceId substituted), with a mandatory pre-write
+check that the base document's opening heading and each sentinel pair appear exactly once -
+the v2.8.2 fallback silently doubled the entire base document and the purge couldn't undo
+it. A connected Meta workspace now explicitly counts as a reachable VoC platform (ad
+comments via `motion meta creative-comments`, slug `meta-ads`), so `voc-sync-meta-ads` is
+always created alongside the other routines. Account Context autofill must persist its
+results - terse facts written to the brain file before stopping at the gap questions;
+long-form write-ups and INDEX.md updates wait for the turn where the answers arrive.
+
 ## 2.8.3 - 2026-07-26
 
 The package is now a real indexed package: registered in the repo root `package-index.json`

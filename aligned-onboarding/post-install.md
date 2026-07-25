@@ -17,29 +17,37 @@ asked. Exactly once per install: if the four guard sentinels are already in
    no recipe still counts.
 2. **VoC first (it runs in the background).** For each reachable VoC platform, run the
    voc-data-pull skill's "Set up the recurring sync" procedure: create the
-   `voc-sync-<platform>` routine and kick its first run. **Every routine created in this
+   `voc-sync-<platform>` routine and kick its first run. **A connected Meta workspace is
+   itself a reachable VoC platform** - ad comments are customer voice, pulled with
+   `motion meta creative-comments` (skill slug `meta-ads`) - so it gets a
+   `voc-sync-meta-ads` routine alongside the others. **Every routine created in this
    step gets its first run kicked before moving on - check them off one by one.** The
    12-month backfills churn in the background while everything below happens. Never pull
    VoC data inside this conversation. If old canceled `voc-sync-*` routines exist from a
    previous install, ignore them - canceled is terminal; never resume or reuse one, always
    create fresh.
-3. **Merge all four guard blocks into `/agent/user.md` mechanically - one python pass,
-   zero composition.** The blocks ship ready-made in
+3. **Merge all four guard blocks into `/agent/user.md` with one Write - nothing else can
+   touch that file.** The blocks ship ready-made in
    `/agent/brain/aligned-onboarding/guards/` (`account-context-guard.md`,
-   `meta-validation-gate.md`, `knoweth-organize.md`, `knoweth-brain.md`). Do not retype
-   or restate any of this content - run one short python script that does all of it:
-   - Read `/agent/user.md` (treat missing as empty) and the four guard files.
-   - In the guard content, replace every literal `<workspaceId>` token with the target
-     Meta workspace id. Leave every other angle-bracket placeholder (`<platform>`,
-     `<routine-id>`, `<userId>`) untouched - those are descriptive.
-   - For each block: if its sentinel pair already exists in `user.md`, replace that block
-     in place; otherwise append the block at the end. Never duplicate. Touch nothing
-     outside the sentinels.
-   - Write the merged content back to `/agent/user.md` from the script.
-   - Then read `/agent/user.md` and confirm all four sentinel pairs are present. Only if
-     the script's write was rejected by the sandbox: fall back to writing the same merged
-     content with the file-write tool in **one** whole-file write. Never use the
-     edit/patch tool on this file - it fails validation on this VM.
+   `meta-validation-gate.md`, `knoweth-organize.md`, `knoweth-brain.md`). On this VM,
+   `/agent/user.md` is walled off from Bash entirely (reads and writes are both refused -
+   do not try a script) and the edit/patch tool fails validation; the file-write tool is
+   the only thing that can change it, and the file's current contents are already in your
+   system prompt. So:
+   - Read the four guard files with the file-read tool. In the guard content, replace
+     every literal `<workspaceId>` token with the target Meta workspace id; leave every
+     other angle-bracket placeholder (`<platform>`, `<routine-id>`, `<userId>`) untouched,
+     and change nothing else - the blocks go in byte-for-byte, never paraphrased or
+     condensed.
+   - Compose the full new file: the current `/agent/user.md` content (from your system
+     prompt) exactly once, then each guard block. If a sentinel pair already exists in
+     the file, replace that block in place instead of appending. Touch nothing outside
+     the sentinels.
+   - Check the payload before writing: the base document's opening heading appears
+     exactly once, and each of the four sentinel pairs appears exactly once. A doubled
+     base document is a corrupted merge - fix the payload; never write it.
+   - Write it with the file-write tool in **one** whole-file write. One Write total for
+     this step.
    - The blocks are self-gating: merging now is what makes their gates watched. Do not run
      what they gate - organize and validation fire later, on their own conditions.
 4. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
@@ -47,14 +55,21 @@ asked. Exactly once per install: if the four guard sentinels are already in
    proposals for the next step.
 5. **Account Context Brain** (Meta connected only): its guard is already merged (step 3).
    Autofill every field possible from live data, then surface only the gap questions a
-   human must answer. This step ends waiting on a person - that is expected.
+   human must answer. This step ends waiting on a person - that is expected. **Persist
+   before you stop:** write the account context brain file with every autofilled field
+   and the provisional naming decode as terse facts (short lines, no prose polish) so
+   the autofill survives beyond this conversation. Long-form write-ups and
+   `/agent/INDEX.md` updates wait for the turn where the human's answers arrive - do not
+   compose them now, but never leave autofill results only in the chat.
 6. **Report one line per part**: running in background / done / waiting on a person for X /
    skipped (not reachable) and why.
 
 Mechanics for every step above: when a step updates `/agent/INDEX.md` or any other
 existing file, do not use the edit/patch tool - it fails validation on this VM. Read the
 file and write it back whole (python for mechanical splices, the file-write tool for
-short files). Prefer scripted file assembly over retyping staged content anywhere.
+short files). Prefer scripted file assembly over retyping staged content anywhere -
+except `/agent/user.md`, which Bash cannot touch at all (step 3's single Write is the
+only way).
 
 If nothing is reachable at all: say so and stop. Do not watch or poll; when a platform is
 connected later, setup runs on ask.
