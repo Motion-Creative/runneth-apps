@@ -55,7 +55,10 @@ by name - no GitHub link.** A person asks for "aligned-onboarding" and the agent
 runs `package intent add-optional aligned-onboarding` followed by `package sync`:
 backend-cached artifacts, durable intent across VM rebuilds, automatic updates
 after merges. An explicit `package install` of a GitHub ref exists only for
-branch testing. `building-integrations/` remains on `main` as a compatibility
+branch testing. If an install fails with `EPERM: ... chmod ... .tmp` (a known
+mounted-filesystem bug on some VMs), see the recovery steps in
+`aligned-onboarding/README.md` under "How to install" before giving up or
+escalating. `building-integrations/` remains on `main` as a compatibility
 exception. The `corpus-search/` tool has been removed: retrieval now runs on
 Knoweth, with per-creative summaries held in Cacheth (staging). The removed
 payload remains available from the archive branch and snapshot tag.
