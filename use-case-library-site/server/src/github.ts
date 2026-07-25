@@ -1,8 +1,8 @@
 /**
  * GitHub-backed content layer for the Use Case Library.
  *
- * Reads curated metadata from Motion-Creative/runneth-apps via raw.githubusercontent.com.
- * 60s in-memory TTL cache. Set RUNNETH_APPS_REF to override the default branch.
+ * Reads archived metadata from Motion-Creative/runneth-apps via raw.githubusercontent.com.
+ * 60s in-memory TTL cache. Set RUNNETH_APPS_REF to override the snapshot tag.
  *
  * Repo layout (see PR #22):
  *   .use-case-library/catalog.json     — { version, slugs[], excluded[] }
@@ -16,8 +16,9 @@
 
 const REPO_OWNER = 'Motion-Creative'
 const REPO_NAME = 'runneth-apps'
+const ARCHIVED_LIBRARY_REF = 'pre-cleanup-2026-07-21-with-aligned-onboarding'
 
-const resolveRef = (): string => process.env.RUNNETH_APPS_REF?.trim() || 'main'
+const resolveRef = (): string => process.env.RUNNETH_APPS_REF?.trim() || ARCHIVED_LIBRARY_REF
 
 const CACHE_TTL_MS = 60_000
 

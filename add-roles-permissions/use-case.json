@@ -1,8 +1,0 @@
-{
-  "slug": "add-roles-permissions",
-  "display_title": "Decide who can change Runneth",
-  "pitch": "Out of the box, anyone the team trusts to chat with Runneth can also edit anything Runneth knows. That includes the context Runneth references and the rules for how it behaves for everyone. This skill lets the admin choose what gets locked down and who can change each locked area.",
-  "status": "proven",
-  "category": "agent-foundations",
-  "github_path": "add-roles-permissions"
-}

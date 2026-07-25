@@ -33,16 +33,17 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
-# Default to /data so a mounted Railway volume at /data persists reviews.
-# Override with REVIEWS_DB_PATH env var if you mount the volume elsewhere.
+# Default to /data so a mounted Railway volume persists both databases.
+# Override either path if you mount the volume elsewhere.
 ENV REVIEWS_DB_PATH=/data/reviews.db
+ENV BRAIN_SUBMISSIONS_DB_PATH=/data/brain-submissions.db
 
 # Self-contained bundle: package.json + node_modules + dist + public.
 COPY --from=builder /app/bundle ./
 RUN mkdir -p /data
 
 # Smoke check that the runtime layout is correct before container starts taking traffic.
-RUN node -e "require('node:fs').accessSync('./dist/index.js'); require('node:fs').accessSync('./dist/one-pager.html'); require('node:fs').accessSync('./public/index.html')"
+RUN node -e "require('node:fs').accessSync('./dist/index.js'); require('node:fs').accessSync('./dist/one-pager.html'); require('node:fs').accessSync('./dist/ai-training-club-marketers-growth.html'); require('node:fs').accessSync('./public/index.html')"
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD wget -qO- "http://127.0.0.1:${PORT}/api/health" >/dev/null || exit 1
