@@ -1,5 +1,12 @@
 # Aligned Onboarding Package: Overview
 
+> **Install by name - no GitHub link needed.** This is a real indexed package: it is
+> registered in the repo's `package-index.json`, which every VM already reads from `main`.
+> A person just says "install aligned-onboarding" and Runneth runs
+> `package intent add-optional aligned-onboarding` + `package sync` - artifacts come from
+> the backend cache, the intent survives VM rebuilds, and merged updates roll out
+> automatically. Pasting a repo URL is only for testing an unmerged branch or PR.
+
 This is the onboarding bundle for a customer's brain. Installing it is the trigger: the
 install conversation stages this folder's files to their destinations on the VM with one
 `package install` call (per `package.json`, the package manifest - skill files to the
