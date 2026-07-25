@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.5 — draft for review (July 2026)
+### Version 1.6 — draft for review (July 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
@@ -182,6 +182,10 @@ Rules for the loop:
 - Show the work. Each answer states which filter and signal it used (naming decode, which name
   level it filtered — campaign, ad set, or ad — Cacheth tags, live metrics) and what it
   couldn't confirm. The customer can't correct a read they can't see.
+- Show the creatives. When an answer references specific creatives, present them as a gallery
+  per the Data-Query Guide's presenting-creatives contract: media rendered from each
+  creative's Cacheth `url`, names decoded through the naming decoder — never a raw delimited
+  ad name as the label.
 - Every correction is logged to `/agent/brain/meta/validation.md` and applied to
   `/agent/brain/meta/account-context.md` so the fix is durable.
 
@@ -315,6 +319,11 @@ the CSM, the customer, and Runneth can all point at.
 ---
 
 # Changelog
+
+## v1.6 (July 2026) — show the creatives
+- New loop rule: answers referencing specific creatives present them as a gallery (media from
+  the Cacheth record's `url`, names decoded through the naming decoder) per the Data-Query
+  Guide's presenting-creatives contract. Raw delimited ad names are filter keys, not labels.
 
 ## v1.5 (July 2026) — deck build reads Field 10 (the deck spec)
 - The deck is now gated on Account Context Field 10 (reporting structure and marketing

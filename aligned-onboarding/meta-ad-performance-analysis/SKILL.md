@@ -1,11 +1,11 @@
 ---
 name: meta-ad-performance-analysis
-description: "Generalized framework for analyzing the performance of any individual ad in any Meta ad account — e-commerce, SaaS, lead gen, or service. Use this skill whenever evaluating how an ad is performing, diagnosing why an ad is or isn't working based on its metrics, or comparing ads within an account. Trigger for any request involving 'analyze this ad's performance,' 'how is this ad doing,' 'read these metrics,' 'is this ad working,' or any variation of interpreting Meta ad data. The core method: identify the ad's primary KPI first, judge efficiency through cost-per (or ROAS) against the account's own averages, then use supporting metrics — first frame retention, thumbstop rate, hold rate, engagement, CTR outbound, conversion rate, and AOV — to locate exactly where in the funnel the ad is winning or losing."
+description: "Framework for analyzing Meta ad performance in any account — e-commerce, SaaS, lead gen, or service — whether the question is about one ad, a set of ads, or the account's ads in general. Use this skill whenever evaluating or explaining ad performance: 'how are our ads doing,' 'what are our top ads,' 'analyze this ad's performance,' 'how is this ad doing,' 'compare these ads,' 'why is this (or any) ad working or not working,' 'read these metrics,' or any variation of interpreting Meta ad performance data. The core method: identify the primary KPI first, judge efficiency through cost-per (or ROAS) against the account's own averages, then use supporting metrics — first frame retention, thumbstop rate, hold rate, engagement, CTR outbound, conversion rate, and AOV — to locate exactly where in the funnel an ad is winning or losing. Across many ads: group by optimization goal, rank by primary-KPI efficiency, then run the funnel diagnosis on the ads worth explaining."
 ---
 
 # Meta Ad Performance Analysis
 
-This skill defines how to read the performance of a single ad in a Meta ad account. It is account-agnostic — the metrics are universal, but the benchmarks mostly are not.
+This skill defines how to read Meta ad performance — one ad, a set of ads, or the account's ads in general. It is account-agnostic — the metrics are universal, but the benchmarks mostly are not.
 
 **The rule that governs everything: compare against the account's own averages.** With one exception (first frame retention), there are no universal benchmarks in this framework. An ad is only "good" or "bad" relative to the other ads in its account — ideally ads with the same optimization goal and a similar format. Never judge a metric in a vacuum.
 
@@ -115,6 +115,25 @@ This tells you whether the ad is bringing in higher- or lower-value orders than 
 
 ---
 
+## Analyzing Across Ads (same framework, comparative)
+
+The single-ad method scales to "how are our ads doing," top-N asks, and head-to-head
+comparisons without changing:
+
+- **Group before ranking.** Compare ads with the same optimization goal (primary KPI) and, for
+  the video funnel metrics, a similar format and length. Ranking a lead-gen ad against a
+  purchase ad on cost-per is a category error.
+- **Rank by primary-KPI efficiency** — cost per KPI ascending, or ROAS descending — within the
+  account's confirmed default reporting window. Apply winner/cut criteria (spend floor, minimum
+  days, tiers) only when the question is explicitly a winner/cut question, per
+  account-context Field 9; all other asks show the data as asked.
+- **Then diagnose the ads worth explaining.** The funnel read (Steps 2–3) runs per ad on the
+  leaders, the laggards, or the specific ads being compared — that is where the "why" lives.
+- **State the comparison fabric.** Every comparative answer names the group, the window, and
+  the metric it ranked on.
+
+---
+
 ## The Analysis Flow
 
 After the efficiency read, steps 3–6 trace the viewer's path through the ad: stop and watch → react → click → convert, and what that conversion was worth.
@@ -125,5 +144,13 @@ After the efficiency read, steps 3–6 trace the viewer's path through the ad: s
 4. Cross-check engagement against performance.
 5. Read CTR outbound and conversion rate to locate creative vs. landing page problems.
 6. If purchase-optimized: compare the ad's AOV to the account average.
+7. To explain any of it, read the creative itself — and the customer. Metrics locate where
+   an ad wins or loses — the WHAT. The WHY lives in the creative's content (the Cacheth
+   summary sections, hook, transcript, and AI tags, via Knoweth injection or the
+   `motion cache` CLI) and in the customer's voice (the ad's comments, and VoC reviews and
+   support themes) when the question is how people are responding. Tie the drop-off to what
+   the ad actually says and shows; never infer the why from the numbers alone.
 
-The output of a good analysis isn't a list of numbers — it's a diagnosis of where in the funnel this ad wins, where it loses, and what to fix first. And it shows its work: which filter was applied, which signal was read, and what couldn't be confirmed.
+The output of a good analysis isn't a list of numbers — it's a diagnosis of where in the funnel an ad wins, where it loses, and what to fix first. And it shows its work: which filter was applied, which signal was read, and what couldn't be confirmed.
+
+**Present the ads being analyzed as a gallery**, per the Data-Query Guide's presenting-creatives contract: media rendered from each creative's Cacheth `url` (playable video or image; ad-unit thumbnails as the lightweight fallback), names decoded through the account's naming decoder — never a raw delimited ad name as the label — and the metrics under discussion on each card.

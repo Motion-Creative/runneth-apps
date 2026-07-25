@@ -1,7 +1,7 @@
 # Motion CLI Data-Query Guide
 
-The canonical contract for how Runneth pulls Meta, Inspo, benchmark, and workspace-setup
-data through the `motion` CLI. Goal: correct query shape on the first try, every time. Grounded in
+The canonical contract for how Runneth pulls Meta, Inspo, and benchmark data through the
+`motion` CLI. Goal: correct query shape on the first try, every time. Grounded in
 live `motion <command> --help` output, not memory. Re-verify against live `--help` when a
 command's flags change.
 
@@ -27,6 +27,11 @@ command's flags change.
 9. **Pick the name level deliberately.** `campaignName`, `adsetName`, and `adName` are not
    interchangeable proxies for a product or theme, even when they share a word. See "Which name
    level to filter on" before building any name filter.
+10. **Metrics answer WHAT; creative content and VoC answer WHY.** Live metric pulls say what
+    is happening; Cacheth summaries, hooks, transcripts, and tags say why from the creative
+    side, and VoC (reviews, support conversations, ad comments) says why from the customer
+    side. Never explain performance from metrics alone, and never claim performance from
+    cached content. See "Answering WHAT vs answering WHY."
 
 ---
 
@@ -181,6 +186,72 @@ from the id with a valid suffix: `_count`, `_cost`, `_value`, `_rate`, `_roas`, 
 
 Use `data.metricTotals` only for additive totals (spend, impressions, purchases, clicks), never for
 rates/costs (CTR, CPC, CPM, ROAS, CPA, thumbstop).
+
+---
+
+## Answering WHAT vs answering WHY (metrics vs creative content)
+
+Performance questions decompose into two different evidence reads, and each has exactly one
+home:
+
+- **WHAT — live metrics, always.** What is spending, what is winning or losing, how ads
+  compare, where in the funnel the drop-off happens. This is `motion meta insights` /
+  `motion meta ads`, pulled fresh per this guide. Metrics never explain themselves: a low
+  thumbstop says the hook failed, not what the hook was or why it failed.
+- **WHY — creative content and customer voice.** Two why-sources, two sides of the same
+  question:
+  - **Cacheth is the creative side:** why an ad hooks or loses people, what the winners have
+    in common, what a creative actually says and shows. This is the summary sections, hooks,
+    transcripts, and AI tags — via Knoweth injection first, then the `motion cache` CLI.
+    Cacheth holds no performance data: stating a number from memory or from a summary is
+    fabrication, not analysis.
+  - **VoC is the customer side:** why people respond the way they do — reviews, support
+    conversations, community posts, and ad comments under
+    `/agent/brain/data-sources/voc/<platform>/`, surfaced through Knoweth. Ad comments are
+    the bridge: they connect performance and customer voice on the same creatives. When the
+    question is why customers buy, object, or churn, the creative's content alone cannot
+    answer it.
+
+Most real questions need both, in order: **metrics pick the set, content explains it.**
+"Why are our top ads working?" is a metrics pull (rank the winners in the confirmed window)
+followed by a content read (pull those creatives' summaries and tags, and name the shared
+patterns). Skipping the first step explains ads that may not be winning; skipping the second
+turns a WHY question into a restated WHAT.
+
+Route by the question's verb: "how is / how much / which ads" → metrics. "why / what's
+different about / what do they have in common / what should we make next" → metrics to pick
+the set, then Cacheth for the creative read — and VoC when the why is about the customer
+(what they love, object to, or misunderstand), with ad comments tying reactions to specific
+creatives. When the answer draws on several sources, say which claim came from which — per
+the show-the-work rule, a pattern claim cites the content signal (tags, transcript, summary,
+reviews), and a performance claim cites the pull.
+
+---
+
+## Presenting creatives (gallery + decoded names)
+
+When an answer references specific creatives — top ads, winners, a comparison, an analysis
+verdict — present them as a gallery of creative cards, never as a bare text list:
+
+- **Render the media from the Cacheth record's `url`** — the creative's own media asset
+  (playable video or full image), returned on the identity layer by
+  `motion cache get-creative`. The ad-unit `thumbnailUrl` / `videoThumbnailUrl` are the
+  lightweight fallback when a full player is not warranted.
+- **Card contents:** the media, the creative's decoded name, and the metrics the answer is
+  about. In deck and report surfaces, build on MotionUI / the report component library
+  (playable videos, equal-size creative cards) — never hand-rolled layout.
+- **Pull enough rows for the gallery.** If N creatives are displayed, the pull must have
+  covered at least N — check completeness per golden rule 7 before claiming "top N."
+
+**Always normalize ad names on display.** A raw delimited ad name
+(`ProductX_UGC_QuestionHook_v2`) is a filter key, not a label. When referencing a creative,
+decode its name through the account's naming decoder
+(`/agent/brain/meta/naming-decoder.json`, owned by Account Context Field 4) and present the
+human-readable identity — product, format, hook, version, whatever the decoder carries — with
+the raw `adName` kept as a secondary reference (it stays the join key back to the data). If
+the account has no confirmed convention, present the name as-is and say so. This is the
+display-side mirror of the decode-before-filtering rule: decode on the way in (filters) and
+on the way out (labels).
 
 ---
 

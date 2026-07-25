@@ -1,5 +1,5 @@
 # Meta Account Context: Brain Onboarding Package
-### Version 1.24 — patch on v1.23 (July 2026)
+### Version 1.26 — patch on v1.25 (July 2026)
 
 This package teaches Runneth how a customer understands their Meta ad account, so its queries,
 rankings, and insights match how the team actually thinks about the data. This package is
@@ -96,7 +96,11 @@ per-product targets with the team), not as flag noise. Use this order:
 3. **At a glance:** a few bullets a human can skim: last refreshed, confidence, fields confirmed
    (count / 9), and any open flags.
 4. **The nine fields**, in order.
-5. **File metadata (last):** end the file with a `## File metadata` heading followed by the machine
+5. **The deck spec (only once Field 10 is confirmed):** a short section carrying Field 10's
+   saved output — marketing calendar, reporting cadence, exclusions, and deck sections — in the
+   same plain prose as the rest of the file. Omit the section entirely while Field 10 is
+   pending; the validation deck build reads it from here.
+6. **File metadata (last):** end the file with a `## File metadata` heading followed by the machine
    contract as a fenced `yaml` code block.
 
 - Index it in `/agent/INDEX.md` with aliases (account context, KPI hierarchy, how we judge ads,
@@ -125,6 +129,64 @@ the exact commands per field. Every pull passes `--workspace-id <workspaceId>` a
 
 After pulling, inspect each returned file with a separate `jq` call before using the data.
 
+## Required output schema (the shape of every fill-in presentation)
+
+Every fill-in presentation follows one structural shape — three parts, always in this order.
+The content within each part is entirely contextual and account-specific; only the structure
+is fixed. This schema governs the one full fill-in presentation. Follow-up turns, corrections,
+and refresh runs are ordinary conversation and do not re-run the three parts.
+
+**Part 1 — Opening frame.** Two beats in order: brand story (from `motion brand-context`,
+never inferred from ad names), then account findings (from the field pulls). 4–6 sentences of
+prose, no heading, never a list, never longer.
+
+**Part 2 — Field sections.** One section per field, in field order. Sanctioned consolidations
+(Fields 1–3 under a confirmed attribution tool) count as one section. Each section is: a bold
+plain-language heading (never "Field N," never a status badge), the pulled findings grounded
+in this account's real data, then at most one question as the section's last line — bold, so
+it can't be missed. A field the pull fully settles gets no question: say what you know and
+move on. Two questions are allowed only when one section genuinely covers two distinct
+confirmations (Field 10's two beats, when they run in this conversation); more than two means
+the section is too broad — split it or cut a question.
+
+**Part 3 — Closing TLDR.** Under the bold heading **Questions for you:**, a numbered list of
+every open question from Part 2, one line each, in the order they appeared. Close with this
+line verbatim: "Just answer what you know — I'll write the context file from your responses."
+If nothing is open, replace the list and the closing line with: "Nothing open — I'll write
+the context file now."
+
+**Skeleton (structure is literal; every `<...>` is account-specific):**
+
+```
+<Brand story: 2–3 sentences — what they sell, who they sell to, what makes them distinct.>
+<Account findings: 1–3 sentences — spend scale, creative volume, naming system quality,
+attribution status. Include total spend and creative count.>
+
+**<Plain-language topic heading>**
+<What the pull found here, with this account's real names and numbers.>
+**<The one question this leaves open?>**
+
+**<Next topic heading>**
+<Findings. This field is settled by the pull — one line on how it will be read, no question.>
+
+<...one section per remaining field, in field order...>
+
+**Questions for you:**
+1. <Open question, one line, same order as above>
+2. <Open question>
+Just answer what you know — I'll write the context file from your responses.
+```
+
+**Before sending, verify:**
+- Three parts, in order, nothing before the opening frame or after the closing line.
+- Part 1 is 4–6 sentences of prose — not a list, no heading.
+- Part 2 sections are in field order; consolidated sections count as one.
+- No field numbers, status badges, or worksheet labels anywhere.
+- At most one bold question per section (two only for a sanctioned two-beat section); settled
+  fields have none.
+- The TLDR lists every open question from Part 2, in appearance order, and ends with the
+  verbatim closing line.
+
 ## Step 2: Write the opening frame
 
 Before presenting the nine fields, open with a "What do you know about me?" frame.
@@ -138,7 +200,8 @@ Write it like a sharp analyst briefing a new teammate on the account — not a p
 1–3 sentences on what the pull surfaced: spend scale, creative volume, naming system quality,
 data cleanliness. Include the total spend and creative count.
 
-Total opening: 4–6 sentences. Must not read like a system log or a status report.
+The opening's length and shape are fixed by the output schema above (Part 1). It must not
+read like a system log or a status report.
 
 **Example shape:**
 > [Brand name] is a [product type] brand that [what they do / who they serve / what makes them
@@ -156,9 +219,9 @@ then ask the single open question the pull leaves unanswered. Where the pull ful
 a field, say what you know and move on with no question.
 
 Rules for the full overview:
-- Talk about the account, never the worksheet. Do not show field numbers, status badges, or
-  `[FLAGGED]` labels.
-- Each field gets one anchored question at most. No compound questions or sub-bullets.
+- Structure per the output schema above (Part 2): one section per field in field order, bold
+  plain-language headings, at most one bold question as a section's last line, no field
+  numbers or status badges. Talk about the account, never the worksheet.
 - Lead with what you know. The ratio should feel like mostly settled reads with a few specific
   things still open — not a list of things you don't know.
 - Keep it moving. When a field is settled by the pull, say so briefly and move on.
@@ -169,7 +232,8 @@ After all nine fields, end with a numbered list of every open question — one l
 This is the most important UX moment. The customer should be able to read this block and
 answer everything without scrolling back through the nine sections.
 
-Required closing line: "Just answer what you know — I'll write the context file from your responses."
+The list order, the bold heading, and the verbatim closing line are fixed by the output
+schema above (Part 3).
 
 **Example shape:**
 > **Questions for you:**
@@ -177,6 +241,14 @@ Required closing line: "Just answer what you know — I'll write the context fil
 > 2. [next open question]
 > ...
 > Just answer what you know — I'll write the context file from your responses.
+
+## Step 5: Offer the deck spec (Field 10, once the inputs are confirmed)
+
+Field 10 is not one of the nine and needs no new pull. Once Fields 4, 7, and 9 are confirmed,
+offer to run its two beats (marketing calendar, then reporting structure) right here while the
+context is fresh. If the customer is done for now, say so and stop — Field 10's two beats run
+at deck time instead (the Meta Validation package handles that). Either way, no deck is built
+until it is confirmed.
 
 ---
 
@@ -682,6 +754,9 @@ two beats in sequence.
 - Deck sections: `<1. top ads | 2. by [dimension] | 3. seasonal | 4. naming breakdown>`
 - Confirmed or open: `<what the customer confirmed vs what is still pending>`
 
+On confirmation, write this as the deck-spec section of `/agent/brain/meta/account-context.md`
+(see "Where the filled result lives") — that is where the validation deck build reads it.
+
 ---
 
 # Derived capabilities (not filled, enabled)
@@ -726,6 +801,25 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 ---
 
 # Changelog
+
+## v1.26 (July 2026) — required output schema for the fill-in presentation
+
+The fill-in conversation now has one declared structural contract, placed between Steps 1
+and 2: three parts in order (opening frame, field sections, closing TLDR), a literal
+skeleton, and a pre-send checklist. Structure only — content stays account-specific.
+Reconciliations with existing rules: settled fields get no question; the Fields 1–3
+consolidation counts as one section; the one-question-per-section default allows two only
+for a sanctioned two-beat section (Field 10, when its beats run in this conversation).
+Steps 2–4 now point at the schema instead of restating its rules. The schema governs the
+one full fill-in presentation; follow-up turns, corrections, and refresh runs are exempt.
+
+## v1.25 (July 2026) — patch: Field 10 wired into the fill-in flow and the saved file
+
+Two gaps from the v1.24 merge closed: the saved-file order now carries a deck-spec section
+(written only once Field 10 is confirmed; the validation deck build reads it from
+account-context.md), and the fill-in procedure gains Step 5 — once Fields 4, 7, and 9 are
+confirmed, offer Field 10's two beats on the spot, or defer them to deck time. No behavior
+change to the scope rule: Field 10 still gates the deck, not the question loop.
 
 ## v1.24 (July 2026) — Field 10: Reporting structure and marketing calendar (the deck spec)
 
