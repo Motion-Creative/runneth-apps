@@ -62,24 +62,12 @@ PR or branch reference):
    Always use this `github:` ref form - the `https://github.com/.../tree/<branch>/...` URL
    form misparses branch names that contain `/` and fails with a 422.
 
-**If the install fails with `EPERM: operation not permitted, chmod ... .tmp`** (a known
-mounted-filesystem bug on staging VMs - the files are already staged; only the final
-placement failed), recover mechanically from the operation directory under
-`/agent/.runneth/packages/operations/<operation-id>/`:
+If an install fails, report the exact error and stop. Do not work around the package
+manager: never copy staged files by hand and never edit anything under
+`/agent/.runneth/packages/` (`installed.json`, operations, locks). Partial or hand-made
+package state is worse than a failed install.
 
-1. Copy every staged file to its target path exactly as mapped in the operation manifest.
-2. Write the package's entry into `/agent/.runneth/packages/installed.json` with its
-   `resources` array copied **verbatim from the operation manifest** - every field
-   (`contentSha256`, `executable`, `id`, `sourcePath`, `target`, `targetPath`, `type`),
-   never a trimmed-down projection. The CLI validates the full shape; every later
-   `package` command fails on a partial entry.
-   **If you cannot copy the resource entries verbatim from the operation manifest, do
-   NOT write `installed.json` at all.** A partial entry is far worse than a missing
-   one: the harness strictly parses this file before every turn, so one malformed
-   entry permanently breaks every conversation on this VM with no way to self-repair.
-3. Run `package status` to confirm the install is recognized, then continue.
-
-Either way: the moment the install succeeds, run [`post-install.md`](post-install.md)
+The moment the install succeeds, run [`post-install.md`](post-install.md)
 (staged at `/agent/brain/aligned-onboarding/post-install.md`) in the same conversation.
 
 These instruction files are the package itself, not its output. They live in the brain

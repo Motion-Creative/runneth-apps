@@ -15,6 +15,16 @@ old `install-config.json`) and the **installer lane** (this branch,
 `eric/aligned-onboarding-make-fasteth` - the package-manager migration). 2.12.0 unifies
 them; each lane's own entries are kept below under its heading.
 
+### 2.12.2 - 2026-07-25
+
+The package now describes desired state only. The 2.12.1 EPERM recovery recipe is removed:
+telling the agent to hand-copy staged files and hand-write `installed.json` produced
+invalid package state in the field (a trimmed `resources` projection that failed strict
+parsing and blocked every later turn on the VM). Both READMEs now instruct the opposite -
+if an install fails, report the exact error and stop; never edit anything under
+`/agent/.runneth/packages/`. The underlying chmod-on-mount bug is a platform issue fixed in
+agent-builder, not in this package.
+
 ### 2.12.1 - 2026-07-24
 
 The EPERM install-recovery recipe is now written down instead of improvised. The README's
