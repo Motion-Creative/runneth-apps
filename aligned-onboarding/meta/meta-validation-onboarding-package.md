@@ -38,7 +38,11 @@ idempotent.
 
 **MERGE INSTRUCTIONS:** If a block with the sentinel `runneth:meta-validation-gate` already
 exists in `/agent/user.md`, replace it in place. Otherwise append it. Never duplicate it. Do not
-edit anything outside the sentinels.
+edit anything outside the sentinels. The canonical copy of this block is the staged guard file
+`/agent/brain/aligned-onboarding/guards/meta-validation-gate.md` - merge from that file,
+copying the block byte-for-byte; never paraphrase, condense, or restate any part of it (the
+package's post-install run does this in its single scripted guard merge). The block below is
+shown for context and must stay identical to the staged file.
 
 ```
 <!-- BEGIN runneth:meta-validation-gate v2 -->

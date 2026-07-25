@@ -47,12 +47,16 @@ are available from the archive branch and snapshot tag. Reintroduce one to
 `main` only after rebuilding it as a schema-v1 package; do not restore its
 legacy directory directly.
 
-## Aligned Onboarding compatibility
+## Aligned Onboarding
 
-`aligned-onboarding/` remains on `main` with `building-integrations/`. These
-are a deliberate compatibility exception so the onboarding flow keeps its
-source and referenced dependencies while it is migrated to the package
-contract. The `corpus-search/` tool has been removed: retrieval now runs on
+`aligned-onboarding/` is a real indexed package: it carries a schema-v1
+`package.json` manifest and is registered in `package-index.json`. **It installs
+by name - no GitHub link.** A person asks for "aligned-onboarding" and the agent
+runs `package intent add-optional aligned-onboarding` followed by `package sync`:
+backend-cached artifacts, durable intent across VM rebuilds, automatic updates
+after merges. An explicit `package install` of a GitHub ref exists only for
+branch testing. `building-integrations/` remains on `main` as a compatibility
+exception. The `corpus-search/` tool has been removed: retrieval now runs on
 Knoweth, with per-creative summaries held in Cacheth (staging). The removed
 payload remains available from the archive branch and snapshot tag.
 
