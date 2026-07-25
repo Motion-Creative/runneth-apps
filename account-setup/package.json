@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "account-setup",
   "name": "Account Setup",
-  "version": "0.1.0",
-  "description": "Visible Account Setup instructions for customer-owned Runneth configuration.",
+  "version": "0.2.0",
+  "description": "Visible Account Setup instructions and report dashboard defaults for customer-owned Runneth configuration.",
   "updatePolicy": "manual",
   "uninstallPolicy": "allowed",
   "resources": [
@@ -14,6 +14,16 @@
       "target": {
         "root": "agent_brain",
         "path": "account-setup/README.md"
+      },
+      "executable": false
+    },
+    {
+      "id": "account-setup-report-dashboard-guide",
+      "type": "file",
+      "sourcePath": "brain/account-setup/report-dashboard-guide.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "account-setup/report-dashboard-guide.md"
       },
       "executable": false
     },

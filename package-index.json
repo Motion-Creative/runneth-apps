@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "account-setup-0.1.0",
+  "indexRevision": "account-setup-0.2.0",
   "packages": [
     {
       "id": "account-setup",
       "name": "Account Setup",
-      "description": "Visible Account Setup instructions for customer-owned Runneth configuration.",
-      "version": "0.1.0",
+      "description": "Visible Account Setup instructions and report dashboard defaults for customer-owned Runneth configuration.",
+      "version": "0.2.0",
       "packageManagerVersion": 1,
       "categories": ["baseline"],
       "source": {

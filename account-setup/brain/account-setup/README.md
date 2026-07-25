@@ -5,6 +5,7 @@ This folder is where Runneth keeps setup that should be visible, editable, and e
 ## What Lives Here
 
 - Motion imports for brand context, primary KPI, attribution windows, and spend thresholds
+- Report and dashboard defaults in `report-dashboard-guide.md`
 - Customer-taught corrections that should win over imported values
 - Notes about which workspace, account, brand, market, or organization a setup file applies to
 - Integration source guides when a connected source needs customer-specific instructions
@@ -19,6 +20,8 @@ Examples:
 - "When you use our attribution source, use this attribution window."
 - "For this brand, ignore products with less than $1,000 spend."
 - "For the asset source, this folder is our source of truth for approved assets."
+- "For reporting dashboards, use Northbeam new-customer ROAS as the source of truth."
+- "Our weekly dashboard should show top ads, product comparison, and testing ads that could graduate."
 
 Runneth should update the visible setup file and preserve the latest imported Motion value unless you ask it to refresh from Motion.
 
@@ -32,6 +35,13 @@ Each import file has:
 - `Runneth Instructions`: corrections and customer-specific rules
 
 When those conflict, the `Runneth Instructions` section is the behavior Runneth should follow.
+
+## Report Dashboard Guide
+
+Report and dashboard setup lives in `report-dashboard-guide.md`.
+
+Use it to teach Runneth the standard report views, source-of-truth rules, metric definitions, date
+windows, taxonomy, visual expectations, refresh cadence, and validation questions for this account.
 
 ## Integration Source Guides
 

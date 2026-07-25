@@ -12,6 +12,7 @@ Use it for:
 - primary KPI and attribution settings
 - spend thresholds
 - naming conventions
+- report and dashboard app-building defaults
 - customer-specific source instructions
 - integration setup notes that describe how this customer wants Runneth to use a connected source
 
@@ -26,6 +27,30 @@ Motion imports live under:
 `/agent/brain/account-setup/motion-imports/`
 
 Each setup file should clearly say what it applies to: organization, workspace, account, brand, market, data source, folder, or user scope.
+
+## Report Dashboard Guide
+
+Report and dashboard app-building defaults live at:
+
+`/agent/brain/account-setup/report-dashboard-guide.md`
+
+Read this guide before building or updating ad performance reports, creative dashboards, weekly deck
+sources, launch trackers, or recurring reporting apps. Use it for the customer's standard views,
+source-of-truth choices, KPI definitions, date windows, taxonomy, visual standards, refresh cadence,
+and validation questions.
+
+Update this guide when the user teaches Runneth:
+
+- which report views matter to the team
+- which saved Motion reports or connected sources are trusted
+- what metrics, thresholds, or attribution rules decide scale, cut, hit, or graduation labels
+- how products, campaigns, creators, funnels, or tests are named
+- what the dashboard must show visually, such as playable videos, same-size cards, and table columns
+- how often a report should refresh and where it should be delivered
+
+Do not create hidden app-building config when this guide is the right customer-owned setup surface.
+If the guide is blank and the missing preference changes the report's meaning, ask one focused
+question or write the open question into the guide after building the best available first version.
 
 ## Motion Imports
 
