@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "id": "aligned-onboarding",
+  "name": "Aligned Onboarding",
+  "version": "2.8.0",
+  "description": "INSTALLER: the moment this package installs, read /agent/brain/aligned-onboarding/post-install.md and execute its install-time sequence in the installing conversation - installing is the trigger; do not wait to be asked. The Meta onboarding package, v2. Stages six instruction docs into the brain: the package overview, the Creative Attributes playbook, the Account Context Brain onboarding package (v1.24), the Meta Validation onboarding package (v1.5), the Motion CLI data-query guide, and the Cacheth command reference - plus the four ready-made guard blocks under guards/ that post-install merges into /agent/user.md. Install stages these files deterministically through the package manager and then fires the post-install run; outside that run, nothing self-runs. Per-creative content lives in Cacheth (the local creative cache) and is surfaced through Knoweth; nothing in this package writes per-creative files to the brain. No corpus-search dependency. Meta only, one workspace at a time. Also carries the VoC Data Pull part (voc-data-pull/): a skill installed to the skills root that, at post-install (or on request), creates one daily sync routine per reachable VoC platform pulling reviews, support conversations, community posts, and ad comments into /agent/brain/data-sources/voc/<platform>/. Also carries the Knoweth organize part (knoweth/): after the questions are answered it organizes the brain so retrieval stays tight and sets the standing save + maintenance discipline. The <workspaceId> token in the staged guard files is resolved during post-install, not at file-copy time.",
+  "installPolicy": "manual",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "readme",
+      "type": "file",
+      "sourcePath": "README.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/README.md"
+      }
+    },
+    {
+      "id": "creative-attributes-playbook",
+      "type": "file",
+      "sourcePath": "meta/meta-creative-attributes-playbook.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/meta-creative-attributes-playbook.md"
+      }
+    },
+    {
+      "id": "account-context-brain-package",
+      "type": "file",
+      "sourcePath": "meta/meta-account-context-brain-onboarding-package.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/meta-account-context-brain-onboarding-package.md"
+      }
+    },
+    {
+      "id": "meta-validation-package",
+      "type": "file",
+      "sourcePath": "meta/meta-validation-onboarding-package.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/meta-validation-onboarding-package.md"
+      }
+    },
+    {
+      "id": "motion-cli-data-query-guide",
+      "type": "file",
+      "sourcePath": "meta/motion-cli-data-query-guide.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/motion-cli-data-query-guide.md"
+      }
+    },
+    {
+      "id": "cacheth-command-reference",
+      "type": "file",
+      "sourcePath": "meta/cacheth-command-reference.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/cacheth-command-reference.md"
+      }
+    },
+    {
+      "id": "knoweth-organize-package",
+      "type": "file",
+      "sourcePath": "knoweth/knoweth-organize-onboarding-package.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/knoweth-organize-onboarding-package.md"
+      }
+    },
+    {
+      "id": "post-install",
+      "type": "file",
+      "sourcePath": "post-install.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/post-install.md"
+      }
+    },
+    {
+      "id": "guards",
+      "type": "directory",
+      "sourcePath": "guards",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_brain",
+        "path": "aligned-onboarding/guards"
+      }
+    },
+    {
+      "id": "voc-data-pull-skill",
+      "type": "directory",
+      "sourcePath": "voc-data-pull",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_skills",
+        "path": "voc-data-pull"
+      }
+    },
+    {
+      "id": "meta-ad-performance-analysis-skill",
+      "type": "file",
+      "sourcePath": "meta-ad-performance-analysis/SKILL.md",
+      "executable": false,
+      "target": {
+        "root": "agent_skills",
+        "path": "meta-ad-performance-analysis/SKILL.md"
+      }
+    },
+    {
+      "id": "activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
+    }
+  ]
+}

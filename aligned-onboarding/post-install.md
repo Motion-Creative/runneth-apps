@@ -2,9 +2,9 @@
 
 Installing the aligned-onboarding package is the trigger for running it - both the VoC data
 sync setup and the Meta context work (Creative Attributes, then the Account Context Brain).
-In the same conversation that performs the install - the one that copies this package's
-files to their VM destinations per `install-config.json` - the moment those files are in
-place, run the sequence below, without waiting to be asked.
+In the same conversation that performs the install - the one that ran
+`package install` and staged this package's files on the VM - the moment the install
+succeeds, run the sequence below, without waiting to be asked.
 
 ## The install-time sequence, in order
 
@@ -18,19 +18,28 @@ place, run the sequence below, without waiting to be asked.
    `voc-sync-<platform>` routine and kick its first run. The 12-month backfills churn in
    the background while everything below happens. Never pull VoC data inside this
    conversation.
-3. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
+3. **Merge all four guard blocks into `/agent/user.md` - one write, from the staged
+   guard files.** The blocks ship ready-made in
+   `/agent/brain/aligned-onboarding/guards/` (`account-context-guard.md`,
+   `meta-validation-gate.md`, `knoweth-organize.md`, `knoweth-brain.md`). Procedure,
+   exactly:
+   - Read the four guard files. In their content, replace every literal `<workspaceId>`
+     token with the target Meta workspace id. Leave every other angle-bracket placeholder
+     (`<platform>`, `<routine-id>`, `<userId>`) untouched - those are descriptive.
+   - Read `/agent/user.md` in full. For each block: if its sentinel already exists,
+     replace that block in place; otherwise append the block at the end. Never duplicate.
+     Do not edit anything outside the sentinels.
+   - Write the complete updated content back to `/agent/user.md` with the file-write tool
+     in **one** write. Do not use the edit/patch tool on this file, and do not append via
+     shell - both fail here; the full read-then-write is the reliable path.
+   - The blocks are self-gating: merging now is what makes their gates watched. Do not run
+     what they gate - organize and validation fire later, on their own conditions.
+4. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
    creative content layer (Cacheth + query paths), detect naming patterns as provisional
    proposals for the next step.
-4. **Account Context Brain** (Meta connected only): merge its guard block into
-   `/agent/user.md` per its MERGE INSTRUCTIONS, autofill every field possible from live
-   data, then surface only the gap questions a human must answer. This step ends waiting
-   on a person - that is expected.
-5. **Merge the self-gating guard blocks now, but do not run what they gate.** Merge all
-   three, each per its own doc's MERGE INSTRUCTIONS: `runneth:knoweth-organize` and
-   `runneth:knoweth-brain` from `knoweth/knoweth-organize-onboarding-package.md`, and
-   `runneth:meta-validation-gate` from `meta/meta-validation-onboarding-package.md`. They
-   are self-gating: organize and validation fire later, on their own gates - merging now is
-   what makes those gates watched.
+5. **Account Context Brain** (Meta connected only): its guard is already merged (step 3).
+   Autofill every field possible from live data, then surface only the gap questions a
+   human must answer. This step ends waiting on a person - that is expected.
 6. **Report one line per part**: running in background / done / waiting on a person for X /
    skipped (not reachable) and why.
 
@@ -41,7 +50,7 @@ connected later, setup runs on ask.
 
 - **Knoweth organize** - from the merged guard's gates, once content lands and the
   interpretation is confirmed.
-- **Meta Validation** - from its merged gate (step 5), opening on its own once the Account
+- **Meta Validation** - from its merged gate (step 3), opening on its own once the Account
   Context Brain is confirmed and the creative cache has synced.
 - **Daily VoC syncs, Cacheth sync, refresh cadences** - the routines created above.
 

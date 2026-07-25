@@ -1,11 +1,11 @@
 # Aligned Onboarding Package: Overview
 
 This is the onboarding bundle for a customer's brain. Installing it is the trigger: the
-install conversation copies this folder's files to their destinations on the VM (per
-`install-config.json` - skill files to `/agent/.agents/skills/`, docs to
-`/agent/brain/aligned-onboarding/`) and immediately runs the package for everything the
-org already has connected (see "After install" below); routines and guard blocks keep it
-current afterward. Its parts do two jobs, in order: **land the data** (VoC pulls into brain
+install conversation stages this folder's files to their destinations on the VM with one
+`package install` call (per `package.json`, the package manifest - skill files to the
+skills root, docs to `/agent/brain/aligned-onboarding/`) and immediately runs the package
+for everything the org already has connected (see "After install" below); routines and
+guard blocks keep it current afterward. Its parts do two jobs, in order: **land the data** (VoC pulls into brain
 files, the creative layer in Cacheth), then **teach the interpretation** (Account Context
 Brain, Validation) - with Knoweth organizing the result so retrieval stays tight.
 
@@ -31,8 +31,18 @@ The one-line model:
 
 This folder holds one part per subfolder: `meta/` (the Creative Attributes playbook, the
 Account Context Brain package, the Meta Validation package, the Motion CLI Data-Query
-Guide, and the Cacheth Command Reference) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates), plus `knoweth/` (the organize-the-brain part that runs after the questions) and `meta-ad-performance-analysis/` (the single-ad performance analysis skill). This README
-covers all of them; `install-config.json` maps every file to its installed location.
+Guide, and the Cacheth Command Reference) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates), plus `knoweth/` (the organize-the-brain part that runs after the questions), `meta-ad-performance-analysis/` (the single-ad performance analysis skill), and `guards/` (the four ready-made `/agent/user.md` guard blocks that post-install merges). This README
+covers all of them; `package.json` (the package manifest) maps every file to its installed location.
+
+### How to install (exact procedure)
+
+Never copy files by hand - the package manager stages everything in one call:
+
+1. If you were given a pull-request URL, resolve it to its head branch first:
+   `gh pr view <pr-url> --json headRefName`.
+2. Run: `package install https://github.com/Motion-Creative/runneth-apps/tree/<branch>/aligned-onboarding`
+3. The moment the install succeeds, run [`post-install.md`](post-install.md)
+   (staged at `/agent/brain/aligned-onboarding/post-install.md`) in the same conversation.
 
 These instruction files are the package itself, not its output. They live in the brain
 outside the `meta` folder structure. The brain's `meta` folder holds only what Runneth
@@ -165,7 +175,7 @@ Folder: `voc-data-pull/`
   and whose daily runs pull only new items. A platform connected later gets set up on ask -
   nothing runs just because a platform connects.
 - **Installs to the skills root** (`/agent/.agents/skills/voc-data-pull/`), not the brain -
-  see the install entries in `install-config.json`.
+  see the `voc-data-pull-skill` resource in `package.json`.
 
 ---
 
@@ -189,31 +199,35 @@ Folder: `meta-ad-performance-analysis/`
   `--workspace-id`; per-creative content stays in Cacheth. Analyses show their work: filter
   applied, signal read, what couldn't be confirmed.
 - **Installs to the skills root** (`/agent/.agents/skills/meta-ad-performance-analysis/`), not
-  the brain - see the install entry in `install-config.json`.
+  the brain - see the `meta-ad-performance-analysis-skill` resource in `package.json`.
 
 ---
 
 ## After install: the package fires itself
 
 **Run [`post-install.md`](post-install.md) the moment this package's files land - every
-install, no exceptions.** Installing is the trigger - `install-config.json`'s `post_install`
-key, its final install entry, and this line all point at the same file, which carries the
-executable install-time sequence (reachability check, VoC sync setup, Meta context steps,
-guard merges). The run order below is the human-readable description of the same lifecycle.
+install, no exceptions.** Installing is the trigger - the manifest's `activation` package
+instruction, the staged post-install doc, and this line all point at the same file, which
+carries the executable install-time sequence (reachability check, VoC sync setup, guard
+merges, Meta context steps). The run order below is the human-readable description of the
+same lifecycle.
 
 ## Install and run order
 
-1. **Install the package.** Staging the files does not self-run anything. Nothing in this
-   package writes per-creative files to the brain — creative content lives in Cacheth and is
-   surfaced through Knoweth.
+1. **Install the package** with one `package install` call (see "How to install" above);
+   never copy files by hand. Staging the files does not self-run anything - the post-install
+   run right after it does. Nothing in this package writes per-creative files to the brain —
+   creative content lives in Cacheth and is surfaced through Knoweth.
 2. **Creative Attributes (Step 1).** Confirms the workspace scope, establishes the creative
    content layer (Cacheth + the query paths), detects naming patterns, and passes them to the
    Account Context Brain as provisional proposals. Writes nothing per-creative to the brain.
-3. **Activate and run the Account Context Brain (Step 2).** Merge the guard block into
-   `/agent/user.md`, then run the fill-in. Confirms how the team judges performance, drawing on
+3. **Activate and run the Account Context Brain (Step 2).** Its guard block (staged at
+   `guards/account-context-guard.md`) is merged into `/agent/user.md` by the post-install run's
+   single guard merge; then run the fill-in. Confirms how the team judges performance, drawing on
    the Creative Attributes step (if it was run) for naming proposals and creative evidence.
-4. **Activate and run Meta Validation (Step 3).** Merge the validation-gate guard block into
-   `/agent/user.md`; once the Account Context Brain is fully confirmed and the cache has synced,
+4. **Activate and run Meta Validation (Step 3).** Its validation-gate guard block (staged at
+   `guards/meta-validation-gate.md`) is merged by the same post-install guard merge; once the
+   Account Context Brain is fully confirmed and the cache has synced,
    the gate opens the validation experience on its own: the answer-and-confirm loop, the weekly
    deck, lock-in, and the MVCE gate. Onboarding is done when MVCE is on, not when data is
    connected.
@@ -222,9 +236,10 @@ guard merges). The run order below is the human-readable description of the same
    routine and kicks the backfill in the background.
 6. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
    confirmed and data-source content has landed, organize the brain: keep shared content in the
-   global lane and make it findable with tags and a naming decoder, and merge both the
-   `runneth:knoweth-organize` and `runneth:knoweth-brain` guard blocks into /agent/user.md (per the
-   MERGE INSTRUCTIONS in that doc) so the organize trigger fires and save-routing/maintenance stay on. Do not carve data-source-family or
+   global lane and make it findable with tags and a naming decoder. Both the
+   `runneth:knoweth-organize` and `runneth:knoweth-brain` guard blocks (staged at
+   `guards/knoweth-organize.md` and `guards/knoweth-brain.md`) are merged into /agent/user.md by the
+   post-install run's single guard merge, so the organize trigger fires and save-routing/maintenance stay on. Do not carve data-source-family or
    initiative lanes today; only global, the user lane, and the workspace lane are queried. See
    knoweth/knoweth-organize-onboarding-package.md.
 7. **Keep everything current.** Creative content stays current through the Cacheth sync

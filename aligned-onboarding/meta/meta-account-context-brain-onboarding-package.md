@@ -28,7 +28,10 @@ Merge the block using the standard behavior-snippet convention (author it from
 
 **MERGE INSTRUCTIONS:** If a block with the sentinel `runneth:account-context-guard` already
 exists in `/agent/user.md`, replace it in place. Otherwise append it. Never duplicate it. Do not
-edit anything outside the sentinels.
+edit anything outside the sentinels. The canonical copy of this block is the staged guard file
+`/agent/brain/aligned-onboarding/guards/account-context-guard.md` - merge from that file (the
+package's post-install run does this in its single guard merge); the block below is shown for
+context and must stay identical to the staged file.
 
 ```
 <!-- BEGIN runneth:account-context-guard v1 -->
