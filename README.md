@@ -54,7 +54,11 @@ legacy directory directly.
 by name - no GitHub link.** A person asks for "aligned-onboarding" and the agent
 runs `package intent add-optional aligned-onboarding` followed by `package sync`:
 backend-cached artifacts, durable intent across VM rebuilds, automatic updates
-after merges. An explicit `package install` of a GitHub ref exists only for
+after merges. The install message must also tell the agent to read
+`/agent/brain/aligned-onboarding/post-install.md` and execute its install-time
+sequence in the same conversation - that clause is what kicks off the VoC/Meta
+setup; the exact copy-paste message lives in `aligned-onboarding/README.md` under
+"How to install". An explicit `package install` of a GitHub ref exists only for
 branch testing. If an install fails, report the exact error and stop - never
 work around the package manager by hand-copying files or editing state under
 `/agent/.runneth/packages/`. `building-integrations/` remains on `main` as a compatibility

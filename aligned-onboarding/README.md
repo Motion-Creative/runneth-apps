@@ -45,6 +45,23 @@ covers all of them; `package.json` (the package manifest) maps every file to its
 
 Never copy files by hand - the package manager stages everything.
 
+**What to send Runneth (copy-paste - this exact shape matters).** The install message
+must carry the kickoff clause itself: installing stages files, but the post-install
+sequence (VoC sync routines, guard merges, Meta account context) runs only when the
+conversation tells it to. Canonical message:
+
+> Install the aligned-onboarding package: run
+> `package intent add-optional aligned-onboarding` and then `package sync`, then read
+> `/agent/brain/aligned-onboarding/post-install.md` and execute its install-time
+> sequence in this conversation.
+
+Branch-testing variant (same clause, different install command):
+
+> Install the aligned-onboarding package: run
+> `package install "github:Motion-Creative/runneth-apps/aligned-onboarding#<branch>"`,
+> then read `/agent/brain/aligned-onboarding/post-install.md` and execute its
+> install-time sequence in this conversation.
+
 The canonical path (the package is registered in the repo's `package-index.json`, which
 VMs read from `main`):
 
