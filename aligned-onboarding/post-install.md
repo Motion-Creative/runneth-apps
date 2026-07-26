@@ -24,7 +24,11 @@ asked. Exactly once per install: if the four guard sentinels are already in
    reachability test: if a Meta workspace shows as connected, create and kick
    `voc-sync-meta-ads` even when a Meta API probe errors in this conversation - the
    routine's own scheduled runs absorb transient API failures. An API error is never
-   grounds to skip the routine; only the absence of a connected workspace is. **Every routine created in this
+   grounds to skip the routine; only the absence of a connected workspace is. If the
+   connection status itself cannot be read because those calls are erroring too, still
+   create and kick the routine - this package is installed for Meta orgs, and the
+   routine self-heals or keeps erroring visibly, either of which beats silently
+   skipping setup. **Every routine created in this
    step gets its first run kicked before moving on - check them off one by one.** The
    12-month backfills churn in the background while everything below happens. Never pull
    VoC data inside this conversation. If old canceled `voc-sync-*` routines exist from a
