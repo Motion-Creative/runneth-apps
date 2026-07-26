@@ -20,7 +20,11 @@ asked. Exactly once per install: if the four guard sentinels are already in
    `voc-sync-<platform>` routine and kick its first run. **A connected Meta workspace is
    itself a reachable VoC platform** - ad comments are customer voice, pulled with
    `motion meta creative-comments` (skill slug `meta-ads`) - so it gets a
-   `voc-sync-meta-ads` routine alongside the others. **Every routine created in this
+   `voc-sync-meta-ads` routine alongside the others. For Meta, connected is the only
+   reachability test: if a Meta workspace shows as connected, create and kick
+   `voc-sync-meta-ads` even when a Meta API probe errors in this conversation - the
+   routine's own scheduled runs absorb transient API failures. An API error is never
+   grounds to skip the routine; only the absence of a connected workspace is. **Every routine created in this
    step gets its first run kicked before moving on - check them off one by one.** The
    12-month backfills churn in the background while everything below happens. Never pull
    VoC data inside this conversation. If old canceled `voc-sync-*` routines exist from a
@@ -58,7 +62,10 @@ asked. Exactly once per install: if the four guard sentinels are already in
    human must answer. This step ends waiting on a person - that is expected. **Persist
    before you stop:** write the account context brain file with every autofilled field
    and the provisional naming decode as terse facts (short lines, no prose polish) so
-   the autofill survives beyond this conversation. Long-form write-ups and
+   the autofill survives beyond this conversation. This file gets written even when the
+   live pulls are entirely blocked by API errors: all field headers with whatever is
+   known, each blocker recorded next to the field it blocks - a resumable scaffold must
+   exist on disk before this step ends, never nothing. Long-form write-ups and
    `/agent/INDEX.md` updates wait for the turn where the human's answers arrive - do not
    compose them now, but never leave autofill results only in the chat.
 6. **Report one line per part**: running in background / done / waiting on a person for X /
