@@ -17,24 +17,11 @@ them; each lane's own entries are kept below under its heading.
 
 ### 2.12.2 - 2026-07-25
 
-The package now describes desired state only. The 2.12.1 EPERM recovery recipe is removed:
-telling the agent to hand-copy staged files and hand-write `installed.json` produced
-invalid package state in the field (a trimmed `resources` projection that failed strict
-parsing and blocked every later turn on the VM). Both READMEs now instruct the opposite -
-if an install fails, report the exact error and stop; never edit anything under
-`/agent/.runneth/packages/`. The underlying chmod-on-mount bug is a platform issue fixed in
-agent-builder, not in this package.
-
-### 2.12.1 - 2026-07-24
-
-The EPERM install-recovery recipe is now written down instead of improvised. The README's
-install section documents the exact mechanical recovery for the known mounted-filesystem
-chmod bug: copy staged files from the operation directory to their targets, write the
-`installed.json` entry with its `resources` array copied verbatim from the operation
-manifest (the full field set - a trimmed projection fails CLI validation and stalls the
-install), then confirm with `package status`. Codified from live run evidence: the run that
-improvised a stripped `installed.json` schema lost ~110 seconds to failed `package` calls
-and a recompose.
+Install-failure posture: if an install fails, the agent reports the exact error and stops.
+Both READMEs forbid working around the package manager - never hand-copy staged files and
+never edit anything under `/agent/.runneth/packages/` (`installed.json`, operations,
+locks). Hand-made package state has produced invalid `installed.json` entries in the field
+that blocked every later turn on the VM.
 
 ### 2.12.0 - 2026-07-24
 
