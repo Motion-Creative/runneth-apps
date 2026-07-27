@@ -22,7 +22,6 @@ const PACKAGE_SOURCE_OWNER = 'Motion-Creative'
 const PACKAGE_SOURCE_REPO = 'runneth-apps'
 const PACKAGE_SOURCE_REF = 'main'
 const PACKAGE_ID = /^[a-z0-9][a-z0-9-]*$/
-const SEMVER = /^\d+\.\d+\.\d+$/
 const GITHUB_OWNER = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?$/
 const GITHUB_REPO = /^[A-Za-z0-9._-]+$/
 const RELATIVE_PATH = /^(?!\/)(?!.*(?:^|\/)\.\.(?:\/|$))(?!.*\/\/).+$/
@@ -32,6 +31,7 @@ const RESOURCE_TARGET_ROOTS = new Set([
   'agent_skills',
   'agent_tools',
 ])
+const INSTALL_POLICIES = new Set(['auto', 'manual'])
 const UPDATE_POLICIES = new Set(['auto', 'manual'])
 const UNINSTALL_POLICIES = new Set(['allowed', 'protected'])
 
@@ -65,16 +65,11 @@ const assertRelativePath = (value, label) => {
   assert.ok(RELATIVE_PATH.test(value), `${label}: unsafe relative path`)
 }
 
-const assertSemver = (value, label) => {
-  assertNonEmptyString(value, label)
-  assert.ok(SEMVER.test(value), `${label}: must be semver X.Y.Z`)
-}
-
 const assertSource = (source, label) => {
   assert.ok(isRecord(source), `${label}: must be an object`)
   assert.equal(typeof source.type, 'string', `${label}.type: must be a string`)
 
-  if (source.type === 'github') {
+  if (source.type === 'github' || source.type === 'backend-github') {
     assertKeys(source, ['owner', 'path', 'ref', 'repo', 'type'], label)
     assert.ok(GITHUB_OWNER.test(source.owner), `${label}.owner: invalid GitHub owner`)
     assert.ok(GITHUB_REPO.test(source.repo), `${label}.repo: invalid GitHub repo`)
@@ -85,7 +80,7 @@ const assertSource = (source, label) => {
     return
   }
 
-  assert.fail(`${label}.type: must be github`)
+  assert.fail(`${label}.type: must be github or backend-github`)
 }
 
 const assertTarget = (target, label) => {
@@ -132,6 +127,7 @@ const assertPackageManifest = (manifest, label) => {
     [
       'description',
       'id',
+      'installPolicy',
       'name',
       'resources',
       'schemaVersion',
@@ -145,7 +141,8 @@ const assertPackageManifest = (manifest, label) => {
   assertPackageId(manifest.id, `${label}.id`)
   assertNonEmptyString(manifest.name, `${label}.name`)
   assertNonEmptyString(manifest.description, `${label}.description`)
-  assertSemver(manifest.version, `${label}.version`)
+  assertNonEmptyString(manifest.version, `${label}.version`)
+  assert.ok(INSTALL_POLICIES.has(manifest.installPolicy), `${label}.installPolicy: invalid`)
   assert.ok(UPDATE_POLICIES.has(manifest.updatePolicy), `${label}.updatePolicy: invalid`)
   assert.ok(
     UNINSTALL_POLICIES.has(manifest.uninstallPolicy),
@@ -165,6 +162,7 @@ const assertIndexEntry = (entry, label) => {
       'categories',
       'description',
       'id',
+      'installPolicy',
       'name',
       'packageManagerVersion',
       'source',
@@ -178,7 +176,8 @@ const assertIndexEntry = (entry, label) => {
   assertPackageId(entry.id, `${label}.id`)
   assertNonEmptyString(entry.name, `${label}.name`)
   assertNonEmptyString(entry.description, `${label}.description`)
-  assertSemver(entry.version, `${label}.version`)
+  assertNonEmptyString(entry.version, `${label}.version`)
+  assert.ok(INSTALL_POLICIES.has(entry.installPolicy), `${label}.installPolicy: invalid`)
   assert.ok(UPDATE_POLICIES.has(entry.updatePolicy), `${label}.updatePolicy: invalid`)
   assert.ok(UNINSTALL_POLICIES.has(entry.uninstallPolicy), `${label}.uninstallPolicy: invalid`)
   assert.ok(Array.isArray(entry.categories), `${label}.categories: must be array`)
@@ -205,7 +204,7 @@ const validatePackageIndex = (index) => {
 }
 
 const localManifestPathForSource = (source) => {
-  return `${source.path}/runneth-package.json`
+  return `${source.path}/package.json`
 }
 
 const assertPathHasNoSymlinkSegments = (relativePath, label) => {
@@ -263,6 +262,11 @@ const assertManifestMatchesIndexEntry = (entry, manifest, manifestPath) => {
     `${entry.id}: manifest description does not match index description`,
   )
   assert.equal(
+    manifest.installPolicy,
+    entry.installPolicy,
+    `${entry.id}: manifest installPolicy does not match index installPolicy`,
+  )
+  assert.equal(
     manifest.updatePolicy,
     entry.updatePolicy,
     `${entry.id}: manifest updatePolicy does not match index updatePolicy`,
@@ -272,7 +276,7 @@ const assertManifestMatchesIndexEntry = (entry, manifest, manifestPath) => {
     entry.uninstallPolicy,
     `${entry.id}: manifest uninstallPolicy does not match index uninstallPolicy`,
   )
-  assertManifestResourceFilesExist(manifest, manifestPath.replace(/\/runneth-package\.json$/, ''))
+  assertManifestResourceFilesExist(manifest, manifestPath.replace(/\/package\.json$/, ''))
 }
 
 const getIndexedPackageById = (index) =>
@@ -310,11 +314,13 @@ const readPullRequestLabels = () => {
   return event.pull_request?.labels?.map((label) => label.name).filter(Boolean) ?? []
 }
 
-const isAutoInstallable = (entry) => entry.updatePolicy === 'auto'
+const affectsManagedSync = (entry) =>
+  entry.installPolicy === 'auto' || entry.updatePolicy === 'auto'
 
 const sourceFingerprint = (entry) =>
   JSON.stringify({
     categories: [...entry.categories].sort(),
+    installPolicy: entry.installPolicy,
     source: entry.source,
     uninstallPolicy: entry.uninstallPolicy,
     updatePolicy: entry.updatePolicy,
@@ -324,8 +330,8 @@ const sourceFingerprint = (entry) =>
 const fleetImpactMessages = (baseIndex, nextIndex) => {
   if (baseIndex === null) {
     return nextIndex.packages
-      .filter(isAutoInstallable)
-      .map((entry) => `${entry.id}: new auto package`)
+      .filter(affectsManagedSync)
+      .map((entry) => `${entry.id}: new managed-sync package`)
   }
 
   const baseById = getIndexedPackageById(baseIndex)
@@ -335,25 +341,25 @@ const fleetImpactMessages = (baseIndex, nextIndex) => {
   for (const nextEntry of nextIndex.packages) {
     const baseEntry = baseById.get(nextEntry.id)
     if (!baseEntry) {
-      if (isAutoInstallable(nextEntry)) {
-        messages.push(`${nextEntry.id}: new auto package`)
+      if (affectsManagedSync(nextEntry)) {
+        messages.push(`${nextEntry.id}: new managed-sync package`)
       }
       continue
     }
 
-    if (!isAutoInstallable(baseEntry) && isAutoInstallable(nextEntry)) {
-      messages.push(`${nextEntry.id}: changed to auto package`)
+    if (!affectsManagedSync(baseEntry) && affectsManagedSync(nextEntry)) {
+      messages.push(`${nextEntry.id}: changed to managed-sync package`)
       continue
     }
 
-    if (isAutoInstallable(baseEntry) && sourceFingerprint(baseEntry) !== sourceFingerprint(nextEntry)) {
-      messages.push(`${nextEntry.id}: changed auto package version, source, policy, or categories`)
+    if (affectsManagedSync(baseEntry) && sourceFingerprint(baseEntry) !== sourceFingerprint(nextEntry)) {
+      messages.push(`${nextEntry.id}: changed managed-sync package version, source, policy, or categories`)
     }
   }
 
   for (const baseEntry of baseIndex.packages) {
-    if (isAutoInstallable(baseEntry) && !nextById.has(baseEntry.id)) {
-      messages.push(`${baseEntry.id}: removed auto package`)
+    if (affectsManagedSync(baseEntry) && !nextById.has(baseEntry.id)) {
+      messages.push(`${baseEntry.id}: removed managed-sync package`)
     }
   }
 
@@ -364,7 +370,7 @@ test('package-index.json matches the package index contract', () => {
   validatePackageIndex(readJSON(INDEX_PATH))
 })
 
-test('indexed packages match their runneth-package.json manifests', () => {
+test('indexed packages match their package.json manifests', () => {
   const index = readJSON(INDEX_PATH)
   for (const entry of index.packages) {
     const manifestPath = localManifestPathForSource(entry.source)
@@ -376,7 +382,7 @@ test('indexed packages match their runneth-package.json manifests', () => {
   }
 })
 
-test('auto package changes require explicit fleet approval', () => {
+test('managed-sync package changes require explicit fleet approval', () => {
   const nextIndex = readJSON(INDEX_PATH)
   const messages = fleetImpactMessages(readBaseIndex(), nextIndex)
   if (messages.length === 0) {
@@ -387,7 +393,7 @@ test('auto package changes require explicit fleet approval', () => {
   assert.ok(
     labels.includes(FLEET_APPROVAL_LABEL),
     [
-      'This PR changes auto-installable Runneth packages.',
+      'This PR changes managed-sync Runneth packages.',
       'These changes may sync to matching VMs after merge.',
       `Add the ${FLEET_APPROVAL_LABEL} label after core engineering approval.`,
       '',
