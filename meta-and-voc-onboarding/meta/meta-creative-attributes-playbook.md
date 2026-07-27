@@ -88,7 +88,7 @@ Runneth reaches this content two ways, cheapest first:
    content.
 
    Flag-level detail, the full-record field layout, and `jq` extraction recipes live in the
-   Cacheth Command Reference (`/agent/brain/aligned-onboarding/cacheth-command-reference.md`),
+   Cacheth Command Reference (`/agent/brain/meta-and-voc-onboarding/cacheth-command-reference.md`),
    installed beside the Data-Query Guide.
 
 Freshness is the sync's job, not Runneth's: the cache bootstraps per workspace and keeps

@@ -9,7 +9,7 @@ This skill owns the **presentation** of the Account Context Brain fill-in: one g
 conversation, in a fixed three-part shape, that turns the silent post-install autofill into
 confirmed account context. It does not define the fields — their meanings, pulls, confirm
 loops, and saved outputs live in
-`/agent/brain/aligned-onboarding/meta-account-context-brain-onboarding-package.md` (the ACB
+`/agent/brain/meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md` (the ACB
 package). Read that document before presenting; this skill is the how-to-say-it, that
 document is the what-it-means.
 

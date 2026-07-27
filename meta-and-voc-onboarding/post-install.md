@@ -1,6 +1,6 @@
-# Post-install: the aligned-onboarding package fires itself
+# Post-install: the meta-and-voc-onboarding package fires itself
 
-Installing the aligned-onboarding package is the trigger for running it - both the VoC data
+Installing the meta-and-voc-onboarding package is the trigger for running it - both the VoC data
 sync setup and the Meta context work (Creative Attributes, then the Account Context Brain).
 Run the sequence below at the first opportunity after the package's files land: in the
 installing turn if you are reading this then, otherwise on the first turn where the
@@ -10,9 +10,11 @@ asked. Exactly once per install: if the four guard sentinels are already in
 
 ## The install-time sequence, in order
 
-1. **Check what the org can reach.** `integrations status` for OAuth connections, plus the
-   stored secrets for **every** VoC platform (any platform may be key-stored instead of
-   connected), plus whether a Meta workspace is connected. VoC scope is customer-voice
+1. **Check what the org can reach.** `integrations status --app <slug>` for each known
+   VoC platform slug (the voc-data-pull skill's Step 1 table lists them; `integrations
+   list --query <term>` finds any others) for OAuth connections, plus the stored secrets
+   for **every** VoC platform (any platform may be key-stored instead of connected), plus
+   whether a Meta workspace is connected. VoC scope is customer-voice
    data, not the skill's recipe list - a reachable reviews/support/community platform with
    no recipe still counts.
 2. **VoC first (it runs in the background).** For each reachable VoC platform, run the
@@ -36,7 +38,7 @@ asked. Exactly once per install: if the four guard sentinels are already in
    create fresh.
 3. **Merge all four guard blocks into `/agent/user.md` with one Write - nothing else can
    touch that file.** The blocks ship ready-made in
-   `/agent/brain/aligned-onboarding/guards/` (`account-context-guard.md`,
+   `/agent/brain/meta-and-voc-onboarding/guards/` (`account-context-guard.md`,
    `meta-validation-gate.md`, `knoweth-organize.md`, `knoweth-brain.md`). On this VM,
    `/agent/user.md` is walled off from Bash entirely (reads and writes are both refused -
    do not try a script) and the edit/patch tool fails validation; the file-write tool is
@@ -81,7 +83,7 @@ asked. Exactly once per install: if the four guard sentinels are already in
    opening. If a part is waiting on a person, name the topic in two or three words
    ("targets and thresholds"), not the question. The report's shape is literal:
 
-   > aligned-onboarding <version> - install complete
+   > meta-and-voc-onboarding <version> - install complete
    > - VoC sync: <per-platform status, one line total>
    > - Guards: merged
    > - Creative Attributes: done

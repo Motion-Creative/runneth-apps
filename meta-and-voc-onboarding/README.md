@@ -1,16 +1,16 @@
-# Aligned Onboarding Package: Overview
+# Meta and Voice of Customer Onboarding Package: Overview
 
 > **Install by name - no GitHub link needed.** This is a real indexed package: it is
 > registered in the repo's `package-index.json`, which every VM already reads from `main`.
-> A person just says "install aligned-onboarding" and Runneth runs
-> `package intent add-optional aligned-onboarding` + `package sync` - artifacts come from
-> the backend cache, the intent survives VM rebuilds, and merged updates roll out
+> A person just says "install meta-and-voc-onboarding" and Runneth runs
+> `package intent add-optional meta-and-voc-onboarding` + `package sync` - artifacts are
+> fetched from GitHub, the intent survives VM rebuilds, and merged updates roll out
 > automatically. Pasting a repo URL is only for testing an unmerged branch or PR.
 
 This is the onboarding bundle for a customer's brain. Installing it is the trigger: the
 install conversation stages this folder's files to their destinations on the VM with one
 `package install` call (per `package.json`, the package manifest - skill files to the
-skills root, docs to `/agent/brain/aligned-onboarding/`) and immediately runs the package
+skills root, docs to `/agent/brain/meta-and-voc-onboarding/`) and immediately runs the package
 for everything the org already has connected (see "After install" below); routines and
 guard blocks keep it current afterward. Its parts do two jobs, in order: **land the data** (VoC pulls into brain
 files, the creative layer in Cacheth), then **teach the interpretation** (Account Context
@@ -53,32 +53,32 @@ must carry the kickoff clause itself: installing stages files, but the post-inst
 sequence (VoC sync routines, guard merges, Meta account context) runs only when the
 conversation tells it to. Canonical message:
 
-> Install the aligned-onboarding package: run
-> `package intent add-optional aligned-onboarding` and then `package sync`, then read
-> `/agent/brain/aligned-onboarding/post-install.md` and execute its install-time
+> Install the meta-and-voc-onboarding package: run
+> `package intent add-optional meta-and-voc-onboarding` and then `package sync`, then read
+> `/agent/brain/meta-and-voc-onboarding/post-install.md` and execute its install-time
 > sequence in this conversation.
 
 Branch-testing variant (same clause, different install command):
 
-> Install the aligned-onboarding package: run
-> `package install "github:Motion-Creative/runneth-apps/aligned-onboarding#<branch>"`,
-> then read `/agent/brain/aligned-onboarding/post-install.md` and execute its
+> Install the meta-and-voc-onboarding package: run
+> `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#<branch>"`,
+> then read `/agent/brain/meta-and-voc-onboarding/post-install.md` and execute its
 > install-time sequence in this conversation.
 
 The canonical path (the package is registered in the repo's `package-index.json`, which
 VMs read from `main`):
 
-1. Run `package intent add-optional aligned-onboarding` - this records durable intent, so
+1. Run `package intent add-optional meta-and-voc-onboarding` - this records durable intent, so
    VM rebuilds reinstall the package automatically.
-2. Run `package sync` - this installs it from the index (backend-cached artifacts) and,
-   with `updatePolicy: auto`, keeps it updated fleet-wide after that.
+2. Run `package sync` - this installs it from the index (artifacts fetched from GitHub)
+   and, with `updatePolicy: auto`, keeps it updated fleet-wide after that.
 
 Branch testing only (the version on `main` is not what you were asked to install, e.g. a
 PR or branch reference):
 
 1. If you were given a pull-request URL, resolve it to its head branch first:
    `gh pr view <pr-url> --json headRefName`.
-2. Run: `package install "github:Motion-Creative/runneth-apps/aligned-onboarding#<branch>"`.
+2. Run: `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#<branch>"`.
    Always use this `github:` ref form - the `https://github.com/.../tree/<branch>/...` URL
    form misparses branch names that contain `/` and fails with a 422.
 
@@ -88,7 +88,7 @@ manager: never copy staged files by hand and never edit anything under
 package state is worse than a failed install.
 
 The moment the install succeeds, run [`post-install.md`](post-install.md)
-(staged at `/agent/brain/aligned-onboarding/post-install.md`) in the same conversation.
+(staged at `/agent/brain/meta-and-voc-onboarding/post-install.md`) in the same conversation.
 
 These instruction files are the package itself, not its output. They live in the brain
 outside the `meta` folder structure. The brain's `meta` folder holds only what Runneth
@@ -231,7 +231,8 @@ Folder: `voc-data-pull/`
   boundaries live in `voc-data-pull/SKILL.md` (read-only against platforms, bounded
   12-month pulls, PII rules).
 - **Fires at install.** Right after this package installs, Runneth checks which VoC
-  platforms the org can reach - `integrations status` for OAuth connections **and** the
+  platforms the org can reach - `integrations status --app <slug>` for each known VoC
+  platform slug (the skill's Step 1 table lists them) for OAuth connections **and** the
   stored secrets for every VoC platform (any of them may be key-stored instead of
   connected; Okendo and Stamped always are), plus the Motion connection for Meta ad
   comments - and runs the skill's "Set up the recurring sync" procedure for every reachable

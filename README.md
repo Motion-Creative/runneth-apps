@@ -47,17 +47,17 @@ are available from the archive branch and snapshot tag. Reintroduce one to
 `main` only after rebuilding it as a schema-v1 package; do not restore its
 legacy directory directly.
 
-## Aligned Onboarding
+## Meta and Voice of Customer Onboarding
 
-`aligned-onboarding/` is a real indexed package: it carries a schema-v1
+`meta-and-voc-onboarding/` is a real indexed package: it carries a schema-v1
 `package.json` manifest and is registered in `package-index.json`. **It installs
-by name - no GitHub link.** A person asks for "aligned-onboarding" and the agent
-runs `package intent add-optional aligned-onboarding` followed by `package sync`:
-backend-cached artifacts, durable intent across VM rebuilds, automatic updates
-after merges. The install message must also tell the agent to read
-`/agent/brain/aligned-onboarding/post-install.md` and execute its install-time
+by name - no GitHub link.** A person asks for "meta-and-voc-onboarding" and the agent
+runs `package intent add-optional meta-and-voc-onboarding` followed by `package sync`:
+artifacts fetched from GitHub, durable intent across VM rebuilds, automatic
+updates after merges. The install message must also tell the agent to read
+`/agent/brain/meta-and-voc-onboarding/post-install.md` and execute its install-time
 sequence in the same conversation - that clause is what kicks off the VoC/Meta
-setup; the exact copy-paste message lives in `aligned-onboarding/README.md` under
+setup; the exact copy-paste message lives in `meta-and-voc-onboarding/README.md` under
 "How to install". An explicit `package install` of a GitHub ref exists only for
 branch testing. If an install fails, report the exact error and stop - never
 work around the package manager by hand-copying files or editing state under

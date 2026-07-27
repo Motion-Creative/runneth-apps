@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "aligned-onboarding",
-  "name": "Aligned Onboarding",
-  "version": "2.13.1",
-  "description": "INSTALLER: the moment this package installs, read /agent/brain/aligned-onboarding/post-install.md and execute its install-time sequence in the installing conversation - installing is the trigger; do not wait to be asked. The Meta onboarding package, v2. Stages the onboarding docs and ready-made guard blocks into /agent/brain/aligned-onboarding/, plus the voc-data-pull, meta-ad-performance-analysis, and onboarding-walkthrough skills into the skills root. Post-install runs the reachability check, creates one daily VoC sync routine per reachable platform (files land under /agent/brain/data-sources/voc/<platform>/), merges the four guard blocks into /agent/user.md, and runs the Meta account-context autofill silently; it ends by asking 'Are you ready to begin your onboarding?' - the walkthrough presentation fires only on a human's yes, via the onboarding-walkthrough skill. Outside that run, nothing self-runs. Meta only, one workspace at a time. The <workspaceId> token in the staged guard files is resolved during post-install, not at file-copy time.",
+  "id": "meta-and-voc-onboarding",
+  "name": "Meta and Voice of Customer Onboarding",
+  "version": "1",
+  "description": "INSTALLER: the moment this package installs, read /agent/brain/meta-and-voc-onboarding/post-install.md and execute its install-time sequence in the installing conversation - installing is the trigger; do not wait to be asked. The Meta and Voice of Customer onboarding package. Stages the onboarding docs and ready-made guard blocks into /agent/brain/meta-and-voc-onboarding/, plus the voc-data-pull, meta-ad-performance-analysis, and onboarding-walkthrough skills into the skills root. Post-install runs the reachability check, creates one daily VoC sync routine per reachable platform (files land under /agent/brain/data-sources/voc/<platform>/), merges the four guard blocks into /agent/user.md, and runs the Meta account-context autofill silently; it ends by asking 'Are you ready to begin your onboarding?' - the walkthrough presentation fires only on a human's yes, via the onboarding-walkthrough skill. Outside that run, nothing self-runs. Meta only, one workspace at a time. The <workspaceId> token in the staged guard files is resolved during post-install, not at file-copy time.",
   "installPolicy": "manual",
   "updatePolicy": "auto",
   "uninstallPolicy": "allowed",
@@ -15,7 +15,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "aligned-onboarding/README.md"
+        "path": "meta-and-voc-onboarding/README.md"
       }
     },
     {
@@ -25,7 +25,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "aligned-onboarding/meta-creative-attributes-playbook.md"
+        "path": "meta-and-voc-onboarding/meta-creative-attributes-playbook.md"
       }
     },
     {
@@ -35,7 +35,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "aligned-onboarding/meta-account-context-brain-onboarding-package.md"
+        "path": "meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md"
       }
     },
     {
@@ -45,7 +45,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "aligned-onboarding/meta-validation-onboarding-package.md"
+        "path": "meta-and-voc-onboarding/meta-validation-onboarding-package.md"
       }
     },
     {
@@ -55,7 +55,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "aligned-onboarding/motion-cli-data-query-guide.md"
+        "path": "meta-and-voc-onboarding/motion-cli-data-query-guide.md"
       }
     },
     {
@@ -65,7 +65,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "aligned-onboarding/cacheth-command-reference.md"
+        "path": "meta-and-voc-onboarding/cacheth-command-reference.md"
       }
     },
     {
@@ -75,7 +75,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "aligned-onboarding/knoweth-organize-onboarding-package.md"
+        "path": "meta-and-voc-onboarding/knoweth-organize-onboarding-package.md"
       }
     },
     {
@@ -85,7 +85,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "aligned-onboarding/post-install.md"
+        "path": "meta-and-voc-onboarding/post-install.md"
       }
     },
     {
@@ -95,7 +95,7 @@
       "executablePaths": [],
       "target": {
         "root": "agent_brain",
-        "path": "aligned-onboarding/guards"
+        "path": "meta-and-voc-onboarding/guards"
       }
     },
     {

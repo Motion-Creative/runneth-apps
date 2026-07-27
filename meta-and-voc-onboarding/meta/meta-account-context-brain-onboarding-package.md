@@ -31,7 +31,7 @@ Merge the block using the standard behavior-snippet convention (author it from
 **MERGE INSTRUCTIONS:** If a block with the sentinel `runneth:account-context-guard` already
 exists in `/agent/user.md`, replace it in place. Otherwise append it. Never duplicate it. Do not
 edit anything outside the sentinels. The canonical copy of this block is the staged guard file
-`/agent/brain/aligned-onboarding/guards/account-context-guard.md` - merge from that file,
+`/agent/brain/meta-and-voc-onboarding/guards/account-context-guard.md` - merge from that file,
 copying the block byte-for-byte; never paraphrase, condense, or restate any part of it (the
 package's post-install run does this in its single scripted guard merge). The block below is
 shown for context and must stay identical to the staged file.
@@ -196,7 +196,7 @@ real gap when an attribution tool is confirmed is which of its metrics the team 
 # Field-to-command map
 
 How to pull each field. Exact command shapes and flags live in the Motion CLI Data-Query Guide
-(`/agent/brain/aligned-onboarding/motion-cli-data-query-guide.md`); this table says which command
+(`/agent/brain/meta-and-voc-onboarding/motion-cli-data-query-guide.md`); this table says which command
 answers which field and what to read from the result.
 
 | Field | Pull with | Extract |
@@ -717,5 +717,5 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 
 # Changelog
 
-Maintained in the package repo at `aligned-onboarding/CHANGELOG.md` — not staged to
+Maintained in the package repo at `meta-and-voc-onboarding/CHANGELOG.md` — not staged to
 customer brains.

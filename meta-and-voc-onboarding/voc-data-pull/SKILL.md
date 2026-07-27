@@ -23,7 +23,7 @@ on these files, so shape consistency matters more than volume.
 
 ## When to use
 
-- The aligned-onboarding package (the package that carries this skill) just finished
+- The meta-and-voc-onboarding package (the package that carries this skill) just finished
   installing on this VM - that install is the ask, per its README's "After install"
   section - or the team or user asks to set up the VoC data sync -> run the "Set up the
   recurring sync" procedure below. Setup never happens at any other unprompted moment -
@@ -69,12 +69,13 @@ Two connection paths exist and the pull mechanics differ:
 | Path | Platforms | How to call the API |
 |---|---|---|
 | Pipedream OAuth | `judge_me`, `trustpilot`, `yotpo`, `gorgias_oauth`, `intercom`, `reddit`, `zendesk`, `klaviyo`, `attentive`, `gong`, `hotjar`, `discord`, `youtube_data`, `junip` and `reviews_io` (keys-auth in Pipedream) | `integrations` CLI: check `integrations status --app <slug>`, pick the account with `integrations accounts --app <slug>`, then `integrations proxy --app <slug> --account <accountId> --method GET --path <path>` (or the registered app command) |
-| Stored secret (customer API key) | `okendo`, `stamped` - and **any platform above whose org stores a key instead of connecting OAuth** | `secure-fetch` (`n run --url <url> --secret-key <SECRET_KEY> ...`) per `/runneth/references/secure-fetch-cli--command-contracts.md`. If no stored key exists, request one via the secret-collection flow - never ask for the key in chat. |
+| Stored secret (customer API key) | `okendo`, `stamped` - and **any platform above whose org stores a key instead of connecting OAuth** | `secure-fetch` (`secure-fetch run --url <url> --secret-key <SECRET_KEY> ...`) per `/runneth/references/secure-fetch-cli--command-contracts.md`. If no stored key exists, request one via the secret-collection flow - never ask for the key in chat. |
 | Motion native | Meta ad comments | `motion meta creative-comments` (no Runneth connect involved) |
 
 The path is how this customer set the platform up, not a property of the platform: any
 VoC platform may arrive as an OAuth connection **or** a stored secret, so an
-availability check always checks both `integrations status` and the stored secrets - for
+availability check always checks both `integrations status --app <slug>` and the stored
+secrets - for
 every VoC platform, not just Okendo/Stamped (which are secrets-only because no
 Pipedream app exists for them).
 
