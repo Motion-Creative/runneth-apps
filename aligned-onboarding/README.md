@@ -188,7 +188,7 @@ File: `meta/meta-validation-onboarding-package.md`
 - **Activation:** merges the `runneth:meta-validation-gate` guard block into `/agent/user.md`;
   once merged, the trigger fires on its own when the prerequisites are met.
 - **Re-validation:** re-run the affected questions when the account changes in a way that could
-  break an answer (new north-star metric, naming-system change, new product line).
+  break an answer (new primary conversion event, naming-system change, new product line).
 
 ---
 

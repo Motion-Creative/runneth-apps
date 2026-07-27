@@ -1,5 +1,5 @@
 # Meta Account Context: Brain Onboarding Package
-### Version 1.29 — presentation layer extracted to the onboarding-walkthrough skill (July 2026)
+### Version 1.30 — patch: "north-star" renamed to creative-strategist language (July 2026)
 
 This package teaches Runneth how a customer understands their Meta ad account, so its queries,
 rankings, and insights match how the team actually thinks about the data. This package is
@@ -261,7 +261,8 @@ Captures every conversion event, what it means to the business, and how it ranks
 
 **What to understand**
 - What each event represents to the business and how the customer ranks them.
-- Use `motion brand-context` to propose the most likely north-star before asking cold.
+- Use `motion brand-context` to propose the most likely primary conversion event — the one
+  the team judges everything by — before asking cold.
 
 **If attribution tool is confirmed:**
 Skip the Meta pixel event hierarchy question entirely. When an attribution tool is present, the
@@ -269,7 +270,7 @@ operative conversion is modeled by that tool — not a pixel event. Ask instead:
 from the attribution tool do they judge on, and are there any Meta platform metrics they still
 track alongside it? Those supplemental metrics should be creative engagement signals only
 (thumbstop, CTR, hold rate) — not conversion attribution. Do not propose Meta native conversion
-events as north-star candidates when an attribution tool is the source of truth.
+events as primary-conversion candidates when an attribution tool is the source of truth.
 
 **Fields** (repeat per event)
 - Event: `<AUTO>` | Meaning: `<...>` | Value rank: `<...>` | Optimization or upstream-only: `<...>`
@@ -506,11 +507,11 @@ Status: `[EMPTY]`
 
 **What to understand**
 - Confirm which campaigns belong to which stage.
-- Identify the north-star campaign(s).
+- Identify the priority campaign(s) — the ones the team watches and judges the account by.
 - Confirm whether flagged campaigns should be excluded from standard comparisons.
 
 **Fields**
-- Campaign-to-stage map: `<AUTO proposal>` | North-star campaign(s): `<...>` |
+- Campaign-to-stage map: `<AUTO proposal>` | Priority campaign(s): `<...>` |
   Excluded campaigns: `<...>`
 
 ## 8. Creative performance metrics and benchmarks
@@ -678,7 +679,7 @@ On confirmation, write this as the deck-spec section of `/agent/brain/meta/accou
 Runneth computes these from the fields above. Never asked or filled; they turn on once their
 inputs exist.
 
-- **Cross-KPI surfacing** needs the Funnel map and its north-star campaign.
+- **Cross-KPI surfacing** needs the Funnel map and its priority campaign.
 - **Click-to-conversion diagnosis** needs the Funnel map and landing page context.
 - **Metric-gotcha handling** needs field 3.
 
@@ -691,7 +692,7 @@ is captured.
 
 Run these as a suite once fields are filled. Each is the acceptance test for its field.
 
-1. Sources of truth: "What was our cost per [north-star event] last month, and which source is that from?"
+1. Sources of truth: "What was our cost per [primary conversion event] last month, and which source is that from?"
 2. Conversion events: "What are our best-performing ads right now?"
 3. Metric gotchas: "What's our ROAS on [campaign]?"
 4. Naming conventions: "What's our best-performing messaging angle across the account?"

@@ -15,6 +15,18 @@ old `install-config.json`) and the **installer lane** (this branch,
 `eric/aligned-onboarding-make-fasteth` - the package-manager migration). 2.12.0 unifies
 them; each lane's own entries are kept below under its heading.
 
+### 2.13.1 - 2026-07-26
+
+Readiness-report leak fix, from the first 2.13.0 field run: the install-complete report
+included account findings (metrics, naming positions, field reads) and the gap questions
+themselves before the invitation - the walkthrough's content, presented early. Post-install
+step 6 is now a literal contract: status only, one line per part plus the question count, a
+verbatim skeleton, no findings or question text anywhere ("waiting on a person" names a
+two-word topic, never the question), and nothing after the closing invitation line. Also
+from the same field run: "north-star" renamed to creative-strategist language across the
+ACB package (v1.30), validation (v1.9), and the README — "primary conversion event" and
+"priority campaign(s)".
+
 ### 2.13.0 - 2026-07-26
 
 Silent install, walkthrough on a human's yes. The Account Context Brain fill-in split in
@@ -352,6 +364,16 @@ Fields 4/7/9 confirm, resume on re-invocation). Field definitions stay in the AC
 
 ## Account Context Brain (`meta/meta-account-context-brain-onboarding-package.md`)
 
+### v1.30 (July 2026) — patch: "north-star" renamed to creative-strategist language
+
+"North-star" was growth/analytics dialect surfacing in customer-facing questions (the first
+2.13.0 field run asked "What conversion event is the north-star?"). Renamed throughout:
+Field 2 proposes the "primary conversion event — the one the team judges everything by";
+Field 7 identifies "priority campaign(s) — the ones the team watches and judges the account
+by"; derived capabilities and the health check follow. Same rename in validation (v1.9) and
+the README. Same class of fix as validation v1.8's "graduate" removal: keep the concept,
+drop the dialect.
+
 ### v1.29 (July 2026) — presentation layer extracted to the onboarding-walkthrough skill
 
 The Required output schema section and Steps 2–5 (opening frame, present the fields, close
@@ -531,6 +553,10 @@ sections to find their questions.
 ---
 
 ## Meta Validation (`meta/meta-validation-onboarding-package.md`)
+
+### v1.9 (July 2026) — patch: "north-star" renamed to creative-strategist language
+- The loop's example correction and the re-validation trigger now say "primary conversion
+  event" instead of "north-star" (ACB v1.30 is the owning rename).
 
 ### v1.8 (July 2026) — field-audit fixes: autosave, handoff, Q4 rework
 - validation.md is written incrementally — after every confirmed answer and correction, never

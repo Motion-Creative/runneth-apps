@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.8 — draft for review (July 2026)
+### Version 1.9 — patch: "north-star" renamed to creative-strategist language (July 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
@@ -192,9 +192,9 @@ Then, one question at a time:
 Rules for the loop:
 
 - Never move past a wrong answer. A correction is the point of the exercise, not a detour.
-- Talk about the account, never the worksheet or the fields by number. "I had your north-star
-  event as purchases, but it sounds like it's booked calls, I've updated that" not "Field 2
-  corrected."
+- Talk about the account, never the worksheet or the fields by number. "I had your primary
+  conversion event as purchases, but it sounds like it's booked calls, I've updated that" not
+  "Field 2 corrected."
 - Keep it moving. When an answer lands, confirm and go. Don't over-explain a correct read.
 - Show the work. Each answer states which filter and signal it used (naming decode, which name
   level it filtered — campaign, ad set, or ad — Cacheth tags, live metrics) and what it
@@ -317,8 +317,8 @@ confidence, worth a follow-up, not a silent pass.
 
 - The **weekly deck** regenerates on its cadence via the refresh routine set up in Step 4. After
   onboarding, this is the standing weekly deck, not a one-time artifact.
-- **Re-validate** when the account changes in a way that could break an answer: a new north-star
-  metric, a naming-system change, a new product line, or a materially different funnel. Re-running
+- **Re-validate** when the account changes in a way that could break an answer: a new primary
+  conversion event, a naming-system change, a new product line, or a materially different funnel. Re-running
   the affected questions in the loop is enough; a full re-onboard is not.
 - Log re-validations in `/agent/brain/meta/_changelog.md`, the same convention the other parts use.
 
