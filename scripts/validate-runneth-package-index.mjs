@@ -202,7 +202,7 @@ const validatePackageIndex = (index) => {
 }
 
 const localManifestPathForSource = (source) => {
-  return `${source.path}/runneth-package.json`
+  return `${source.path}/package.json`
 }
 
 const assertPathHasNoSymlinkSegments = (relativePath, label) => {
@@ -269,7 +269,7 @@ const assertManifestMatchesIndexEntry = (entry, manifest, manifestPath) => {
     entry.uninstallPolicy,
     `${entry.id}: manifest uninstallPolicy does not match index uninstallPolicy`,
   )
-  assertManifestResourceFilesExist(manifest, manifestPath.replace(/\/runneth-package\.json$/, ''))
+  assertManifestResourceFilesExist(manifest, manifestPath.replace(/\/package\.json$/, ''))
 }
 
 const getIndexedPackageById = (index) =>
@@ -405,6 +405,13 @@ test('package manifest accepts an opaque version', () => {
   )
 })
 
+test('package manifests use package.json in the indexed source root', () => {
+  assert.equal(
+    localManifestPathForSource({ path: 'manual-test-package' }),
+    'manual-test-package/package.json',
+  )
+})
+
 test('repository package indexes reject backend-github sources', () => {
   assert.throws(
     () =>
@@ -435,7 +442,7 @@ test('repository package indexes reject backend-github sources', () => {
   )
 })
 
-test('indexed packages match their runneth-package.json manifests', () => {
+test('indexed packages match their package.json manifests', () => {
   const index = readJSON(INDEX_PATH)
   for (const entry of index.packages) {
     const manifestPath = localManifestPathForSource(entry.source)
