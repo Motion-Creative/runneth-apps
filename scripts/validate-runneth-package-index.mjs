@@ -29,6 +29,7 @@ const PACKAGE_SOURCE_OWNER = 'Motion-Creative'
 const PACKAGE_SOURCE_REPO = 'runneth-apps'
 const PACKAGE_SOURCE_REF = 'main'
 const PACKAGE_ID = /^[a-z0-9][a-z0-9-]*$/
+const SEMVER = /^\d+\.\d+\.\d+$/
 const GITHUB_OWNER = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?$/
 const GITHUB_REPO = /^[A-Za-z0-9._-]+$/
 const RELATIVE_PATH = /^(?!\/)(?!.*(?:^|\/)\.\.(?:\/|$))(?!.*\/\/).+$/
@@ -90,11 +91,9 @@ const assertRelativePath = (value, label) => {
   assert.ok(RELATIVE_PATH.test(value), `${label}: unsafe relative path`)
 }
 
-// Package versions are opaque change tokens. Agent Builder compares them by
-// equality and only requires a non-empty string. Repo convention: simple
-// integers (1, 2, ...), bumped once per package update.
-const assertPackageVersion = (value, label) => {
+const assertSemver = (value, label) => {
   assertNonEmptyString(value, label)
+  assert.ok(SEMVER.test(value), `${label}: must be semver X.Y.Z`)
 }
 
 const assertOptionalNonEmptyString = (object, key, label) => {
@@ -121,9 +120,7 @@ const assertSource = (source, label) => {
   assert.ok(isRecord(source), `${label}: must be an object`)
   assert.equal(typeof source.type, 'string', `${label}.type: must be a string`)
 
-  // Repository indexes use github sources. The Agent Builder backend resolves
-  // the ref and rewrites served entries to backend-github.
-  if (source.type === 'github') {
+  if (source.type === 'github' || source.type === 'backend-github') {
     assertKeys(source, ['owner', 'path', 'ref', 'repo', 'type'], label)
     assert.ok(GITHUB_OWNER.test(source.owner), `${label}.owner: invalid GitHub owner`)
     assert.ok(GITHUB_REPO.test(source.repo), `${label}.repo: invalid GitHub repo`)
@@ -134,7 +131,7 @@ const assertSource = (source, label) => {
     return
   }
 
-  assert.fail(`${label}.type: must be github`)
+  assert.fail(`${label}.type: must be github or backend-github`)
 }
 
 const assertTarget = (target, label) => {
@@ -253,12 +250,14 @@ const MANIFEST_COMMON_KEYS = [
   'version',
 ]
 
-// Shared by every manifest version: identity, policies, and resources.
+// Shared by every manifest version: identity, policies, and resources. Repo
+// policy requires semver versions in both v1 and v2 (the runtime only requires
+// a non-empty string, so this is deliberately stricter).
 const assertPackageManifestCommon = (manifest, label) => {
   assertPackageId(manifest.id, `${label}.id`)
   assertNonEmptyString(manifest.name, `${label}.name`)
   assertNonEmptyString(manifest.description, `${label}.description`)
-  assertPackageVersion(manifest.version, `${label}.version`)
+  assertSemver(manifest.version, `${label}.version`)
   assert.ok(INSTALL_POLICIES.has(manifest.installPolicy), `${label}.installPolicy: invalid`)
   assert.ok(UPDATE_POLICIES.has(manifest.updatePolicy), `${label}.updatePolicy: invalid`)
   assert.ok(
@@ -336,11 +335,12 @@ const assertIndexEntry = (entry, label) => {
   assertPackageId(entry.id, `${label}.id`)
   assertNonEmptyString(entry.name, `${label}.name`)
   assertNonEmptyString(entry.description, `${label}.description`)
-  assertPackageVersion(entry.version, `${label}.version`)
+  assertSemver(entry.version, `${label}.version`)
   assert.ok(INSTALL_POLICIES.has(entry.installPolicy), `${label}.installPolicy: invalid`)
   assert.ok(UPDATE_POLICIES.has(entry.updatePolicy), `${label}.updatePolicy: invalid`)
   assert.ok(UNINSTALL_POLICIES.has(entry.uninstallPolicy), `${label}.uninstallPolicy: invalid`)
   assert.ok(Array.isArray(entry.categories), `${label}.categories: must be array`)
+  assert.ok(entry.categories.length > 0, `${label}.categories: must not be empty`)
   entry.categories.forEach((category, index) =>
     assertNonEmptyString(category, `${label}.categories[${index}]`),
   )
@@ -493,8 +493,6 @@ const readPullRequestLabels = () => {
   return event.pull_request?.labels?.map((label) => label.name).filter(Boolean) ?? []
 }
 
-const isPullRequestEvent = (eventName) => eventName === 'pull_request'
-
 const affectsManagedSync = (entry) =>
   entry.installPolicy === 'auto' || entry.updatePolicy === 'auto'
 
@@ -571,11 +569,11 @@ test('package index contract accepts package manager v2 entries', () => {
           path: 'analytics',
           ref: PACKAGE_SOURCE_REF,
           repo: PACKAGE_SOURCE_REPO,
-          type: 'github',
+          type: 'backend-github',
         },
         uninstallPolicy: 'allowed',
         updatePolicy: 'auto',
-        version: '1',
+        version: '1.0.0',
       },
     ],
     schemaVersion: 1,
@@ -654,7 +652,7 @@ test('package manifest contract accepts v2 tasks and workflows', () => {
       ],
       uninstallPolicy: 'allowed',
       updatePolicy: 'auto',
-      version: '1',
+      version: '1.0.0',
       workflows: [
         {
           entry: 'wf',
@@ -684,7 +682,7 @@ test('package manifest contract keeps tasks and workflows out of v1', () => {
         tasks: [],
         uninstallPolicy: 'allowed',
         updatePolicy: 'auto',
-        version: '1',
+        version: '1.0.0',
       },
       'package.json',
     )
@@ -704,11 +702,6 @@ test('indexed packages match their package.json manifests', () => {
 })
 
 test('managed-sync package changes require explicit fleet approval', () => {
-  // Fleet approval is a PR review gate; non-PR pushes have no labels to check.
-  if (!isPullRequestEvent(process.env.GITHUB_EVENT_NAME)) {
-    return
-  }
-
   const nextIndex = readJSON(INDEX_PATH)
   const messages = fleetImpactMessages(readBaseIndex(), nextIndex)
   if (messages.length === 0) {
