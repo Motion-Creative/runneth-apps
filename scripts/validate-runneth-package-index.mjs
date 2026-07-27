@@ -31,6 +31,7 @@ const RESOURCE_TARGET_ROOTS = new Set([
   'agent_skills',
   'agent_tools',
 ])
+const INSTALL_POLICIES = new Set(['auto', 'manual'])
 const UPDATE_POLICIES = new Set(['auto', 'manual'])
 const UNINSTALL_POLICIES = new Set(['allowed', 'protected'])
 
@@ -128,6 +129,7 @@ const assertPackageManifest = (manifest, label) => {
     [
       'description',
       'id',
+      'installPolicy',
       'name',
       'resources',
       'schemaVersion',
@@ -144,6 +146,7 @@ const assertPackageManifest = (manifest, label) => {
   // Package versions are opaque change tokens. Agent Builder compares them by
   // equality and only requires a non-empty string.
   assertNonEmptyString(manifest.version, `${label}.version`)
+  assert.ok(INSTALL_POLICIES.has(manifest.installPolicy), `${label}.installPolicy: invalid`)
   assert.ok(UPDATE_POLICIES.has(manifest.updatePolicy), `${label}.updatePolicy: invalid`)
   assert.ok(
     UNINSTALL_POLICIES.has(manifest.uninstallPolicy),
@@ -163,6 +166,7 @@ const assertIndexEntry = (entry, label) => {
       'categories',
       'description',
       'id',
+      'installPolicy',
       'name',
       'packageManagerVersion',
       'source',
@@ -177,6 +181,7 @@ const assertIndexEntry = (entry, label) => {
   assertNonEmptyString(entry.name, `${label}.name`)
   assertNonEmptyString(entry.description, `${label}.description`)
   assertNonEmptyString(entry.version, `${label}.version`)
+  assert.ok(INSTALL_POLICIES.has(entry.installPolicy), `${label}.installPolicy: invalid`)
   assert.ok(UPDATE_POLICIES.has(entry.updatePolicy), `${label}.updatePolicy: invalid`)
   assert.ok(UNINSTALL_POLICIES.has(entry.uninstallPolicy), `${label}.uninstallPolicy: invalid`)
   assert.ok(Array.isArray(entry.categories), `${label}.categories: must be array`)
@@ -260,6 +265,11 @@ const assertManifestMatchesIndexEntry = (entry, manifest, manifestPath) => {
     `${entry.id}: manifest description does not match index description`,
   )
   assert.equal(
+    manifest.installPolicy,
+    entry.installPolicy,
+    `${entry.id}: manifest installPolicy does not match index installPolicy`,
+  )
+  assert.equal(
     manifest.updatePolicy,
     entry.updatePolicy,
     `${entry.id}: manifest updatePolicy does not match index updatePolicy`,
@@ -309,11 +319,14 @@ const readPullRequestLabels = () => {
 
 const isPullRequestEvent = (eventName) => eventName === 'pull_request'
 
-const isAutoInstallable = (entry) => entry.updatePolicy === 'auto'
+const affectsManagedSync = (entry) =>
+  entry.installPolicy === 'auto' || entry.updatePolicy === 'auto'
 
 const sourceFingerprint = (entry) =>
   JSON.stringify({
     categories: [...entry.categories].sort(),
+    installPolicy: entry.installPolicy,
+    packageManagerVersion: entry.packageManagerVersion,
     source: entry.source,
     uninstallPolicy: entry.uninstallPolicy,
     updatePolicy: entry.updatePolicy,
@@ -323,8 +336,8 @@ const sourceFingerprint = (entry) =>
 const fleetImpactMessages = (baseIndex, nextIndex) => {
   if (baseIndex === null) {
     return nextIndex.packages
-      .filter(isAutoInstallable)
-      .map((entry) => `${entry.id}: new auto package`)
+      .filter(affectsManagedSync)
+      .map((entry) => `${entry.id}: new managed-sync package`)
   }
 
   const baseById = getIndexedPackageById(baseIndex)
@@ -334,25 +347,30 @@ const fleetImpactMessages = (baseIndex, nextIndex) => {
   for (const nextEntry of nextIndex.packages) {
     const baseEntry = baseById.get(nextEntry.id)
     if (!baseEntry) {
-      if (isAutoInstallable(nextEntry)) {
-        messages.push(`${nextEntry.id}: new auto package`)
+      if (affectsManagedSync(nextEntry)) {
+        messages.push(`${nextEntry.id}: new managed-sync package`)
       }
       continue
     }
 
-    if (!isAutoInstallable(baseEntry) && isAutoInstallable(nextEntry)) {
-      messages.push(`${nextEntry.id}: changed to auto package`)
+    if (!affectsManagedSync(baseEntry) && affectsManagedSync(nextEntry)) {
+      messages.push(`${nextEntry.id}: changed to managed-sync package`)
       continue
     }
 
-    if (isAutoInstallable(baseEntry) && sourceFingerprint(baseEntry) !== sourceFingerprint(nextEntry)) {
-      messages.push(`${nextEntry.id}: changed auto package version, source, policy, or categories`)
+    if (
+      affectsManagedSync(baseEntry) &&
+      sourceFingerprint(baseEntry) !== sourceFingerprint(nextEntry)
+    ) {
+      messages.push(
+        `${nextEntry.id}: changed managed-sync package version, source, policy, or categories`,
+      )
     }
   }
 
   for (const baseEntry of baseIndex.packages) {
-    if (isAutoInstallable(baseEntry) && !nextById.has(baseEntry.id)) {
-      messages.push(`${baseEntry.id}: removed auto package`)
+    if (affectsManagedSync(baseEntry) && !nextById.has(baseEntry.id)) {
+      messages.push(`${baseEntry.id}: removed managed-sync package`)
     }
   }
 
@@ -371,6 +389,7 @@ test('package index accepts opaque versions and empty categories', () => {
         categories: [],
         description: 'Manual test package',
         id: 'manual-test-package',
+        installPolicy: 'manual',
         name: 'Manual Test Package',
         packageManagerVersion: 1,
         source: {
@@ -394,6 +413,7 @@ test('package manifest accepts an opaque version', () => {
     {
       description: 'Manual test package',
       id: 'manual-test-package',
+      installPolicy: 'manual',
       name: 'Manual Test Package',
       resources: [],
       schemaVersion: 1,
@@ -412,6 +432,27 @@ test('package manifests use package.json in the indexed source root', () => {
   )
 })
 
+test('package manifest installPolicy must match its index entry', () => {
+  const entry = {
+    description: 'Manual test package',
+    id: 'manual-test-package',
+    installPolicy: 'auto',
+    name: 'Manual Test Package',
+    uninstallPolicy: 'allowed',
+    updatePolicy: 'auto',
+    version: '1',
+  }
+  assert.throws(
+    () =>
+      assertManifestMatchesIndexEntry(
+        entry,
+        { ...entry, installPolicy: 'manual', resources: [] },
+        'manual-test-package/package.json',
+      ),
+    /manifest installPolicy does not match index installPolicy/,
+  )
+})
+
 test('repository package indexes reject backend-github sources', () => {
   assert.throws(
     () =>
@@ -422,6 +463,7 @@ test('repository package indexes reject backend-github sources', () => {
             categories: [],
             description: 'Manual test package',
             id: 'manual-test-package',
+            installPolicy: 'manual',
             name: 'Manual Test Package',
             packageManagerVersion: 1,
             source: {
@@ -460,7 +502,37 @@ test('fleet approval is evaluated only for pull requests', () => {
   assert.equal(isPullRequestEvent(undefined), false)
 })
 
-test('auto package changes require explicit fleet approval', () => {
+test('install policy changes are included in managed-sync fleet impact', () => {
+  const baseEntry = {
+    categories: [],
+    description: 'Manual test package',
+    id: 'manual-test-package',
+    installPolicy: 'manual',
+    name: 'Manual Test Package',
+    packageManagerVersion: 1,
+    source: {
+      owner: PACKAGE_SOURCE_OWNER,
+      path: 'manual-test-package',
+      ref: PACKAGE_SOURCE_REF,
+      repo: PACKAGE_SOURCE_REPO,
+      type: 'github',
+    },
+    uninstallPolicy: 'allowed',
+    updatePolicy: 'manual',
+    version: '1',
+  }
+  const messages = fleetImpactMessages(
+    { indexRevision: 'base', packages: [baseEntry], schemaVersion: 1 },
+    {
+      indexRevision: 'next',
+      packages: [{ ...baseEntry, installPolicy: 'auto' }],
+      schemaVersion: 1,
+    },
+  )
+  assert.deepEqual(messages, ['manual-test-package: changed to managed-sync package'])
+})
+
+test('managed-sync package changes require explicit fleet approval', () => {
   if (!isPullRequestEvent(process.env.GITHUB_EVENT_NAME)) {
     return
   }
@@ -475,7 +547,7 @@ test('auto package changes require explicit fleet approval', () => {
   assert.ok(
     labels.includes(FLEET_APPROVAL_LABEL),
     [
-      'This PR changes auto-installable Runneth packages.',
+      'This PR changes managed-sync Runneth packages.',
       'These changes may sync to matching VMs after merge.',
       `Add the ${FLEET_APPROVAL_LABEL} label after core engineering approval.`,
       '',
