@@ -20,7 +20,10 @@ The parts, and their operational nature:
 
 - **VoC Data Pull** - background: setup once, daily routines do the work.
 - **Creative Attributes** - establishes the creative layer (Cacheth) and naming detection.
-- **Account Context Brain** - human-gated interview; autofill first, gap questions to a person.
+- **Account Context Brain** - autofill runs silently at install; the gap questions wait for
+  the walkthrough.
+- **Onboarding Walkthrough** - on-demand skill: presents the findings and collects the human
+  answers when someone says yes to "Are you ready to begin your onboarding?"
 - **Meta Validation** - human-gated proof loop.
 - **Meta Ad Performance Analysis** - on-demand diagnostic skill; nothing self-runs.
 - **Knoweth organize** - self-gating: fires on its own conditions once content lands; do not
@@ -38,7 +41,7 @@ The one-line model:
 
 This folder holds one part per subfolder: `meta/` (the Creative Attributes playbook, the
 Account Context Brain package, the Meta Validation package, the Motion CLI Data-Query
-Guide, and the Cacheth Command Reference) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates), plus `knoweth/` (the organize-the-brain part that runs after the questions), `meta-ad-performance-analysis/` (the ad performance analysis skill), and `guards/` (the four ready-made `/agent/user.md` guard blocks that post-install merges). This README
+Guide, and the Cacheth Command Reference) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates), plus `knoweth/` (the organize-the-brain part that runs after the questions), `meta-ad-performance-analysis/` (the ad performance analysis skill), `onboarding-walkthrough/` (the walkthrough presentation skill), and `guards/` (the four ready-made `/agent/user.md` guard blocks that post-install merges). This README
 covers all of them; `package.json` (the package manifest) maps every file to its installed location.
 
 ### How to install (exact procedure)
@@ -113,8 +116,10 @@ package writes it to brain files.
 
 - **Fires at install.** Right after this package installs, when a Meta workspace is
   connected, Runneth runs the Creative Attributes step and then the Account Context Brain
-  interview (autofill first, then the gap questions a human must answer) - per
-  `post-install.md`. Validation and Knoweth organize fire later from their own gates.
+  autofill - silently, per `post-install.md` - persisting the scaffold and ending with
+  "Are you ready to begin your onboarding?" The gap questions wait for the
+  onboarding-walkthrough skill, which fires on a human's yes. Validation and Knoweth
+  organize fire later from their own gates.
 
 ### Creative Attributes
 File: `meta/meta-creative-attributes-playbook.md`
@@ -143,12 +148,28 @@ File: `meta/meta-account-context-brain-onboarding-package.md`
   Field 10 (the deck spec: reporting structure and marketing calendar, synthesized from
   confirmed fields) — it gates the validation deck, not the question loop.
 - **Runs second.** Uses what the Creative Attributes step found (especially naming decode) as
-  pre-populated proposals for confirmation, rather than starting cold.
+  pre-populated proposals for confirmation, rather than starting cold. At install, only the
+  autofill runs - silently; the presentation belongs to the Onboarding Walkthrough skill below.
 - **Persists to:** `/agent/brain/meta/account-context.md`, plus the operational naming decoder
   at `/agent/brain/meta/naming-decoder.json` when a convention is confirmed (Field 4 owns it).
 - **Activation:** merges a read-before-performance guard into `/agent/user.md`.
 - **Refresh:** monthly cadence plus structural-drift triggers, logged in
   `/agent/brain/meta/_changelog.md`.
+
+### Onboarding Walkthrough (skill)
+Folder: `onboarding-walkthrough/`
+
+- **Job:** the presentation layer of the Account Context Brain fill-in - the guided
+  conversation that opens with the brand story and account findings, walks the field
+  sections (tables where the data calls for them, the full naming breakdown always), and
+  closes with the questions TLDR. Owns the required output schema; the ACB package owns the
+  fields it presents.
+- **Runs on demand - does not fire at install.** Post-install ends by asking "Are you ready
+  to begin your onboarding?"; a yes (from anyone, in any conversation, whenever it comes)
+  invokes this skill. Typically a CSM triggers it live on the onboarding call. An
+  interrupted walkthrough resumes where it left off.
+- **Installs to the skills root** (`/agent/.agents/skills/onboarding-walkthrough/`), not the
+  brain - see the `onboarding-walkthrough-skill` resource in `package.json`.
 
 ### Meta Validation
 File: `meta/meta-validation-onboarding-package.md`
@@ -269,10 +290,12 @@ The run order below is the human-readable description of the same lifecycle.
 2. **Creative Attributes (Step 1).** Confirms the workspace scope, establishes the creative
    content layer (Cacheth + the query paths), detects naming patterns, and passes them to the
    Account Context Brain as provisional proposals. Writes nothing per-creative to the brain.
-3. **Activate and run the Account Context Brain (Step 2).** Its guard block (staged at
+3. **Activate and run the Account Context Brain autofill (Step 2).** Its guard block (staged at
    `guards/account-context-guard.md`) is merged into `/agent/user.md` by the post-install run's
-   single guard merge; then run the fill-in. Confirms how the team judges performance, drawing on
+   single guard merge; then the autofill runs silently and persists the scaffold, drawing on
    the Creative Attributes step (if it was run) for naming proposals and creative evidence.
+   Post-install ends with "Are you ready to begin your onboarding?" - the onboarding-walkthrough
+   skill presents the findings and collects the human answers on the yes.
 4. **Activate and run Meta Validation (Step 3).** Its validation-gate guard block (staged at
    `guards/meta-validation-gate.md`) is merged by the same post-install guard merge; once the
    Account Context Brain is fully confirmed and the cache has synced,

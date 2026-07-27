@@ -15,6 +15,27 @@ old `install-config.json`) and the **installer lane** (this branch,
 `eric/aligned-onboarding-make-fasteth` - the package-manager migration). 2.12.0 unifies
 them; each lane's own entries are kept below under its heading.
 
+### 2.13.0 - 2026-07-26
+
+Silent install, walkthrough on a human's yes. The Account Context Brain fill-in split in
+two: post-install now runs only the autofill - silently, persisting the scaffold, asking
+nothing - and ends with the verbatim invitation "Are you ready to begin your onboarding?"
+The presentation (opening frame, field sections, closing TLDR - the required output schema,
+skeleton, and pre-send checklist) moved into the new onboarding-walkthrough skill (v1.0,
+installed to the skills root), which fires on any affirmative reply to the invitation or
+any ask to begin/resume onboarding - typically a CSM leading the onboarding call. The ACB
+package (v1.29) drops its schema section and Steps 2-5 in favor of a pointer and becomes
+the pure data layer (fields, pulls, confirm loops, storage); its new Field 4 presentation
+rule (v1.28: inline decoder table, never a prose summary) stays with the decoder spec and
+is referenced by the skill. Also in this bump: ACB v1.28's format-per-data rule (tables and
+bullets in field sections; "no list" is Part 1 only) and the always-include naming
+breakdown. README and post-install updated to the same lifecycle. Audit fixes for full
+silence: the account-context guard (v2) offers the onboarding walkthrough instead of "the
+fill-in flow" (staged file and the ACB package's embedded copy, kept identical); the
+Creative Attributes playbook's Step 1 scope confirmation is silent inside post-install (its
+opening message fires only on a standalone, human-requested run); package-index.json synced
+to 2.13.0 with the new description (indexRevision 2026-07-26-01).
+
 ### 2.12.2 - 2026-07-25
 
 Install-failure posture: if an install fails, the agent reports the exact error and stops.
@@ -315,7 +336,44 @@ Per-doc maintainer history for the staged instruction docs, relocated here from 
 themselves (content-lane v2.11.1). Each staged doc keeps its version header and a one-line
 pointer to this file.
 
+## Onboarding Walkthrough skill (`onboarding-walkthrough/SKILL.md`)
+
+### v1.0 (July 2026) — initial: the fill-in presentation, extracted from the ACB package
+
+New skill owning the presentation layer of the Account Context Brain fill-in. Fires on an
+affirmative reply to "Are you ready to begin your onboarding?" or any ask to begin/resume
+onboarding. Carries the required output schema (opening frame, field sections, closing
+TLDR, skeleton, pre-send checklist), pre-flight (read the scaffold; run ACB Steps 0-1 if
+the autofill never ran; offer the health check if everything is confirmed), and the
+after-the-presentation rules (persist per ACB field rules, offer Field 10's beats once
+Fields 4/7/9 confirm, resume on re-invocation). Field definitions stay in the ACB package.
+
+---
+
 ## Account Context Brain (`meta/meta-account-context-brain-onboarding-package.md`)
+
+### v1.29 (July 2026) — presentation layer extracted to the onboarding-walkthrough skill
+
+The Required output schema section and Steps 2–5 (opening frame, present the fields, close
+with TLDR, offer the deck spec) moved to the onboarding-walkthrough skill. In their place, a
+pointer: Steps 0–1 run silently at post-install; the presentation fires via the skill on a
+human's yes to "Are you ready to begin your onboarding?" The package is now the pure data
+layer — field meanings, pulls, confirm loops, storage. Field 4's presentation rule stays
+here beside its decoder spec, referenced by the skill.
+
+### v1.28 (July 2026) — patch: format-per-data in field sections, Field 4 presentation rule
+
+The output schema's "no list, no heading" rule is now explicitly Part 1 only. Field sections
+(Part 2) use the format the data deserves: prose for a settled one-sentence read, a table or
+bullet list for structured data the customer needs to scan and confirm — never prose forced
+onto a table. Field 4 gains a presentation rule: when a naming decoder exists, its section
+embeds the full filterable-field table inline (Part A — filterable dimensions with known
+values; Part B — context-only fields with what they capture), followed by the campaign and
+ad set naming formats and the two confirmation questions; a prose summary of a decoder is
+never sufficient. The naming-conventions section always carries the full breakdown, even
+when the decoder is confirmed, and Field 4's two decoder confirmations join Field 10's two
+beats as the sanctioned two-question sections. Mirrored in the onboarding-walkthrough skill,
+which carries the presentation schema.
 
 ### v1.27 (July 2026) — patch: answer-register note in "at a glance"
 

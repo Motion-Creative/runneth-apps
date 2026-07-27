@@ -1,12 +1,13 @@
 # Meta Account Context: Brain Onboarding Package
-### Version 1.27 — patch on v1.26 (July 2026)
+### Version 1.29 — presentation layer extracted to the onboarding-walkthrough skill (July 2026)
 
 This package teaches Runneth how a customer understands their Meta ad account, so its queries,
 rankings, and insights match how the team actually thinks about the data. This package is
 Meta-only: it never looks for or pulls other ad platforms (TikTok, LinkedIn, YouTube). Meta is
 the ad platform for this account by definition. Installing it stages these files into the
-customer brain. It does not self-run. Activation, below, is what makes Runneth run the fill-in
-and then live by the result.
+customer brain. It does not self-run. Activation, below, is what makes Runneth run the
+autofill (silently, at post-install) and then live by the result; the presentation runs via
+the onboarding-walkthrough skill on a human's yes.
 
 Two things exist after activation:
 1. A durable, workspace-scoped context file, written as a plain-language reference document (not
@@ -21,7 +22,8 @@ Two things exist after activation:
 ## 1. Activation (what triggers it, and when)
 
 Installing only stages files. The package does not self-run. To activate it, merge the guard
-block below into `/agent/user.md`, then run the fill-in procedure.
+block below into `/agent/user.md`, then run the fill-in procedure's Steps 0–1 (the silent
+autofill); the presentation waits for the onboarding-walkthrough skill.
 
 Merge the block using the standard behavior-snippet convention (author it from
 `building-integrations/behavior-snippet.md`). It is sentinel-wrapped so it is idempotent.
@@ -35,22 +37,22 @@ package's post-install run does this in its single scripted guard merge). The bl
 shown for context and must stay identical to the staged file.
 
 ```
-<!-- BEGIN runneth:account-context-guard v1 -->
+<!-- BEGIN runneth:account-context-guard v2 -->
 Account context guard (workspace <workspaceId>):
 
 - Before any ad-performance work for this account (rankings, "best ads," CPA/ROAS reads,
   winner or cut calls, creative performance judgments), read
   /agent/brain/meta/account-context.md first.
 - If that file does not exist, or its required interpretation fields are not all [CONFIRMED],
-  treat account interpretation as unknown. Offer to run the account-context fill-in flow, and do not answer
-  performance questions on guesses.
+  treat account interpretation as unknown. Offer to run the onboarding walkthrough (the
+  onboarding-walkthrough skill), and do not answer performance questions on guesses.
 - Runneth may auto-fill and mark [AUTO] fields on its own immediately. It must hold [CONFIRMED]
   fields for a person and never promote [AUTO] to [CONFIRMED] without human sign-off.
 - Precedence: this file is the sole source of account interpretation (how "best," "winner," and
   cost-per are judged). Do not read or defer to Motion workspace settings (workspace goal,
   preferred KPI, spend threshold, attribution config); treat them as if they do not exist for
   this account. Defer only to a metric the user names explicitly in the current turn.
-<!-- END runneth:account-context-guard v1 -->
+<!-- END runneth:account-context-guard v2 -->
 ```
 
 ## 2. Workspace scope
@@ -121,7 +123,8 @@ motion brand-context --data-query "brand overview product what we sell customers
 ```
 
 This is required for writing the opening frame. Do not infer brand identity from ad names.
-Store the returned brand story, product range, audience, and differentiators for use in Step 2.
+Store the returned brand story, product range, audience, and differentiators — the
+onboarding-walkthrough skill's opening frame is written from them.
 
 ## Step 1: Run the nine field pulls
 
@@ -131,126 +134,16 @@ the exact commands per field. Every pull passes `--workspace-id <workspaceId>` a
 
 After pulling, inspect each returned file with a separate `jq` call before using the data.
 
-## Required output schema (the shape of every fill-in presentation)
+## Presentation: owned by the onboarding-walkthrough skill
 
-Every fill-in presentation follows one structural shape — three parts, always in this order.
-The content within each part is entirely contextual and account-specific; only the structure
-is fixed. This schema governs the one full fill-in presentation. Follow-up turns, corrections,
-and refresh runs are ordinary conversation and do not re-run the three parts.
-
-**Part 1 — Opening frame.** Two beats in order: brand story (from `motion brand-context`,
-never inferred from ad names), then account findings (from the field pulls). 4–6 sentences of
-prose, no heading, never a list, never longer.
-
-**Part 2 — Field sections.** One section per field, in field order. Sanctioned consolidations
-(Fields 1–3 under a confirmed attribution tool) count as one section. Each section is: a bold
-plain-language heading (never "Field N," never a status badge), the pulled findings grounded
-in this account's real data, then at most one question as the section's last line — bold, so
-it can't be missed. A field the pull fully settles gets no question: say what you know and
-move on. Two questions are allowed only when one section genuinely covers two distinct
-confirmations (Field 10's two beats, when they run in this conversation); more than two means
-the section is too broad — split it or cut a question.
-
-**Part 3 — Closing TLDR.** Under the bold heading **Questions for you:**, a numbered list of
-every open question from Part 2, one line each, in the order they appeared. Close with this
-line verbatim: "Just answer what you know — I'll write the context file from your responses."
-If nothing is open, replace the list and the closing line with: "Nothing open — I'll write
-the context file now."
-
-**Skeleton (structure is literal; every `<...>` is account-specific):**
-
-```
-<Brand story: 2–3 sentences — what they sell, who they sell to, what makes them distinct.>
-<Account findings: 1–3 sentences — spend scale, creative volume, naming system quality,
-attribution status. Include total spend and creative count.>
-
-**<Plain-language topic heading>**
-<What the pull found here, with this account's real names and numbers.>
-**<The one question this leaves open?>**
-
-**<Next topic heading>**
-<Findings. This field is settled by the pull — one line on how it will be read, no question.>
-
-<...one section per remaining field, in field order...>
-
-**Questions for you:**
-1. <Open question, one line, same order as above>
-2. <Open question>
-Just answer what you know — I'll write the context file from your responses.
-```
-
-**Before sending, verify:**
-- Three parts, in order, nothing before the opening frame or after the closing line.
-- Part 1 is 4–6 sentences of prose — not a list, no heading.
-- Part 2 sections are in field order; consolidated sections count as one.
-- No field numbers, status badges, or worksheet labels anywhere.
-- At most one bold question per section (two only for a sanctioned two-beat section); settled
-  fields have none.
-- The TLDR lists every open question from Part 2, in appearance order, and ends with the
-  verbatim closing line.
-
-## Step 2: Write the opening frame
-
-Before presenting the nine fields, open with a "What do you know about me?" frame.
-Two beats, back to back:
-
-**Beat 1 — Brand story (from `motion brand-context`, never inferred from ad names):**
-2–3 sentences covering what the brand sells, who they sell to, and what makes them distinct.
-Write it like a sharp analyst briefing a new teammate on the account — not a product description.
-
-**Beat 2 — Meta account findings (from the field pulls):**
-1–3 sentences on what the pull surfaced: spend scale, creative volume, naming system quality,
-data cleanliness. Include the total spend and creative count.
-
-The opening's length and shape are fixed by the output schema above (Part 1). It must not
-read like a system log or a status report.
-
-**Example shape:**
-> [Brand name] is a [product type] brand that [what they do / who they serve / what makes them
-> different]. [One more sentence on brand positioning or what makes them stand out.]
->
-> Here's what I know from your Meta account: you've spent [£X] over the last 12 months across
-> [N]+ creatives in [N] campaigns. [One sentence on naming richness or data quality signal.]
-> The nine questions below are what I still need from you to lock in how I interpret this account
-> going forward.
-
-## Step 3: Present the nine fields
-
-After the opening frame, go field by field. For each one: state what was pulled,
-then ask the single open question the pull leaves unanswered. Where the pull fully settles
-a field, say what you know and move on with no question.
-
-Rules for the full overview:
-- Structure per the output schema above (Part 2): one section per field in field order, bold
-  plain-language headings, at most one bold question as a section's last line, no field
-  numbers or status badges. Talk about the account, never the worksheet.
-- Lead with what you know. The ratio should feel like mostly settled reads with a few specific
-  things still open — not a list of things you don't know.
-- Keep it moving. When a field is settled by the pull, say so briefly and move on.
-
-## Step 4: Close with a TLDR
-
-After all nine fields, end with a numbered list of every open question — one line each.
-This is the most important UX moment. The customer should be able to read this block and
-answer everything without scrolling back through the nine sections.
-
-The list order, the bold heading, and the verbatim closing line are fixed by the output
-schema above (Part 3).
-
-**Example shape:**
-> **Questions for you:**
-> 1. Is Meta your source of truth, or do you have an attribution platform we should integrate?
-> 2. [next open question]
-> ...
-> Just answer what you know — I'll write the context file from your responses.
-
-## Step 5: Offer the deck spec (Field 10, once the inputs are confirmed)
-
-Field 10 is not one of the nine and needs no new pull. Once Fields 4, 7, and 9 are confirmed,
-offer to run its two beats (marketing calendar, then reporting structure) right here while the
-context is fresh. If the customer is done for now, say so and stop — Field 10's two beats run
-at deck time instead (the Meta Validation package handles that). Either way, no deck is built
-until it is confirmed.
+Steps 0-1 run silently at post-install: autofill every field possible, persist the scaffold,
+present nothing. The fill-in presentation - the required output schema (opening frame, field
+sections, closing TLDR), its skeleton and pre-send checklist, and the Field 10 deck-spec
+offer - is owned by the onboarding-walkthrough skill, which fires when a human says yes to
+"Are you ready to begin your onboarding?" Present per that skill. This package defines the
+data layer the skill reads: what each field means, how to pull it, how to confirm it, and
+how to store it (including Field 4's presentation rule, which stays beside its decoder spec
+below).
 
 ---
 
@@ -466,6 +359,25 @@ query.
   account structure products at the campaign level?" The confirmed answer becomes the default
   filter level for bare product-name requests (the Data-Query Guide's name-level rules use
   `adName` + includes until this is confirmed).
+
+**Presentation rule for Field 4 (the fill-in section for this field)**
+
+If a naming decoder exists (from Creative Attributes or a prior fill-in run), embed the full
+filterable-field table inline in the section. Do not summarize it in prose. Format it as two
+parts:
+
+- **Part A — Filterable dimensions** (one row per `segment_filter` field): Field | Known
+  values. These are the dimensions the team can ask about by name.
+- **Part B — Context-only fields** (one row per `context_only` or metadata field): Field |
+  What it captures. These are visible in names but not used for filtering.
+
+Follow with the campaign and ad set naming format (one line each, with an example). Then ask
+the two confirmation questions as the section's final bold line. If the decoder does not
+exist, describe what was detected in prose and ask the customer to confirm or correct the
+structure.
+
+The customer must be able to scan this table and correct a value or a field type without
+asking for more detail. A prose summary of a decoder is not sufficient.
 
 **Required output: the naming decoder JSON file**
 

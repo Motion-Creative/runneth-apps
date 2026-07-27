@@ -62,8 +62,9 @@ asked. Exactly once per install: if the four guard sentinels are already in
    creative content layer (Cacheth + query paths), detect naming patterns as provisional
    proposals for the next step.
 5. **Account Context Brain** (Meta connected only): its guard is already merged (step 3).
-   Autofill every field possible from live data, then surface only the gap questions a
-   human must answer. This step ends waiting on a person - that is expected. **Persist
+   Autofill every field possible from live data - silently. Do not present the findings,
+   do not ask the gap questions, do not run the walkthrough; the onboarding-walkthrough
+   skill owns all of that and fires later, on a human's yes. **Persist
    before you stop:** write the account context brain file with every autofilled field
    and the provisional naming decode as terse facts (short lines, no prose polish) so
    the autofill survives beyond this conversation. This file gets written even when the
@@ -72,8 +73,12 @@ asked. Exactly once per install: if the four guard sentinels are already in
    exist on disk before this step ends, never nothing. Long-form write-ups and
    `/agent/INDEX.md` updates wait for the turn where the human's answers arrive - do not
    compose them now, but never leave autofill results only in the chat.
-6. **Report one line per part**: running in background / done / waiting on a person for X /
-   skipped (not reachable) and why.
+6. **Close with the readiness report.** One line per part - running in background / done /
+   waiting on a person for X / skipped (not reachable) and why - plus how many questions
+   need a human. End with this line verbatim: "Are you ready to begin your onboarding?"
+   A yes (from anyone, in any conversation, whenever it comes) invokes the
+   onboarding-walkthrough skill; that skill presents the findings and asks the questions.
+   Do not start the walkthrough inside the install turn unless the yes arrives here.
 
 Mechanics for every step above: when a step updates `/agent/INDEX.md` or any other
 existing file, do not use the edit/patch tool - it fails validation on this VM. Read the
@@ -87,6 +92,10 @@ connected later, setup runs on ask.
 
 ## What fires later, on its own
 
+- **The onboarding walkthrough** - the onboarding-walkthrough skill, when a human says yes
+  to "Are you ready to begin your onboarding?" (or asks to start it in any phrasing, in any
+  conversation). It presents the autofilled findings per its output schema and collects the
+  answers only a human can give.
 - **Knoweth organize** - from the merged guard's gates, once content lands and the
   interpretation is confirmed.
 - **Meta Validation** - from its merged gate (step 3), opening on its own once the Account

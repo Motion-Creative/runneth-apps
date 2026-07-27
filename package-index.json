@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-07-25-01",
+  "indexRevision": "2026-07-26-01",
   "packages": [
     {
       "id": "aligned-onboarding",
       "name": "Aligned Onboarding",
-      "version": "2.12.2",
-      "description": "INSTALLER: the moment this package installs, read /agent/brain/aligned-onboarding/post-install.md and execute its install-time sequence in the installing conversation - installing is the trigger; do not wait to be asked. The Meta onboarding package, v2. Stages the onboarding docs and ready-made guard blocks into /agent/brain/aligned-onboarding/, plus the voc-data-pull and meta-ad-performance-analysis skills into the skills root. Post-install runs the reachability check, creates one daily VoC sync routine per reachable platform (files land under /agent/brain/data-sources/voc/<platform>/), merges the four guard blocks into /agent/user.md, and runs the Meta account-context steps; outside that run, nothing self-runs. Meta only, one workspace at a time. The <workspaceId> token in the staged guard files is resolved during post-install, not at file-copy time.",
+      "version": "2.13.0",
+      "description": "INSTALLER: the moment this package installs, read /agent/brain/aligned-onboarding/post-install.md and execute its install-time sequence in the installing conversation - installing is the trigger; do not wait to be asked. The Meta onboarding package, v2. Stages the onboarding docs and ready-made guard blocks into /agent/brain/aligned-onboarding/, plus the voc-data-pull, meta-ad-performance-analysis, and onboarding-walkthrough skills into the skills root. Post-install runs the reachability check, creates one daily VoC sync routine per reachable platform (files land under /agent/brain/data-sources/voc/<platform>/), merges the four guard blocks into /agent/user.md, and runs the Meta account-context autofill silently; it ends by asking 'Are you ready to begin your onboarding?' - the walkthrough presentation fires only on a human's yes, via the onboarding-walkthrough skill. Outside that run, nothing self-runs. Meta only, one workspace at a time. The <workspaceId> token in the staged guard files is resolved during post-install, not at file-copy time.",
       "categories": ["onboarding"],
       "packageManagerVersion": 1,
       "installPolicy": "manual",

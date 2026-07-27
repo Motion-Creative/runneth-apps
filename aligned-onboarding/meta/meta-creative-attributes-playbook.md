@@ -103,7 +103,9 @@ never reconstruct the record by hand.
 
 1. Get the target `workspaceId`. Use `motion workspaces` if it is not already known. Never
    assume a default workspace — resolve it explicitly before any pull or cache query.
-2. Open with a direct confirmation to the customer:
+2. When running inside post-install, resolve and record the scope silently — no message to
+   the customer; the walkthrough owns the conversation later. Only on a standalone,
+   human-requested run, open with a direct confirmation:
 
 > I'm starting the Meta Creative Attributes step for **[account name]**. Your creative content —
 > what each ad says, shows, and is tagged as — is already synced and searchable. What I'll do now
