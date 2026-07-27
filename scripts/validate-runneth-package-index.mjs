@@ -22,7 +22,6 @@ const PACKAGE_SOURCE_OWNER = 'Motion-Creative'
 const PACKAGE_SOURCE_REPO = 'runneth-apps'
 const PACKAGE_SOURCE_REF = 'main'
 const PACKAGE_ID = /^[a-z0-9][a-z0-9-]*$/
-const SEMVER = /^\d+\.\d+\.\d+$/
 const GITHUB_OWNER = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?$/
 const GITHUB_REPO = /^[A-Za-z0-9._-]+$/
 const RELATIVE_PATH = /^(?!\/)(?!.*(?:^|\/)\.\.(?:\/|$))(?!.*\/\/).+$/
@@ -65,15 +64,12 @@ const assertRelativePath = (value, label) => {
   assert.ok(RELATIVE_PATH.test(value), `${label}: unsafe relative path`)
 }
 
-const assertSemver = (value, label) => {
-  assertNonEmptyString(value, label)
-  assert.ok(SEMVER.test(value), `${label}: must be semver X.Y.Z`)
-}
-
 const assertSource = (source, label) => {
   assert.ok(isRecord(source), `${label}: must be an object`)
   assert.equal(typeof source.type, 'string', `${label}.type: must be a string`)
 
+  // Repository indexes use github sources. The Agent Builder backend resolves
+  // the ref and rewrites served entries to backend-github.
   if (source.type === 'github') {
     assertKeys(source, ['owner', 'path', 'ref', 'repo', 'type'], label)
     assert.ok(GITHUB_OWNER.test(source.owner), `${label}.owner: invalid GitHub owner`)
@@ -145,7 +141,9 @@ const assertPackageManifest = (manifest, label) => {
   assertPackageId(manifest.id, `${label}.id`)
   assertNonEmptyString(manifest.name, `${label}.name`)
   assertNonEmptyString(manifest.description, `${label}.description`)
-  assertSemver(manifest.version, `${label}.version`)
+  // Package versions are opaque change tokens. Agent Builder compares them by
+  // equality and only requires a non-empty string.
+  assertNonEmptyString(manifest.version, `${label}.version`)
   assert.ok(UPDATE_POLICIES.has(manifest.updatePolicy), `${label}.updatePolicy: invalid`)
   assert.ok(
     UNINSTALL_POLICIES.has(manifest.uninstallPolicy),
@@ -178,11 +176,10 @@ const assertIndexEntry = (entry, label) => {
   assertPackageId(entry.id, `${label}.id`)
   assertNonEmptyString(entry.name, `${label}.name`)
   assertNonEmptyString(entry.description, `${label}.description`)
-  assertSemver(entry.version, `${label}.version`)
+  assertNonEmptyString(entry.version, `${label}.version`)
   assert.ok(UPDATE_POLICIES.has(entry.updatePolicy), `${label}.updatePolicy: invalid`)
   assert.ok(UNINSTALL_POLICIES.has(entry.uninstallPolicy), `${label}.uninstallPolicy: invalid`)
   assert.ok(Array.isArray(entry.categories), `${label}.categories: must be array`)
-  assert.ok(entry.categories.length > 0, `${label}.categories: must not be empty`)
   entry.categories.forEach((category, index) =>
     assertNonEmptyString(category, `${label}.categories[${index}]`),
   )
@@ -310,6 +307,8 @@ const readPullRequestLabels = () => {
   return event.pull_request?.labels?.map((label) => label.name).filter(Boolean) ?? []
 }
 
+const isPullRequestEvent = (eventName) => eventName === 'pull_request'
+
 const isAutoInstallable = (entry) => entry.updatePolicy === 'auto'
 
 const sourceFingerprint = (entry) =>
@@ -364,6 +363,78 @@ test('package-index.json matches the package index contract', () => {
   validatePackageIndex(readJSON(INDEX_PATH))
 })
 
+test('package index accepts opaque versions and empty categories', () => {
+  validatePackageIndex({
+    indexRevision: 'test',
+    packages: [
+      {
+        categories: [],
+        description: 'Manual test package',
+        id: 'manual-test-package',
+        name: 'Manual Test Package',
+        packageManagerVersion: 1,
+        source: {
+          owner: PACKAGE_SOURCE_OWNER,
+          path: 'manual-test-package',
+          ref: PACKAGE_SOURCE_REF,
+          repo: PACKAGE_SOURCE_REPO,
+          type: 'github',
+        },
+        uninstallPolicy: 'allowed',
+        updatePolicy: 'auto',
+        version: '1',
+      },
+    ],
+    schemaVersion: 1,
+  })
+})
+
+test('package manifest accepts an opaque version', () => {
+  assertPackageManifest(
+    {
+      description: 'Manual test package',
+      id: 'manual-test-package',
+      name: 'Manual Test Package',
+      resources: [],
+      schemaVersion: 1,
+      uninstallPolicy: 'allowed',
+      updatePolicy: 'auto',
+      version: '1',
+    },
+    'package.json',
+  )
+})
+
+test('repository package indexes reject backend-github sources', () => {
+  assert.throws(
+    () =>
+      validatePackageIndex({
+        indexRevision: 'test',
+        packages: [
+          {
+            categories: [],
+            description: 'Manual test package',
+            id: 'manual-test-package',
+            name: 'Manual Test Package',
+            packageManagerVersion: 1,
+            source: {
+              owner: PACKAGE_SOURCE_OWNER,
+              path: 'manual-test-package',
+              ref: PACKAGE_SOURCE_REF,
+              repo: PACKAGE_SOURCE_REPO,
+              type: 'backend-github',
+            },
+            uninstallPolicy: 'allowed',
+            updatePolicy: 'auto',
+            version: '1',
+          },
+        ],
+        schemaVersion: 1,
+      }),
+    /source\.type: must be github/,
+  )
+})
+
 test('indexed packages match their runneth-package.json manifests', () => {
   const index = readJSON(INDEX_PATH)
   for (const entry of index.packages) {
@@ -376,7 +447,17 @@ test('indexed packages match their runneth-package.json manifests', () => {
   }
 })
 
+test('fleet approval is evaluated only for pull requests', () => {
+  assert.equal(isPullRequestEvent('pull_request'), true)
+  assert.equal(isPullRequestEvent('push'), false)
+  assert.equal(isPullRequestEvent(undefined), false)
+})
+
 test('auto package changes require explicit fleet approval', () => {
+  if (!isPullRequestEvent(process.env.GITHUB_EVENT_NAME)) {
+    return
+  }
+
   const nextIndex = readJSON(INDEX_PATH)
   const messages = fleetImpactMessages(readBaseIndex(), nextIndex)
   if (messages.length === 0) {
