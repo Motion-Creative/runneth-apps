@@ -10,7 +10,7 @@ and at the immutable `pre-cleanup-2026-07-21-with-aligned-onboarding` tag.
 ## Package contract
 
 `package-index.json` is the package-manager registry. Each indexed source path
-must contain a `runneth-package.json` schema-v1 manifest.
+must contain a `package.json` schema-v1 manifest.
 
 The validator enforces:
 
@@ -27,12 +27,12 @@ Run the contract tests with:
 node --test scripts/validate-runneth-package-index.mjs
 ```
 
-Changes to auto-updating packages require core engineering approval and the
-`runneth-fleet-change-approved` pull-request label.
+Changes to auto-installing or auto-updating packages require core engineering
+approval and the `runneth-fleet-change-approved` pull-request label.
 
 ## Adding a package
 
-1. Add the package payload and its `runneth-package.json`.
+1. Add the package payload and its `package.json`.
 2. Add one matching entry to `package-index.json`.
 3. Run the package contract tests.
 4. Open a focused pull request for that package.

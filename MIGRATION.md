@@ -51,21 +51,21 @@ snapshot tag. They must return to `main` only as schema-v1 packages:
 | Permissions | Complete the active rework and add a schema-v1 manifest |
 
 They are not package-manager installable until a canonical package payload,
-matching `runneth-package.json`, and `package-index.json` entry are merged.
+matching `package.json`, and `package-index.json` entry are merged.
 
 ## Package acceptance criteria
 
 Every package pull request must:
 
-1. add one package payload and schema-v1 `runneth-package.json`;
+1. add one package payload and schema-v1 `package.json`;
 2. add a matching `package-index.json` entry;
 3. reference only existing relative paths without symlinks;
 4. target a supported root (`agent_apps`, `agent_brain`, `agent_skills`, or
    `agent_tools`);
 5. pass `node --test scripts/validate-runneth-package-index.mjs`; and
 6. receive core engineering approval and the
-   `runneth-fleet-change-approved` label when it changes an auto-updating
-   package.
+   `runneth-fleet-change-approved` label when it changes an auto-installing or
+   auto-updating package.
 
 Merge package pull requests sequentially because each one updates the central
 index.

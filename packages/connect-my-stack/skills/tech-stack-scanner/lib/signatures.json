@@ -1,0 +1,958 @@
+{
+  "_note": "Each signature: any single rule match => detected. network=request host substrings, html=regex on rendered DOM, global=window property names, cookie=cookie name substrings, meta=generator content substrings, header=response header substrings. Categories map to how CSMs think about a customer's stack. Extend freely.",
+  "signatures": [
+    {
+      "name": "Shopify",
+      "category": "Ecommerce Platform",
+      "network": [
+        "cdn.shopify.com",
+        "shopifycloud.com",
+        "myshopify.com"
+      ],
+      "global": [
+        "Shopify",
+        "ShopifyAnalytics"
+      ],
+      "html": [
+        "cdn\\.shopify\\.com",
+        "shopify"
+      ],
+      "meta": [
+        "Shopify"
+      ]
+    },
+    {
+      "name": "WooCommerce",
+      "category": "Ecommerce Platform",
+      "html": [
+        "woocommerce",
+        "wp-content/plugins/woocommerce"
+      ],
+      "cookie": [
+        "woocommerce_"
+      ],
+      "global": [
+        "wc_"
+      ]
+    },
+    {
+      "name": "Magento",
+      "category": "Ecommerce Platform",
+      "html": [
+        "Magento_",
+        "mage-cache-storage",
+        "/static/version\\d"
+      ],
+      "cookie": [
+        "mage-cache"
+      ]
+    },
+    {
+      "name": "BigCommerce",
+      "category": "Ecommerce Platform",
+      "network": [
+        "bigcommerce.com",
+        "cdn11.bigcommerce.com"
+      ],
+      "html": [
+        "bigcommerce"
+      ]
+    },
+    {
+      "name": "Salesforce Commerce Cloud",
+      "category": "Ecommerce Platform",
+      "network": [
+        "demandware.net",
+        "demandware.edgesuite.net"
+      ],
+      "html": [
+        "demandware"
+      ]
+    },
+    {
+      "name": "Wix",
+      "category": "Website Builder",
+      "network": [
+        "static.parastorage.com",
+        "wixstatic.com"
+      ],
+      "meta": [
+        "Wix.com"
+      ],
+      "html": [
+        "X-Wix"
+      ]
+    },
+    {
+      "name": "Squarespace",
+      "category": "Website Builder",
+      "network": [
+        "squarespace.com",
+        "static1.squarespace.com"
+      ],
+      "html": [
+        "Squarespace",
+        "static.squarespace"
+      ]
+    },
+    {
+      "name": "Webflow",
+      "category": "Website Builder",
+      "network": [
+        "assets.website-files.com",
+        "webflow.com"
+      ],
+      "html": [
+        "webflow",
+        "data-wf-page"
+      ],
+      "meta": [
+        "Webflow"
+      ]
+    },
+    {
+      "name": "Framer",
+      "category": "Website Builder",
+      "network": [
+        "framerusercontent.com",
+        "framer.com"
+      ],
+      "html": [
+        "framer",
+        "__framer"
+      ]
+    },
+    {
+      "name": "WordPress",
+      "category": "CMS",
+      "html": [
+        "wp-content",
+        "wp-includes"
+      ],
+      "meta": [
+        "WordPress"
+      ]
+    },
+    {
+      "name": "Contentful",
+      "category": "CMS",
+      "network": [
+        "ctfassets.net",
+        "contentful.com"
+      ]
+    },
+    {
+      "name": "Sanity",
+      "category": "CMS",
+      "network": [
+        "cdn.sanity.io",
+        "sanity.io"
+      ]
+    },
+    {
+      "name": "HubSpot CMS",
+      "category": "CMS",
+      "network": [
+        "hs-sites.com",
+        "hscoscdn"
+      ],
+      "html": [
+        "hs-scripts",
+        "_hsq"
+      ]
+    },
+    {
+      "name": "Google Analytics 4",
+      "category": "Analytics",
+      "network": [
+        "googletagmanager.com/gtag",
+        "google-analytics.com/g/collect"
+      ],
+      "global": [
+        "gtag",
+        "dataLayer"
+      ],
+      "html": [
+        "G-[A-Z0-9]{6,}"
+      ]
+    },
+    {
+      "name": "Universal Analytics",
+      "category": "Analytics",
+      "network": [
+        "google-analytics.com/analytics.js",
+        "google-analytics.com/collect"
+      ],
+      "global": [
+        "ga",
+        "GoogleAnalyticsObject"
+      ]
+    },
+    {
+      "name": "Google Tag Manager",
+      "category": "Tag Manager",
+      "network": [
+        "googletagmanager.com/gtm.js",
+        "googletagmanager.com/ns.html"
+      ],
+      "global": [
+        "google_tag_manager"
+      ],
+      "html": [
+        "GTM-[A-Z0-9]{4,}"
+      ]
+    },
+    {
+      "name": "Segment",
+      "category": "CDP / Tag Manager",
+      "network": [
+        "cdn.segment.com",
+        "api.segment.io"
+      ],
+      "global": [
+        "analytics"
+      ]
+    },
+    {
+      "name": "Tealium",
+      "category": "Tag Manager",
+      "network": [
+        "tags.tiqcdn.com",
+        "tealium"
+      ],
+      "global": [
+        "utag"
+      ]
+    },
+    {
+      "name": "Amplitude",
+      "category": "Analytics",
+      "network": [
+        "amplitude.com",
+        "cdn.amplitude.com",
+        "api2.amplitude.com"
+      ],
+      "global": [
+        "amplitude"
+      ]
+    },
+    {
+      "name": "Mixpanel",
+      "category": "Analytics",
+      "network": [
+        "cdn.mxpnl.com",
+        "api.mixpanel.com"
+      ],
+      "global": [
+        "mixpanel"
+      ]
+    },
+    {
+      "name": "Heap",
+      "category": "Analytics",
+      "network": [
+        "cdn.heapanalytics.com",
+        "heapanalytics.com"
+      ],
+      "global": [
+        "heap"
+      ]
+    },
+    {
+      "name": "Hotjar",
+      "category": "Analytics / Heatmaps",
+      "network": [
+        "static.hotjar.com",
+        "script.hotjar.com"
+      ],
+      "global": [
+        "hj",
+        "_hjSettings"
+      ]
+    },
+    {
+      "name": "Microsoft Clarity",
+      "category": "Analytics / Heatmaps",
+      "network": [
+        "clarity.ms"
+      ],
+      "global": [
+        "clarity"
+      ]
+    },
+    {
+      "name": "FullStory",
+      "category": "Analytics / Session Replay",
+      "network": [
+        "fullstory.com",
+        "fs.fullstory.com"
+      ],
+      "global": [
+        "FS",
+        "_fs_namespace"
+      ]
+    },
+    {
+      "name": "Plausible",
+      "category": "Analytics",
+      "network": [
+        "plausible.io"
+      ]
+    },
+    {
+      "name": "Fathom",
+      "category": "Analytics",
+      "network": [
+        "cdn.usefathom.com"
+      ]
+    },
+    {
+      "name": "Meta Pixel",
+      "category": "Advertising Pixel",
+      "network": [
+        "connect.facebook.net",
+        "facebook.com/tr"
+      ],
+      "global": [
+        "fbq",
+        "_fbq"
+      ]
+    },
+    {
+      "name": "TikTok Pixel",
+      "category": "Advertising Pixel",
+      "network": [
+        "analytics.tiktok.com",
+        "business-api.tiktok.com"
+      ],
+      "global": [
+        "ttq"
+      ]
+    },
+    {
+      "name": "Google Ads / Conversion",
+      "category": "Advertising Pixel",
+      "network": [
+        "googleadservices.com",
+        "googlesyndication.com",
+        "google.com/ads"
+      ],
+      "html": [
+        "AW-[0-9]{6,}"
+      ]
+    },
+    {
+      "name": "Pinterest Tag",
+      "category": "Advertising Pixel",
+      "network": [
+        "s.pinimg.com",
+        "ct.pinterest.com"
+      ],
+      "global": [
+        "pintrk"
+      ]
+    },
+    {
+      "name": "Snapchat Pixel",
+      "category": "Advertising Pixel",
+      "network": [
+        "sc-static.net",
+        "tr.snapchat.com"
+      ],
+      "global": [
+        "snaptr"
+      ]
+    },
+    {
+      "name": "LinkedIn Insight",
+      "category": "Advertising Pixel",
+      "network": [
+        "snap.licdn.com",
+        "px.ads.linkedin.com"
+      ],
+      "global": [
+        "_linkedin_partner_id"
+      ]
+    },
+    {
+      "name": "Reddit Pixel",
+      "category": "Advertising Pixel",
+      "network": [
+        "redditstatic.com/ads",
+        "alb.reddit.com"
+      ],
+      "global": [
+        "rdt"
+      ]
+    },
+    {
+      "name": "Twitter/X Pixel",
+      "category": "Advertising Pixel",
+      "network": [
+        "static.ads-twitter.com",
+        "analytics.twitter.com"
+      ],
+      "global": [
+        "twq"
+      ]
+    },
+    {
+      "name": "Klaviyo",
+      "category": "Email / SMS",
+      "network": [
+        "static.klaviyo.com",
+        "a.klaviyo.com",
+        "static-tracking.klaviyo.com"
+      ],
+      "global": [
+        "klaviyo",
+        "_klOnsite"
+      ]
+    },
+    {
+      "name": "Mailchimp",
+      "category": "Email / SMS",
+      "network": [
+        "chimpstatic.com",
+        "list-manage.com",
+        "mailchimp.com"
+      ]
+    },
+    {
+      "name": "Attentive",
+      "category": "Email / SMS",
+      "network": [
+        "cdn.attn.tv",
+        "attentivemobile.com"
+      ],
+      "global": [
+        "__attentive"
+      ]
+    },
+    {
+      "name": "Postscript",
+      "category": "Email / SMS",
+      "network": [
+        "postscript.io",
+        "sdk.postscript.io"
+      ]
+    },
+    {
+      "name": "Omnisend",
+      "category": "Email / SMS",
+      "network": [
+        "omnisend.com",
+        "omnisrc.com"
+      ],
+      "global": [
+        "omnisend"
+      ]
+    },
+    {
+      "name": "Sendlane",
+      "category": "Email / SMS",
+      "network": [
+        "sendlane.com"
+      ]
+    },
+    {
+      "name": "Iterable",
+      "category": "Email / SMS",
+      "network": [
+        "iterable.com",
+        "links.iterable"
+      ]
+    },
+    {
+      "name": "Braze",
+      "category": "Lifecycle / CDP",
+      "network": [
+        "braze.com",
+        "sdk.iad-0"
+      ],
+      "global": [
+        "appboy",
+        "braze"
+      ]
+    },
+    {
+      "name": "HubSpot",
+      "category": "CRM / Marketing",
+      "network": [
+        "js.hs-scripts.com",
+        "track.hubspot.com",
+        "js.hsforms.net"
+      ],
+      "global": [
+        "_hsq",
+        "HubSpotConversations"
+      ]
+    },
+    {
+      "name": "Marketo",
+      "category": "CRM / Marketing",
+      "network": [
+        "munchkin.marketo.net",
+        "mktoresp.com"
+      ],
+      "global": [
+        "Munchkin"
+      ]
+    },
+    {
+      "name": "Salesforce / Pardot",
+      "category": "CRM / Marketing",
+      "network": [
+        "pi.pardot.com",
+        "pardot.com"
+      ]
+    },
+    {
+      "name": "Intercom",
+      "category": "Chat / Support",
+      "network": [
+        "widget.intercom.io",
+        "js.intercomcdn.com"
+      ],
+      "global": [
+        "Intercom"
+      ]
+    },
+    {
+      "name": "Zendesk",
+      "category": "Chat / Support",
+      "network": [
+        "static.zdassets.com",
+        "zendesk.com",
+        "zopim.com"
+      ],
+      "global": [
+        "zE"
+      ]
+    },
+    {
+      "name": "Drift",
+      "category": "Chat / Support",
+      "network": [
+        "js.driftt.com",
+        "drift.com"
+      ],
+      "global": [
+        "drift"
+      ]
+    },
+    {
+      "name": "Gorgias",
+      "category": "Chat / Support",
+      "network": [
+        "gorgias.chat",
+        "config.gorgias.chat"
+      ]
+    },
+    {
+      "name": "Tidio",
+      "category": "Chat / Support",
+      "network": [
+        "code.tidio.co"
+      ],
+      "global": [
+        "tidioChatApi"
+      ]
+    },
+    {
+      "name": "Yotpo",
+      "category": "Reviews / UGC",
+      "network": [
+        "yotpo.com",
+        "staticw2.yotpo.com"
+      ],
+      "global": [
+        "yotpo"
+      ]
+    },
+    {
+      "name": "Okendo",
+      "category": "Reviews / UGC",
+      "network": [
+        "okendo.io",
+        "d3hw6dc1ow8pp2.cloudfront"
+      ]
+    },
+    {
+      "name": "Judge.me",
+      "category": "Reviews / UGC",
+      "network": [
+        "judge.me",
+        "cdn.judge.me"
+      ]
+    },
+    {
+      "name": "Stamped",
+      "category": "Reviews / UGC",
+      "network": [
+        "stamped.io"
+      ]
+    },
+    {
+      "name": "Trustpilot",
+      "category": "Reviews / UGC",
+      "network": [
+        "widget.trustpilot.com",
+        "trustpilot.com"
+      ]
+    },
+    {
+      "name": "Loox",
+      "category": "Reviews / UGC",
+      "network": [
+        "loox.io"
+      ]
+    },
+    {
+      "name": "Recharge",
+      "category": "Subscriptions",
+      "network": [
+        "rechargecdn.com",
+        "rechargepayments.com",
+        "rechargeapps.com"
+      ]
+    },
+    {
+      "name": "Bold Subscriptions",
+      "category": "Subscriptions",
+      "network": [
+        "boldapps.net",
+        "bold-subscriptions"
+      ]
+    },
+    {
+      "name": "Skio",
+      "category": "Subscriptions",
+      "network": [
+        "skio.com"
+      ]
+    },
+    {
+      "name": "Stripe",
+      "category": "Payments",
+      "network": [
+        "js.stripe.com",
+        "api.stripe.com",
+        "m.stripe.network"
+      ],
+      "global": [
+        "Stripe"
+      ]
+    },
+    {
+      "name": "PayPal",
+      "category": "Payments",
+      "network": [
+        "paypal.com/sdk",
+        "paypalobjects.com"
+      ],
+      "global": [
+        "paypal"
+      ]
+    },
+    {
+      "name": "Shop Pay",
+      "category": "Payments",
+      "network": [
+        "shop.app",
+        "cdn.shopify.com/shop"
+      ]
+    },
+    {
+      "name": "Klarna",
+      "category": "Payments / BNPL",
+      "network": [
+        "klarna.com",
+        "klarnaservices.com"
+      ]
+    },
+    {
+      "name": "Afterpay",
+      "category": "Payments / BNPL",
+      "network": [
+        "afterpay.com",
+        "static.afterpay.com"
+      ]
+    },
+    {
+      "name": "Affirm",
+      "category": "Payments / BNPL",
+      "network": [
+        "affirm.com",
+        "cdn1.affirm.com"
+      ],
+      "global": [
+        "affirm"
+      ]
+    },
+    {
+      "name": "Rebuy",
+      "category": "Merchandising / Upsell",
+      "network": [
+        "rebuyengine.com"
+      ]
+    },
+    {
+      "name": "Nosto",
+      "category": "Personalization",
+      "network": [
+        "nosto.com",
+        "connect.nosto.com"
+      ],
+      "global": [
+        "nostojs"
+      ]
+    },
+    {
+      "name": "Dynamic Yield",
+      "category": "Personalization / A-B Testing",
+      "network": [
+        "dynamicyield.com",
+        "cdn.dynamicyield.com"
+      ]
+    },
+    {
+      "name": "Optimizely",
+      "category": "A-B Testing",
+      "network": [
+        "cdn.optimizely.com",
+        "optimizely.com"
+      ],
+      "global": [
+        "optimizely"
+      ]
+    },
+    {
+      "name": "VWO",
+      "category": "A-B Testing",
+      "network": [
+        "dev.visualwebsiteoptimizer.com",
+        "vwo.com"
+      ],
+      "global": [
+        "VWO",
+        "_vwo_code"
+      ]
+    },
+    {
+      "name": "Google Optimize",
+      "category": "A-B Testing",
+      "network": [
+        "optimize.google.com"
+      ]
+    },
+    {
+      "name": "Justuno",
+      "category": "Popups / Conversion",
+      "network": [
+        "justuno.com",
+        "cdn.jst.ai"
+      ]
+    },
+    {
+      "name": "Privy",
+      "category": "Popups / Conversion",
+      "network": [
+        "privy.com",
+        "widget.privy.com"
+      ]
+    },
+    {
+      "name": "OptinMonster",
+      "category": "Popups / Conversion",
+      "network": [
+        "optinmonster.com",
+        "a.optnmstr.com"
+      ]
+    },
+    {
+      "name": "Northbeam",
+      "category": "Attribution",
+      "network": [
+        "northbeam.io",
+        "j.northbeam.io"
+      ]
+    },
+    {
+      "name": "Triple Whale",
+      "category": "Attribution",
+      "network": [
+        "triplewhale.com",
+        "api.config-security.com",
+        "triplewhale-pixel"
+      ],
+      "global": [
+        "TriplePixel"
+      ]
+    },
+    {
+      "name": "Elevar",
+      "category": "Attribution / Data Layer",
+      "network": [
+        "elevar.com",
+        "shopify-gtm-suite"
+      ]
+    },
+    {
+      "name": "Cloudflare",
+      "category": "CDN / Hosting",
+      "header": {
+        "server": "cloudflare"
+      },
+      "network": [
+        "cdnjs.cloudflare.com"
+      ]
+    },
+    {
+      "name": "Fastly",
+      "category": "CDN / Hosting",
+      "header": {
+        "x-served-by": "cache",
+        "via": "varnish"
+      }
+    },
+    {
+      "name": "Vercel",
+      "category": "Hosting",
+      "header": {
+        "server": "vercel",
+        "x-vercel-id": "."
+      }
+    },
+    {
+      "name": "Netlify",
+      "category": "Hosting",
+      "header": {
+        "server": "netlify",
+        "x-nf-request-id": "."
+      }
+    },
+    {
+      "name": "AWS CloudFront",
+      "category": "CDN / Hosting",
+      "header": {
+        "via": "cloudfront",
+        "x-amz-cf-id": "."
+      }
+    },
+    {
+      "name": "React",
+      "category": "JS Framework",
+      "html": [
+        "__reactContainer",
+        "data-reactroot",
+        "react-dom"
+      ],
+      "global": [
+        "React",
+        "__REACT_DEVTOOLS_GLOBAL_HOOK__"
+      ]
+    },
+    {
+      "name": "Next.js",
+      "category": "JS Framework",
+      "html": [
+        "/_next/static",
+        "__NEXT_DATA__"
+      ],
+      "global": [
+        "__NEXT_DATA__",
+        "next"
+      ]
+    },
+    {
+      "name": "Vue.js",
+      "category": "JS Framework",
+      "html": [
+        "data-v-",
+        "vue.js"
+      ],
+      "global": [
+        "Vue",
+        "__VUE__"
+      ]
+    },
+    {
+      "name": "Gatsby",
+      "category": "JS Framework",
+      "html": [
+        "___gatsby",
+        "gatsby-"
+      ],
+      "global": [
+        "___gatsby"
+      ]
+    },
+    {
+      "name": "jQuery",
+      "category": "JS Library",
+      "global": [
+        "jQuery",
+        "$"
+      ],
+      "html": [
+        "jquery"
+      ]
+    },
+    {
+      "name": "Google Fonts",
+      "category": "Fonts",
+      "network": [
+        "fonts.googleapis.com",
+        "fonts.gstatic.com"
+      ]
+    },
+    {
+      "name": "Adobe Fonts (Typekit)",
+      "category": "Fonts",
+      "network": [
+        "use.typekit.net",
+        "typekit.com"
+      ]
+    },
+    {
+      "name": "reCAPTCHA",
+      "category": "Security / Bot",
+      "network": [
+        "google.com/recaptcha",
+        "gstatic.com/recaptcha"
+      ],
+      "global": [
+        "grecaptcha"
+      ]
+    },
+    {
+      "name": "Cloudflare Turnstile",
+      "category": "Security / Bot",
+      "network": [
+        "challenges.cloudflare.com/turnstile"
+      ]
+    },
+    {
+      "name": "OneTrust",
+      "category": "Consent / Privacy",
+      "network": [
+        "cdn.cookielaw.org",
+        "onetrust.com"
+      ],
+      "global": [
+        "OneTrust"
+      ]
+    },
+    {
+      "name": "Cookiebot",
+      "category": "Consent / Privacy",
+      "network": [
+        "consent.cookiebot.com"
+      ],
+      "global": [
+        "Cookiebot"
+      ]
+    }
+  ]
+}
