@@ -7,16 +7,19 @@ The Account Context Brain answers: **how should Runneth judge the account?**
 Report Dashboard Setup answers: **how should Runneth package those judgments into useful surfaces for
 this team?**
 
-The saved output is `/agent/brain/meta/report-dashboard-context.md`. It is customer-owned setup,
-visible in the Brain, and safe for the team to edit. Do not hide these preferences in app code,
-runtime config, scratch files, or one-off conversation memory.
+The saved output is the reporting/app setup file for this workspace. It is customer-owned setup,
+visible through the Brain or another indexed customer-owned location, and safe for the team to edit.
+Resolve the location from an existing guard, `/agent/INDEX.md`, or customer-edited setup first. Use
+this package's default only when no established file already owns reporting/app setup for the
+workspace. Do not hide these preferences in app code, runtime config, scratch files, or one-off
+conversation memory.
 
 ---
 
 ## 1. Activation
 
-Installing only stages this file. The package does not self-run. Run this setup after
-`/agent/brain/meta/account-context.md` exists.
+Installing only stages this file. The package does not self-run. Run this setup after this
+workspace's Account Context Brain exists.
 
 Merge the block below into `/agent/user.md` using the standard behavior-snippet convention. It is
 sentinel-wrapped so it is idempotent.
@@ -30,12 +33,13 @@ not edit anything outside the sentinels.
 Report dashboard context guard (workspace <workspaceId>):
 
 - Before building, updating, scheduling, or refreshing a Meta report, dashboard, app, tracker,
-  readout, or weekly deck source for this account, read /agent/brain/meta/account-context.md.
+  readout, or weekly deck source for this account, read this workspace's established
+  account-context file.
 - Treat report, dashboard, app, tracker, readout, and deck as compatible surface words. Preserve the
   person's term when naming the deliverable instead of forcing `dashboard`.
-- If /agent/brain/meta/report-dashboard-context.md exists, read it before choosing report defaults,
-  source-of-truth rules, metric order, thresholds, taxonomy, creative evidence, visual treatment, or
-  delivery cadence.
+- If an indexed reporting/app setup file is established for this account, read it before choosing
+  report defaults, authoritative-source rules, metric order, thresholds, taxonomy, creative
+  evidence, visual treatment, or delivery cadence.
 - If the report-dashboard context file does not exist and the build depends on customer-specific
   choices, offer to run the report-dashboard setup flow instead of guessing. The user can still give
   an explicit one-time instruction in the current turn.
@@ -53,9 +57,11 @@ This setup describes report preferences for one Meta workspace/account at a time
 
 - Target workspace: `<workspaceId>` (ad account: `<name>`)
 - Platform scope: Meta only.
-- Interpretation source: `/agent/brain/meta/account-context.md`
-- Report setup output: `/agent/brain/meta/report-dashboard-context.md`
-- Related creative evidence: `/agent/brain/meta/creatives/`
+- Interpretation source: the established account-context file for this workspace
+- Report setup output: the established indexed reporting/app setup file for this account, or this
+  package's default when none exists yet
+- Related creative evidence: the established creative-context location for this workspace, or this
+  package's default when none exists yet
 
 Report Dashboard Setup can mention other connected attribution or delivery sources only when the
 customer uses them to build Meta reporting, for example Northbeam, Hyros, Triple Whale, Google
@@ -65,8 +71,10 @@ Analytics, Slack, Google Slides, or an internal sheet. It does not pull other ad
 
 ## 3. Where The Filled Result Lives
 
-Create `/agent/brain/meta/report-dashboard-context.md`. The saved file is a prose reference document,
-not a worksheet. Write it the way a sharp CSM or analyst would explain the customer's reporting
+Resolve the output path before writing: use an existing guard first, then `/agent/INDEX.md` or a
+customer-edited setup file, then this package's default
+`/agent/brain/meta/report-dashboard-context.md`. The saved file is a prose reference document, not a
+worksheet. Write it the way a sharp CSM or analyst would explain the customer's reporting
 preferences to a new teammate.
 
 The saved file should include these sections. Leave unknowns in **Still confirming** instead of
@@ -161,8 +169,8 @@ confirmed_by_team: <yes | partial | no>
 
 ## 4. How Runneth Fills This In
 
-Read `/agent/brain/meta/account-context.md` first. Do not re-derive account interpretation here.
-Pull only the setup needed to understand the reporting surface.
+Read this workspace's established account-context file first. Do not re-derive account
+interpretation here. Pull only the setup needed to understand the reporting surface.
 
 Work through these fields:
 
@@ -332,7 +340,7 @@ this account?"
 - Do not save generic design-system instructions here. This file is for customer-specific reporting
   preferences.
 - Do not save tool-calling details, CLI flags, command names, endpoint comparisons, or internal
-  Runneth implementation notes into `/agent/brain/meta/report-dashboard-context.md`.
+  Runneth implementation notes into the reporting/app setup file.
 - Do not make up metric definitions, thresholds, taxonomy, source trust, or delivery cadence.
 - Do not treat a saved Motion report as trusted just because it exists. Record why the customer uses
   it.
@@ -341,10 +349,12 @@ this account?"
   customer truth unless the team confirms them or a trusted saved report proves them.
 - Preserve the customer's surface word in visible work. If they ask for an app, report, tracker,
   readout, or deck, do not rename it to a dashboard unless they do.
-- Do not store this setup under `/agent/workspaces/<workspaceId>/...`; this package writes customer
-  setup into the visible Brain under `/agent/brain/meta/`.
-- Do not make the app itself the only source of reporting truth. Apps should render data and criteria
-  that are saved separately and auditable.
+- Do not move this setup into workspace config, app code, scratch files, or one-off conversation
+  memory just because a report app is being built. Keep it in the established customer-owned setup
+  file for this workspace; use this package's visible Brain default only when no established file
+  exists yet.
+- Do not make the app itself the only source of reporting truth. Apps should render data and
+  criteria that are saved separately and auditable.
 
 ---
 
@@ -354,10 +364,11 @@ Refresh this setup when:
 
 - the customer corrects a report or dashboard
 - the trusted saved Motion reports change
-- a source of truth changes
+- an authoritative source changes
 - a weekly report, dashboard, app, tracker, readout, or deck becomes recurring
 - a new product, campaign taxonomy, market, or attribution rule becomes important
 - the validation surface fails because Runneth picked the wrong source, metric, grouping, or
   evidence shape
 
-Append every refresh to `/agent/brain/meta/_changelog.md`.
+Append every refresh to `/agent/brain/meta/_changelog.md` by default, or to the established
+package/customer changelog if this workspace already uses one.

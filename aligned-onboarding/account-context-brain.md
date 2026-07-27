@@ -9,12 +9,11 @@ Runneth run the fill-in and then live by the result.
 
 This file owns account interpretation. It does not own report packaging, dashboard layout, delivery
 cadence, saved-report trust rules, or visual standards. Those customer-specific reporting choices
-belong in the companion Report Dashboard Setup file at
-`/agent/brain/meta/report-dashboard-context.md`.
+belong in the workspace's reporting/app setup file from the companion Report Dashboard Setup.
 
 Two things exist after activation:
 1. A durable, workspace-scoped context file, written as a plain-language reference document (not
-   the worksheet), that Runneth writes and later reads as source of truth.
+   the worksheet), that Runneth writes and later reads as the source of account interpretation.
 2. A small standing guard merged into `/agent/user.md` that forces Runneth to read that file
    before any performance work.
 
@@ -32,15 +31,15 @@ Merge the block using the standard behavior-snippet convention (author it from
 
 **MERGE INSTRUCTIONS:** If a block with the sentinel `runneth:account-context-guard` already
 exists in `/agent/user.md`, replace it in place. Otherwise append it. Never duplicate it. Do not
-edit anything outside the sentinels.
+edit anything outside the sentinels. Replace `<accountContextPath>` with the established
+account-context file for this workspace, or this package's default path if none exists yet.
 
 ```
 <!-- BEGIN runneth:account-context-guard v1 -->
 Account context guard (workspace <workspaceId>):
 
 - Before any ad-performance work for this account (rankings, "best ads," CPA/ROAS reads,
-  winner or cut calls, creative performance judgments), read
-  /agent/brain/meta/account-context.md first.
+  winner or cut calls, creative performance judgments), read <accountContextPath> first.
 - If that file does not exist, or its required interpretation fields are not all [CONFIRMED],
   treat account
   interpretation as unknown. Offer to run the account-context fill-in flow, and do not answer
@@ -78,12 +77,13 @@ This context describes one workspace. Record the scope before pulling anything:
 Confirmed answers do not live in this worksheet. Runneth writes them to a durable brain file so
 future turns read them.
 
-- Create the account's `meta` folder in the brain if it does not exist. Save the filled result
-  to `/agent/brain/meta/account-context.md`. The per-creative files from the Creative Corpus live
-  in a `creatives` subfolder beside it (`/agent/brain/meta/creatives/`).
+- Resolve the output path before writing. Use `/agent/INDEX.md`, an installed guard, or a
+  customer-edited setup file when one already names this workspace's account-context file. Otherwise
+  create this package's default in the account's `meta` folder. The per-creative files from the
+  Creative Corpus live beside the package default unless an established creative-context location
+  already exists.
 - Do not save dashboard layout, report cadence, visual standards, or saved-report trust rules in
-  this file. Save those to `/agent/brain/meta/report-dashboard-context.md` during Report Dashboard
-  Setup.
+  this file. Save those to the Report Dashboard Setup output during Report Dashboard Setup.
 
 **The saved file is a prose reference document, not the worksheet.** Capture and communication are
 two different jobs. The fields-and-statuses procedure below is how Runneth captures rigorously; the
@@ -209,9 +209,9 @@ settings; treat workspace goal, preferred KPI, spend threshold, and attribution 
 do not exist for this account. This file defers only to a metric the user names explicitly in the
 current turn.
 
-When a report or dashboard also depends on customer-specific packaging choices, read
-`/agent/brain/meta/report-dashboard-context.md` after this file. That companion file can decide view
-shape, metric order, saved-report trust, taxonomy, evidence, and cadence, but it never redefines the
+When a report or dashboard also depends on customer-specific packaging choices, read the
+workspace's reporting/app setup file after this file. That companion file can decide view shape,
+metric order, saved-report trust, taxonomy, evidence, and cadence, but it never redefines the
 account interpretation captured here.
 
 ---
@@ -669,6 +669,6 @@ back to the field that is wrong or missing.
 
 - Fields confirmed: `<count>` / 9
 - Flagged fields needing the customer: `<list>`
-- Written to: `/agent/brain/meta/account-context.md`
+- Written to: `<resolved account-context path>`
 - Indexed in `/agent/INDEX.md`: `<yes | no>`
 - Guard merged into `/agent/user.md`: `<yes | no>`

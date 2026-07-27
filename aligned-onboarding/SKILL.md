@@ -2,13 +2,13 @@
 name: aligned-onboarding
 description: >
   Teaches Runneth how a customer reads their Meta ad account, captures customer-specific report and
-  dashboard setup, then builds and maintains one enriched record per active creative. Three parts
-  run in order: the Account Context Brain (how to analyze the account), Report Dashboard Setup (how
-  to package account analysis for this team), and the Creative Corpus (the per-creative attributes).
+  dashboard setup, then builds and maintains saved creative context. Three parts run in order: the
+  Account Context Brain (how to analyze the account), Report Dashboard Setup (how to package
+  account analysis for this team), and the Creative Corpus (durable creative attributes when useful).
   Meta only, one workspace at a time. Trigger on "run aligned onboarding", "set up my Meta account
   context", "set up report dashboard context", "teach Runneth how we read the account",
   "teach Runneth how we build dashboards", "build the creative corpus", or when a Meta performance
-  or reporting question is asked and /agent/brain/meta/account-context.md does not exist yet.
+  or reporting question is asked before an account-context file is established for the workspace.
 triggers:
   phrases:
     - "run aligned onboarding"
@@ -22,23 +22,23 @@ triggers:
     - "build report dashboard context"
     - "build the creative corpus"
     - "onboard my meta account"
-  intent: "User wants Runneth to learn how their Meta account should be interpreted, how report/dashboard surfaces should be packaged, and how to build the per-creative corpus."
+  intent: "User wants Runneth to learn how their Meta account should be interpreted, how report/dashboard surfaces should be packaged, and how to build saved creative context."
 ---
 
 # Aligned Onboarding
 
 Teaches Runneth how this customer reads their Meta ad account, captures how the team wants reports
-and dashboards packaged, then builds the per-creative corpus off that lens. It ships as three parts
-that do different jobs and persist to different places.
+and dashboards packaged, then builds saved creative context off that lens. It ships as three parts
+that do different jobs and persist to customer-owned locations.
 
 The one-line model:
 
 > The **Account Context Brain** tells Runneth **how to analyze** the account. **Report Dashboard
 > Setup** tells Runneth **how to package that analysis for this team**. The **Creative Corpus**
-> gives Runneth **the attributes it needs to actually do the job**.
+> gives Runneth **durable creative context it should reuse when useful**.
 
 Read the package overview at `/agent/brain/aligned-onboarding/README.md` before running. The full
-procedures live in the staged docs and are the source of truth for each step:
+procedures live in the staged docs and define the contract for each step:
 
 - Account Context Brain: `/agent/brain/aligned-onboarding/account-context-brain.md`
 - Report Dashboard Setup: `/agent/brain/aligned-onboarding/report-dashboard-setup.md`
@@ -55,8 +55,9 @@ procedures live in the staged docs and are the source of truth for each step:
 - **Brain files are customer-facing.** Save account interpretation, report/dashboard preferences,
   taxonomy, cadence, and creative attributes in plain business language. Never write tool-calling
   nuances, CLI commands or flags, or debugging notes into the saved files.
-- **Customer setup belongs in the Brain.** Report/dashboard preferences are visible setup in
-  `/agent/brain/meta/report-dashboard-context.md`, not hidden runtime config or app code.
+- **Customer setup stays visible and editable.** Report/dashboard preferences belong in the
+  established indexed reporting/app setup file for the workspace. Use this package's default only
+  when that file does not exist yet. Do not hide those rules in runtime config or app code.
 - **Onboarding pull window is `last_365d`** for the fill-in only, so onboarding sees enough history.
 
 ## Run order
@@ -69,38 +70,41 @@ procedures live in the staged docs and are the source of truth for each step:
    Replace an existing block in place; never duplicate it.
 3. **Run the Account Context Brain fill-in.** Follow `account-context-brain.md`: auto-pull all nine
    fields, present them together as one overview, confirm the open questions with a person,
-   validate, and flag what cannot be captured. Write the prose result to
-   `/agent/brain/meta/account-context.md` and index it in `/agent/INDEX.md`. `[AUTO]` values stay
-   proposals until a person signs off.
+   validate, and flag what cannot be captured. Update the established indexed account-context file
+   for this workspace, or create this package's default if none exists yet, and index it in
+   `/agent/INDEX.md`. `[AUTO]` values stay proposals until a person signs off.
 4. **Run Report Dashboard Setup.** Follow `report-dashboard-setup.md`: merge the report-dashboard
-   guard block into `/agent/user.md`, read `/agent/brain/meta/account-context.md`, inspect saved
+   guard block into `/agent/user.md`, read this workspace's account-context file, inspect saved
    Motion report metadata and existing app or routine registry entries when available, confirm the
-   team's reporting preferences with a person, then write the prose result to
-   `/agent/brain/meta/report-dashboard-context.md` and index it in `/agent/INDEX.md`.
+   team's reporting preferences with a person, then update the established indexed reporting/app
+   setup file for this workspace, or create this package's default if none exists yet, and index it
+   in `/agent/INDEX.md`.
 5. **Reuse corpus-search when deliberate filterable search is needed.** If
    `/agent/tools/corpus-search/` is not already present, fetch corpus-search from the public library
    and install it per its own install-config; never clobber a customized copy. It supplements default
-   Brain retrieval for deliberate, filterable search. Register `/agent/brain/meta/creatives` as a
-   source with `kind: creative`.
+   Brain retrieval for deliberate, filterable search. Register the resolved creative-context folder
+   as a source with `kind: creative`.
 6. **Build the Creative Corpus.** Follow `creative-corpus-playbook.md`: read what the Account
-   Context Brain already knows, pull only the creative content from Motion, and write one enriched
-   Markdown file per active creative under `/agent/brain/meta/creatives/`. Writing the files makes
-   them available to default Brain retrieval; refresh the corpus-search source too if installed.
+   Context Brain already knows, pull source-backed creative data from Motion only when it is needed
+   for durable saved context, and write or update creative-context Markdown files in the established
+   creative-context folder, or create this package's default if none exists yet.
+   Motion or the creative store remains authoritative for exact creative content and media. Refresh
+   the corpus-search source too if installed.
 7. **Keep all three current.** Account Context Brain on a monthly-plus-drift cadence, Report
    Dashboard Setup when reporting preferences or saved reports change, and Creative Corpus on daily
    and event-triggered maintenance. Log every refresh in `/agent/brain/meta/_changelog.md`.
 
 ## Precedence
 
-`/agent/brain/meta/account-context.md` is the sole source of account interpretation (how "best,"
-"winner," and cost-per are judged). It defers only to a metric the user names explicitly in the
-current turn.
+The established indexed account-context file for this workspace owns account interpretation (how
+"best," "winner," and cost-per are judged). It defers only to a metric the user names explicitly in
+the current turn.
 
-`/agent/brain/meta/report-dashboard-context.md` is the source for report and dashboard packaging:
-standard views, saved-report trust, metric order, thresholds, date windows, taxonomy, creative
-evidence requirements, visual expectations, and delivery cadence. It defers to explicit current-turn
-instructions and to a named saved Motion report unless the report-dashboard context says that report
-is not trusted or should be adapted.
+The established indexed reporting/app setup file for this workspace owns report and dashboard
+packaging: standard views, saved-report trust, metric order, thresholds, date windows, taxonomy,
+creative evidence requirements, visual expectations, and delivery cadence. It defers to explicit
+current-turn instructions and to a named saved Motion report unless the report-dashboard context says
+that report is not trusted or should be adapted.
 
 The Creative Corpus reads the Account Context Brain for interpretation and the Report Dashboard
 Setup for report-surface evidence requirements. It never re-derives either one. When the corpus and

@@ -1,6 +1,6 @@
 ---
 hero_headline: "Runneth judges your ads and reports the way you do."
-hero_subhead: "Runneth learns which numbers your team trusts, what 'best' means on this account, how reports and apps should be packaged, and how your names decode. Then it builds one enriched record per creative so every answer and readout is grounded, not generic."
+hero_subhead: "Runneth learns which numbers your team trusts, what 'best' means on this account, how reports and apps should be packaged, and how your names decode. Then it saves the creative context your team needs so answers and readouts are grounded, not generic."
 install_time: "A few minutes to install, then a short guided fill-in with someone on the team."
 requires: "A Motion workspace with a connected Meta ad account"
 status: "experimental"
@@ -11,12 +11,12 @@ status: "experimental"
 - Rankings that match your logic. Runneth reads results against your north-star event and your targets, not a default metric it guessed.
 - Fewer wrong reads. It learns the metrics that mislead on this account (blended ROAS, a broken column, a cryptic name) and what to use instead.
 - Reports and apps start from your operating rhythm. Runneth saves your preferred views, trusted sources, metric order, thresholds, date windows, taxonomy, creative evidence, and delivery cadence so reporting requests do not start from a blank page.
-- A living creative library. One record per active creative with its hook, transcript, value props, and tags, kept current as new ads launch.
+- A living creative context layer. Hooks, transcript notes, value props, and tags are saved when they matter for future analysis, while exact creative content stays in Motion.
 - Answers you can trust on day one. A person confirms the interpretation before Runneth relies on it, so nothing runs on a guess.
 
 ## How it works
 
-Runneth auto-pulls a year of your Meta account, proposes how it reads the account across nine areas, then walks a short confirmation with someone on the team before saving anything. Once that lens is in place, it captures the reporting defaults your team repeats most often and builds an enriched file per creative. From then on it reads the lens and reporting setup before performance and report/app work.
+Runneth auto-pulls a year of your Meta account, proposes how it reads the account across nine areas, then walks a short confirmation with someone on the team before saving anything. Once that lens is in place, it captures the reporting defaults your team repeats most often and saves creative context where it will help future work. From then on it reads the lens and reporting setup before performance and report/app work.
 
 ## A real example
 

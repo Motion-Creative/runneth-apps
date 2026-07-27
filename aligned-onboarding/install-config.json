@@ -2,7 +2,7 @@
   "schema": "1.0",
   "id": "aligned-onboarding",
   "version": "1.1.0",
-  "description": "Teaches Runneth how a customer reads their Meta ad account, captures customer-specific report/dashboard setup, then builds one enriched record per active creative. Stages four procedure/reference docs into the brain (Account Context Brain, Report Dashboard Setup, Creative Corpus playbook, Motion CLI data-query guide) plus a thin orchestration skill. Activation merges read-before-performance and read-before-reporting guards into /agent/user.md, writes customer-owned setup under /agent/brain/meta/, and reuses the corpus-search tool from the library for filterable retrieval rather than bundling it. Meta only.",
+  "description": "Teaches Runneth how a customer reads their Meta ad account, captures customer-specific report/dashboard setup, then saves durable creative context when useful. Stages four procedure/reference docs into the brain (Account Context Brain, Report Dashboard Setup, Creative Corpus playbook, Motion CLI data-query guide) plus a thin orchestration skill. Activation merges read-before-performance and read-before-reporting guards into /agent/user.md, writes customer-owned setup to the package defaults or established indexed setup files, and reuses the corpus-search tool from the library for filterable retrieval rather than bundling it. Meta only.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -22,7 +22,7 @@
       "from": "SKILL.md",
       "to": "/agent/.agents/skills/aligned-onboarding/SKILL.md",
       "on_exists": "overwrite",
-      "purpose": "Orchestration skill. Activates the account-context and report-dashboard guards, runs the account-context fill-in, captures report/dashboard setup, then builds and maintains the creative corpus. Triggered by prompts like 'run aligned onboarding', 'set up my Meta account context', or 'set up report dashboard context'."
+      "purpose": "Orchestration skill. Activates the account-context and report-dashboard guards, runs the account-context fill-in, captures report/dashboard setup, then builds and maintains saved creative context. Triggered by prompts like 'run aligned onboarding', 'set up my Meta account context', or 'set up report dashboard context'."
     },
     {
       "from": "README.md",
@@ -34,19 +34,19 @@
       "from": "account-context-brain.md",
       "to": "/agent/brain/aligned-onboarding/account-context-brain.md",
       "on_exists": "overwrite",
-      "purpose": "The Account Context Brain fill-in package: nine required interpretation fields, how Runneth pulls and confirms them, and the prose output shape saved to /agent/brain/meta/account-context.md."
+      "purpose": "The Account Context Brain fill-in package: nine required interpretation fields, how Runneth pulls and confirms them, and the prose output shape saved to the package default or the established indexed account-context file."
     },
     {
       "from": "report-dashboard-setup.md",
       "to": "/agent/brain/aligned-onboarding/report-dashboard-setup.md",
       "on_exists": "overwrite",
-      "purpose": "The Report Dashboard Setup package: customer-specific standard views, saved-report trust, source-of-truth rules, metrics, thresholds, date windows, taxonomy, creative evidence, visual standards, cadence, and validation surface captured as /agent/brain/meta/report-dashboard-context.md."
+      "purpose": "The Report Dashboard Setup package: customer-specific standard views, saved-report trust, authoritative sources, metrics, thresholds, date windows, taxonomy, creative evidence, visual standards, cadence, and validation surface saved to the package default or the established indexed reporting/app setup file."
     },
     {
       "from": "creative-corpus-playbook.md",
       "to": "/agent/brain/aligned-onboarding/creative-corpus-playbook.md",
       "on_exists": "overwrite",
-      "purpose": "The Creative Corpus playbook: how to build and maintain one enriched Markdown record per active creative under /agent/brain/meta/creatives/."
+      "purpose": "The Creative Corpus playbook: how to build and maintain customer-facing creative-context Markdown files in the established creative-context folder, or this package's default when none exists yet, while leaving exact creative content in Motion or the creative store."
     },
     {
       "from": "motion-cli-data-query-guide.md",
@@ -60,13 +60,13 @@
       "version": "1.1.0",
       "date": "2026-07-25",
       "type": "minor",
-      "notes": "Adds Report Dashboard Setup as the customer-owned reporting companion to Account Context Brain. It captures standard views, trusted saved reports and attribution sources, metric labels, thresholds, date windows, taxonomy, creative evidence, visual and delivery standards, and the validation surface into /agent/brain/meta/report-dashboard-context.md. The package now stages four procedure/reference docs and activates both performance and reporting guards."
+      "notes": "Adds Report Dashboard Setup as the customer-owned reporting companion to Account Context Brain. It captures standard views, trusted saved reports and attribution sources, metric labels, thresholds, date windows, taxonomy, creative evidence, visual and delivery standards, and the validation surface into the established reporting/app setup file, or this package's default when none exists yet. The package now stages four procedure/reference docs and activates both performance and reporting guards."
     },
     {
       "version": "1.0.0",
       "date": "2026-07-21",
       "type": "major",
-      "notes": "Initial release. Aligned Onboarding teaches Runneth how a customer reads their Meta ad account and then builds a per-creative corpus off that lens. It ships two parts: the Account Context Brain (nine interpretation fields Runneth auto-pulls, confirms with a person, validates, and flags, then saves as a plain-language reference at /agent/brain/meta/account-context.md) and the Creative Corpus playbook (one enriched Markdown record per active creative with identity, summary, hook, transcript, value props, and Motion AI tags, under /agent/brain/meta/creatives/). A supporting Motion CLI data-query guide keeps the auto-pulls correct on the first try. Activation merges a workspace-scoped read-before-performance guard into /agent/user.md so the lens is loaded before any Meta performance work, and treats Motion workspace settings (goal, preferred KPI, spend threshold, attribution config) as if they do not exist. Meta only, one workspace at a time. Default Brain retrieval handles ordinary recall; the corpus-search tool is fetched from the library only if absent for deliberate filterable search, never bundled or clobbered."
+      "notes": "Initial release. Aligned Onboarding teaches Runneth how a customer reads their Meta ad account and then builds saved creative context off that lens. It ships two parts: the Account Context Brain (nine interpretation fields Runneth auto-pulls, confirms with a person, validates, and flags, then saves as a plain-language reference in the established account-context file or package default) and the Creative Corpus playbook (customer-facing creative-context Markdown files with identity, summary, hook, transcript notes, value props, and Motion AI tags, saved in the established creative-context folder or package default). A supporting Motion CLI data-query guide keeps the auto-pulls correct on the first try. Activation merges a workspace-scoped read-before-performance guard into /agent/user.md so the lens is loaded before any Meta performance work, and treats Motion workspace settings (goal, preferred KPI, spend threshold, attribution config) as if they do not exist. Meta only, one workspace at a time. Default Brain retrieval handles ordinary recall; the corpus-search tool is fetched from the library only if absent for deliberate filterable search, never bundled or clobbered."
     }
   ]
 }

@@ -5,7 +5,7 @@
     {
       "id": "aligned-onboarding",
       "name": "Aligned Onboarding",
-      "description": "Teaches Runneth how a customer reads their Meta ad account, captures customer-specific report/dashboard setup, and builds a creative corpus for grounded Meta performance work.",
+      "description": "Teaches Runneth how a customer reads their Meta ad account, captures customer-specific report/dashboard setup, and saves durable creative context when useful.",
       "version": "1.1.0",
       "packageManagerVersion": 1,
       "categories": ["agent-foundations"],

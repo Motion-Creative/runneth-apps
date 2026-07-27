@@ -1,21 +1,20 @@
 # Meta Creative Corpus Playbook (Onboarding Package)
 
-**How Runneth builds and maintains the per-creative attribute corpus for a Meta account,
-using the Account Context Brain it already has.**
+**How Runneth builds and maintains saved creative context for a Meta account, using the Account
+Context Brain it already has.**
 
-This is the creative-attributes part of the Meta onboarding package. It pairs with the
-**Meta Account Context Brain** (`/agent/brain/meta/account-context.md`) and, for report surfaces,
-the **Report Dashboard Setup** (`/agent/brain/meta/report-dashboard-context.md`).
+This is the creative-attributes part of the Meta onboarding package. It pairs with this workspace's
+established Account Context Brain and, for report surfaces, the established Report Dashboard Setup.
 
 The one-line model:
 
 > The **Account Context Brain** tells Runneth **how to analyze** the account. The **Creative
-> Corpus** gives Runneth **the attributes it needs to actually do the job**: one enriched record
-> per active creative.
+> Corpus** gives Runneth **the durable creative context it needs to actually do the job**.
 
 The Creative Corpus depends on the Account Context Brain for interpretation and does not
-re-derive it. It only pulls from Motion what the Account Context Brain cannot already tell it: the
-creative content itself.
+re-derive it. It pulls enough source-backed creative data from Motion to create customer-facing
+context, but Motion or the creative store remains authoritative for exact assets, previews,
+transcripts, and current source-backed content.
 
 For reports and dashboards, the corpus supplies creative evidence: hooks, transcripts, previews,
 tags, value props, and identity. Report Dashboard Setup decides how that evidence should appear on a
@@ -28,27 +27,26 @@ files.
 
 The output is:
 
-- **Individual creative Markdown files**, one per active creative, with identity, summary, hook,
-  value props, transcript, AI tags, and naming.
+- **Individual creative Markdown files** for creatives that need durable saved context, with
+  identity, summary, hook, value props, transcript notes, AI tags, and naming.
 - An optional thin **tagging taxonomy** file, only if the Account Context Brain has a decoded naming
   convention to project.
-- These files are available through default Brain retrieval. There is no separate package-owned
-  corpus index to build for ordinary recall.
+- These files are available through default Brain retrieval when they are saved to Brain. They are
+  not the canonical creative store and should not be created solely to mirror every source row.
 
 Report and dashboard builds use these files for stable creative context, not for current
-performance. If `/agent/brain/meta/report-dashboard-context.md` asks for playable videos,
-same-size creative cards, transcript snippets, or specific evidence columns, satisfy those
-requirements from this corpus where possible and show visible caveats when media or transcripts are
-missing.
+performance. If the established reporting/app setup asks for playable videos, same-size creative
+cards, transcript snippets, or specific evidence columns, satisfy those requirements from this
+corpus where possible and show visible caveats when media or transcripts are missing.
 
 ## How retrieval works here (default Brain retrieval first, corpus-search to supplement)
 
 Runneth can surface readable Markdown under `/agent/brain/` as saved context in future turns. Treat
-default Brain retrieval as the ordinary path and do not add a separate creative index just to make
-these files searchable:
+default Brain retrieval as the ordinary path for saved creative context:
 
-- Writing the file under `/agent/brain/meta/creatives/` is the package's index step. No manual
-  package-level `index`, `embed`, or `refresh` is needed for ordinary Brain recall.
+- When a creative-context file is intentionally saved under the established creative-context folder
+  or this package's default, stable names, source IDs, tags, headings, and
+  `/agent/INDEX.md` entries make it findable for ordinary Brain recall.
 - To confirm a file is discoverable, reference its topic in a later turn, or list the folder.
 - Use `ContextConfig` only if these files need a specific lane (for example a workspace lane).
 
@@ -62,7 +60,7 @@ query the corpus deliberately. corpus-search requires its own index step below.
 
 ## Step 1 - Read what the Account Context Brain already knows (do not re-derive)
 
-Open `/agent/brain/meta/account-context.md` first and pull these directly:
+Open this workspace's established Account Context Brain first and pull these directly:
 
 - **Naming conventions** (Account Context Brain field 4): if it has a decoded pattern, use it to decode
   each creative's name. If it does not, just store the raw ad name as the attribute and move on.
@@ -76,18 +74,17 @@ Open `/agent/brain/meta/account-context.md` first and pull these directly:
 If a needed field in the Account Context Brain is `[FLAGGED]` or missing, that is the only case where you gather
 it live, and you flag it the same way rather than guessing.
 
-When the corpus is being built or refreshed to support a report/dashboard surface, also read
-`/agent/brain/meta/report-dashboard-context.md` if it exists. Use it only for report evidence
-requirements such as card content, table columns, media behavior, and taxonomy. Do not let it
-override the Account Context Brain's interpretation of what counts as best, winning, scaling, or
-ready to cut.
+When the corpus is being built or refreshed to support a report/dashboard surface, also read the
+established reporting/app setup if it exists. Use it only for report evidence requirements such as
+card content, table columns, media behavior, and taxonomy. Do not let it override the Account
+Context Brain's interpretation of what counts as best, winning, scaling, or ready to cut.
 
 ---
 
-## Step 2 - Pull the creative corpus from Motion
+## Step 2 - Pull source creative context from Motion
 
-This is the genuinely new data the Account Context Brain does not hold. Use the workspace and window from the Account Context Brain
-(default `last_365d`).
+This is the source-backed creative data the Account Context Brain does not hold. Use the workspace
+and window from the Account Context Brain (default `last_365d`).
 
 ```
 motion meta insights --date-range last_365d --include-glossary --include-metrics --include-transcript --workspace-id <workspaceId from the Account Context Brain>
@@ -130,22 +127,20 @@ naming decode,
 skip the naming table entirely; the per-creative files simply carry the raw ad name.
 
 Do not build elaborate auto-tagging logic. Keep this file to the naming table (if any) and the
-template. Save it at:
-```
-/agent/brain/meta/creatives/_tagging-taxonomy.md
-```
-The underscore keeps it at the top of the folder and signals it is a reference, not a creative.
+template. Save it beside the creative-context files as `_tagging-taxonomy.md`. The underscore keeps
+it at the top of the folder and signals it is a reference, not a creative.
 
 ---
 
-## Step 4 - Generate individual creative MD files (the attributes)
+## Step 4 - Generate saved creative-context MD files
 
-One file per creative.
+Write one file per creative only when that creative needs durable saved context.
 
 **File naming:** match the ad name exactly, `.md` extension, replace slashes or special
 characters with hyphens.
 
-**Location:** `/agent/brain/meta/creatives/<AdName>.md`
+**Location:** the established creative-context folder for this workspace, or this package's default
+if one does not exist yet.
 
 **Each file contains:**
 
@@ -205,38 +200,39 @@ the thresholds already in the Account Context Brain (do not re-fetch the workspa
 
 ---
 
-## Step 5 - Make it retrievable
+## Step 5 - Make saved creative context retrievable
 
-Writing the files under `/agent/brain/meta/creatives/` makes them available for ordinary Brain
-recall.
+Saving creative-context files under the established creative-context folder, or this package's
+default, makes them available for ordinary Brain recall.
 
-- For default Brain retrieval: nothing else to run. If the files need a specific lane or read scope,
-  set that once with `ContextConfig`. To sanity-check, reference a creative topic in a later turn or
-  list the folder.
-- For corpus-search (the supplement): register `/agent/brain/meta/creatives` as an enabled source in
-  corpus-search's `sources.json` with `kind: creative` during install, so its `refresh` keeps the
-  folder current automatically. To index on demand: `bash /agent/tools/corpus-search/corpus-search.sh
-  index markdown --source /agent/brain/meta/creatives --kind creative`. Re-runs are idempotent,
-  deduped by `source_id`. This step is only for corpus-search.
+- For default Brain retrieval: keep stable names, source IDs, headings, tags, and index entries. If
+  the files need a specific lane or read scope, set that once with `ContextConfig`. To sanity-check,
+  reference a creative topic in a later turn or list the folder.
+- For corpus-search (the supplement): register the resolved creative-context folder as an enabled
+  source in corpus-search's `sources.json` with `kind: creative` during install, so its `refresh`
+  keeps the folder current automatically. To index on demand, pass that same resolved folder to
+  `bash /agent/tools/corpus-search/corpus-search.sh index markdown --source <creativeContextFolder> --kind creative`.
+  Re-runs are idempotent, deduped by `source_id`. This step is only for corpus-search.
 
 ---
 
 ## Step 6 - Update the brain index
 
-Add two entries to `/agent/INDEX.md`:
+Add entries to `/agent/INDEX.md` for the default creative-context folder, or for the established
+creative-context folder if this workspace already uses one:
 
 **1. The creatives folder**
 ```
-- path: /agent/brain/meta/creatives/
-  aliases: creative corpus, creative library, [workspace] creatives, per-creative files, creative tags, meta account attributes
-  note: Per-creative MD files for [workspace] actives as of [date]. Identity, format, launch date, spend state, campaign, naming, transcript, and Motion AI glossary tags. No metrics. Interpretation source of truth is the Account Context Brain (account-context.md).
+- path: <creativeContextFolder>
+  aliases: creative corpus, creative library, [workspace] creatives, saved creative context, creative tags, meta account attributes
+  note: Saved creative-context files for [workspace] as of [date]. Identity, format, launch date, spend state, campaign, naming, transcript notes, and Motion AI glossary tags when useful. No metrics. Interpretation source is the Account Context Brain (account-context.md).
   created: [date]
   updated: [date]
 ```
 
 **2. The taxonomy** (only if you created one)
 ```
-- path: /agent/brain/meta/creatives/_tagging-taxonomy.md
+- path: <creativeContextFolder>/_tagging-taxonomy.md
   aliases: tagging taxonomy, naming convention, creative template
   note: [workspace] naming projection and the standard MD template, derived from the Account Context Brain (account-context.md).
   created: [date]
@@ -253,7 +249,7 @@ retired from the account.
 ### Daily
 
 1. Pull recent launches: `motion meta insights --date-range last_7d --include-glossary --include-metrics --include-transcript --workspace-id <workspaceId>`
-2. Compare returned creative IDs against existing files in `/agent/brain/meta/creatives/`.
+2. Compare returned creative IDs against existing files in the resolved creative-context folder.
 3. For each new ID, generate its MD file (run the scoped transcript pass if the inline transcript
    came back empty).
 4. Default Brain retrieval picks up the new files automatically. For corpus-search, run its refresh
@@ -286,7 +282,8 @@ contradicts the Account Context Brain.
 ## Multi-workspace
 
 Customer brains are usually one workspace, but multi-workspace orgs are real. When the brain
-holds more than one workspace, scope per workspace so entries do not collide:
+holds more than one workspace, scope per workspace so entries do not collide. These are default
+examples; use the established indexed setup locations when the customer already has them:
 
 - `/agent/brain/meta/<workspace-slug>/account-context.md`
 - `/agent/brain/meta/<workspace-slug>/creatives/`
@@ -298,16 +295,18 @@ holds more than one workspace, scope per workspace so entries do not collide:
 
 ## Precedence and relationship to the Account Context Brain
 
-- The Account Context Brain (`account-context.md`) is the source of truth for interpretation: what "best" means,
+- The Account Context Brain (`account-context.md`) owns interpretation: what "best" means,
   how names decode, what the thresholds are, and how AI tags are used in analysis.
-- Report Dashboard Setup (`report-dashboard-context.md`) is the source of truth for report-surface
+- Report Dashboard Setup (`report-dashboard-context.md`) owns report-surface
   packaging: standard views, metric order, evidence requirements, visual expectations, and cadence.
-- The Creative Corpus (this file's output) is the source of truth for creative content: what each creative is,
-  says, and shows, plus its transcript and Motion AI tags.
-- The Creative Corpus always captures the attributes. The Account Context Brain decides how they are
-  interpreted; Report Dashboard Setup decides how they appear on report surfaces. When either file
-  disagrees with the corpus on an interpretation or packaging rule, re-project the Creative Corpus
-  rather than editing it to diverge.
+- Motion or the creative store is authoritative for exact creative content, media, previews,
+  transcripts, and source-backed attributes. Creative Corpus files are saved customer-facing context
+  with provenance.
+- The Creative Corpus captures durable attributes when they are useful. The Account Context Brain
+  decides how they are interpreted; Report Dashboard Setup decides how they appear on report
+  surfaces. When either setup file disagrees with a creative-context file on an interpretation or
+  packaging rule, update the saved context or report surface from the owning setup file rather than
+  creating a second maintained truth.
 
 ---
 
@@ -315,10 +314,10 @@ holds more than one workspace, scope per workspace so entries do not collide:
 
 | What | Where |
 |---|---|
-| Account Context Brain | `/agent/brain/meta/account-context.md` |
-| Report Dashboard Setup | `/agent/brain/meta/report-dashboard-context.md` |
-| Individual creative files | `/agent/brain/meta/creatives/<AdName>.md` |
-| Tagging taxonomy (optional) | `/agent/brain/meta/creatives/_tagging-taxonomy.md` |
+| Account Context Brain | `<accountContextPath>` |
+| Report Dashboard Setup | `<reportingSetupPath>` |
+| Individual creative files | `<creativeContextFolder>/<AdName>.md` |
+| Tagging taxonomy (optional) | `<creativeContextFolder>/_tagging-taxonomy.md` |
 | Brain index | `/agent/INDEX.md` |
 | Change log | `/agent/brain/meta/_changelog.md` |
 

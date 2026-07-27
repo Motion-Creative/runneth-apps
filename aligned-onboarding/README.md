@@ -7,13 +7,13 @@ The three parts:
 
 - **Account Context Brain** - how Runneth should analyze this account.
 - **Report Dashboard Setup** - how this customer wants report, dashboard, and app readouts built.
-- **Creative Corpus** - the per-creative attributes Runneth analyzes.
+- **Creative Corpus** - durable creative context Runneth can reuse when it helps future analysis.
 
 The one-line model:
 
 > **The Account Context Brain tells Runneth how to analyze the account. The Report Dashboard Setup
 > tells Runneth how to package that analysis for this customer. The Creative Corpus gives Runneth the
-> per-creative attributes it needs to actually do the job.**
+> durable creative context it should reuse, while exact creative content stays in Motion.**
 
 Report Dashboard Setup and Creative Corpus both depend on the Account Context Brain and never
 re-derive it. Keep them as separate files: they do different jobs, persist to different places, and
@@ -27,9 +27,11 @@ These instruction files (this overview, the Account Context Brain, the Report Da
 Creative Corpus, and the Motion CLI Data-Query Guide) are the package itself, not its output. They
 live in the Brain outside the `meta` folder structure at `/agent/brain/aligned-onboarding/`.
 corpus-search is an optional companion tool, not an instruction file, and installs under
-`/agent/tools/corpus-search/` when needed. The `meta` folder holds only what Runneth generates from
-running the package: the filled account context, the report/dashboard setup context, and the
-per-creative files.
+`/agent/tools/corpus-search/` when needed. The `meta` folder is the package's first-run default
+output area for what Runneth generates from running the package. Before writing, resolve the owning
+customer setup location from an installed guard, `/agent/INDEX.md`, or customer-edited setup. Create
+the package default only when no established file already owns that workspace's account context,
+report/dashboard setup, or creative context.
 
 ---
 
@@ -44,9 +46,11 @@ per-creative files.
   preferences, and creative attributes. Never save internal Runneth-team content: tool-calling
   nuances, CLI commands or flags, command-vs-command discrepancies, or debugging notes. Metric
   nuances about how a metric shows up in this account are welcome, written in business terms.
-- **Customer setup belongs in the Brain.** Report/dashboard preferences, saved-report trust rules,
-  taxonomy, delivery cadence, and visual standards are customer-owned setup. They should be visible
-  and editable in `/agent/brain/meta/report-dashboard-context.md`, not hidden in runtime config.
+- **Customer setup stays visible and editable.** Report/dashboard preferences, saved-report trust
+  rules, taxonomy, delivery cadence, and visual standards are customer-owned setup. Resolve the
+  workspace's reporting/app setup file before writing; use this package's default only when one does
+  not exist yet. Do not hide these rules in app code, runtime config, scratch files, or
+  conversation-only memory.
 - **Onboarding pull window.** The fill-in auto-pulls default to `last_365d` so onboarding sees
   enough history. This governs the fill-in only, not later performance queries.
 
@@ -63,7 +67,8 @@ File: `account-context-brain.md`
   targets).
 - **How it runs:** auto-pull, then confirm with a person, then validate, then flag what it cannot
   capture. `[AUTO]` values are proposals until a person confirms them.
-- **Persists to:** `/agent/brain/meta/account-context.md` (create the `meta` folder if needed)
+- **Persists to:** the established indexed account-context file for this workspace, or this
+  package's default if one does not exist yet.
 - **Activation:** merges a read-before-performance guard into `/agent/user.md`.
 - **Refresh:** monthly cadence plus structural-drift triggers, logged in
   `/agent/brain/meta/_changelog.md`.
@@ -78,7 +83,8 @@ File: `report-dashboard-setup.md`
 - **How it runs:** reads the Account Context Brain first, inspects any saved Motion report metadata
   and existing app/routine registry entries when available, then asks a short confirmation with a
   person. It captures only customer-facing preferences and labels uncertain items as open.
-- **Persists to:** `/agent/brain/meta/report-dashboard-context.md`
+- **Persists to:** the established indexed reporting/app setup file for this workspace, or this
+  package's default if one does not exist yet.
 - **Activation:** extends the account-context guard with a read-before-reporting rule.
 - **Refresh:** after reporting setup calls, when saved Motion reports change, or when a built
   dashboard gets corrected by the team. Log updates in `/agent/brain/meta/_changelog.md`.
@@ -86,16 +92,17 @@ File: `report-dashboard-setup.md`
 ### Creative Corpus
 File: `creative-corpus-playbook.md`
 
-- **Job:** build and maintain one enriched record per active creative (identity, summary, hook,
-  value props, transcript, AI tags, naming), the attributes Runneth uses to do the analysis the
-  Account Context Brain defines.
+- **Job:** maintain customer-facing creative context (identity, summary, hook, value props,
+  transcript notes, AI tags, naming) when those attributes are useful for future analysis. Motion or
+  the creative store remains authoritative for exact creative assets, previews, and current
+  source-backed content.
 - **How it runs:** reads what the Account Context Brain already knows, then pulls from Motion only
-  what the Account Context Brain cannot tell it (the creative content itself). Default Brain
-  retrieval picks up the files automatically; corpus-search can be installed as the optional
-  filterable supplement.
-- **Persists to:** individual creative Markdown files under `/agent/brain/meta/creatives/`, plus an
-  optional tagging taxonomy at `/agent/brain/meta/creatives/_tagging-taxonomy.md`.
-- **Retrieval:** automatic through default Brain retrieval. Writing the file is the index step.
+  what is needed to create or refresh saved creative context. Default Brain retrieval can pick up
+  intentionally saved files; corpus-search can be installed as the optional filterable supplement.
+- **Persists to:** the established creative-context location for this workspace, or this package's
+  default if one does not exist yet. Keep an optional tagging taxonomy beside that creative context.
+- **Retrieval:** automatic through default Brain retrieval for saved Brain files. Use stable names,
+  source IDs, tags, and `/agent/INDEX.md` entries to make saved context findable.
 - **Maintenance:** daily and event-triggered updates as creatives change.
 
 ---
@@ -126,7 +133,7 @@ similar. Everything shares one index, kept separate by the `kind` tag (`creative
   `bash /agent/tools/corpus-search/install.sh` and resolve its checklist.
 - **Credentials:** if the checklist flags a missing credential, request it securely and never ask for
   it to be pasted into chat. Some workspaces pre-provision it.
-- **Register sources by kind:** for this package, add `/agent/brain/meta/creatives` to
+- **Register sources by kind:** for this package, add the resolved creative-context folder to
   corpus-search's `sources.json` with `kind: creative`. Register other raw-text folders (reviews,
   voice-of-customer, transcripts) the same way under their own `kind` so `refresh` keeps them all
   current. Give each indexed file frontmatter (`brand`, `workspace`, `source_id`, and `event_at`
@@ -139,18 +146,20 @@ similar. Everything shares one index, kept separate by the `kind` tag (`creative
 1. **Install the package.** Staging the files does not self-run anything.
 2. **Activate the Account Context Brain.** Merge its guard block into `/agent/user.md`.
 3. **Run the Account Context Brain fill-in.** Auto-pull, confirm with a person, validate, flag
-   gaps. This writes `/agent/brain/meta/account-context.md`.
-4. **Run Report Dashboard Setup.** Read `/agent/brain/meta/account-context.md`, capture the team's
-   reporting preferences, write `/agent/brain/meta/report-dashboard-context.md`, and index it in
-   `/agent/INDEX.md`.
+   gaps. This updates the established indexed account-context file for this workspace, or creates the
+   package default if none exists yet.
+4. **Run Report Dashboard Setup.** Read this workspace's account-context file, capture the team's
+   reporting preferences, update the established reporting/app setup file or create the package
+   default, and index it in `/agent/INDEX.md`.
 5. **Install corpus-search when deliberate filterable search is needed.** Run
-   `bash /agent/tools/corpus-search/install.sh`, resolve its checklist, and register
-   `/agent/brain/meta/creatives` as a source with `kind: creative`. One-time; can happen before or
-   after the corpus is built.
-6. **Build the Creative Corpus.** With the Account Context Brain in place, generate the per-creative
-   attribute files (each with its frontmatter). The Creative Corpus reads the Account Context Brain
-   for interpretation and the Report Dashboard Setup when report surfaces need creative evidence
-   rules. If corpus-search is installed, refresh that source so filterable search is available.
+   `bash /agent/tools/corpus-search/install.sh`, resolve its checklist, and register the resolved
+   creative-context folder as a source with `kind: creative`. One-time; can happen before or after
+   the corpus is built.
+6. **Build the Creative Corpus.** With the Account Context Brain in place, generate or refresh the
+   saved creative-context files that are useful for future analysis. The Creative Corpus reads the
+   Account Context Brain for interpretation and the Report Dashboard Setup when report surfaces need
+   creative evidence rules. If corpus-search is installed, refresh that source so filterable search
+   is available.
 7. **Keep all three current.** The Account Context Brain on its refresh cadence, Report Dashboard
    Setup when report preferences or saved reports change, the Creative Corpus on daily and
    event-triggered maintenance, and refresh corpus-search on that same cadence when it is installed.
