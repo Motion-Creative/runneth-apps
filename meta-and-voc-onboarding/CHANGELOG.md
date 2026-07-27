@@ -6,9 +6,6 @@ change to the package, not per commit. Entries are newest-first.
 
 ## 1 - 2026-07-27
 
-First release under the `meta-and-voc-onboarding` id (previously developed as
-`aligned-onboarding` with 2.x versions; that history lives in this file's git log).
-
 The package as it ships:
 
 - Schema-v1 `package.json` manifest, indexed in the repo root `package-index.json`
