@@ -1,4 +1,4 @@
-<!-- BEGIN runneth:meta-validation-gate v2 -->
+<!-- BEGIN runneth:meta-validation-gate v3 -->
 Meta validation gate (workspace <workspaceId>):
 
 - When the Account Context Brain (/agent/brain/meta/account-context.md) has all required fields
@@ -13,4 +13,10 @@ Meta validation gate (workspace <workspaceId>):
   /agent/brain/meta/validation.md.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
-<!-- END runneth:meta-validation-gate v2 -->
+- A deck change request is a context correction too: route it to the field behind it
+  (structure, cadence, or slicing -> the deck spec, Field 10; winner or metric complaints ->
+  the interpretation fields; labels -> naming), update the field, and regenerate the deck from
+  context - never hand-edit the deck output. Durable corrections in any later conversation get
+  the same routing; one-off or current-state remarks shape the answer or the current render,
+  never the file.
+<!-- END runneth:meta-validation-gate v3 -->

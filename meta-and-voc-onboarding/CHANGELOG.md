@@ -28,6 +28,22 @@ The package as it ships:
 - The walkthrough presentation (opening frame, field sections, closing TLDR)
   lives in the `onboarding-walkthrough` skill and fires only on a human's yes to
   that invitation or an explicit ask to begin/resume onboarding.
+- Validation is a training loop (validation doc v1.10, ACB v1.31, validation
+  gate guard v3): the question loop and the deck build train one brain. All
+  feedback routes through a durability test — judgment rules heal ACB fields,
+  standing preferences land in the register note or Field 10, current-state
+  facts shape the answer only, one-offs are applied and forgotten. Deck change
+  requests are context corrections (structure/cadence/slicing to Field 10,
+  metric/winner complaints to the interpretation fields); the deck regenerates
+  from context and is never hand-edited directly (one-offs touch the current
+  render only and revert on refresh — said out loud; standing look-and-feel
+  lives in validation.md's deck record, where the refresh routine reads it).
+  MVCE requires every question clean (latest answer confirmed without
+  correction — corrections re-open only the questions they touch, never a full
+  re-run) and spec-level deck approval; validation.md tracks questions clean,
+  total corrections, and deck rebuilds. The loop continues past MVCE: durable
+  corrections in any later conversation get the same routing, no scheduled
+  check-ins.
 - Meta reachability is connection-status-driven: a connected Meta workspace gets
   `voc-sync-meta-ads` even when API probes error, and the account-context
   scaffold is always written, blockers recorded per field.

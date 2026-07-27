@@ -1,5 +1,5 @@
 # Meta Account Context: Brain Onboarding Package
-### Version 1.30 — patch: "north-star" renamed to creative-strategist language (July 2026)
+### Version 1.31 — patch: Field 10 is the landing spot for deck feedback (July 2026)
 
 This package teaches Runneth how a customer understands their Meta ad account, so its queries,
 rankings, and insights match how the team actually thinks about the data. This package is
@@ -671,6 +671,12 @@ two beats in sequence.
 
 On confirmation, write this as the deck-spec section of `/agent/brain/meta/account-context.md`
 (see "Where the filled result lives") — that is where the validation deck build reads it.
+
+This field is also where deck feedback lands. When a customer asks for a structural change
+to the deck — sections, cadence, slicing, exclusions — during validation or any later
+conversation, the change is written here first and the deck regenerates from it. The spec's
+only home is this field, never the deck file itself (per the validation package's training
+loop).
 
 ---
 

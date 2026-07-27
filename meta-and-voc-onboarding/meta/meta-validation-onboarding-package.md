@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.9 — patch: "north-star" renamed to creative-strategist language (July 2026)
+### Version 1.10 — validation is a training loop: deck feedback heals context, durability routing, spec-level convergence (July 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
@@ -20,6 +20,38 @@ Onboarding is not done when data is connected and trained. It is done when Runne
 demonstrably understood the account, can answer from it, the customer has seen proof, and the
 whole thing is locked into a routine that keeps running. A pass is not complete until the other
 person catches the ball. This part is the catch.
+
+## The training loop (the operating principle)
+
+The question loop and the deck build are **one training loop over one brain**. Every piece of
+feedback the customer gives during either is a training signal for
+`/agent/brain/meta/account-context.md` (and its satellites: the naming decoder, Field 10) —
+never a fix to apply to the output directly. The deck is a rendering of the context: the only
+way to fix the deck is to fix the context and regenerate. The loop converges when the brain
+produces answers and a deck the team recognizes as their own on the first try — corrections
+trending to zero, not zero forever.
+
+**Route every piece of feedback through the durability test before writing anything:**
+
+- **A rule about how the team judges** ("we judge on CPA," "exclude agency campaigns") — the
+  Account Context Brain field behind it. The test: would this still be true in three months,
+  regardless of what's running? If the feedback names specific campaigns or this month's
+  test, extract the rule behind it and store the rule — fields hold the lens, never the scene.
+- **A current-state fact** ("we're testing statics right now") — use it in the answer now; it
+  never enters an interpretation field. Live state belongs to live pulls.
+- **A standing preference** — about answers ("numbers first, always") → the answer-register
+  note; about the deck's structure ("never show ROAS in the deck") → Field 10; about the
+  deck's look and feel ("always dark cards") → the deck record in `validation.md`, where the
+  refresh routine reads it. An unqualified ask defaults to standing.
+- **A one-off** ("bigger chart this week") — apply it to the current render and move on;
+  nothing is written, and it reverts on the next refresh — say so.
+
+When durable and ephemeral are hard to tell apart, ask — "is that just for now, or always?" —
+and file it where the answer says.
+
+**The loop does not end at MVCE.** A correction in any later conversation — week one or month
+six — gets the same routing: notice it, classify it, persist it when durable. No scheduled
+check-ins; be judicious about what a remark means and whether it needs remembering.
 
 This package is **Meta-only**. It never asks about, pulls, or reasons over other ad platforms or
 competitors. Meta is the platform for this account by definition.
@@ -45,7 +77,7 @@ package's post-install run does this in its single scripted guard merge). The bl
 shown for context and must stay identical to the staged file.
 
 ```
-<!-- BEGIN runneth:meta-validation-gate v2 -->
+<!-- BEGIN runneth:meta-validation-gate v3 -->
 Meta validation gate (workspace <workspaceId>):
 
 - When the Account Context Brain (/agent/brain/meta/account-context.md) has all required fields
@@ -60,7 +92,13 @@ Meta validation gate (workspace <workspaceId>):
   /agent/brain/meta/validation.md.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
-<!-- END runneth:meta-validation-gate v2 -->
+- A deck change request is a context correction too: route it to the field behind it
+  (structure, cadence, or slicing -> the deck spec, Field 10; winner or metric complaints ->
+  the interpretation fields; labels -> naming), update the field, and regenerate the deck from
+  context - never hand-edit the deck output. Durable corrections in any later conversation get
+  the same routing; one-off or current-state remarks shape the answer or the current render,
+  never the file.
+<!-- END runneth:meta-validation-gate v3 -->
 ```
 
 ## 2. Prerequisites (hard gate)
@@ -96,7 +134,9 @@ Save the validation record to `/agent/brain/meta/validation.md`. It captures:
 - The starter questions the customer chose to validate, and their confirmed answers.
 - Every context correction made during the loop (which Account Context Brain field changed, and
   what it changed to).
-- The weekly deck: its route, its structure, and the reference it was built from.
+- The weekly deck: its route, its structure, the reference it was built from, and the
+  standing look-and-feel preferences the customer has confirmed — the refresh routine
+  rebuilds from these, so a visual preference not recorded here is lost on the next refresh.
 - The lock-in state: deck approval, refresh routine id and cadence, Slack connection status.
 - The MVCE state block (on/off, date, who signed off).
 
@@ -186,8 +226,10 @@ Then, one question at a time:
    account's own interpretation (their metrics, their naming, their targets).
 2. **Ask the confirm:** "Is that right? Am I missing anything?"
 3. **On a yes:** note the confirmed answer and move to the next question.
-4. **On a correction:** find the specific Account Context Brain field behind the miss, update it,
-   say plainly what you changed, then re-answer and re-confirm before moving on.
+4. **On a correction:** route it through the durability test (the training-loop principle
+   above). A current-state remark shapes this answer only; a durable rule heals the specific
+   Account Context Brain field behind the miss. Update the field, say plainly what you
+   changed, then re-answer and re-confirm before moving on.
 
 Rules for the loop:
 
@@ -250,9 +292,20 @@ Building the deck is not the finish line. Onboarding is complete only when the d
 the team will actually live in, it keeps itself current, and the team has a place to ask Runneth
 questions. Three things, all required:
 
-1. **The customer approves the deck.** Not "it exists," but "this is right, this is how we see our
-   performance." If they want changes, iterate until they sign off. Their yes is the gate, not the
-   build.
+1. **The customer approves the deck — at the spec level.** Not "it exists," but "this is the
+   right structure, the right metrics, the right winners — this is how we see our
+   performance." Every change request routes through the training loop before anything is
+   rebuilt: deck structure, sections, cadence, or slicing → Field 10; what counts as a winner
+   or which metric leads → the interpretation field behind it (Fields 1, 2, 9); names and
+   labels → Field 4; standing look-and-feel → the deck record in `validation.md` (the refresh
+   routine rebuilds from it); one-offs → this render only, reverting on refresh — say so.
+   Update the home first, then regenerate the deck from it — never hand-edit the deck output
+   directly; a hand-fixed deck reverts on its next scheduled refresh. Rebuild at the
+   customer's pace: piecemeal feedback can rebuild as it lands, a burst of feedback routes
+   fully first and rebuilds once. A correction that changes an interpretation field re-runs
+   the affected loop questions (Step 2) — only those, never the full set — before the next
+   build, and does not reset approval of untouched spec sections. Aesthetics do not gate
+   approval; the spec does. Their yes is the gate, not the build.
 2. **A refresh routine is set up.** With the customer, agree how often the deck should update
    (weekly is common; some want daily) and set up a routine that refreshes it on that cadence.
    Confirm who owns it and whose access it runs on, since it depends on the Meta connection and the
@@ -269,8 +322,13 @@ Validation is complete, and the Minimum Viable Context Engine is on, when all fi
 
 1. Must-have Meta context sources are connected and set to refresh (the Account Context Brain on
    its cadence; the creative cache syncs itself).
-2. The customer has confirmed Runneth's answers to their starter questions.
-3. The weekly deck is built, live, and approved by the customer.
+2. Every question in the final set is **clean** — its latest answer was confirmed without
+   correction. Corrections along the way are the loop working, not a failure; a correction
+   (in the loop or during deck review) re-opens only the questions it touched, which are
+   re-answered and re-confirmed. Never re-ask the full set to prove cleanliness — a
+   question stays clean until a correction touches it.
+3. The weekly deck is built, live, and approved at the spec level — as regenerated from
+   context, never as hand-tweaked output.
 4. A refresh routine keeps the deck updated on an agreed cadence.
 5. Slack is connected so the team can ask Runneth questions.
 
@@ -281,7 +339,9 @@ mvce_state: on            # on | off
 validated_on: <date>
 signed_off_by: <person>
 starter_questions_confirmed: <count>
-context_corrections: <count>
+questions_clean: <n of m — latest answer confirmed without correction>
+context_corrections: <total>
+deck_rebuilds: <count>
 weekly_deck_route: <app route>
 weekly_deck_built_from: <reference | description>
 weekly_deck_approved: <yes | no>
