@@ -369,8 +369,11 @@ const fleetImpactMessages = (baseIndex, nextIndex) => {
   }
 
   for (const baseEntry of baseIndex.packages) {
-    if (affectsManagedSync(baseEntry) && !nextById.has(baseEntry.id)) {
-      messages.push(`${baseEntry.id}: removed managed-sync package`)
+    // Any package may be referenced by durable optional intent. Removing the
+    // index entry makes those VMs fail plan resolution before unrelated
+    // packages can sync, regardless of the removed package's policies.
+    if (!nextById.has(baseEntry.id)) {
+      messages.push(`${baseEntry.id}: removed package`)
     }
   }
 
@@ -530,6 +533,32 @@ test('install policy changes are included in managed-sync fleet impact', () => {
     },
   )
   assert.deepEqual(messages, ['manual-test-package: changed to managed-sync package'])
+})
+
+test('fully manual package removals require fleet approval', () => {
+  const manualEntry = {
+    categories: [],
+    description: 'Manual test package',
+    id: 'manual-test-package',
+    installPolicy: 'manual',
+    name: 'Manual Test Package',
+    packageManagerVersion: 1,
+    source: {
+      owner: PACKAGE_SOURCE_OWNER,
+      path: 'manual-test-package',
+      ref: PACKAGE_SOURCE_REF,
+      repo: PACKAGE_SOURCE_REPO,
+      type: 'github',
+    },
+    uninstallPolicy: 'allowed',
+    updatePolicy: 'manual',
+    version: '1',
+  }
+  const messages = fleetImpactMessages(
+    { indexRevision: 'base', packages: [manualEntry], schemaVersion: 1 },
+    { indexRevision: 'next', packages: [], schemaVersion: 1 },
+  )
+  assert.deepEqual(messages, ['manual-test-package: removed package'])
 })
 
 test('managed-sync package changes require explicit fleet approval', () => {
