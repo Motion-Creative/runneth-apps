@@ -68,9 +68,11 @@ asked. Exactly once per install: if the four guard sentinels are already in
 4. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
    creative content layer (Cacheth + query paths), detect naming patterns as provisional
    proposals for the next step. The procedure is
-   `/agent/brain/meta-and-voc-onboarding/meta/meta-creative-attributes-playbook.md`
+   `/agent/brain/meta-and-voc-onboarding/meta-creative-attributes-playbook.md`
    (its Step 2 is the install-time part). It ships as a brain document - there is no
-   creative-attributes skill directory to look for.
+   creative-attributes skill directory to look for. Skipping the playbook is not an
+   option: if that file is missing, say so in the readiness report - never improvise
+   this step from live Motion pulls without reading it.
 5. **Account Context Brain** (Meta connected only): its guard is already merged (step 3).
    Autofill every field possible from live data - silently. Do not present the findings,
    do not ask the gap questions, do not run the walkthrough; the onboarding-walkthrough
