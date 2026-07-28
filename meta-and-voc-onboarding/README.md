@@ -287,7 +287,7 @@ The run order below is the human-readable description of the same lifecycle.
 1. **Install the package** with one `package install` call (see "How to install" above);
    never copy files by hand. Staging the files does not self-run anything - the post-install
    run right after it does. Nothing in this package writes per-creative files to the brain —
-   creative content lives in Cacheth and is surfaced through Knoweth.
+   creative content lives in Cacheth; its summary artifacts are surfaced through Knoweth.
 2. **Creative Attributes (Step 1).** Confirms the workspace scope, establishes the creative
    content layer (Cacheth + the query paths), detects naming patterns, and passes them to the
    Account Context Brain as provisional proposals. Writes nothing per-creative to the brain.
@@ -334,8 +334,8 @@ The run order below is the human-readable description of the same lifecycle.
   to analyze. But the Creative Attributes step runs first because it supplies real evidence the
   Account Context Brain can draw on — naming patterns, campaign structure, creative volume.
 - The Account Context Brain's read-before-performance guard forces the interpretation lens to load
-  before any performance work. Creative attributes are surfaced automatically through Knoweth
-  when creatives are discussed.
+  before any performance work. Creative summary artifacts are surfaced automatically through
+  Knoweth when creatives are discussed (transcripts and AI tags via the `motion cache` CLI).
 - **Naming decode is the handoff point.** The Creative Attributes step detects provisional naming patterns
   from ad names and passes them to the Account Context Brain as proposals. Account Context Brain
   confirms or corrects them in Field 4 — the single interpretation owner — and writes the

@@ -17,7 +17,7 @@ This skill runs inside the Meta onboarding package's contracts:
 - **Pull metrics live via the `motion` CLI**, per the Motion CLI Data-Query Guide installed beside the package docs. Performance metrics are never stored to files — every read is a fresh pull.
 - **Resolve the workspace explicitly.** Every pull passes `--workspace-id <id>`; never assume the default workspace.
 - **Decode names before filtering by them.** Before filtering by campaign, ad set, or ad name, read the account's naming decode — Field 4 of account-context.md and its operational appendix `/agent/brain/meta/naming-decoder.json`. Wrap filter values in underscores (`_VALUE_`, not `VALUE`) when filtering `adName`; use `adsetName`/`campaignName` for those levels, per the Data-Query Guide's name-level rules.
-- **Per-creative content lives in Cacheth** (the local creative cache), surfaced through Knoweth or the `motion cache` CLI. This skill writes nothing to brain files.
+- **Per-creative content lives in Cacheth** (the local creative cache) — summary artifacts surfaced through Knoweth, full records (incl. transcript and AI tags) through the `motion cache` CLI. This skill writes nothing to brain files.
 - **Answer transparently.** Every analysis states which filter was applied, which signal was read, and what couldn't be confirmed.
 - **Read what the question deserves.** Per the Data-Query Guide's answering posture: if the answer is already in the data, pull it, apply the account's confirmed rules, and report it — this framework earns its place when the question asks for diagnosis or explanation. Interpretation is offered before it is delivered.
 
@@ -146,9 +146,9 @@ After the efficiency read, steps 3–6 trace the viewer's path through the ad: s
 5. Read CTR outbound and conversion rate to locate creative vs. landing page problems.
 6. If purchase-optimized: compare the ad's AOV to the account average.
 7. To explain any of it, read the creative itself — and the customer. Metrics locate where
-   an ad wins or loses — the WHAT. The WHY lives in the creative's content (the Cacheth
-   summary sections, hook, transcript, and AI tags, via Knoweth injection or the
-   `motion cache` CLI) and in the customer's voice (the ad's comments, and VoC reviews and
+   an ad wins or loses — the WHAT. The WHY lives in the creative's content (Cacheth: summary
+   sections and hook via Knoweth injection or the `motion cache` CLI; transcript and AI tags
+   via `motion cache get-creative` only) and in the customer's voice (the ad's comments, and VoC reviews and
    support themes) when the question is how people are responding. Tie the drop-off to what
    the ad actually says and shows; never infer the why from the numbers alone.
 

@@ -6,12 +6,18 @@ All five `motion cache` commands, with every flag, option, and usage note.
 
 ## Overview
 
-Cacheth is the local Motion cache for creative data. All five commands write their output to a
-file under `./workdir/` and return a pointer plus compact metadata. Inspect the returned file
-with a separate `jq` call — do not expect full data inline in the shell output.
+Cacheth is the local Motion cache for creative data. It is a hydration layer behind the
+`motion cache` CLI — the agent never touches its storage directly, only these commands. All
+five commands write their output to a file under `./workdir/` and return a pointer plus compact
+metadata. Inspect the returned file with a separate `jq` call — do not expect full data inline
+in the shell output.
 
 Every command accepts `--workspace-id <value>` to target a workspace other than the current
 default. Omit it to use the default workspace.
+
+Before leaning on the cache in a workspace, run `motion cache status` once. If it errors or
+shows an empty/unbuilt cache, record that as the blocker (and run `motion cache refresh` when
+the cache merely has not synced yet) — do not loop retries against the data commands.
 
 There is no section filtering within a record. `get-creative` always returns the full record.
 Use `jq` on the returned file to extract only the layer you need.
@@ -117,8 +123,15 @@ jq 'keys' ./workdir/motion-cache-creative-<id>.json
 
 ### `motion cache export-summaries`
 
-Exports the entire creative corpus as a file. Use this for bulk extraction — getting all ad
-names, all transcripts, all glossary tags across every creative in the cache.
+Exports the summary corpus in bulk — one record per creative carrying identity (`creativeId`,
+format, origin, launch date, media `url`), ad metadata (`adIds`, `adNames`, `adsetNames`,
+`campaignNames`), copy (`adTexts`, `callToActions`), `landingPageUrls`, and the concatenated
+`summaryText`. Use this when a question spans the whole account: all ad names, all copy, the
+full summary corpus.
+
+Export records do **not** carry transcripts or glossary tags. Those live only on the full
+creative record — find the `creativeId` here (or via search), then pull it with
+`motion cache get-creative`.
 
 Note that one creative can have multiple ad names (one per ad unit it was served in), so the
 export will show that many-to-one relationship.
@@ -141,17 +154,27 @@ motion cache export-summaries --format jsonl --workspace-id <workspaceId>
 - `jsonl`: One JSON record per line. Easy to pipe through `jq` for extraction and filtering.
 - `duckdb`: Queryable database file. Better for large corpora where SQL-style queries are useful.
 
-**Example `jq` extractions on a JSONL export:**
+**Reading the output — two hops, not one:**
+
+The command does not return the corpus directly. It returns a wrapper: the command output
+carries per-provider paths under `exportPaths` (`meta`, `tiktok`), and the returned
+`./workdir/` file holds the same paths under `.providers.<provider>.path`. The records live in
+those per-provider files — running `jq` record extractions against the wrapper itself returns
+nothing.
 
 ```bash
+motion cache export-summaries --format jsonl
+# output: { "file": "./workdir/motion-cache-export-summaries-<...>.json",
+#           "exportPaths": { "meta": "<path>", "tiktok": "<path>" }, "recordCount": N }
+
+# Resolve the Meta corpus path from the wrapper file
+META_JSONL=$(jq -r '.providers.meta.path' ./workdir/motion-cache-export-summaries-<...>.json)
+
 # All ad names across every creative
-jq -r '.adNames[]?' ./workdir/<export-file>.jsonl
+jq -r '.adNames[]?' "$META_JSONL"
 
 # All creative IDs
-jq -r '.creativeId' ./workdir/<export-file>.jsonl
-
-# All unique glossary tag names
-jq -r '.glossary | .. | objects | .name? // empty' ./workdir/<export-file>.jsonl | sort -u
+jq -r '.creativeId' "$META_JSONL"
 ```
 
 ---
@@ -160,7 +183,9 @@ jq -r '.glossary | .. | objects | .name? // empty' ./workdir/<export-file>.jsonl
 
 Text search across ad names, ad copy, and summary content. Returns matched records with a
 summary excerpt and relevance score. Use this when you know part of an ad name, a hook phrase,
-a messaging theme, or a transcript fragment.
+or a messaging theme. Transcripts are not in the search surface — a spoken line matches only
+where the summary sections happen to quote it; for transcript text, pull the full record with
+`motion cache get-creative`.
 
 This is a qualitative search surface — not the source of truth for exact performance counts,
 fresh live filtering, or metric-grounded ranking.
@@ -207,8 +232,8 @@ record — use `motion cache get-creative` if you need all layers for a specific
 |---|---|
 | Is the cache built? When was it last synced? | `motion cache status` |
 | Pull in new creatives or updated summaries | `motion cache refresh` |
-| Everything about one specific creative (by ID) | `motion cache get-creative` |
-| All ad names, all transcripts, full corpus in bulk | `motion cache export-summaries` |
+| Everything about one specific creative (by ID) — incl. transcript and glossary tags | `motion cache get-creative` |
+| All ad names, all copy, full summary corpus in bulk | `motion cache export-summaries` |
 | Find a creative by name fragment, theme, hook, or copy | `motion cache search-summaries` |
 
 ---
@@ -218,7 +243,9 @@ record — use `motion cache get-creative` if you need all layers for a specific
 When answering questions about creative summaries, transcripts, hooks, or tags:
 
 1. **Knoweth pre-injected context** — arrives automatically before the turn, no tool call needed.
-   If the matching creative context is already there, answer from it.
+   Knoweth indexes the summary artifacts Cacheth generates (identity, ad names, copy, summary
+   text) — not complete records. If the matching summary-level context is already there, answer
+   from it; a transcript or glossary-tag question always needs step 3.
 2. **`motion cache search-summaries`** — active local search, no Meta API call required.
 3. **`motion cache get-creative`** — full record for a specific ID, still local, no API call.
 4. **`motion meta insights --summary-sections`** — live pull from Motion/Meta. Use only when

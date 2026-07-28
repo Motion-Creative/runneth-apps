@@ -10,7 +10,9 @@ anything. Once done, it gives the Account Context Brain real material to work wi
 
 > **Cacheth is the system of record for per-creative content.**
 > Per-creative content (summaries, hooks, transcripts, AI tags) lives in **Cacheth**, the local
-> creative cache, and is surfaced through **Knoweth**. This playbook writes no creative files,
+> creative cache. **Knoweth** indexes the summary artifacts Cacheth generates (identity, ad
+> names, copy, summary text) — transcripts and AI tags are reachable only through the
+> `motion cache` CLI. This playbook writes no creative files,
 > and nothing in the package does so on its own. Runneth saves a creative file to the brain only
 > when a person explicitly asks for one — a dated snapshot that will not stay synced with the
 > cache. When later citing such a file, prefer the cache for current facts.
@@ -64,8 +66,10 @@ Runneth reaches this content two ways, cheapest first:
 
 1. **Knoweth pre-context injection (passive, first priority).** Before every turn, Knoweth
    resolves the incoming query against the local index and injects matching creative chunks into
-   the "Knoweth Pre-LLM Context" block. If the injected context answers the question, answer
-   from it — no tool call.
+   the "Knoweth Pre-LLM Context" block. What it holds is Cacheth's generated summary artifacts —
+   identity, ad names, copy, summary text — not complete records, so transcripts and AI tags
+   never arrive this way. If the injected context answers the question, answer from it — no
+   tool call.
 2. **motion cache CLI (active, when injection is not enough).** Local, no API call:
    - `motion cache search-summaries --query "<text>" [--limit <n>]` — text search across ad
      names, ad copy, and summary content. Each match carries `creativeId`, `adNames[]`, an
@@ -74,10 +78,13 @@ Runneth reaches this content two ways, cheapest first:
    - `motion cache get-creative --creative-id <id>` — the complete record for one creative,
      including `adUnits[].adName`. Always the full record (no section filtering); extract the
      layer you need from the result file with `jq`.
-   - `motion cache export-summaries --format jsonl` — the whole synced corpus, one record per
-     creative, each carrying its `adNames[]`. `--format` is required (`duckdb` is the
-     alternative when SQL-style queries suit a large corpus). The bulk path when the question
-     spans the full account rather than a search match.
+   - `motion cache export-summaries --format jsonl` — the whole synced summary corpus, one
+     record per creative, each carrying its `adNames[]` (no transcripts or AI tags — those need
+     `get-creative`). `--format` is required (`duckdb` is the alternative when SQL-style queries
+     suit a large corpus). The command returns a wrapper, not the corpus: read the Meta corpus
+     path from `exportPaths.meta` on the output (or `.providers.meta.path` in the wrapper file)
+     and query that per-provider file. The bulk path when the question spans the full account
+     rather than a search match.
    - `motion cache status` — when the cache last synced and how many creatives it holds.
    - `motion cache refresh` — trigger a fresh sync from Motion to pull in newly launched
      creatives or updated summaries (the one cache command that reaches out to Motion).
@@ -119,27 +126,35 @@ never reconstruct the record by hand.
 
 ## Step 2 — Provisional naming decode
 
-1. Export the synced corpus and extract the full ad-name list (local, no API call):
+1. Check access before pulling: run `motion cache status --workspace-id <workspaceId>` once.
+   If it errors, record the blocker and stop this step — do not loop retries against the data
+   commands. If it succeeds but shows an empty or still-building cache, run
+   `motion cache refresh --workspace-id <workspaceId>` and come back once the sync settles.
+2. Export the synced corpus and extract the full ad-name list (local, no API call), keeping the
+   same explicit workspace scope on every command:
 
    ```
-   motion cache export-summaries --format jsonl
+   motion cache export-summaries --format jsonl --workspace-id <workspaceId>
    ```
 
-   One record per creative, each carrying its associated ad names — extract them with
-   `jq -r '.adNames[]?'` on the returned file (a creative served in several ads carries that
-   many names). If the cache is still bootstrapping the workspace, the list may be incomplete —
-   `motion cache status` shows the sync state; run `motion cache refresh` and re-run the decode
-   once the sync settles. The export file is `./workdir/` scratch, not brain content.
-2. Look for structure in the `adName` values: delimiters (underscores, hyphens, pipes),
+   The command returns a wrapper, not the corpus. Read the Meta corpus path from
+   `exportPaths.meta` on the output (or `.providers.meta.path` in the wrapper file), then
+   extract the names with `jq -r '.adNames[]?'` on that per-provider JSONL file — one record
+   per creative, each carrying its associated ad names (a creative served in several ads
+   carries that many names). If the list looks incomplete the cache may still be bootstrapping —
+   `motion cache status --workspace-id <workspaceId>` shows the sync state; re-run the decode
+   once the sync settles. The wrapper is `./workdir/` scratch and the per-provider export files
+   live in Cacheth's own storage — none of it is brain content.
+3. Look for structure in the `adName` values: delimiters (underscores, hyphens, pipes),
    position-based encoding, recurring prefixes, tag-like codes.
-3. If a pattern is detected, build a provisional decode table: position or segment → meaning →
+4. If a pattern is detected, build a provisional decode table: position or segment → meaning →
    example values. Mark it **provisional**.
-4. Note where product/concept tokens live. Each full record's `adUnits[]` (via
+5. Note where product/concept tokens live. Each full record's `adUnits[]` (via
    `motion cache get-creative`) carries the campaign and ad set names alongside each ad name —
    spot-check a handful of records to see whether the product tokens found in ad names also
    cascade into campaign or ad set names, or live at the ad level only. Record the provisional
    placement (e.g. "product names appear in ad names and campaign names") with the decode table.
-5. **Pass findings to the Account Context Brain.** When the Account Context Brain runs (Step 2
+6. **Pass findings to the Account Context Brain.** When the Account Context Brain runs (Step 2
    of the onboarding), pre-populate Field 4 (Naming conventions) with this provisional decode
    table and the product-token placement. The Account Context Brain confirms, corrects, or
    replaces them — it does not start from scratch.
@@ -149,7 +164,7 @@ the Account Context Brain to confirm.
 
 The provisional decode is a handoff — this playbook writes nothing to the brain, and no
 `/agent/INDEX.md` entry is needed here (per-creative content is in Cacheth, and Knoweth
-surfaces it without an index step). On confirmation, the Account Context Brain (Field 4, the
+surfaces its summary artifacts without an index step). On confirmation, the Account Context Brain (Field 4, the
 single owner of account interpretation) saves the result in `account-context.md` and writes
 the operational decoder to `/agent/brain/meta/naming-decoder.json` — typed positions, query
 fields, and filter patterns per the Field 4 spec. Anything decoding an ad name at analysis
@@ -188,14 +203,14 @@ workspace-scoped, and every cache query runs against the resolved workspace.
 |---|---|
 | Account Context Brain (incl. confirmed naming decode, Field 4) | `/agent/brain/meta/account-context.md` |
 | Naming decoder (Field 4's operational output) | `/agent/brain/meta/naming-decoder.json` |
-| Per-creative content | Cacheth (surfaced via Knoweth; brain files only as person-requested snapshots) |
+| Per-creative content | Cacheth (summary artifacts surfaced via Knoweth; brain files only as person-requested snapshots) |
 | Brain index | `/agent/INDEX.md` |
 | Change log | `/agent/brain/meta/_changelog.md` |
 
 | What | Command / approach |
 |---|---|
-| Creative lookup (passive) | Knoweth pre-context injection — answer from injected chunks when sufficient |
+| Creative lookup (passive, summary-level only) | Knoweth pre-context injection — answer from injected chunks when sufficient |
 | Creative search (active) | `motion cache search-summaries --query "<text>"` (local, no API call) |
-| One creative's full record | `motion cache get-creative --creative-id <id>` (local, no API call) |
-| Full corpus / naming decode | `motion cache export-summaries --format jsonl` + `jq -r '.adNames[]?'` (local, no API call) |
+| One creative's full record (incl. transcript, AI tags) | `motion cache get-creative --creative-id <id>` (local, no API call) |
+| Full corpus / naming decode | `motion cache export-summaries --format jsonl`, then `jq -r '.adNames[]?'` on the per-provider file the wrapper points to (local, no API call) |
 | Cache freshness / re-sync | `motion cache status` (local) / `motion cache refresh` (syncs from Motion) |

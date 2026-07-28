@@ -7,7 +7,7 @@ building their weekly deck. This is the "catch" in Connect → Train → Validat
 
 This is the third part of the Meta onboarding package. It runs after the
 **Account Context Brain** (`/agent/brain/meta/account-context.md`) and the
-**creative content layer** (Cacheth, surfaced through Knoweth) are in place.
+**creative content layer** (Cacheth, summaries surfaced through Knoweth) are in place.
 
 The one-line model:
 

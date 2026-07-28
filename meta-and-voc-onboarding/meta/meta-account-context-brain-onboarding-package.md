@@ -82,7 +82,7 @@ future turns read them.
 - Create the account's `meta` folder in the brain if it does not exist. Save the filled result
   to `/agent/brain/meta/account-context.md`. If a naming convention was confirmed, the
   operational decoder lives beside it at `/agent/brain/meta/naming-decoder.json` (Field 4 owns
-  it). Per-creative content lives in Cacheth (surfaced through Knoweth), not in brain files.
+  it). Per-creative content lives in Cacheth (summaries surfaced through Knoweth), not in brain files.
 
 **The saved file is a prose reference document, not the worksheet.** Capture and communication are
 two different jobs. The fields-and-statuses procedure below is how Runneth captures rigorously; the

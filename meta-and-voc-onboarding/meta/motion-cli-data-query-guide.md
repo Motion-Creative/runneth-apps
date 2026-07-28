@@ -201,8 +201,9 @@ home:
 - **WHY — creative content and customer voice.** Two why-sources, two sides of the same
   question:
   - **Cacheth is the creative side:** why an ad hooks or loses people, what the winners have
-    in common, what a creative actually says and shows. This is the summary sections, hooks,
-    transcripts, and AI tags — via Knoweth injection first, then the `motion cache` CLI.
+    in common, what a creative actually says and shows. This is the summary sections and hooks —
+    via Knoweth injection first, then the `motion cache` CLI — plus transcripts and AI tags,
+    which live only on the full record (`motion cache get-creative`).
     Cacheth holds no performance data: stating a number from memory or from a summary is
     fabrication, not analysis.
   - **VoC is the customer side:** why people respond the way they do — reviews, support
