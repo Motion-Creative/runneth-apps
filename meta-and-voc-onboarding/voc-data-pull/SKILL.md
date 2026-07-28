@@ -77,7 +77,11 @@ VoC platform may arrive as an OAuth connection **or** a stored secret, so an
 availability check always checks both `integrations status --app <slug>` and the stored
 secrets - for
 every VoC platform, not just Okendo/Stamped (which are secrets-only because no
-Pipedream app exists for them).
+Pipedream app exists for them). The secret store cannot be listed (the runtime refuses
+Bash reads of `/agent/.runtime/secrets`, and neither `secret` nor `secure-fetch` has a
+list command): probe per platform by attempting its documented secret key
+(`secret run --env KEY=<SECRET_KEY> -- true`, or a bounded `secure-fetch run`) and treat
+a "secret not available" error as not stored.
 
 **Driving a platform from a stored secret (instead of the proxy):** the recipe's endpoints
 and mappings stay the same, but you must supply what the proxy normally injects. Get the

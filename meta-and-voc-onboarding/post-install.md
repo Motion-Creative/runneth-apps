@@ -14,7 +14,12 @@ asked. Exactly once per install: if the four guard sentinels are already in
    VoC platform slug (the voc-data-pull skill's Step 1 table lists them; `integrations
    list --query <term>` finds any others) for OAuth connections, plus the stored secrets
    for **every** VoC platform (any platform may be key-stored instead of connected), plus
-   whether a Meta workspace is connected. VoC scope is customer-voice
+   whether a Meta workspace is connected. The secret store cannot be listed - the runtime
+   refuses Bash reads of `/agent/.runtime/secrets`, and neither `secret` nor
+   `secure-fetch` has a list command - so probe per platform: attempt the platform's
+   documented secret key (`secret run --env KEY=<SECRET_KEY> -- true`, or a bounded
+   `secure-fetch run`) and treat a "secret not available" error as not stored. Never
+   conclude "no secrets" from a refused directory read. VoC scope is customer-voice
    data, not the skill's recipe list - a reachable reviews/support/community platform with
    no recipe still counts.
 2. **VoC first (it runs in the background).** For each reachable VoC platform, run the
@@ -62,26 +67,35 @@ asked. Exactly once per install: if the four guard sentinels are already in
      what they gate - organize and validation fire later, on their own conditions.
 4. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
    creative content layer (Cacheth + query paths), detect naming patterns as provisional
-   proposals for the next step.
+   proposals for the next step. The procedure is
+   `/agent/brain/meta-and-voc-onboarding/meta/meta-creative-attributes-playbook.md`
+   (its Step 2 is the install-time part). It ships as a brain document - there is no
+   creative-attributes skill directory to look for.
 5. **Account Context Brain** (Meta connected only): its guard is already merged (step 3).
    Autofill every field possible from live data - silently. Do not present the findings,
    do not ask the gap questions, do not run the walkthrough; the onboarding-walkthrough
    skill owns all of that and fires later, on a human's yes. **Persist
-   before you stop:** write the account context brain file with every autofilled field
-   and the provisional naming decode as terse facts (short lines, no prose polish) so
-   the autofill survives beyond this conversation. This file gets written even when the
+   before you stop:** write `/agent/brain/meta/account-context.md` in the saved-file
+   format the account-context playbook defines (Section 3: a prose reference document,
+   not the worksheet) with every autofilled field and the provisional naming decode, and
+   index it in `/agent/INDEX.md` with the playbook's aliases, so the autofill survives
+   beyond this conversation. This file gets written even when the
    live pulls are entirely blocked by API errors: all field headers with whatever is
    known, each blocker recorded next to the field it blocks - a resumable scaffold must
-   exist on disk before this step ends, never nothing. Long-form write-ups and
-   `/agent/INDEX.md` updates wait for the turn where the human's answers arrive - do not
-   compose them now, but never leave autofill results only in the chat.
+   exist on disk before this step ends, never nothing. What waits for the human's
+   answers is the walkthrough itself - never leave autofill results only in the chat.
 6. **Close with the readiness report - status only, never content.** One line per part
    stating its state (running in background / done / waiting on a person / skipped and
    why), plus how many questions need a human. The report carries no findings: no account
-   numbers or metrics, no naming positions or decoder detail, no field reads, and never
+   numbers or metrics, no naming positions or decoder detail (not even the shape - "a
+   5-position decoder" or "4 schemas detected" is decoder detail; say "provisional
+   naming decode written" and stop), no field reads, and never
    the question text itself - naming even one question here burns the walkthrough's
    opening. If a part is waiting on a person, name the topic in two or three words
-   ("targets and thresholds"), not the question. The report's shape is literal:
+   ("targets and thresholds"), not the question. The same discipline covers the whole
+   closing stretch of the turn: the progress narration around the report must not
+   surface metrics, findings, or flags either ("average ROAS is 0.88" belongs in the
+   brain file, never in this turn's visible text). The report's shape is literal:
 
    > meta-and-voc-onboarding <version> - install complete
    > - VoC sync: <per-platform status, one line total>
