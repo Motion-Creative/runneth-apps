@@ -16,10 +16,13 @@ asked. Exactly once per install: if the four guard sentinels are already in
    for **every** VoC platform (any platform may be key-stored instead of connected), plus
    whether a Meta workspace is connected. The secret store cannot be listed - the runtime
    refuses Bash reads of `/agent/.runtime/secrets`, and neither `secret` nor
-   `secure-fetch` has a list command - so probe per platform: attempt the platform's
-   documented secret key (`secret run --env KEY=<SECRET_KEY> -- true`, or a bounded
-   `secure-fetch run`) and treat a "secret not available" error as not stored. Never
-   conclude "no secrets" from a refused directory read. VoC scope is customer-voice
+   `secure-fetch` has a list command. The only probe that counts is running each
+   key-stored platform's documented secret key: `secret run --env KEY=<SECRET_KEY> -- true`
+   (or that platform's bounded `secure-fetch run` from the skill). A "secret not
+   available" error means not stored. A refused `ls`, a `--help` read, or any other
+   indirect check proves nothing and is never grounds to mark a platform unreachable -
+   every key-stored platform in the skill's table gets its key probed this way before
+   this step is done. VoC scope is customer-voice
    data, not the skill's recipe list - a reachable reviews/support/community platform with
    no recipe still counts.
 2. **VoC first (it runs in the background).** For each reachable VoC platform, run the
@@ -107,6 +110,11 @@ asked. Exactly once per install: if the four guard sentinels are already in
    >
    > Are you ready to begin your onboarding?
 
+   Fill only the angle-bracket slots; append nothing else to any bullet. "Creative
+   Attributes: done" is the entire line - naming what was detected, the convention's name
+   or shape, a file path, or guard version numbers turns a status into a finding. The
+   only permitted extensions of a bullet are its allowed states ("skipped - <why>",
+   "waiting on a person - <two-or-three-word topic>"), never extra detail after "done".
    The closing line is verbatim and nothing follows it. A yes (from anyone, in any
    conversation, whenever it comes) invokes the onboarding-walkthrough skill; that skill -
    and only that skill - presents the findings and asks the questions. Do not start the
