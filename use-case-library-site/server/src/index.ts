@@ -70,6 +70,7 @@ const PUBLIC_DIR = resolve(__dirname, '..', 'public')
 const ONE_PAGER_HTML = readFileSync(resolve(__dirname, 'one-pager.html'), 'utf-8')
 const HOW_TO_BUILD_THE_BRAIN_HTML = readFileSync(resolve(__dirname, 'how-to-build-the-brain.html'), 'utf-8')
 const HOW_TO_PROMPT_HTML = readFileSync(resolve(__dirname, 'how-to-prompt-masterfully.html'), 'utf-8')
+const ATC_GROWTH_HTML = readFileSync(resolve(__dirname, 'ai-training-club-marketers-growth.html'), 'utf-8')
 
 const server = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' } })
 
@@ -265,6 +266,19 @@ const BRAIN_CHECKLIST_FIELD_KEYS = new Set(BRAIN_CHECKLIST_SECTIONS.map((s) => s
 const BRAIN_CHECKLIST_MAX_TOTAL_BYTES = 25 * 1024 * 1024
 
 server.post('/api/brain-checklist', async (req, reply) => {
+  // Uploads temporarily paused while the memory pipeline fix ships (approved by Kyra, 2026-07-24).
+  // Backstops the removed upload tab: even a cached page or a #checklist deep link cannot submit
+  // and risk losing a customer's files. Re-enable with BRAIN_CHECKLIST_PAUSED=0 (or remove this
+  // block) once the fix has landed.
+  const UPLOADS_PAUSED = process.env.BRAIN_CHECKLIST_PAUSED !== '0'
+  if (UPLOADS_PAUSED) {
+    reply.code(503)
+    return {
+      error: 'paused',
+      message: 'Uploads are temporarily paused while we ship an improvement to how your files are saved. Your CSM will follow up, or email support@motionapp.com and we can take it from there.',
+    }
+  }
+
   if (!req.isMultipart()) {
     reply.code(400)
     return { error: 'invalid_request', message: 'Expected multipart/form-data.' }
@@ -433,6 +447,16 @@ server.get('/how-to-prompt-masterfully/', async (_, reply) => {
   reply.header('content-type', 'text/html; charset=utf-8')
   reply.header('cache-control', 'public, max-age=300')
   return HOW_TO_PROMPT_HTML
+})
+server.get('/ai-training-club-marketers-growth', async (_, reply) => {
+  reply.header('content-type', 'text/html; charset=utf-8')
+  reply.header('cache-control', 'public, max-age=300')
+  return ATC_GROWTH_HTML
+})
+server.get('/ai-training-club-marketers-growth/', async (_, reply) => {
+  reply.header('content-type', 'text/html; charset=utf-8')
+  reply.header('cache-control', 'public, max-age=300')
+  return ATC_GROWTH_HTML
 })
 // CSM roster — used to validate path params on /how-to-build-the-brain/:csm
 // and to render the dashboard tabs. Keep alphabetical.
