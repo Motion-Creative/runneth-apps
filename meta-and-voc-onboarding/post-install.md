@@ -52,9 +52,13 @@ asked. Exactly once per install: if the four guard sentinels are already in
    do not try a script) and the edit/patch tool fails validation; the file-write tool is
    the only thing that can change it, and the file's current contents are already in your
    system prompt. So:
-   - Read the four guard files with the file-read tool. In the guard content, replace
-     every literal `<workspaceId>` token with the target Meta workspace id; leave every
-     other angle-bracket placeholder (`<platform>`, `<routine-id>`, `<userId>`) untouched,
+   - Read the four guard files with the file-read tool. The target Meta workspace is
+     the one this conversation operates in - the workspace id this conversation's
+     Motion commands resolve to - never an id recalled from removed guard blocks, a
+     prior install, or another conversation. In the guard content, replace the
+     `<workspaceId>` token in each guard's "(workspace <workspaceId>)" header with that
+     id; leave the Knoweth lane syntax (`project:<workspaceId>`) and every other
+     angle-bracket placeholder (`<platform>`, `<routine-id>`, `<userId>`) untouched,
      and change nothing else - the blocks go in byte-for-byte, never paraphrased or
      condensed.
    - Compose the full new file: the current `/agent/user.md` content (from your system
