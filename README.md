@@ -50,15 +50,15 @@ legacy directory directly.
 ## Meta and Voice of Customer Onboarding
 
 `meta-and-voc-onboarding/` is a real indexed package: it carries a schema-v1
-`package.json` manifest and is registered in `package-index.json`. **It installs
-by name - no GitHub link.** A person asks for "meta-and-voc-onboarding" and the agent
-runs `package intent add-optional meta-and-voc-onboarding` followed by `package sync`:
-artifacts fetched from GitHub, durable intent across VM rebuilds, automatic
-updates after merges. The install message must also tell the agent to read
+`package.json` manifest and is registered in `package-index.json` with
+`installPolicy: manual` - nothing installs it except one explicit
+`package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"`
+call. The completed install records selected intent (VM rebuilds reinstall it) and
+`updatePolicy: auto` rolls out merged updates. The install message must also tell the agent to read
 `/agent/brain/meta-and-voc-onboarding/post-install.md` and execute its install-time
 sequence in the same conversation - that clause is what kicks off the VoC/Meta
 setup; the exact copy-paste message lives in `meta-and-voc-onboarding/README.md` under
-"How to install". An explicit `package install` of a GitHub ref exists only for
+"How to install". A branch ref instead of `#main` exists only for
 branch testing. If an install fails, report the exact error and stop - never
 work around the package manager by hand-copying files or editing state under
 `/agent/.runneth/packages/`. `building-integrations/` remains on `main` as a compatibility

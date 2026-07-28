@@ -9,9 +9,9 @@ change to the package, not per commit. Entries are newest-first.
 The package as it ships:
 
 - Schema-v1 `package.json` manifest, indexed in the repo root `package-index.json`
-  with a raw `github` source. Installs by name: `package intent add-optional
-  meta-and-voc-onboarding` + `package sync`. `installPolicy: manual`,
-  `updatePolicy: auto`, `categories: []`.
+  with a raw `github` source. Manual install: one explicit `package install` call
+  of the GitHub source. `installPolicy: manual`, `updatePolicy: auto`,
+  `categories: []`.
 - Stages onboarding docs and four ready-made guard blocks into
   `/agent/brain/meta-and-voc-onboarding/`, plus the `voc-data-pull`,
   `meta-ad-performance-analysis`, and `onboarding-walkthrough` skills into the

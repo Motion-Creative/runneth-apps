@@ -1,16 +1,16 @@
 # Meta and Voice of Customer Onboarding Package: Overview
 
-> **Install by name - no GitHub link needed.** This is a real indexed package: it is
-> registered in the repo's `package-index.json`, which every VM already reads from `main`.
-> A person just says "install meta-and-voc-onboarding" and Runneth runs
-> `package intent add-optional meta-and-voc-onboarding` + `package sync` - artifacts are
-> fetched from GitHub, the intent survives VM rebuilds, and merged updates roll out
-> automatically. Pasting a repo URL is only for testing an unmerged branch or PR.
+> **Manual install (beta).** This is a real indexed package: it carries a schema-v1
+> manifest and is registered in the repo's `package-index.json` with
+> `installPolicy: manual` - nothing installs it except one explicit
+> `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"` call.
+> The completed install records selected intent, so it survives VM rebuilds, and
+> `updatePolicy: auto` rolls out merged updates. A branch ref instead of `#main` is only
+> for testing an unmerged branch or PR.
 
 This is the onboarding bundle for a customer's brain. Installing it is the trigger: the
-install conversation runs `package intent add-optional meta-and-voc-onboarding` followed by
-`package sync`, which stages this folder's files to their destinations on the VM (per
-`package.json`, the package manifest - skill files to the
+install conversation stages this folder's files to their destinations on the VM with one
+`package install` call (per `package.json`, the package manifest - skill files to the
 skills root, docs to `/agent/brain/meta-and-voc-onboarding/`) and immediately runs the package
 for everything the org already has connected (see "After install" below); routines and
 guard blocks keep it current afterward. Its parts do two jobs, in order: **land the data** (VoC pulls into brain
@@ -55,24 +55,23 @@ sequence (VoC sync routines, guard merges, Meta account context) runs only when 
 conversation tells it to. Canonical message:
 
 > Install the meta-and-voc-onboarding package: run
-> `package intent add-optional meta-and-voc-onboarding` and then `package sync`, then read
-> `/agent/brain/meta-and-voc-onboarding/post-install.md` and execute its install-time
-> sequence in this conversation.
+> `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"`,
+> then read `/agent/brain/meta-and-voc-onboarding/post-install.md` and execute its
+> install-time sequence in this conversation.
 
-Branch-testing variant (same clause, different install command):
+Branch-testing variant (same clause, different ref):
 
 > Install the meta-and-voc-onboarding package: run
 > `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#<branch>"`,
 > then read `/agent/brain/meta-and-voc-onboarding/post-install.md` and execute its
 > install-time sequence in this conversation.
 
-The canonical path (the package is registered in the repo's `package-index.json`, which
-VMs read from `main`):
+The canonical path (`installPolicy: manual` - nothing installs this package except the
+explicit call):
 
-1. Run `package intent add-optional meta-and-voc-onboarding` - this records durable intent, so
-   VM rebuilds reinstall the package automatically.
-2. Run `package sync` - this installs it from the index (artifacts fetched from GitHub)
-   and, with `updatePolicy: auto`, keeps it updated fleet-wide after that.
+1. Run `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"`.
+   The completed install records selected intent, so VM rebuilds reinstall the package
+   automatically, and `updatePolicy: auto` keeps it updated after that.
 
 Branch testing only (the version on `main` is not what you were asked to install, e.g. a
 PR or branch reference):
@@ -285,8 +284,8 @@ The run order below is the human-readable description of the same lifecycle.
 
 ## Install and run order
 
-1. **Install the package**: `package intent add-optional meta-and-voc-onboarding` followed by
-   `package sync` (see "How to install" above); never copy files by hand. Staging the files
+1. **Install the package** with one `package install` call (see "How to install" above);
+   never copy files by hand. Staging the files
    does not self-run anything - the post-install run right after it does. Nothing in this package writes per-creative files to the brain —
    creative content lives in Cacheth; its summary artifacts are surfaced through Knoweth.
 2. **Creative Attributes (Step 1).** Confirms the workspace scope, establishes the creative
