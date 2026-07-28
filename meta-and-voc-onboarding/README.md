@@ -8,8 +8,9 @@
 > automatically. Pasting a repo URL is only for testing an unmerged branch or PR.
 
 This is the onboarding bundle for a customer's brain. Installing it is the trigger: the
-install conversation stages this folder's files to their destinations on the VM with one
-`package install` call (per `package.json`, the package manifest - skill files to the
+install conversation runs `package intent add-optional meta-and-voc-onboarding` followed by
+`package sync`, which stages this folder's files to their destinations on the VM (per
+`package.json`, the package manifest - skill files to the
 skills root, docs to `/agent/brain/meta-and-voc-onboarding/`) and immediately runs the package
 for everything the org already has connected (see "After install" below); routines and
 guard blocks keep it current afterward. Its parts do two jobs, in order: **land the data** (VoC pulls into brain
@@ -284,9 +285,9 @@ The run order below is the human-readable description of the same lifecycle.
 
 ## Install and run order
 
-1. **Install the package** with one `package install` call (see "How to install" above);
-   never copy files by hand. Staging the files does not self-run anything - the post-install
-   run right after it does. Nothing in this package writes per-creative files to the brain —
+1. **Install the package**: `package intent add-optional meta-and-voc-onboarding` followed by
+   `package sync` (see "How to install" above); never copy files by hand. Staging the files
+   does not self-run anything - the post-install run right after it does. Nothing in this package writes per-creative files to the brain —
    creative content lives in Cacheth; its summary artifacts are surfaced through Knoweth.
 2. **Creative Attributes (Step 1).** Confirms the workspace scope, establishes the creative
    content layer (Cacheth + the query paths), detects naming patterns, and passes them to the
