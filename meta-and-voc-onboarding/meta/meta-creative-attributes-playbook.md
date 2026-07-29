@@ -186,14 +186,14 @@ automatically. What remains is event-triggered:
 
 ## Multi-workspace
 
-Most accounts are single-workspace, but multi-workspace orgs are real. When the brain holds more
-than one workspace, scope the brain files per workspace:
-
-- `/agent/brain/meta/<workspace-slug>/account-context.md`
-- `/agent/brain/meta/<workspace-slug>/naming-decoder.json`
-
-The creative content layer needs no per-workspace folders: Cacheth's cache projects are already
-workspace-scoped, and every cache query runs against the resolved workspace.
+This package supports **one Meta workspace per sandbox**. The brain files
+(`/agent/brain/meta/account-context.md`, `/agent/brain/meta/naming-decoder.json`) and the
+merged guard headers all describe a single workspace - the one resolved at install. If
+the sandbox is already set up for a different workspace (the guard headers name it), do
+not improvise per-workspace copies or rewrite the guards: stop and report that this
+sandbox belongs to another workspace, and let a person decide. The creative content
+layer is unaffected either way: Cacheth's cache projects are workspace-scoped, and every
+cache query runs against the resolved workspace.
 
 ---
 
