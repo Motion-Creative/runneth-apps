@@ -357,7 +357,10 @@ folder state:
    sentence (for example "Only pull items for brand <brand>."). On the stored-secret path,
    replace the `--account` sentence with the secret key and confirmed identity ("Use the
    stored key <SECRET_KEY> for <identity>; if the key stops working, report - do not
-   substitute another credential.").
+   substitute another credential."). On the Motion-native path (meta-ads), there is no
+   pinned account: replace the `--account` sentence with the workspace scope ("Ad comments
+   come through this workspace's own Meta connection - scope every pull with
+   `--workspace-id <workspaceId>`; there is no account to pass.").
 
 3. Kick the first sync run now (it happens in the background; the window rules below make
    it a full backfill when no files exist yet, incremental otherwise):

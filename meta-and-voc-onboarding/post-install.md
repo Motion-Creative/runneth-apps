@@ -33,7 +33,13 @@ per-workspace:
   the blocks untouched, no matter which workspace merged them, and continue with the rest.
 - **This workspace's setup (steps 1, 2, 4, 5):** done when this workspace is listed in the
   `runneth:meta-voc-onboarded` roster in `/agent/user.md` (step 6). If it is, this sequence
-  already ran for this workspace - do not repeat it. If it is not, run those steps now even
+  already ran for this workspace - do not repeat it. The one exception is the explicit
+  reinstall or upgrade the activation instruction names: then re-run the sequence for this
+  workspace as a resume, never a restart - the guard merge keeps its normal skip rule, VoC
+  setup skips any platform whose workspace-named routine already exists (same pinned
+  account, no re-confirmation), existing brain files are kept and filled rather than
+  rewritten, and the roster entry stays exactly as it is - a workspace is never listed
+  twice. If it is not, run those steps now even
   when other workspace folders are already populated and other workspaces are listed in the
   roster. Never read, copy, rename, or overwrite another workspace's folder to serve this one.
   If the roster does not list this workspace but

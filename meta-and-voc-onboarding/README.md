@@ -92,11 +92,12 @@ package state is worse than a failed install.
 The moment the install succeeds, run [`post-install.md`](post-install.md)
 (staged at `/agent/brain/meta-and-voc-onboarding/post-install.md`) in the same conversation.
 
-These instruction files are the package itself, not its output. They live in the brain
-outside the `meta` folder structure. The brain's `meta` folder holds only what Runneth
-generates from running them: the filled account context (which carries the confirmed naming
-decode). Per-creative content lives in Cacheth (the local creative cache); nothing in this
-package writes it to brain files.
+These instruction files are the package itself, not its output. They stay in the shared
+staged folder (`/agent/brain/meta-and-voc-onboarding/`), outside every workspace folder.
+What Runneth generates from running them lands under
+`/agent/brain/<workspace>/data-sources/meta/`: the filled account context (which carries
+the confirmed naming decode). Per-creative content lives in Cacheth (the local creative
+cache); nothing in this package writes it to brain files.
 
 ---
 
