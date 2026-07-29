@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.10 — validation is a training loop: deck feedback heals context, durability routing, spec-level convergence (July 2026)
+### Version 1.12 — completed Voice of Customer Audits feed validation questions, answers, and recommendations (July 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
@@ -85,9 +85,10 @@ Meta validation gate:
   `<workspace>` token stays literal in this file. Every path below is inside this
   conversation's workspace folder, and each workspace validates independently.
 - When the Account Context Brain (/agent/brain/<workspace>/data-sources/meta/account-context.md) has all required
-  fields [CONFIRMED] and the creative content layer has synced (the workspace's creatives are in
-  Cacheth, surfaced through Knoweth), and validation has not yet been completed
-  (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
+  fields [CONFIRMED] and the creative content layer resolves (the workspace's creatives in
+  Cacheth, surfaced through Knoweth - or, where the sandbox cache feature is disabled, live
+  content pulls per the Cacheth Command Reference's ladder), and validation has not yet been
+  completed (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
   experience described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
   the customer has confirmed Runneth's answers to their starter questions, the weekly deck is
@@ -113,8 +114,13 @@ Do not start validation until both are true:
    metadata" block at the end of `/agent/brain/<workspace>/data-sources/meta/account-context.md`. All nine required interpretation fields signed off
    by a person. If any field is still `[AUTO]` or `[FLAGGED]`, finish that first. Validating
    against a guessed lens teaches the customer the wrong thing.
-2. **The creative content layer is ready.** The workspace's creatives are in Cacheth: Knoweth
-   injects matching summaries into the turn, and `motion cache search-summaries` finds them.
+2. **The creative content layer resolves.** In the normal case the workspace's creatives are
+   in Cacheth: Knoweth injects matching summaries into the turn, and
+   `motion cache search-summaries` finds them. In a sandbox where the cache feature is not
+   enabled (the `motion cache` commands fail with the explicit "Motion cache is disabled for
+   this sandbox" message), the layer's live rung stands in (per the Cacheth Command
+   Reference's ladder) — validation proceeds on live content reads; they are just slower. A
+   cache that exists but has not synced yet is neither: the fix is the sync.
 
 If either is missing, say so plainly and route back to that step. Do not fake a validation on an
 incomplete foundation. Routing back means telling the person what is missing — it never means
@@ -195,6 +201,15 @@ or adds.** These are the foundational questions, not frequent queries. The defau
 3. What themes show up in our winning ads? (from AI tags and creative summaries)
 4. What are we testing right now, and what's ready to scale?
 5. Show me all our [product] ads — using a real product or concept name from this account.
+6. When `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` exists: What are
+   customers telling us they love, object to, or misunderstand — and which of our current
+   ads speak to those signals?
+
+Question 6 is conditional, not a validation prerequisite. A completed Voice of Customer
+Audit makes it part of the starter set; cite the compiled themes and inspect their cited raw
+evidence before repeating a claim or quote. If synced VoC exists but the manual audit has not
+run, do not silently run it and do not block Meta validation. Say that the customer-voice
+question becomes available after the person chooses to run the `voc-audit` skill.
 
 Question 4 speaks the account's language and reads its structure. "Ready to scale" is the
 neutral default — if the team has its own word for the testing-to-scaling transition
@@ -227,7 +242,9 @@ set.
 Then, one question at a time:
 
 1. **Answer it** from the Account Context Brain + the creative content layer, using the
-   account's own interpretation (their metrics, their naming, their targets).
+   account's own interpretation (their metrics, their naming, their targets). For Question 6
+   and any customer-side WHY question the customer adds, also read the saved Voice of
+   Customer Audit and verify against its cited raw VoC evidence.
 2. **Ask the confirm:** "Is that right? Am I missing anything?"
 3. **On a yes:** note the confirmed answer and move to the next question.
 4. **On a correction:** route it through the durability test (the training-loop principle
@@ -243,8 +260,9 @@ Rules for the loop:
   "Field 2 corrected."
 - Keep it moving. When an answer lands, confirm and go. Don't over-explain a correct read.
 - Show the work. Each answer states which filter and signal it used (naming decode, which name
-  level it filtered — campaign, ad set, or ad — Cacheth tags, live metrics) and what it
-  couldn't confirm. The customer can't correct a read they can't see.
+  level it filtered — campaign, ad set, or ad — Cacheth tags, live metrics, compiled VoC
+  themes, or cited raw customer language) and what it couldn't confirm. The customer can't
+  correct a read they can't see.
 - Show the creatives. When an answer references specific creatives, present them as a gallery
   per the Data-Query Guide's presenting-creatives contract: media rendered from each
   creative's Cacheth `url`, names decoded through the naming decoder — never a raw delimited
@@ -285,7 +303,9 @@ Build it on the report component library so the layout is proven, not hand-rolle
 reads Field 10 for its structure and sections, the creative content layer (Cacheth, via
 injection or the cache CLI) for creative facts (themes, hooks, tags, content), live motion CLI
 pulls for performance (spend, winners, spend state), and the Account Context Brain for how
-"best," "winner," and "ready to scale" are judged.
+"best," "winner," and "ready to scale" are judged. When the deck includes customer insight,
+messaging recommendations, or what-to-make-next guidance and a Voice of Customer Audit exists,
+read it and cite its evidence; never substitute it for live performance or creative content.
 
 The deck is not just output. It is the proof that Runneth connected the pieces and understood them
 well enough to produce something the team will use every week.

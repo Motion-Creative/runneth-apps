@@ -6,9 +6,10 @@ Meta validation gate:
   `<workspace>` token stays literal in this file. Every path below is inside this
   conversation's workspace folder, and each workspace validates independently.
 - When the Account Context Brain (/agent/brain/<workspace>/data-sources/meta/account-context.md) has all required
-  fields [CONFIRMED] and the creative content layer has synced (the workspace's creatives are in
-  Cacheth, surfaced through Knoweth), and validation has not yet been completed
-  (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
+  fields [CONFIRMED] and the creative content layer resolves (the workspace's creatives in
+  Cacheth, surfaced through Knoweth - or, where the sandbox cache feature is disabled, live
+  content pulls per the Cacheth Command Reference's ladder), and validation has not yet been
+  completed (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
   experience described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
   the customer has confirmed Runneth's answers to their starter questions, the weekly deck is

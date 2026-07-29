@@ -17,10 +17,18 @@ Knoweth brain discipline (all writes, going forward):
   per-creative file only when a person explicitly asks, and treat it as a dated snapshot (the
   cache stays the retrieval source of truth for current facts). Performance metrics are pulled
   live via the motion CLI, never saved.
+- For any question about why customers respond, what to make next, messaging, pain points,
+  objections, transformations, personas, or customer language, read
+  `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` when it exists, then verify
+  important claims against the raw VoC files it cites. The audit informs customer-side WHY;
+  it never replaces live performance metrics or creative content.
 - Keep compiled pages in sync with raw: new evidence restales and regenerates the dependent page; a
-  correction updates the compiled page (never raw) and propagates. Curate, do not append: merge into
-  the existing page rather than spawning a duplicate. Merge only within one workspace - two
-  workspaces describing the same platform stay two pages.
+  correction updates the compiled page (never raw) and propagates. Exception: the Voice of
+  Customer Audit is manually triggered - if raw VoC is newer than its `last_compiled`, treat
+  the audit as stale, disclose its coverage date when using it, and offer a rerun, but never
+  regenerate it without a person's yes. Curate, do not append: merge into the existing page
+  rather than spawning a duplicate. Merge only within one workspace - two workspaces
+  describing the same platform stay two pages.
 - Adopt stray human-added files (classify and tag, or flag) without moving the human's folders.
   Default new dimensions to tags, not lanes; only user: isolation and the automatic workspace lane
   are real lanes today.

@@ -97,6 +97,16 @@ Just answer what you know — I'll write the context file from your responses.
 
 - Handle answers and corrections per the ACB package's field rules, and persist them to
   `/agent/brain/<workspace>/data-sources/meta/account-context.md` as they confirm.
+- Keep the Voice of Customer Audit separate from the fixed three-part presentation. After
+  the account-context questions are handled, check whether any of this workspace's
+  `voc-sync-<workspace>-*` routines has completed full backfill coverage and whether
+  `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` exists. If
+  customer voice is ready, no audit exists, and `/agent/brain/<workspace>/_changelog.md`
+  has no `voc-audit-offer` entry, ask once: "Would you like me to run a Voice of Customer
+  Audit?" Append a dated `voc-audit-offer` entry to the changelog. A yes invokes the
+  `voc-audit` skill; never run it merely because the walkthrough completed. If the
+  backfill is still running, do not offer yet—the sync routine offers when coverage
+  completes.
 - Once Fields 4, 7, and 9 are confirmed, offer Field 10's two beats (marketing calendar, then
   reporting structure) while the context is fresh — per the ACB package's Field 10 section.
   If the person is done for now, stop; the beats run at deck time instead (the Meta Validation

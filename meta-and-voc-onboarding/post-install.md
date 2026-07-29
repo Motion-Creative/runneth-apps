@@ -196,6 +196,7 @@ per-workspace:
 
    > meta-and-voc-onboarding - install complete for <workspace>
    > - VoC sync: <per-platform status, one line total>
+   > - Voice of Customer Audit: waits for backfill completion and a person's yes
    > - Guards: merged
    > - Creative Attributes: done
    > - Account Context Brain: done - remaining gaps wait for the walkthrough
@@ -237,12 +238,16 @@ connected later, setup runs on ask.
   to "Are you ready to begin your onboarding?" (or asks to start it in any phrasing, in any
   conversation). It presents the autofilled findings per its output schema and collects the
   answers only a human can give, for the workspace that conversation is in.
+- **The Voice of Customer Audit offer** - the workspace's first fully covered VoC backfill
+  asks once whether the person wants the `voc-audit` skill to run. The skill runs only on a
+  yes or an explicit audit request, saves one compiled audit page, and never
+  auto-regenerates.
 - **Knoweth organize** - from the merged guard's gates, once content lands and the
   interpretation is confirmed. It runs per workspace, gated on that workspace's
   `_tag-vocabulary.md`.
 - **Meta Validation** - from its merged gate (step 3), opening on its own once the Account
-  Context Brain is confirmed and the creative cache has synced. Each workspace validates
-  independently.
+  Context Brain is confirmed and the creative content layer resolves. Each workspace
+  validates independently.
 - **Daily VoC syncs, Cacheth sync, refresh cadences** - the routines created above.
 
 The README's "Install and run order" describes this same lifecycle for humans; this file,

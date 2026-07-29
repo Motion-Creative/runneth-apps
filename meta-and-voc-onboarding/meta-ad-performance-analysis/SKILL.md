@@ -1,6 +1,6 @@
 ---
 name: meta-ad-performance-analysis
-description: "Framework for analyzing Meta ad performance in any account — e-commerce, SaaS, lead gen, or service — whether the question is about one ad, a set of ads, or the account's ads in general. Use this skill whenever evaluating or explaining ad performance: 'how are our ads doing,' 'what are our top ads,' 'analyze this ad's performance,' 'how is this ad doing,' 'compare these ads,' 'why is this (or any) ad working or not working,' 'read these metrics,' or any variation of interpreting Meta ad performance data. The core method: identify the primary KPI first, judge efficiency through cost-per (or ROAS) against the account's own averages, then use supporting metrics — first frame retention, thumbstop rate, hold rate, engagement, CTR outbound, conversion rate, and AOV — to locate exactly where in the funnel an ad is winning or losing. Across many ads: group by optimization goal, rank by primary-KPI efficiency, then run the funnel diagnosis on the ads worth explaining."
+description: Analyze and explain Meta ad performance for one ad, a set, or the account. Use for top ads, comparisons, what is working, why an ad works or fails, patterns, metrics, and what to make next. Ground WHAT in fresh metrics. For WHY or recommendations, combine account context, creative content, and the saved Voice of Customer Audit or its cited raw VoC evidence; never answer customer-side WHY from metrics or creative summaries alone. Present referenced ads as a gallery.
 ---
 
 # Meta Ad Performance Analysis
@@ -17,7 +17,14 @@ This skill runs inside the Meta onboarding package's contracts:
 - **Pull metrics live via the `motion` CLI**, per the Motion CLI Data-Query Guide installed beside the package docs. Performance metrics are never stored to files — every read is a fresh pull.
 - **Resolve the workspace explicitly.** Every pull passes `--workspace-id <id>`; never assume the default workspace.
 - **Decode names before filtering by them.** Before filtering by campaign, ad set, or ad name, read the account's naming decode — Field 4 of account-context.md and its operational appendix `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`. Wrap filter values in underscores (`_VALUE_`, not `VALUE`) when filtering `adName`; use `adsetName`/`campaignName` for those levels, per the Data-Query Guide's name-level rules.
-- **Per-creative content lives in Cacheth** (the local creative cache) — summary artifacts surfaced through Knoweth, full records (incl. transcript and AI tags) through the `motion cache` CLI. This skill writes nothing to brain files.
+- **Per-creative content comes from the creative content layer** — Cacheth first, always: summary artifacts surfaced through Knoweth, full records (incl. transcript and AI tags) through the `motion cache` CLI. If the cache cannot serve (error, empty, missing record, or disabled for the sandbox), the content read falls through to the live `motion meta insights` content flags per the Cacheth Command Reference's ladder — a cache failure never skips the creative read. This skill writes nothing to brain files.
+- **Read customer voice for customer-side WHY.** When the question asks why customers
+  respond, what they love, object to, or misunderstand, or what the team should make next,
+  read `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` when it exists. Use its
+  cited raw files under `/agent/brain/<workspace>/data-sources/voc/<platform>/` to verify or deepen a
+  claim. If no audit exists but raw VoC does, use the raw evidence and offer the manual
+  `voc-audit` skill after answering. If neither exists, name customer voice as unavailable;
+  never replace it with generic web research without an explicit request.
 - **Answer transparently.** Every analysis states which filter was applied, which signal was read, and what couldn't be confirmed.
 - **Read what the question deserves.** Per the Data-Query Guide's answering posture: if the answer is already in the data, pull it, apply the account's confirmed rules, and report it — this framework earns its place when the question asks for diagnosis or explanation. Interpretation is offered before it is delivered.
 
@@ -146,14 +153,14 @@ After the efficiency read, steps 3–6 trace the viewer's path through the ad: s
 5. Read CTR outbound and conversion rate to locate creative vs. landing page problems.
 6. If purchase-optimized: compare the ad's AOV to the account average.
 7. To explain any of it, read the creative itself — and the customer. Metrics locate where
-   an ad wins or loses — the WHAT. The WHY lives in the creative's content (Cacheth: summary
-   sections and hook via Knoweth injection or the `motion cache` CLI; transcript and AI tags
-   via `motion cache get-creative` only) and in the customer's voice (the ad's comments, VoC
-   reviews, and support themes) when the question is how people are responding. After the later
-   VoC audit skill has run, read its compiled findings from
-   `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` and trace claims back
-   to the raw items it cites. Tie the drop-off to what the ad actually says and shows; never
-   infer the why from the numbers alone.
+   an ad wins or loses — the WHAT. The WHY lives in the creative's content (the creative
+   content layer: summary sections and hook via Knoweth injection or the `motion cache` CLI;
+   transcript and AI tags via `motion cache get-creative`; the live content flags only when
+   the cache cannot serve) and in the customer's voice. Read the saved Voice of Customer
+   Audit (`/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`) first,
+   then its cited reviews, support themes, community posts, and ad comments when the
+   question is how people are responding. Tie the drop-off to what the ad actually says
+   and shows; never infer the why from the numbers alone.
 
 The output of a good analysis isn't a list of numbers — it's a diagnosis of where in the funnel an ad wins, where it loses, and what to fix first. And it shows its work: which filter was applied, which signal was read, and what couldn't be confirmed.
 

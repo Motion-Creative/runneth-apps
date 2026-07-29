@@ -39,7 +39,9 @@ Knoweth organize (after the questions are answered):
   "File metadata" block at the end of /agent/brain/<workspace>/data-sources/meta/account-context.md;
   (2) content has landed: the voc-sync-<workspace>-<platform> backfill reports full date-window
   coverage (not just files existing - read the latest run summary via routine history
-  --id <routine-id>), and creatives are in Cacheth;
+  --id <routine-id>), and the creative content layer resolves (creatives in Cacheth - or,
+  where the sandbox cache feature is disabled, live content pulls per the Cacheth Command
+  Reference's ladder);
   (3) /agent/brain/<workspace>/_tag-vocabulary.md does not exist - writing it is the organize
   step's last act, so its existence means done for this workspace; update the file instead of
   re-running. Another workspace's vocabulary file says nothing about this one.
@@ -84,10 +86,18 @@ Knoweth brain discipline (all writes, going forward):
   per-creative file only when a person explicitly asks, and treat it as a dated snapshot (the
   cache stays the retrieval source of truth for current facts). Performance metrics are pulled
   live via the motion CLI, never saved.
+- For any question about why customers respond, what to make next, messaging, pain points,
+  objections, transformations, personas, or customer language, read
+  `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` when it exists, then verify
+  important claims against the raw VoC files it cites. The audit informs customer-side WHY;
+  it never replaces live performance metrics or creative content.
 - Keep compiled pages in sync with raw: new evidence restales and regenerates the dependent page; a
-  correction updates the compiled page (never raw) and propagates. Curate, do not append: merge into
-  the existing page rather than spawning a duplicate. Merge only within one workspace - two
-  workspaces describing the same platform stay two pages.
+  correction updates the compiled page (never raw) and propagates. Exception: the Voice of
+  Customer Audit is manually triggered - if raw VoC is newer than its `last_compiled`, treat
+  the audit as stale, disclose its coverage date when using it, and offer a rerun, but never
+  regenerate it without a person's yes. Curate, do not append: merge into the existing page
+  rather than spawning a duplicate. Merge only within one workspace - two workspaces
+  describing the same platform stay two pages.
 - Adopt stray human-added files (classify and tag, or flag) without moving the human's folders.
   Default new dimensions to tags, not lanes; only user: isolation and the automatic workspace lane
   are real lanes today.
@@ -172,7 +182,7 @@ Routing by question type:
 - "Performance by campaign / product" -> motion CLI + `meta` naming decode (which campaigns map to which product).
 - "Themes in winning ads (from AI tags + summaries)" -> motion CLI (winners) + Cacheth (AI tags/summaries) + `meta` account-context (winner def). AI tags live in Cacheth, not the Knoweth index - route tag/theme questions through Cacheth; do not expect Knoweth's index to contain them.
 - "What are we testing / scaling / graduating" -> motion CLI (spend state) + `meta` account-context (the graduation rule, still a flagged/needed field).
-- "Why are our winners working / why do customers respond" -> motion CLI (what is winning) + Cacheth (what the creative says and shows) + `voc` (why customers respond: reviews, support themes) - and ad comments (`/agent/brain/<workspace>/data-sources/voc/<platform>/`) connect performance and customer voice on the same creatives in near-real time. Treat performance and VoC as one system: performance shows what is winning, VoC explains why.
+- "Why are our winners working / why do customers respond" -> motion CLI (what is winning) + Cacheth (what the creative says and shows) + the compiled Voice of Customer Audit (`/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`) first, then its cited raw reviews, support themes, community posts, and ad comments (`/agent/brain/<workspace>/data-sources/voc/<platform>/`). Ad comments connect performance and customer voice on the same creatives in near-real time. Treat performance and VoC as one system: performance shows what is winning, VoC explains why.
 
 **Show the work.** Any answer that ranked, filtered, or interpreted states in plain language: which filter it applied (and the decode behind it), which signal it read (names, tags, transcript, reviews - and when freshness matters, how fresh: Cacheth records carry per-layer hydration timestamps), and what it could not confirm. One plain sentence alongside the answer, not a template. Never deliver a bare number that hides a judgment call.
 
@@ -243,7 +253,7 @@ A lane is the only hard boundary, and today it is a partial one: the automatic `
         _changelog.md                              # Meta-specific refresh and re-validation history
       voc/<platform>/                              # items only, id-keyed; format owned by the voc-data-pull skill.
                                                    # No non-item files (the sync's window checks read this folder)
-      voc/voice-of-customer-audit.md               # later cross-platform onboarding audit; absent during raw sync
+      voc/voice-of-customer-audit.md               # canonical cross-platform onboarding audit; absent during raw sync
       voc/<platform>-context.md                    # compiled VoC analysis (segments, personas, keywords, quotes)
                                                    # - beside the item folders, never inside them
       asset-library/<integration>/file-<id>.md     # creative/asset files; another data-source family
@@ -300,7 +310,7 @@ The costly-to-reverse decision is the lane set; that is exactly why the default 
 ## 8. Standard specs: what they are and how to set them up
 A **Standard spec** is a canonical, triggerable setup for one capability, stood up the same way on every VM: the raw ingestion contract, the compiled schema, the questions to ask the human, and the validation. Three initial Standards:
 - **Meta (Meta and Voice of Customer Onboarding, three steps).** Step 1 Creative Attributes: one enriched record per active creative (identity, summary, hook, transcript, AI tags, naming) held in Cacheth, its summary artifacts surfaced via Knoweth (transcripts and AI tags via the `motion cache` CLI), with performance pulled live via the motion CLI (the Motion CLI Data-Query Guide, installed beside this doc, is the query contract); no per-creative files are written to the brain. Step 2 Account Context Brain (`/agent/brain/<workspace>/data-sources/meta/account-context.md`): the interpretation layer, nine fields, with the naming decode confirmed as the handoff from Step 1 (its operational output is `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`) and Field 9's four captures (ranking metric, CPA target, winner/cut criteria incl. the spend floor, default reporting window); Field 10 (reporting structure + marketing calendar, synthesized from Fields 4, 7, and 9) is the deck spec — it gates the validation deck, not the question loop. Step 3 Validation: the answer-and-confirm loop, the weekly deck built from the Field 10 spec, and the MVCE (minimum viable context engine) gate. Ask the human the account idiosyncrasies platform settings cannot capture: the real success metric, which conversion event judges winners and whether products roll up, attribution windows, the cut rule, per-campaign KPI differences, naming clarifications. Validate: performance questions answer with numbers that reconcile to source.
-- **Voice of Customer.** Raw is owned end-to-end by the voc-data-pull skill at `/agent/.agents/skills/voc-data-pull/SKILL.md` (folder convention, file format, unified metadata record, PII rules, sync routine). The later Voice of Customer audit skill compiles cross-platform findings to `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`; it is absent during initial sync. Platform-specific compiled analysis may live beside it at `/agent/brain/<workspace>/data-sources/voc/<platform>-context.md`, never inside the item folders. These compiled pages carry segments, emerging segments, keywords, quotes, and personas, each tracing to items. Ask the human: canonical sources, which personas are established vs aspirational, off-limits claims. Validate: every claim traces to a real verbatim.
+- **Voice of Customer.** Raw is owned end-to-end by the voc-data-pull skill at `/agent/.agents/skills/voc-data-pull/SKILL.md` (folder convention, file format, unified metadata record, PII rules, sync routine). Compiled is the manually triggered Voice of Customer Audit at `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`, beside the platform item folders, never inside them: pain points, trigger moments, objections, transformations, standout language, and qualifying personas, each tracing to raw items. The `voc-audit` skill owns that schema and regenerates the one canonical page on rerun; it is absent during initial sync. Platform-specific compiled analysis may live beside it at `/agent/brain/<workspace>/data-sources/voc/<platform>-context.md`, never inside the item folders. Ask the human: canonical sources, which personas are established vs aspirational, off-limits claims. Validate: every claim and quote traces to real customer language.
 - **Brain and Knoweth setup (this document).** Raw is the connected-data probe; compiled is the org-understanding page plus the specs; it lays the seeded skeleton and the default overlay.
 
 The spec files are short reference pages the human fills in with the agent's help. Fill-in loop: connect the data, teach the agent the idiosyncrasies, visualize to validate, confirm against the question set.

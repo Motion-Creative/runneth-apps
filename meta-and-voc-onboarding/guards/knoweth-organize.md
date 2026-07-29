@@ -10,7 +10,9 @@ Knoweth organize (after the questions are answered):
   "File metadata" block at the end of /agent/brain/<workspace>/data-sources/meta/account-context.md;
   (2) content has landed: the voc-sync-<workspace>-<platform> backfill reports full date-window
   coverage (not just files existing - read the latest run summary via routine history
-  --id <routine-id>), and creatives are in Cacheth;
+  --id <routine-id>), and the creative content layer resolves (creatives in Cacheth - or,
+  where the sandbox cache feature is disabled, live content pulls per the Cacheth Command
+  Reference's ladder);
   (3) /agent/brain/<workspace>/_tag-vocabulary.md does not exist - writing it is the organize
   step's last act, so its existence means done for this workspace; update the file instead of
   re-running. Another workspace's vocabulary file says nothing about this one.

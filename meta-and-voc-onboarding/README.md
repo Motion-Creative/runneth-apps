@@ -20,6 +20,8 @@ Brain, Validation) - with Knoweth organizing the result so retrieval stays tight
 The parts, and their operational nature:
 
 - **VoC Data Pull** - background: setup once, daily routines do the work.
+- **Voice of Customer Audit** - manual skill: turns synced customer language into durable
+  creative-strategy insight after a person says yes.
 - **Creative Attributes** - establishes the creative layer (Cacheth) and naming detection.
 - **Account Context Brain** - autofill runs silently at install; the gap questions wait for
   the walkthrough.
@@ -42,7 +44,12 @@ The one-line model:
 
 This folder holds one part per subfolder: `meta/` (the Creative Attributes playbook, the
 Account Context Brain package, the Meta Validation package, the Motion CLI Data-Query
-Guide, and the Cacheth Command Reference) and `voc-data-pull/` (the VoC Data Pull skill, recipes, and templates), plus `knoweth/` (the organize-the-brain part that runs after the questions), `meta-ad-performance-analysis/` (the ad performance analysis skill), `onboarding-walkthrough/` (the walkthrough presentation skill), and `guards/` (the four ready-made `/agent/user.md` guard blocks that post-install merges). This README
+Guide, and the Cacheth Command Reference), `voc-data-pull/` (the VoC Data Pull skill,
+recipes, and templates), and `voc-audit/` (the manual Voice of Customer Audit skill), plus
+`knoweth/` (the organize-the-brain part that runs after the questions),
+`meta-ad-performance-analysis/` (the ad performance analysis skill),
+`onboarding-walkthrough/` (the walkthrough presentation skill), and `guards/` (the four
+ready-made `/agent/user.md` guard blocks that post-install merges). This README
 covers all of them; `package.json` (the package manifest) maps every file to its installed location.
 
 ### How to install (exact procedure)
@@ -230,7 +237,8 @@ File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta
   deck without it; questions-only customers never need it), lock-in (deck approval, refresh
   routine, Slack), and the MVCE gate.
 - **Runs third, gated.** Starts only when all nine Account Context Brain fields are confirmed
-  and the workspace's creatives are in Cacheth (cache coverage, not files). Every correction in
+  and the creative content layer resolves (creatives in Cacheth — or live content pulls where
+  the sandbox cache feature is disabled; cache coverage, not files). Every correction in
   the loop heals the specific Account Context Brain field behind it — never move past a wrong
   answer.
 - **Persists to:** `/agent/brain/<workspace>/data-sources/meta/validation.md` (confirmed answers, corrections, deck
@@ -294,10 +302,35 @@ Folder: `voc-data-pull/`
   workspace tag, so setup starts by **pinning the account**: a human confirms which
   account belongs to this workspace (a lone connection may belong to a different
   workspace, or be genuinely shared - both are normal), and every pull afterwards
-  addresses that exact account. A platform connected later gets set up on ask -
-  nothing runs just because a platform connects.
+  addresses that exact account. The workspace's first fully covered backfill asks once
+  whether the person wants a Voice of Customer Audit; it never runs the audit
+  automatically. A platform connected later gets set up on ask - nothing runs just
+  because a platform connects.
 - **Installs to the skills root** (`/agent/.agents/skills/voc-data-pull/`), not the brain -
   see the `voc-data-pull-skill` resource in `package.json`.
+
+---
+
+## Voice of Customer Audit (skill, own folder)
+
+Folder: `voc-audit/`
+
+- **Job:** analyze synced reviews, support conversations, ad comments, community posts, and
+  other customer voice into five creative-strategy buckets: pain points, trigger moments,
+  addressable objections, transformations, and standout customer language. Products with at
+  least 200 entries also receive evidence-backed personas.
+- **Runs manually.** The first completed VoC backfill offers it once; a yes or an explicit
+  request such as "run a VoC audit" invokes the skill. Connecting a source, syncing files,
+  or completing onboarding never runs it automatically. The audit requires at least 200
+  total entries.
+- **Reads raw evidence from:** `/agent/brain/<workspace>/data-sources/voc/<platform>/`.
+- **Persists compiled insight to:**
+  `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. The skill rewrites this one
+  canonical page on a person-approved rerun, cites raw items, and indexes it for validation
+  and future customer-side WHY questions.
+- **Installs to the skills root** (`/agent/.agents/skills/voc-audit/`), not the brain - see
+  the `voc-audit-skill` resource in `package.json`. Its compiled output lives in the brain;
+  the executable skill instructions do not.
 
 ---
 
@@ -321,8 +354,9 @@ Folder: `meta-ad-performance-analysis/`
   guard-enforced — never Motion workspace settings. Metrics are pulled live via the `motion`
   CLI per the Data-Query Guide and never stored; name filters go through the confirmed naming
   decode (Field 4 / `naming-decoder.json`); every pull names the workspace with
-  `--workspace-id`; per-creative content stays in Cacheth. Analyses show their work: filter
-  applied, signal read, what couldn't be confirmed.
+  `--workspace-id`; per-creative content stays in Cacheth. Customer-side WHY and
+  what-to-make-next questions read the saved Voice of Customer Audit and its cited raw
+  evidence. Analyses show their work: filter applied, signal read, what couldn't be confirmed.
 - **Installs to the skills root** (`/agent/.agents/skills/meta-ad-performance-analysis/`), not
   the brain - see the `meta-ad-performance-analysis-skill` resource in `package.json`.
 
@@ -347,26 +381,32 @@ The run order below is the human-readable description of the same lifecycle.
    never copy files by hand. Staging the files
    does not self-run anything - the post-install run right after it does. Nothing in this package writes per-creative files to the brain —
    creative content lives in Cacheth; its summary artifacts are surfaced through Knoweth.
-2. **Creative Attributes (Step 1).** Confirms the workspace scope, establishes the creative
+2. **Set up VoC data syncs.** For each reachable customer-voice source, pin the workspace's
+   account, create the daily `voc-sync-<workspace>-<platform>` routine, and kick the first
+   backfill. When the workspace's first full backfill completes, offer the Voice of
+   Customer Audit once; run it only if a person says yes.
+3. **Creative Attributes (Meta Step 1).** Confirms the workspace scope, establishes the creative
    content layer (Cacheth + the query paths), detects naming patterns, and passes them to the
    Account Context Brain as provisional proposals. Writes nothing per-creative to the brain.
-3. **Activate and run the Account Context Brain autofill (Step 2).** Its guard block (staged at
+4. **Activate and run the Account Context Brain autofill (Meta Step 2).** Its guard block (staged at
    `guards/account-context-guard.md`) is merged into `/agent/user.md` by the post-install run's
    single guard merge; then the autofill runs silently and persists the scaffold, drawing on
    the Creative Attributes step (if it was run) for naming proposals and creative evidence.
    Post-install ends with "Are you ready to begin your onboarding?" - the onboarding-walkthrough
    skill presents the findings and collects the human answers on the yes.
-4. **Activate and run Meta Validation (Step 3).** Its validation-gate guard block (staged at
+5. **Activate and run Meta Validation (Meta Step 3).** Its validation-gate guard block (staged at
    `guards/meta-validation-gate.md`) is merged by the same post-install guard merge; once the
-   Account Context Brain is fully confirmed and the cache has synced,
+   Account Context Brain is fully confirmed and the creative content layer resolves,
    the gate opens the validation experience on its own: the answer-and-confirm loop, the weekly
-   deck, lock-in, and the MVCE gate. Onboarding is done when MVCE is on, not when data is
-   connected.
+   deck, lock-in, and the MVCE gate. When a Voice of Customer Audit exists, validation adds
+   its customer-voice question and uses the audit in customer-side WHY answers. Onboarding is
+   done when MVCE is on, not when data is connected.
 5. **Set up the VoC data sync during post-install.** For each reachable VoC platform, run the
    voc-data-pull skill's "Set up the recurring sync" procedure - it pins the workspace's
    account, creates the daily sync routine, and kicks the backfill in the background.
-6. **Run the Voice of Customer audit later in onboarding.** Once raw VoC data has landed, the
-   audit skill compiles the workspace's cross-platform customer-voice findings to
+6. **Run the Voice of Customer audit later in onboarding.** Offered once after the workspace's
+   first fully covered backfill and run only on a person's yes, the `voc-audit` skill compiles
+   the workspace's cross-platform customer-voice findings to
    `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. It is not an
    install-time artifact.
 7. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
