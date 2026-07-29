@@ -20,7 +20,9 @@ The package as it ships:
   `/agent/brain/<workspace>/` (workspace name slugged: lowercase; non-alphanumeric
   runs become one hyphen; trim hyphens): the Meta interpretation layer under
   `data-sources/meta/` (`account-context.md`, `naming-decoder.json`,
-  `validation.md`, `_changelog.md`), VoC data under `data-sources/voc/<platform>/`,
+  `validation.md`, `_changelog.md`), VoC data under `data-sources/voc/<platform>/`
+  (Meta ad comments are the standard pull of every onboarding, one file per creative
+  under `data-sources/voc/meta-ad-comments/`),
   the compiled VoC audit at `data-sources/voc/voice-of-customer-audit.md`, and
   `_tag-vocabulary.md` at the workspace root alongside that workspace's general
   `_changelog.md`. A second workspace in the same org onboards additively without
@@ -124,7 +126,7 @@ The package as it ships:
   corrections in any later conversation get the same routing, no scheduled
   check-ins.
 - Meta reachability is connection-status-driven: a connected Meta workspace gets
-  `voc-sync-<workspace>-meta-ads` even when API probes error, and the account-context
-  scaffold is always written, blockers recorded per field.
+  `voc-sync-<workspace>-meta-ad-comments` even when API probes error, and the
+  account-context scaffold is always written, blockers recorded per field.
 - Install-failure posture: report the exact error and stop - never hand-copy
   staged files or edit state under `/agent/.runneth/packages/`.

@@ -3,7 +3,8 @@ name: voc-data-pull
 description: |
   Pull raw voice-of-customer data - product reviews, support conversations, surveys,
   community posts, and comments - from an available VoC platform into standardized files in
-  the current workspace's brain folder, one file per item. Use when ANY VoC platform - one with a recipe
+  the current workspace's brain folder, one file per item (Meta ad comments: one file per
+  creative). Use when ANY VoC platform - one with a recipe
   (Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom,
   Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord, YouTube) or any other
   reachable platform whose data is customer voice - is reachable by any path - OAuth
@@ -18,7 +19,8 @@ description: |
 
 Pull raw voice-of-customer (VoC) items from a connected platform and write them into the
 current workspace's brain folder as standardized files: **one file per review, support
-ticket/conversation, or ad comment**, each with a metadata header and the content body.
+ticket/conversation, or community post - and for Meta ad comments, one file per creative
+carrying every comment on that creative** - each with a metadata header and the content body.
 Creative strategy packages build on these files, so shape consistency matters more than volume.
 
 ## When to use
@@ -173,7 +175,8 @@ folder, and pulls are never merged into a shared root. Items are keyed by `exter
 shared root would not overwrite - it would silently accumulate two brands' reviews into one
 corpus, which is worse. Under the workspace folder, all VoC pulls live under the shared
 `voc/` parent, one flat folder per platform, no type subfolders. Use the platform's registry
-slug as the folder name (`judge_me`, `gorgias_oauth`, ...; use `meta-ads` for ad comments).
+slug as the folder name (`judge_me`, `gorgias_oauth`, ...; Meta ad comments use
+`meta-ad-comments` - it sits at the same level as every other platform folder).
 The later Voice of Customer audit is the one non-item artifact at the `voc/` root:
 `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. It is created by the
 later audit skill, not by these pull or recurring-sync procedures. Raw platform folders remain
@@ -182,13 +185,15 @@ The filename prefix carries the source type:
 
 - Reviews: `/agent/brain/<workspace>/data-sources/voc/<platform>/review-<external_id>.md`
 - Support tickets/conversations: `/agent/brain/<workspace>/data-sources/voc/<platform>/ticket-<external_id>.md`
-- Ad comments: `/agent/brain/<workspace>/data-sources/voc/meta-ads/comment-<external_id>.md`
+- Meta ad comments: `/agent/brain/<workspace>/data-sources/voc/meta-ad-comments/creative-<creative_asset_id>.md`
+  - **one file per creative**, carrying every comment pulled for that creative
 - Community posts/comments (Reddit): `/agent/brain/<workspace>/data-sources/voc/reddit/post-<external_id>.md`
   and `/agent/brain/<workspace>/data-sources/voc/reddit/comment-<external_id>.md`
 
-Every raw-item path is keyed by the item's `external_id` and nothing else - this is the
-contract that re-pull dedupe, ticket overwrite, and the recurring-sync incremental window all
-depend on. Always use the workspace-scoped path above; never adopt a different surrounding
+Every raw-item path is keyed by the item's `external_id` and nothing else - for Meta ad
+comments the creative is the item, so the file is keyed by its `creative_asset_id`. This is
+the contract that re-pull dedupe, ticket overwrite, and the recurring-sync incremental window
+all depend on. Always use the workspace-scoped path above; never adopt a different surrounding
 layout or invent additional hierarchy.
 
 Re-pull write policy, per source type:
@@ -196,16 +201,19 @@ Re-pull write policy, per source type:
 - **Reviews**: immutable at the source - skip files that already exist.
 - **Support tickets**: live over time - overwrite the ticket's file when the source shows a
   fresher `updated_at` or more messages.
-- **Ad comments and community posts**: content is fixed but engagement mutates (reactions,
-  reply counts, scores) - overwrite when the item is inside the run's pull window, skip
-  when it is older than the window.
+- **Community posts**: content is fixed but engagement mutates (reactions, reply counts,
+  scores) - overwrite when the item is inside the run's pull window, skip when it is older
+  than the window.
+- **Meta ad comments**: the creative's file is the unit - whenever a run pulls comments for
+  a creative, regenerate that creative's file whole (full comment set, updated totals and
+  engagement). Never append to an existing file.
 
 The id-keyed path is what makes every overwrite land on the same file.
 
 ### File format
 
-Every file has the same three-part layout, top to bottom (copyable skeletons for all three
-source types are in `templates/`):
+Every file has the same three-part layout, top to bottom (copyable skeletons for every
+source type are in `templates/`):
 
 1. **Headline + human header** - an `# H1` identity line, then a block of bold-label lines
    (`**Label:** value`, each line ending with two trailing spaces so markdown keeps the line
@@ -219,13 +227,18 @@ source types are in `templates/`):
      buyer.
    - Support: `# Ticket #<external_id> - Re: <subject>`. Labels: Platform, Date, Status,
      Channel, Customer, each `custom` key, Tags, Messages (count + last activity).
-   - Ad comments: `# Ad comment #<external_id>`. Labels: Platform (facebook/instagram),
-     Author, Date, Reactions, Replies, and In reply to when `parent_ref` is set.
+   - Meta ad comments (one file per creative): `# Ad comments - creative <creative_asset_id>`.
+     Labels: Creative asset id, Preview file URL (when the pull returns one), Total
+     comments, Newest comment, plus every identifying field the pull returns (e.g. ad
+     name) as its own label.
    - Community posts: `# Reddit post — "<title>"` (comments: `# Reddit comment #<id>`).
      Labels: Subreddit, Author, Date, Upvotes, Replies, and In reply to for comments.
 2. **The content**, between two `---` rules: the review text as plain prose, the **full
    conversation** for support items (one `### <author> (<role>) - <timestamp>` section per
-   message, in order), or the comment text.
+   message, in order), the comment text for community posts, or **every comment on the
+   creative** for Meta ad-comment files - one `### <author> - <timestamp>` section per
+   comment, newest root first, each reply directly under its parent and marked "in reply
+   to", with the comment's reactions and reply count in the section heading.
 3. **The metadata block** - a collapsed section, exactly:
 
    ```
@@ -248,12 +261,12 @@ org-specific in `custom`, and leave the rest of the payload behind.
 
 ### The unified metadata record
 
-Common fields (every item):
+Common fields (every item; Meta ad-comment files use the per-creative record below instead):
 
 | Field | Meaning |
 |---|---|
-| `source_platform` | Registry slug (`judge_me`, `gorgias_oauth`, `meta-ads`, ...) |
-| `source_type` | `review` \| `support_conversation` \| `ad_comment` \| `community_post` |
+| `source_platform` | Registry slug (`judge_me`, `gorgias_oauth`, ...) |
+| `source_type` | `review` \| `support_conversation` \| `community_post` |
 | `external_id` | The platform's id for the item |
 | `created_at` | ISO 8601 |
 | `title` | Review title / support subject; null when absent |
@@ -261,10 +274,10 @@ Common fields (every item):
 | `author_name` | Reviewer/customer/commenter display name |
 | `author_contact` | **Always null for now** (PII policy pending) |
 | `reply_count` | Number of replies/messages **beyond the root item** (a 4-message ticket has `reply_count: 3`); null when unknown |
-| `parent_ref` | For ad-comment replies: the parent comment's `external_id`. Null for root items. |
+| `parent_ref` | For reply items (e.g. Reddit or YouTube comments): the parent item's `external_id`. Null for root items. |
 | `source_url` | Link back to the item on the platform. Set it only from the recipe's `source_url` mapping; most platforms provide none in the list payload - then it is null. Never invent a URL pattern. |
 
-Review fields (null for support and ad comments):
+Review fields (null for the other types):
 
 | Field | Meaning |
 |---|---|
@@ -272,7 +285,7 @@ Review fields (null for support and ad comments):
 | `product_ref` | Platform product reference. Null for Trustpilot (company-level reviews). |
 | `verified` | Verified-buyer boolean |
 
-Support-conversation fields (null for reviews and ad comments):
+Support-conversation fields (null for the other types):
 
 | Field | Meaning |
 |---|---|
@@ -282,7 +295,7 @@ Support-conversation fields (null for reviews and ad comments):
 | `updated_at` | ISO 8601 - tickets live over time |
 | `custom` | Pass-through object of platform custom fields <- Gorgias `custom_fields`, Intercom `custom_attributes`. Carry keys as-is; do not enumerate or rename. |
 
-Ad-comment and community-post fields (null elsewhere):
+Community-post fields (null elsewhere):
 
 | Field | Meaning |
 |---|---|
@@ -290,6 +303,22 @@ Ad-comment and community-post fields (null elsewhere):
 
 `body` is the file's content section (part 2 of the layout), not a yaml key - it is the one
 template field that lives outside the metadata block.
+
+### The per-creative ad-comments record
+
+Meta ad-comment files carry a per-creative record instead - the creative is the item
+(skeleton in `templates/ad-comments-creative.md`):
+
+| Field | Meaning |
+|---|---|
+| `source_platform` | `meta-ad-comments` |
+| `source_type` | `ad_comments` |
+| `creative_asset_id` | <- the group's `creativeAssetId` |
+| `preview_file_url` | <- the group's `previewFileUrl`, the only URL the pull returns (a preview of the creative, not a post permalink); null when absent. Never invent a URL. |
+| `comment_count` | Total comments this file carries for the creative |
+| `newest_comment_at` / `oldest_comment_at` | ISO 8601 bounds of the comment set |
+| `custom` | Pass-through of every other field the payload carries at the group level - `adName` -> `ad_name`, plus the coverage-reported cached total (`coverage.commentsTotal` -> `comments_total_reported`) when it exceeds `comment_count` |
+| `comments` | One entry per comment: `id`, `created_at`, `author_name`, `author_contact` (always null - PII), `platform` (facebook/instagram), `reactions_total`, `reply_count`, `parent_ref` (replies arrive nested under their parent in the payload - set this to the parent comment's `id`; null for roots). Comment text lives in the body section, not here. |
 
 Per-platform field mappings (`rating` <- Judge.me `rating` / Trustpilot `stars` / Yotpo
 `score` / Stamped `reviewRating`, and so on) are in the recipes reference - each platform
@@ -357,8 +386,8 @@ folder state:
    sentence (for example "Only pull items for brand <brand>."). On the stored-secret path,
    replace the `--account` sentence with the secret key and confirmed identity ("Use the
    stored key <SECRET_KEY> for <identity>; if the key stops working, report - do not
-   substitute another credential."). On the Motion-native path (meta-ads), there is no
-   pinned account: replace the `--account` sentence with the workspace scope ("Ad comments
+   substitute another credential."). On the Motion-native path (meta-ad-comments), there is
+   no pinned account: replace the `--account` sentence with the workspace scope ("Ad comments
    come through this workspace's own Meta connection - scope every pull with
    `--workspace-id <workspaceId>`; there is no account to pass.").
 
@@ -395,7 +424,9 @@ skill flow:
   - Otherwise -> pull from the **newest existing item's `created_at` minus 2 days**
     (overlap for safety; self-healing across paused or failed runs), never further back
     than 12 months. For support tickets, use the platform's `updated_at` bound where the
-    recipe has one, so updated conversations are re-pulled and overwritten.
+    recipe has one, so updated conversations are re-pulled and overwritten. For
+    meta-ad-comments, the newest existing item is the newest `newest_comment_at` across
+    the creative files.
 - **Pull only the pinned account** named in the routine prompt (`--account <accountId>`,
   or the named secret key). Other accounts of the same platform - including ones connected
   after setup - are never pulled by this routine: a new account belongs to whichever

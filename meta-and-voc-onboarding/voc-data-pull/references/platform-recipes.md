@@ -184,18 +184,30 @@ Use relative paths through the proxy (the connected account carries the API host
 
 ## meta ad comments (Motion native - NOT a Runneth integration)
 
-- `source_type: ad_comment`, platform folder `meta-ads`.
+- `source_type: ad_comments`, platform folder `meta-ad-comments` - **one file per creative**
+  (`creative-<creative_asset_id>.md`, the per-creative record), not one file per comment.
 - Rides the org's existing Motion Meta connection; no Runneth connect at all.
 - Pull: `motion meta creative-comments` (per the motion-cli skill). Per creative asset, max
   50 ids per request; root comments bounded at 1,000 per ad unit (explicitly non-exhaustive -
   the tool reports coverage level, gaps, and warnings). Served from Motion's cache, so fresh
-  comments can lag. Junk comments are filtered by default; replies and reactions are opt-in.
-  Output lands as a JSON file in the workdir - transform that into the per-comment files.
-- Field mapping: `external_id` <- `id`; body <- `text`; `author_name` <- `authorName`;
-  `created_at` <- `createdAt`; `reactions_total` <- `reactions.total`;
-  `reply_count` <- `replyCount`; replies become their own files with `parent_ref` set to the
-  parent comment id; `rating`, `product_ref`, and `verified` are null; `source_url` <- null
-  (the payload carries no permalink).
+  comments can lag. Junk comments are filtered by default. **Opt in to replies and
+  reactions** - the file carries all the engagement the tool can return. Output lands as a
+  JSON file in the workdir - group it by creative asset id and write one file per creative.
+- The payload groups comments by creative: `result.comments[]` is one group per creative
+  with `creativeAssetId`, `adName`, `previewFileUrl`, `coverage`, `warnings`, `errors`, and
+  a `comments[]` array whose replies arrive **nested** under their parent comment.
+- Mapping, per comment entry: `id` <- `id`; body-section text <- `text`;
+  `author_name` <- `authorName`; `created_at` <- `createdAt`; `platform` <- `platform`
+  (facebook/instagram); `reactions_total` <- `reactions.total`;
+  `reply_count` <- `replyCount`; `parent_ref` <- the parent comment's `id` for entries
+  flattened out of a `replies` array, null for roots.
+- Mapping, creative level: `creative_asset_id` <- `creativeAssetId`;
+  `preview_file_url` <- `previewFileUrl` (the only URL the payload carries - a creative
+  preview link, NOT a post permalink; null when absent, never invented);
+  `custom.ad_name` <- `adName`; `comment_count` <- the number of comments written to the
+  file; when the group's `coverage.commentsTotal` (the platform-reported cached total)
+  exceeds it - the 1,000-root bound makes that possible - record it as
+  `custom.comments_total_reported`.
 
 ---
 
@@ -284,7 +296,7 @@ Use relative paths through the proxy (the connected account carries the API host
 
 ## youtube (registry: `youtube_data`) - doc-grounded, verify on first connect. Video comments.
 
-- Writes `comment` files, same species as Meta ad comments. List:
+- Writes per-item `comment` files (community-post record, like Reddit comments). List:
   `GET /youtube/v3/commentThreads?allThreadsRelatedToChannelId=<channelId>` (cursor
   pagination via `pageToken`); replies ride in the thread payload or via `comments.list`.
 - Date bound: none server-side on threads - order by time and cut client-side on

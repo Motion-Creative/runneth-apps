@@ -143,7 +143,8 @@ workspace's context, naming decoder, validation state, and VoC corpus live toget
         _changelog.md
       voc/
         voice-of-customer-audit.md  # created by the later audit skill, not initial sync
-        <platform>/
+        <platform>/                 # one folder per pulled platform, one file per item
+        meta-ad-comments/           # standard pull of every onboarding, one file per creative
   motion-crew/              the same structure, entirely independent
 ```
 
@@ -283,7 +284,12 @@ Folder: `voc-data-pull/`
 
 - **Job:** pull raw voice-of-customer data - product reviews, support conversations, surveys,
   community posts, and comments - from available VoC platforms into standardized files under
-  `/agent/brain/<workspace>/data-sources/voc/<platform>/`, one file per item. Recipes exist for
+  `/agent/brain/<workspace>/data-sources/voc/<platform>/`, one file per item. Meta ad
+  comments are the standard pull every onboarding gets: they land beside the other platform
+  folders under `voc/meta-ad-comments/`, one file per creative carrying every comment on
+  that creative (creative asset id, the creative's preview URL when the pull returns one,
+  each comment's author, date, and platform, engagement, and the creative's total comment
+  count). Recipes exist for
   Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom,
   Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord, YouTube, and Meta ad comments
   (the authoritative table is the skill's Step 1) - but the scope is customer-voice data,

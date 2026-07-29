@@ -93,8 +93,10 @@ per-workspace:
    `/agent/brain/<workspace>/data-sources/voc/<platform>/`, written out in full.
    **A connected Meta workspace is
    itself a reachable VoC platform** - ad comments are customer voice, pulled with
-   `motion meta creative-comments` (skill slug `meta-ads`) - so it gets a
-   `voc-sync-<workspace>-meta-ads` routine alongside the others. For Meta, connected is the
+   `motion meta creative-comments` (skill slug `meta-ad-comments`; one file per creative
+   under `voc/meta-ad-comments/`, at the same level as the other platform folders) - so it
+   always gets a `voc-sync-<workspace>-meta-ad-comments` routine alongside the others: the
+   standard pull of every onboarding, not a discovery outcome. For Meta, connected is the
    only reachability test: if a Meta workspace shows as connected, create and kick that
    routine even when a Meta API probe errors in this conversation - the
    routine's own scheduled runs absorb transient API failures. An API error is never

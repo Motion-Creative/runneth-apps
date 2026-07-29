@@ -70,7 +70,9 @@ audit must cite the raw paths it analyzed.
 
 ## Step 1 — Count the entries (hard gate)
 
-Count discrete VoC entries across the selected evidence set before analyzing.
+Count discrete VoC entries across the selected evidence set before analyzing. For
+`meta-ad-comments`, each comment inside a creative file is one entry (sum the files'
+`comment_count`), not one entry per file.
 
 **If fewer than 200 total entries are available, do not run the audit.** Report the count,
 explain that 200 entries are required for reliable cross-entry patterns, and stop without a
