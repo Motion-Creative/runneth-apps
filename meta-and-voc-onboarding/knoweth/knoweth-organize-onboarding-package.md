@@ -9,7 +9,8 @@ The one-line model:
 > The data packages (VoC Data Pull, Meta Creative Attributes + Account Context) put **content** in the brain. **Knoweth** puts **structure** over it: lanes and projects that gate retrieval, a save contract so new writes land right, and a maintenance loop so weeks of human edits do not rot it. Knoweth runs after the content and the confirmed interpretation exist, then holds going forward.
 
 Throughout this doc, `<workspace>` means the folder for one Motion workspace under `/agent/brain/`,
-named after the workspace with spaces as hyphens and everything lowercased ("Huel EU" -> `huel-eu`).
+named with the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9
+becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`).
 It is resolved per conversation, never hardcoded: one org VM holds a folder per onboarded workspace
 and they never merge.
 
@@ -29,7 +30,7 @@ This is the last setup step of the combined run and the first line of ongoing ma
 <!-- BEGIN runneth:knoweth-organize v3 -->
 Knoweth organize (after the questions are answered):
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name lowercased with spaces as hyphens. Resolve it per conversation; the
+  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`). Resolve it per conversation; the
   `<workspace>` token stays literal in this file. Organize one workspace at a time - the
   workspace whose conversation you are in - and never reorganize or retag another
   workspace's folder.
@@ -68,7 +69,7 @@ Knoweth organize (after the questions are answered):
 <!-- BEGIN runneth:knoweth-brain v3 -->
 Knoweth brain discipline (all writes, going forward):
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name lowercased with spaces as hyphens. Resolve it per conversation; the
+  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`). Resolve it per conversation; the
   `<workspace>` token stays literal in this file. Account-specific content belongs in this
   conversation's workspace folder - never in another workspace's folder, and never at the brain
   root where two workspaces would blur together.
@@ -227,8 +228,8 @@ A lane is the only hard boundary, and today it is a partial one: the automatic `
 ### Default skeleton (guaranteed on every VM, the contract Knoweth defaults against)
 ```
 /agent/brain/
-  <workspace>/                                     # one folder per Motion workspace, named after the workspace
-                                                   # (lowercased, spaces as hyphens). Everything account-specific
+  <workspace>/                                     # one folder per Motion workspace, named with the
+                                                   # workspace name slug (doc intro). Everything account-specific
                                                    # lives inside it; two workspaces never share a file.
     account-context.md                             # compiled interpretation (9 fields incl. the confirmed naming
                                                    # decode + spend floor / winner-cut criteria)

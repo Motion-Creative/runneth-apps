@@ -1,7 +1,7 @@
 <!-- BEGIN runneth:knoweth-brain v3 -->
 Knoweth brain discipline (all writes, going forward):
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name lowercased with spaces as hyphens. Resolve it per conversation; the
+  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`). Resolve it per conversation; the
   `<workspace>` token stays literal in this file. Account-specific content belongs in this
   conversation's workspace folder - never in another workspace's folder, and never at the brain
   root where two workspaces would blur together.

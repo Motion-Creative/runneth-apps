@@ -41,7 +41,7 @@ shown for context and must stay identical to the staged file.
 Account context guard:
 
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name lowercased with spaces as hyphens ("Huel EU" -> `huel-eu`). Resolve it per
+  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`). Resolve it per
   conversation; the `<workspace>` token above stays literal in this file.
 - Before any ad-performance work for this account (rankings, "best ads," CPA/ROAS reads,
   winner or cut calls, creative performance judgments), read

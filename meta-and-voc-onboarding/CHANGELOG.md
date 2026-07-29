@@ -10,7 +10,7 @@ Multi-workspace support: one org VM can now onboard several Motion workspaces, e
 additively, none touching another's data.
 
 - **Per-workspace layout.** Everything the package produces lands in
-  `/agent/brain/<workspace>/` (workspace name lowercased, spaces as hyphens):
+  `/agent/brain/<workspace>/` (workspace name slugged (lowercase; non-alphanumeric runs become one hyphen; trim hyphens)):
   `account-context.md`, `naming-decoder.json`, `validation.md`, `_tag-vocabulary.md`,
   and VoC data under `/agent/brain/<workspace>/data-sources/voc/<platform>/`. The
   brain root no longer holds any workspace's content; `_changelog.md` stays org-wide.

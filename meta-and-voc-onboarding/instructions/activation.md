@@ -7,8 +7,7 @@ guidance, anything else) exempts you from this gate.
 
 The check is per workspace, because this package onboards one Motion workspace at a
 time and an org VM can hold several. Resolve this conversation's workspace folder
-name - the workspace name lowercased with spaces as hyphens ("Huel EU" ->
-`huel-eu`) - then look in this system prompt, which already includes the saved
+name - the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`) - then look in this system prompt, which already includes the saved
 contents of `/agent/user.md`, for a block like:
 
 ```

@@ -11,7 +11,7 @@ asked.
 
 Everything this package persists lives in one folder per Motion workspace:
 `/agent/brain/<workspace>/`, where `<workspace>` is the name of the workspace this
-conversation operates in, lowercased with spaces as hyphens ("Huel EU" -> `huel-eu`).
+conversation operates in, slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`).
 Resolve that name from this conversation's own context - the workspace its Motion commands
 resolve to - never from a prior install, a removed guard block, or another conversation. One
 org VM holds several workspace folders side by side and they never merge: a second workspace

@@ -2,7 +2,7 @@
 Meta validation gate:
 
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name lowercased with spaces as hyphens. Resolve it per conversation; the
+  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`). Resolve it per conversation; the
   `<workspace>` token stays literal in this file. Every path below is inside this
   conversation's workspace folder, and each workspace validates independently.
 - When the Account Context Brain (/agent/brain/<workspace>/account-context.md) has all required

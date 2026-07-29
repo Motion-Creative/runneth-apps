@@ -119,8 +119,7 @@ package writes it to brain files.
 
 Everything this package produces is scoped to the Motion workspace it was produced for. A
 workspace's context, naming decoder, validation state, and VoC corpus live together under
-`/agent/brain/<workspace>/`, where `<workspace>` is the workspace name lowercased with spaces as
-hyphens ("Huel EU" -> `huel-eu`), resolved from the conversation.
+`/agent/brain/<workspace>/`, where `<workspace>` is the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`), resolved from the conversation.
 
 ```
 /agent/brain/
