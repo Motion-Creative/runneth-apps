@@ -10,8 +10,8 @@ description: |
   connection, stored API key, or Motion native - and its data should land in files, or when
   the user asks to "pull the reviews", "dump the reviews", "pull support tickets", "sync
   customer conversations to files", or "run the VoC data pull".
-  Do NOT use for analyzing reviews (analyzing skill), building integration guides, or one-off
-  API questions about a platform.
+  Do NOT use for analyzing customer voice (use the voc-audit skill), building integration
+  guides, or one-off API questions about a platform.
 ---
 
 # VoC Data Pull
@@ -294,7 +294,7 @@ folder state:
 
    ```
    routine add --name "voc-sync-<platform>" \
-     --delivery "No notification on success - the deliverable is the files under /agent/brain/data-sources/voc/<platform>/. If the run fails, a platform is disconnected, or coverage is incomplete, send a brief note to web conversation <conversation-id> with conversation send --to <conversation-id>." \
+     --delivery "Daily incremental success: no notification - the files are the deliverable. On the first fully covered backfill across any voc-sync-* routine, if /agent/brain/_changelog.md does not already contain a voc-audit-offer entry, send one brief note to web conversation <conversation-id>: name the source that finished, say the customer voice is ready, and ask 'Would you like me to run a Voice of Customer Audit?' Then append a dated voc-audit-offer entry to /agent/brain/_changelog.md. Never run the audit without a person's yes. If the run fails, a platform is disconnected, or coverage is incomplete, send a brief note to the same conversation." \
      --prompt "Run the voc-data-pull skill for <platform> as a recurring sync run, following the skill's Recurring sync rules exactly - they define the pull window, account iteration, disconnect handling, and coverage reporting." \
      --cron "0 6 * * *"
    ```
@@ -307,7 +307,9 @@ folder state:
    ```
 
 3. Tell the user in one or two sentences: the initial pull is running in the background and
-   the data stays updated daily. Do not mention routine mechanics unless asked.
+   the data stays updated daily. Explain that once the first full backfill is ready, Runneth
+   will offer a manual Voice of Customer Audit. Do not run or present the audit now, and do
+   not mention routine mechanics unless asked.
 
 **Never run the pull inside the user's conversation.** All pulling happens in the routine's
 runs; a one-off refresh beyond the daily cadence is `routine run --id <routine-id>`.
@@ -336,9 +338,14 @@ skill flow:
 - **Disconnected platform** -> do nothing except say so in the run summary. Do not pause
   or cancel the routine; reconnecting self-heals (the connect flow re-fires, the routine
   already exists, the next run resumes).
-- **Delivery**: nothing on success - the files are the deliverable and the run summary is
-  recorded in run history. Failures, disconnects, and incomplete coverage get a brief note
-  to the delivery conversation named in the routine.
+- **Delivery**: daily incremental success is silent - the files are the deliverable and the
+  run summary is recorded in history. The first `voc-sync-*` run to complete full backfill
+  coverage sends one offer to the delivery conversation: "Would you like me to run a Voice
+  of Customer Audit?" Before sending, check `/agent/brain/_changelog.md` for a
+  `voc-audit-offer` entry; if found, stay silent. After sending, append a dated
+  `voc-audit-offer` entry naming the source whose backfill completed. This is an offer only:
+  never run the audit until a person says yes. Failures, disconnects, and incomplete
+  coverage get a brief note to the delivery conversation.
 - Everything else - boundaries, recipes, file format, coverage reporting - is the normal
   skill contract.
 

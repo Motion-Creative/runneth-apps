@@ -211,12 +211,14 @@ home:
     `creativeId` — do not add content flags to a metrics pull for convenience; it slows the
     call. Cacheth holds no performance data: stating a number from memory or from a summary
     is fabrication, not analysis.
-  - **VoC is the customer side:** why people respond the way they do — reviews, support
-    conversations, community posts, and ad comments under
-    `/agent/brain/data-sources/voc/<platform>/`, surfaced through Knoweth. Ad comments are
-    the bridge: they connect performance and customer voice on the same creatives. When the
-    question is why customers buy, object, or churn, the creative's content alone cannot
-    answer it.
+  - **VoC is the customer side:** why people respond the way they do. Read
+    `/agent/brain/data-sources/voc/voice-of-customer-audit.md` first when it exists, then
+    inspect the raw reviews, support conversations, community posts, and ad comments it
+    cites under `/agent/brain/data-sources/voc/<platform>/`. If raw VoC exists but the
+    manual audit has not run, use the relevant raw evidence and offer the `voc-audit` skill;
+    never silently run it. Ad comments are the bridge: they connect performance and
+    customer voice on the same creatives. When the question is why customers buy, object,
+    or churn, the creative's content alone cannot answer it.
 
 Most real questions pair the two, in order: **metrics pick the set, content explains it.**
 Skipping the first step explains ads that may not be winning; skipping the second turns a WHY

@@ -4,6 +4,36 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 3 - 2026-07-29
+
+Voice of Customer analysis becomes a managed, manually triggered package capability.
+
+- Added the `voc-audit` skill, installed to
+  `/agent/.agents/skills/voc-audit/` through the package manifest. The former
+  Review Audit is renamed and generalized across reviews, support conversations,
+  ad comments, community posts, surveys, and other synced customer voice. It
+  requires 200 total entries, produces five creative-strategy buckets, and adds
+  evidence-backed personas for products with 200 or more entries.
+- The first fully covered VoC backfill offers the audit once and records the
+  offer in `/agent/brain/_changelog.md`. The audit runs only on a person's yes
+  or explicit request - never on connection, sync, install, or daily refresh.
+- The audit saves one canonical compiled page at
+  `/agent/brain/data-sources/voc/voice-of-customer-audit.md`, with Knoweth
+  metadata and raw-item citations, and indexes it in `/agent/INDEX.md`.
+  Person-approved reruns regenerate that page rather than creating duplicates.
+- Existing skills now connect to the capability: `voc-data-pull` routes
+  analysis to `voc-audit`; `meta-ad-performance-analysis` front-loads its
+  Harneth catalog triggers and reads the audit for customer-side WHY and
+  what-to-make-next questions; `onboarding-walkthrough` offers the audit as a
+  fallback when a backfill is ready and the routine has not already offered it.
+- Validation v1.12 adds a conditional customer-voice starter question when the
+  audit exists and uses the audit in customer-side WHY answers and relevant deck
+  recommendations. The Data-Query Guide and Knoweth organize contract now route
+  those questions through the compiled audit first, then its cited raw evidence.
+- Knoweth brain guard v3 makes that future-answer routing always-on while
+  preserving the audit's manual rerun rule: new VoC evidence marks it stale and
+  prompts an offer; it does not silently regenerate.
+
 ## 2 - 2026-07-29
 
 Creative attributes get a defined fallback: the creative content layer is now a
