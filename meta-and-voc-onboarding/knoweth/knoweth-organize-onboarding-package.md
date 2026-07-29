@@ -21,14 +21,15 @@ This is the last setup step of the combined run and the first line of ongoing ma
 **Guard 1 — organize the brain (runs once, after the questions are answered).**
 
 ```
-<!-- BEGIN runneth:knoweth-organize v2 -->
+<!-- BEGIN runneth:knoweth-organize v3 -->
 Knoweth organize (after the questions are answered):
 - Organize the brain when all three gates hold; do not wait to be asked:
   (1) the account interpretation is [CONFIRMED] - check the fields-confirmed count in the
   "File metadata" block at the end of /agent/brain/meta/account-context.md;
   (2) content has landed: the voc-sync-<platform> backfill reports full date-window coverage (not
   just files existing - read the latest run summary via routine history --id <routine-id>),
-  and creatives are in Cacheth;
+  and the creative content layer resolves (creatives in Cacheth - or, where the sandbox cache
+  feature is disabled, live content pulls per the Cacheth Command Reference's ladder);
   (3) /agent/brain/_tag-vocabulary.md does not exist - writing it is the organize step's last act,
   so its existence means done; update the file instead of re-running.
 - TODAY only three lanes are searched: global, user:<userId>, and project:<workspaceId> (the
@@ -41,7 +42,7 @@ Knoweth organize (after the questions are answered):
 - Finish by writing the tag vocabulary + naming decoder to /agent/brain/_tag-vocabulary.md (gate 3's
   done-marker) and noting it in /agent/brain/_changelog.md. When the harness starts layering
   configured lanes (see the forward path), promote high-value tags to family lanes then, not before.
-<!-- END runneth:knoweth-organize v2 -->
+<!-- END runneth:knoweth-organize v3 -->
 ```
 
 **Guard 2 — standing save and maintenance contract (always on).**

@@ -4,6 +4,40 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 2 - 2026-07-29
+
+Creative attributes get a defined fallback: the creative content layer is now a
+capability with an access contract, not a synonym for Cacheth.
+
+- Cacheth Command Reference: the "priority order" section becomes "How the
+  creative content layer resolves" — a four-rung ladder (Knoweth injection →
+  `motion cache search-summaries` → `motion cache get-creative` → live
+  `motion meta insights` content flags) with explicit rules. The live rung is
+  failure-only: it fires when the cache errors, is empty/still building, or is
+  missing the record — never as a shortcut past a healthy cache. Transient
+  failures kick a background `motion cache refresh` so the cache serves next
+  time. A sandbox with the cache feature disabled (the `motion cache` commands
+  fail with an explicit "Motion cache is disabled for this sandbox" message —
+  verified against agent-builder's `MOTION_CACHE_ENABLED` handling) runs the
+  live rung as its standing path, noted once per conversation. When an answer needs metrics and content,
+  the metrics pull stays lean (no content flags — they slow the call) and
+  content joins from the cache on `creativeId`. Show-the-work says which rung
+  served.
+- Data-Query Guide (WHY section) and meta-ad-performance-analysis skill: the
+  creative side of WHY now points at the layer, with the fall-through and the
+  lean-metrics join rule — a cache failure never skips the creative read.
+- Creative Attributes playbook: a cache-disabled sandbox no longer stalls the
+  naming decode; it pulls the ad-name list from live insights rows and records
+  in the handoff that the VM runs on the live path.
+- Validation (doc v1.11, gate guard v3 → v4): prerequisite 2 becomes "the
+  creative content layer resolves" — cache-disabled sandboxes validate on live
+  content reads instead of being permanently gated; a cache that exists but has
+  not synced still routes to the sync.
+- Knoweth organize guard (v2 → v3, mirrored in the package doc): gate 2's
+  "creatives are in Cacheth" had the same permanent-gate bug — a cache-disabled
+  sandbox would never organize the brain. It now reads "the creative content
+  layer resolves," same shape as the validation gate fix.
+
 ## 1 - 2026-07-27
 
 The package as it ships:

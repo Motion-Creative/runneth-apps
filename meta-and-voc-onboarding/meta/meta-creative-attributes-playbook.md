@@ -100,8 +100,8 @@ Runneth reaches this content two ways, cheapest first:
 
 Freshness is the sync's job, not Runneth's: the cache bootstraps per workspace and keeps
 hydrating in the background. If a creative seems to be missing, check `motion cache status` and
-run `motion cache refresh`; if it is still absent, the live path is `motion meta insights
---summary-sections` per the Data-Query Guide (the same path that owns performance metrics) —
+run `motion cache refresh`; if it is still absent, fall through to the live content flags on
+`motion meta insights` per the creative content layer's ladder (Cacheth Command Reference) —
 never reconstruct the record by hand.
 
 ---
@@ -130,6 +130,12 @@ never reconstruct the record by hand.
    If it errors, record the blocker and stop this step — do not loop retries against the data
    commands. If it succeeds but shows an empty or still-building cache, run
    `motion cache refresh --workspace-id <workspaceId>` and come back once the sync settles.
+   If it fails with the explicit message "Motion cache is disabled for this sandbox," do not
+   stall the decode: pull the name list live instead with `motion meta ads --grain ads
+   --date-range last_365d` (ad-level rows carrying `adName` plus ad set and campaign
+   membership), continue from step 3, and note in the handoff that this VM runs creative
+   attributes on the live path until the sandbox cache feature is enabled (per the creative
+   content layer's ladder in the Cacheth Command Reference).
 2. Export the synced corpus and extract the full ad-name list (local, no API call), keeping the
    same explicit workspace scope on every command:
 

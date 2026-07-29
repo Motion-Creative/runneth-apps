@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.10 — validation is a training loop: deck feedback heals context, durability routing, spec-level convergence (July 2026)
+### Version 1.11 — creative content layer resolves via ladder: cache-disabled sandboxes validate on live reads, gate guard v4 (July 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
@@ -77,12 +77,13 @@ package's post-install run does this in its single scripted guard merge). The bl
 shown for context and must stay identical to the staged file.
 
 ```
-<!-- BEGIN runneth:meta-validation-gate v3 -->
+<!-- BEGIN runneth:meta-validation-gate v4 -->
 Meta validation gate (workspace <workspaceId>):
 
 - When the Account Context Brain (/agent/brain/meta/account-context.md) has all required fields
-  [CONFIRMED] and the creative content layer has synced (the workspace's creatives are in
-  Cacheth, surfaced through Knoweth), and validation has not yet been completed
+  [CONFIRMED] and the creative content layer resolves (creatives in Cacheth surfaced through
+  Knoweth - or, where the sandbox cache feature is disabled, live content pulls per the
+  Cacheth Command Reference's ladder), and validation has not yet been completed
   (/agent/brain/meta/validation.md missing or MVCE state = off), open the validation experience
   described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
@@ -98,7 +99,7 @@ Meta validation gate (workspace <workspaceId>):
   context - never hand-edit the deck output. Durable corrections in any later conversation get
   the same routing; one-off or current-state remarks shape the answer or the current render,
   never the file.
-<!-- END runneth:meta-validation-gate v3 -->
+<!-- END runneth:meta-validation-gate v4 -->
 ```
 
 ## 2. Prerequisites (hard gate)
@@ -109,8 +110,13 @@ Do not start validation until both are true:
    metadata" block at the end of `/agent/brain/meta/account-context.md`. All nine required interpretation fields signed off
    by a person. If any field is still `[AUTO]` or `[FLAGGED]`, finish that first. Validating
    against a guessed lens teaches the customer the wrong thing.
-2. **The creative content layer is ready.** The workspace's creatives are in Cacheth: Knoweth
-   injects matching summaries into the turn, and `motion cache search-summaries` finds them.
+2. **The creative content layer resolves.** In the normal case the workspace's creatives are
+   in Cacheth: Knoweth injects matching summaries into the turn, and
+   `motion cache search-summaries` finds them. In a sandbox where the cache feature is not
+   enabled (the `motion cache` commands fail with the explicit "Motion cache is disabled for
+   this sandbox" message), the layer's live rung stands in (per the Cacheth Command
+   Reference's ladder) — validation proceeds on live content reads; they are just slower. A
+   cache that exists but has not synced yet is neither: the fix is the sync.
 
 If either is missing, say so plainly and route back to that step. Do not fake a validation on an
 incomplete foundation. Routing back means telling the person what is missing — it never means

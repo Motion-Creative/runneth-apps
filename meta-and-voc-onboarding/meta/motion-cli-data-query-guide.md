@@ -200,12 +200,17 @@ home:
   thumbstop says the hook failed, not what the hook was or why it failed.
 - **WHY — creative content and customer voice.** Two why-sources, two sides of the same
   question:
-  - **Cacheth is the creative side:** why an ad hooks or loses people, what the winners have
-    in common, what a creative actually says and shows. This is the summary sections and hooks —
-    via Knoweth injection first, then the `motion cache` CLI — plus transcripts and AI tags,
-    which live only on the full record (`motion cache get-creative`).
-    Cacheth holds no performance data: stating a number from memory or from a summary is
-    fabrication, not analysis.
+  - **The creative content layer is the creative side:** why an ad hooks or loses people,
+    what the winners have in common, what a creative actually says and shows. Cacheth is its
+    primary store — summary sections and hooks via Knoweth injection first, then the
+    `motion cache` CLI, plus transcripts and AI tags on the full record
+    (`motion cache get-creative`). When the cache cannot serve (errors, empty, missing
+    record, or disabled for the sandbox), the creative read is not skipped — it falls
+    through to the live pull per the layer's ladder in the Cacheth Command Reference. When
+    pairing content with metrics, pull the metrics lean and join content from the cache on
+    `creativeId` — do not add content flags to a metrics pull for convenience; it slows the
+    call. Cacheth holds no performance data: stating a number from memory or from a summary
+    is fabrication, not analysis.
   - **VoC is the customer side:** why people respond the way they do — reviews, support
     conversations, community posts, and ad comments under
     `/agent/brain/data-sources/voc/<platform>/`, surfaced through Knoweth. Ad comments are

@@ -182,7 +182,8 @@ File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta
   deck without it; questions-only customers never need it), lock-in (deck approval, refresh
   routine, Slack), and the MVCE gate.
 - **Runs third, gated.** Starts only when all nine Account Context Brain fields are confirmed
-  and the workspace's creatives are in Cacheth (cache coverage, not files). Every correction in
+  and the creative content layer resolves (creatives in Cacheth — or live content pulls where
+  the sandbox cache feature is disabled; cache coverage, not files). Every correction in
   the loop heals the specific Account Context Brain field behind it — never move past a wrong
   answer.
 - **Persists to:** `/agent/brain/meta/validation.md` (confirmed answers, corrections, deck
@@ -301,7 +302,7 @@ The run order below is the human-readable description of the same lifecycle.
    skill presents the findings and collects the human answers on the yes.
 4. **Activate and run Meta Validation (Step 3).** Its validation-gate guard block (staged at
    `guards/meta-validation-gate.md`) is merged by the same post-install guard merge; once the
-   Account Context Brain is fully confirmed and the cache has synced,
+   Account Context Brain is fully confirmed and the creative content layer resolves,
    the gate opens the validation experience on its own: the answer-and-confirm loop, the weekly
    deck, lock-in, and the MVCE gate. Onboarding is done when MVCE is on, not when data is
    connected.

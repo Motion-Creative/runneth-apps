@@ -1,9 +1,10 @@
-<!-- BEGIN runneth:meta-validation-gate v3 -->
+<!-- BEGIN runneth:meta-validation-gate v4 -->
 Meta validation gate (workspace <workspaceId>):
 
 - When the Account Context Brain (/agent/brain/meta/account-context.md) has all required fields
-  [CONFIRMED] and the creative content layer has synced (the workspace's creatives are in
-  Cacheth, surfaced through Knoweth), and validation has not yet been completed
+  [CONFIRMED] and the creative content layer resolves (creatives in Cacheth surfaced through
+  Knoweth - or, where the sandbox cache feature is disabled, live content pulls per the
+  Cacheth Command Reference's ladder), and validation has not yet been completed
   (/agent/brain/meta/validation.md missing or MVCE state = off), open the validation experience
   described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
@@ -19,4 +20,4 @@ Meta validation gate (workspace <workspaceId>):
   context - never hand-edit the deck output. Durable corrections in any later conversation get
   the same routing; one-off or current-state remarks shape the answer or the current render,
   never the file.
-<!-- END runneth:meta-validation-gate v3 -->
+<!-- END runneth:meta-validation-gate v4 -->
