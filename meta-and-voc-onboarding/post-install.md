@@ -6,7 +6,12 @@ Run the sequence below at the first opportunity after the package's files land: 
 installing turn if you are reading this then, otherwise on the first turn where the
 package's activation instruction is visible. Either way, run it without waiting to be
 asked. Exactly once per install: if the four guard sentinels are already in
-`/agent/user.md`, this sequence already ran - do not repeat it.
+`/agent/user.md` for this conversation's workspace, this sequence already ran - do not
+repeat it. If the sentinels are present but their guard headers name a **different**
+workspace, stop and report exactly that: this package supports one Meta workspace per
+sandbox, and this sandbox is already set up for another workspace. Do not rewrite the
+guard headers, do not copy or rename the brain files, and do not run the sequence for
+the second workspace - a person has to decide which workspace owns this sandbox.
 
 ## The install-time sequence, in order
 
@@ -95,28 +100,33 @@ asked. Exactly once per install: if the four guard sentinels are already in
    answers is the walkthrough itself - never leave autofill results only in the chat.
 6. **Close with the readiness report - status only, never content.** One line per part
    stating its state (running in background / done / waiting on a person / skipped and
-   why), plus how many questions need a human. The report carries no findings: no account
-   numbers or metrics, no naming positions or decoder detail (not even the shape - "a
-   5-position decoder" or "4 schemas detected" is decoder detail; say "provisional
-   naming decode written" and stop), no field reads, and never
-   the question text itself - naming even one question here burns the walkthrough's
-   opening. If a part is waiting on a person, name the topic in two or three words
-   ("targets and thresholds"), not the question. The same discipline covers the whole
-   closing stretch of the turn: the progress narration around the report must not
-   surface metrics, findings, or flags either ("average ROAS is 0.88" belongs in the
-   brain file, never in this turn's visible text). The report's shape is literal:
+   why). The report carries no findings and no numbers of any kind: no account
+   numbers or metrics, no tallies or counts (field counts, question counts, sample
+   sizes, file totals - "autofilled 7 of 9 fields" is a finding, not a status), no
+   version labels (the package version is not part of the report), no naming positions
+   or decoder detail (not even the shape - "a 5-position decoder" or "4 schemas
+   detected" is decoder detail; say "provisional naming decode written" and stop), no
+   field reads, and never the question text itself - naming even one question here
+   burns the walkthrough's opening. If a part is waiting on a person, name the topic in
+   two or three words ("targets and thresholds"), not the question and not a count of
+   questions. The same discipline covers the whole closing stretch of the turn: the
+   progress narration around the report must not surface metrics, findings, or flags
+   either ("average ROAS is 0.88" belongs in the brain file, never in this turn's
+   visible text). The report's shape is literal:
 
-   > meta-and-voc-onboarding <version> - install complete
+   > meta-and-voc-onboarding - install complete
    > - VoC sync: <per-platform status, one line total>
    > - Guards: merged
    > - Creative Attributes: done
-   > - Account Context Brain: autofilled <N> of 9 fields; <M> questions need a human
+   > - Account Context Brain: done - remaining gaps wait for the walkthrough
    >
    > Are you ready to begin your onboarding?
 
    Fill only the angle-bracket slots; append nothing else to any bullet. "Creative
    Attributes: done" is the entire line - naming what was detected, the convention's name
-   or shape, a file path, or guard version numbers turns a status into a finding. The
+   or shape, a file path, or guard version numbers turns a status into a finding.
+   Wrong: "Account Context Brain: autofilled 7 of 9 fields; 4 questions need a human."
+   Right: "Account Context Brain: done - remaining gaps wait for the walkthrough." The
    only permitted extensions of a bullet are its allowed states ("skipped - <why>",
    "waiting on a person - <two-or-three-word topic>"), never extra detail after "done".
    The closing line is verbatim and nothing follows it. A yes (from anyone, in any

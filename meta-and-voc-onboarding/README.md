@@ -76,8 +76,10 @@ explicit call):
 Branch testing only (the version on `main` is not what you were asked to install, e.g. a
 PR or branch reference):
 
-1. If you were given a pull-request URL, resolve it to its head branch first:
-   `gh pr view <pr-url> --json headRefName`.
+1. If you were given a pull-request URL, resolve it to its head branch first. VMs have no
+   GitHub connection, so `gh` always fails here (`Client Error (409)`); use the public API
+   instead: `curl -s https://api.github.com/repos/<owner>/<repo>/pulls/<number>` and read
+   `.head.ref`.
 2. Run: `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#<branch>"`.
    Always use this `github:` ref form - the `https://github.com/.../tree/<branch>/...` URL
    form misparses branch names that contain `/` and fails with a 422.
@@ -122,7 +124,7 @@ package writes it to brain files.
   organize fire later from their own gates.
 
 ### Creative Attributes
-File: `meta/meta-creative-attributes-playbook.md`
+File: `meta/meta-creative-attributes-playbook.md` (staged at `/agent/brain/meta-and-voc-onboarding/meta-creative-attributes-playbook.md`)
 
 - **Job:** establish the creative content layer — one enriched record per active creative
   (identity, summary, hook, value props, transcript, AI tags) held in **Cacheth**, the local
@@ -141,7 +143,7 @@ File: `meta/meta-creative-attributes-playbook.md`
   decode re-runs and routes through Field 4.
 
 ### Account Context Brain
-File: `meta/meta-account-context-brain-onboarding-package.md`
+File: `meta/meta-account-context-brain-onboarding-package.md` (staged at `/agent/brain/meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md`)
 
 - **Job:** capture how the team interprets the account — what "best" means, which numbers to
   trust, how campaigns map to stages. Nine required fields confirmed with a person, plus
@@ -172,7 +174,7 @@ Folder: `onboarding-walkthrough/`
   brain - see the `onboarding-walkthrough-skill` resource in `package.json`.
 
 ### Meta Validation
-File: `meta/meta-validation-onboarding-package.md`
+File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta-and-voc-onboarding/meta-validation-onboarding-package.md`)
 
 - **Job:** prove Runneth understood the account. The answer-and-confirm loop on the customer's
   starter questions (including the name-level probe: "show me all our [product] ads," with the
@@ -193,7 +195,7 @@ File: `meta/meta-validation-onboarding-package.md`
 ---
 
 ### Motion CLI Data-Query Guide (supporting reference)
-File: `meta/motion-cli-data-query-guide.md`
+File: `meta/motion-cli-data-query-guide.md` (staged at `/agent/brain/meta-and-voc-onboarding/motion-cli-data-query-guide.md`)
 
 - **Job:** the canonical contract for how Runneth pulls Meta data through the `motion` CLI, so
   queries come out right on the first try. Every Meta step leans on it for its pulls.
@@ -203,7 +205,7 @@ File: `meta/motion-cli-data-query-guide.md`
 ---
 
 ### Cacheth Command Reference (supporting reference)
-File: `meta/cacheth-command-reference.md`
+File: `meta/cacheth-command-reference.md` (staged at `/agent/brain/meta-and-voc-onboarding/cacheth-command-reference.md`)
 
 - **Job:** the canonical contract for querying the local creative cache through the
   `motion cache` CLI — all five commands with every flag, the full-record field layout, `jq`
@@ -313,7 +315,8 @@ The run order below is the human-readable description of the same lifecycle.
    `guards/knoweth-organize.md` and `guards/knoweth-brain.md`) are merged into /agent/user.md by the
    post-install run's single guard merge, so the organize trigger fires and save-routing/maintenance stay on. Do not carve data-source-family or
    initiative lanes today; only global, the user lane, and the workspace lane are queried. See
-   knoweth/knoweth-organize-onboarding-package.md.
+   `knoweth/knoweth-organize-onboarding-package.md` (staged at
+   `/agent/brain/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md`).
 7. **Keep everything current.** Creative content stays current through the Cacheth sync
    automatically. Account Context Brain on monthly cadence and structural-drift triggers. The
    weekly deck regenerates on the refresh routine agreed at lock-in. VoC data refreshes itself
