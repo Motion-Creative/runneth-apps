@@ -79,8 +79,8 @@ The package as it ships:
 - The walkthrough presentation (opening frame, field sections, closing TLDR)
   lives in the `onboarding-walkthrough` skill and fires only on a human's yes to
   that invitation or an explicit ask to begin/resume onboarding.
-- Validation is a training loop (validation doc v1.10, ACB v1.31, validation
-  gate guard v3): the question loop and the deck build train one brain. All
+- Validation is a training loop (validation doc v1.12, ACB v1.31, validation
+  gate guard v4): the question loop and the deck build train one brain. All
   feedback routes through a durability test — judgment rules heal ACB fields,
   standing preferences land in the register note or Field 10, current-state
   facts shape the answer only, one-offs are applied and forgotten. Deck change
