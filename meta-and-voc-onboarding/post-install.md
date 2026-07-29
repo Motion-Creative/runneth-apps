@@ -90,7 +90,9 @@ the second workspace - a person has to decide which workspace owns this sandbox.
    do not ask the gap questions, do not run the walkthrough; the onboarding-walkthrough
    skill owns all of that and fires later, on a human's yes. **Persist
    before you stop:** write `/agent/brain/meta/account-context.md` in the saved-file
-   format the account-context playbook defines (Section 3: a prose reference document,
+   format the account-context playbook defines (staged at
+   `/agent/brain/meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md`;
+   Section 3: a prose reference document,
    not the worksheet) with every autofilled field and the provisional naming decode, and
    index it in `/agent/INDEX.md` with the playbook's aliases, so the autofill survives
    beyond this conversation. This file gets written even when the
@@ -128,7 +130,10 @@ the second workspace - a person has to decide which workspace owns this sandbox.
    Wrong: "Account Context Brain: autofilled 7 of 9 fields; 4 questions need a human."
    Right: "Account Context Brain: done - remaining gaps wait for the walkthrough." The
    only permitted extensions of a bullet are its allowed states ("skipped - <why>",
-   "waiting on a person - <two-or-three-word topic>"), never extra detail after "done".
+   "waiting on a person - <two-or-three-word topic>", "blocked - <reason>"), never extra
+   detail after "done". "Done" is terminal: a part that completed through a fallback or
+   degraded path is still exactly "done" - the how (which data source, which fallback,
+   what was disabled) is detail, and it belongs in the brain file, not the report.
    The closing line is verbatim and nothing follows it. A yes (from anyone, in any
    conversation, whenever it comes) invokes the onboarding-walkthrough skill; that skill -
    and only that skill - presents the findings and asks the questions. Do not start the
