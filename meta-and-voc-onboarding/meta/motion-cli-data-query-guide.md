@@ -94,6 +94,14 @@ Requires `--grain`. Use for explicit ad IDs, adset/campaign membership, naming r
 - `--northbeam` — NorthBeam attribution (camelCase keys: `northbeamRoas`, `northbeamRoasNew`, `northbeamEcrNew`...)
 - `--google-analytics` — merge GA metrics
 
+**Response shape (extraction keys differ by grain).** Ads-grain rows never carry `adName`,
+`campaignName`, or `adsetName` keys: the ad's own name is the `name` key, and ad set /
+campaign identity lives only inside `associatedObjectDetails` (`.adSets[].name` with
+`optimizationGoal`, `.campaigns[].name` with `objective`), which populates only when
+`--include-associated-objects` is passed. A top-level `adName` exists only on adnames-grain
+rows. Extracting `.adName` from an ads-grain row returns null on every row by definition —
+that is a wrong key, not missing data.
+
 Do NOT use for generic top ads / galleries / hooks / transcripts / tags — those stay on `meta insights`.
 
 ```

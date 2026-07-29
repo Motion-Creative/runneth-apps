@@ -131,11 +131,14 @@ never reconstruct the record by hand.
    commands. If it succeeds but shows an empty or still-building cache, run
    `motion cache refresh --workspace-id <workspaceId>` and come back once the sync settles.
    If it fails with the explicit message "Motion cache is disabled for this sandbox," do not
-   stall the decode: pull the name list live instead with `motion meta ads --grain ads
-   --date-range last_365d` (ad-level rows carrying `adName` plus ad set and campaign
-   membership), continue from step 3, and note in the handoff that this VM runs creative
-   attributes on the live path until the sandbox cache feature is enabled (per the creative
-   content layer's ladder in the Cacheth Command Reference).
+   stall the decode: pull the name list live instead with `motion meta ads --grain adnames
+   --include-associated-objects --date-range last_365d` — each row carries `adName` at the
+   top level, with ad set and campaign names under `associatedObjectDetails.adSets[].name`
+   and `.campaigns[].name` (ads-grain rows have no `adName`/`adsetName`/`campaignName` keys,
+   so do not use `--grain ads` for the decode). Continue from step 3, and note in the
+   handoff that this VM runs creative attributes on the live path until the sandbox cache
+   feature is enabled (per the creative content layer's ladder in the Cacheth Command
+   Reference).
 2. Export the synced corpus and extract the full ad-name list (local, no API call), keeping the
    same explicit workspace scope on every command:
 

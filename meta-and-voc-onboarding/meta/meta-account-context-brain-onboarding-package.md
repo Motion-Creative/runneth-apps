@@ -1,5 +1,5 @@
 # Meta Account Context: Brain Onboarding Package
-### Version 1.31 — patch: Field 10 is the landing spot for deck feedback (July 2026)
+### Version 1.32 — install-report fixes: real ads-grain extraction keys in the field-to-command map, `Field N` headings with a contents section, file-metadata YAML template (July 2026)
 
 This package teaches Runneth how a customer understands their Meta ad account, so its queries,
 rankings, and insights match how the team actually thinks about the data. This package is
@@ -14,6 +14,28 @@ Two things exist after activation:
    the worksheet), that Runneth writes and later reads as source of truth.
 2. A small standing guard merged into `/agent/user.md` that forces Runneth to read that file
    before any performance work.
+
+## Contents
+
+This document is long; read it by section, not end to end. Every field section below uses
+the exact heading form `## Field N — <name>`, so a targeted search for `Field 5` (or any
+field number) lands directly on its section.
+
+- **How this package operates** — activation and the guard block; workspace scope; where the
+  filled result lives, including the file-metadata YAML contract.
+- **Fill-in procedure** — Step 0 (brand context), Step 1 (the field pulls), and the pointer
+  to the onboarding-walkthrough skill that owns the presentation.
+- **Handling specific fields** — Field 1's critical rule on third-party attribution.
+- **Field-to-command map** — which command answers which field, what to extract, and the
+  ads-grain response shape.
+- **Required context fields** — the field sections: Field 1 — Sources of truth ·
+  Field 2 — Conversion events · Field 3 — Known metric gotchas · Field 4 — Naming
+  conventions (decoder spec and presentation rule) · Field 5 — Attribution model and
+  windows · Field 6 — Account structure · Field 7 — Funnel map · Field 8 — Creative
+  performance metrics and benchmarks · Field 9 — Targets, thresholds and decision rules ·
+  Field 10 — Reporting structure and marketing calendar (the deck spec).
+- **Derived capabilities · Context health check · Overall status · Changelog** — the
+  closing sections.
 
 ---
 
@@ -110,7 +132,35 @@ per-product targets with the team), not as flag noise. Use this order:
    same plain prose as the rest of the file. Omit the section entirely while Field 10 is
    pending; the validation deck build reads it from here.
 6. **File metadata (last):** end the file with a `## File metadata` heading followed by the machine
-   contract as a fenced `yaml` code block.
+   contract as a fenced `yaml` code block, written from the template below.
+
+**The file-metadata machine contract.** This block is the only place statuses live in the
+saved file; the prose above it stays status-free. Write every key, exactly these names:
+
+```yaml
+schema_version: 1
+workspace_id: <workspaceId>
+ad_account: <ad account name>
+last_refreshed: <YYYY-MM-DD>
+fields_confirmed: <0-9>            # count of the nine required fields at CONFIRMED
+field_statuses:
+  field_1_sources_of_truth: <CONFIRMED | AUTO | FLAGGED>
+  field_2_conversion_events: <CONFIRMED | AUTO | FLAGGED>
+  field_3_metric_gotchas: <CONFIRMED | AUTO | FLAGGED>
+  field_4_naming_conventions: <CONFIRMED | AUTO | FLAGGED>
+  field_5_attribution: <CONFIRMED | AUTO | FLAGGED>
+  field_6_account_structure: <CONFIRMED | AUTO | FLAGGED>
+  field_7_funnel_map: <CONFIRMED | AUTO | FLAGGED>
+  field_8_creative_metrics: <CONFIRMED | AUTO | FLAGGED>
+  field_9_targets_thresholds: <CONFIRMED | AUTO | FLAGGED>
+  field_10_deck_spec: <CONFIRMED | PENDING>   # the deck gate — outside the nine
+open_flags: []                     # plain-language open items as a list; [] when none
+naming_decoder: </agent/brain/<workspace>/data-sources/meta/naming-decoder.json — or null when no convention>
+```
+
+The account-context guard's all-confirmed check and the validation gate read
+`fields_confirmed` and `field_statuses` from this block. The one-line answer-register note
+lives in the "At a glance" section, not here — do not duplicate it into the metadata.
 
 - Index it in `/agent/INDEX.md` with aliases (account context, KPI hierarchy, how we judge ads,
   performance interpretation) and a one-line note.
@@ -210,13 +260,22 @@ answers which field and what to read from the result.
 | 1. Sources of truth | `motion meta custom-conversion-metrics`; `motion meta ads --grain adnames --northbeam --include-metrics` probe | which events exist; whether third-party attribution returns values vs null |
 | 2. Conversion events | `motion meta custom-conversion-metrics`; `motion meta metric-reference --query "purchase"` | each event's id/name and standard vs custom key |
 | 3. Known metric gotchas | `motion meta insights --date-range last_365d --include-metrics` (inspect returned rows) | null/zero/misleading columns; ROAS anomalies; structural nulls at any grain |
-| 4. Naming conventions | `motion meta insights --include-metrics` (adName on rows); `motion meta ads --grain adnames`; `motion meta ads --grain ads` | name strings per level; detect structure and reliability; note null levels |
+| 4. Naming conventions | Creative Attributes handoff (Cacheth) when present; else `motion meta ads --grain adnames --include-associated-objects` | `adName` on every row; ad set and campaign names from `associatedObjectDetails.adSets[].name` / `.campaigns[].name`; detect structure and reliability per level |
 | 5. Attribution | No pull | propose 7-day click / 1-day view and confirm |
-| 6. Account structure | `motion meta ads --grain ads --include-associated-objects` | budget level (CBO vs ABO); ad set counts |
-| 7. Funnel map | `motion meta ads --grain ads`; `motion meta insights` campaign names on rows | campaign-to-stage grouping; flag agency-managed or ASC campaigns |
+| 6. Account structure | `motion meta ads --grain ads --include-associated-objects` | budget level (CBO vs ABO) and ad set counts from `associatedObjectDetails.campaigns[]` / `.adSets[]` — the ad's own name is the `name` key; ad rows carry no `adName`/`adsetName`/`campaignName` keys |
+| 7. Funnel map | `motion meta ads --grain ads --include-associated-objects`; `motion meta insights` campaign names on rows | campaign names and objectives from `associatedObjectDetails.campaigns[]` (`name`, `objective`); campaign-to-stage grouping; flag agency-managed or ASC campaigns |
 | 8. Creative performance metrics | `motion meta insights --date-range last_365d --include-metrics --table-kpi <keys>` | account averages for CPA, thumbstop, hold rate, CTR; video-only for engagement metrics |
 | 9. Targets, thresholds, decision rules | `motion meta insights --include-metrics --table-kpi <cost-per key>` | reference CPA baseline; surface material variation across product lines / campaign types |
 | 10. Reporting structure and marketing calendar (deck spec) | No new pull — synthesize from Fields 4, 7, and 9 once confirmed | marketing calendar from the decoder's campaign-type and launch-date positions; reporting structure from confirmed fields |
+
+**The ads-grain response shape (read before extracting).** Rows from `motion meta ads
+--grain ads` never carry `adName`, `campaignName`, or `adsetName` keys — at any spend level.
+The ad's own name is the `name` key, and ad set / campaign identity lives only inside
+`associatedObjectDetails` (`.adSets[].name` with `optimizationGoal`, `.campaigns[].name`
+with `objective`), which populates only when the pull passes `--include-associated-objects`.
+A top-level `adName` exists only on `--grain adnames` rows. So a row showing spend with
+`.adName: null` means the extraction asked for a key that does not exist on that grain —
+fix the query; never read it as an empty or broken account.
 
 ---
 
@@ -228,7 +287,7 @@ Field 10 is the one addition outside that set: the deck spec. It is not required
 validation — the question loop runs on the nine — but no deck is built without it (see
 Field 10).
 
-## 1. Sources of truth
+## Field 1 — Sources of truth
 
 Status: `[EMPTY]`
 
@@ -252,7 +311,7 @@ layered on top of Meta.
 - Attribution tool metrics used: `<which specific metrics — ROAS, new customer ROAS, CPA, ECR, etc.>`
 - Supplemental Meta platform signal (if any): `<creative engagement metrics only — thumbstop, CTR, hold rate. Not conversion attribution.>`
 
-## 2. Conversion events: definitions and hierarchy
+## Field 2 — Conversion events: definitions and hierarchy
 
 Status: `[EMPTY]`
 
@@ -280,7 +339,7 @@ events as primary-conversion candidates when an attribution tool is the source o
 **Fields** (repeat per event)
 - Event: `<AUTO>` | Meaning: `<...>` | Value rank: `<...>` | Optimization or upstream-only: `<...>`
 
-## 3. Known metric gotchas
+## Field 3 — Known metric gotchas
 
 Status: `[EMPTY]`
 
@@ -334,7 +393,7 @@ be surprised by this? If not, leave it out.
 **Fields** (repeat per gotcha)
 - Metric: `<...>` | Why misleading here: `<...>` | Use instead: `<...>` | Status: `<confirmed | open flag>`
 
-## 4. Naming conventions
+## Field 4 — Naming conventions
 
 Status: `[EMPTY]`
 
@@ -472,7 +531,7 @@ the same identifier string.
   Default filter level for bare product-name asks: `<adName unless confirmed otherwise>`
 - Decoder file: `</agent/brain/<workspace>/data-sources/meta/naming-decoder.json — written and indexed | not needed (no convention)>`
 
-## 5. Attribution model and windows
+## Field 5 — Attribution model and windows
 
 Status: `[EMPTY]`
 
@@ -485,7 +544,7 @@ or if the team uses different windows. Do not ask them to specify windows cold.
 - Trusted source: `<...>` | Click window: `<proposed 7d, confirm>` |
   View window: `<proposed 1d, confirm>`
 
-## 6. Account structure
+## Field 6 — Account structure
 
 Status: `[EMPTY]`
 
@@ -500,7 +559,7 @@ Status: `[EMPTY]`
 - Budget level: `<AUTO>` | Test batching: `<...>` | Creatives per batch: `<...>` |
   Pause/cut rule: `<...>`
 
-## 7. Funnel map
+## Field 7 — Funnel map
 
 Status: `[EMPTY]`
 
@@ -519,7 +578,7 @@ Status: `[EMPTY]`
 - Campaign-to-stage map: `<AUTO proposal>` | Priority campaign(s): `<...>` |
   Excluded campaigns: `<...>`
 
-## 8. Creative performance metrics and benchmarks
+## Field 8 — Creative performance metrics and benchmarks
 
 Status: `[EMPTY]`
 
@@ -540,7 +599,7 @@ Status: `[EMPTY]`
 **Fields** (repeat per metric)
 - Metric: `<...>` | Account average: `<AUTO>` | Target or floor: `<...>`
 
-## 9. Targets, thresholds and decision rules
+## Field 9 — Targets, thresholds and decision rules
 
 Status: `[EMPTY]`
 
@@ -600,7 +659,7 @@ on (e.g., last 14 days, last 7 days) so Runneth doesn't have to guess.
 - Tier labels: `<Legend: $X+ / Scale: $Y-$X / Kill: <$Y — or: not used>`
 - Default reporting window: `<last N days>`
 
-## 10. Reporting structure and marketing calendar (the deck spec)
+## Field 10 — Reporting structure and marketing calendar (the deck spec)
 
 Status: `[EMPTY]`
 

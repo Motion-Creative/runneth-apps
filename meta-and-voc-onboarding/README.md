@@ -26,7 +26,8 @@ The parts, and their operational nature:
 - **Account Context Brain** - autofill runs silently at install; the gap questions wait for
   the walkthrough.
 - **Onboarding Walkthrough** - on-demand skill: presents the findings and collects the human
-  answers when someone says yes to "Are you ready to begin your onboarding?"
+  answers when someone says yes to "Are you ready to begin your onboarding?", then
+  summarizes the synced customer voice per integration and offers the audit.
 - **Meta Validation** - human-gated proof loop.
 - **Meta Ad Performance Analysis** - on-demand diagnostic skill; nothing self-runs.
 - **Knoweth organize** - self-gating: fires on its own conditions once content lands; do not
@@ -220,7 +221,11 @@ Folder: `onboarding-walkthrough/`
   conversation that opens with the brand story and account findings, walks the field
   sections (tables where the data calls for them, the full naming breakdown always), and
   closes with the questions TLDR. Owns the required output schema; the ACB package owns the
-  fields it presents.
+  fields it presents. After the account-context questions, it proactively presents the
+  Voice of Customer summary - one line per integration with item counts, product coverage,
+  and dates ("Judge.me: 1,240 reviews across 6 products") - then explains what the Voice of
+  Customer Audit entails and hands the person the manual trigger; the audit runs only on
+  their yes.
 - **Runs on demand - does not fire at install.** Post-install ends by asking "Are you ready
   to begin your onboarding?"; a yes (from anyone, in any conversation, whenever it comes)
   invokes this skill. Typically a CSM triggers it live on the onboarding call. An
@@ -319,10 +324,11 @@ Folder: `voc-audit/`
   other customer voice into five creative-strategy buckets: pain points, trigger moments,
   addressable objections, transformations, and standout customer language. Products with at
   least 200 entries also receive evidence-backed personas.
-- **Runs manually.** The first completed VoC backfill offers it once; a yes or an explicit
-  request such as "run a VoC audit" invokes the skill. Connecting a source, syncing files,
-  or completing onboarding never runs it automatically. The audit requires at least 200
-  total entries.
+- **Runs manually.** The first completed VoC backfill offers it once, and the onboarding
+  walkthrough presents the per-integration Voice of Customer summary with the same offer;
+  a yes or an explicit request such as "run a VoC audit" invokes the skill. Connecting a
+  source, syncing files, or completing onboarding never runs it automatically. The audit
+  requires at least 200 total entries.
 - **Reads raw evidence from:** `/agent/brain/<workspace>/data-sources/voc/<platform>/`.
 - **Persists compiled insight to:**
   `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. The skill rewrites this one

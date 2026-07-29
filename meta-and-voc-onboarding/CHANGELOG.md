@@ -78,7 +78,35 @@ The package as it ships:
   onboarding?".
 - The walkthrough presentation (opening frame, field sections, closing TLDR)
   lives in the `onboarding-walkthrough` skill and fires only on a human's yes to
-  that invitation or an explicit ask to begin/resume onboarding.
+  that invitation or an explicit ask to begin/resume onboarding. After the
+  account-context questions are handled, the walkthrough is proactive about
+  customer voice: it presents a Voice of Customer summary without being asked -
+  one line per integration with platform, kind of voice, items synced, products
+  spanned, and date coverage ("Judge.me: 1,240 reviews across 6 products") -
+  then explains what the audit entails (the five buckets, per-product personas
+  at 200+ entries, the compiled page, and its gate) and hands the person the
+  manual trigger. Data ready means the direct question (logging the
+  `voc-audit-offer` entry if absent); an existing audit gets a rerun offer with
+  what has synced since; an incomplete backfill still gets the summary and
+  explanation with the run deferred.
+- The Account Context Brain's field-to-command map names the real extraction
+  keys, verified against agent-builder's response schemas (fixes from the first
+  real customer-VM install report): ads-grain rows carry no
+  `adName`/`campaignName`/`adsetName` keys - the ad's name is `name`, and ad
+  set / campaign identity lives in `associatedObjectDetails` (populated only
+  with `--include-associated-objects`); a top-level `adName` exists only on
+  adnames-grain rows. Field 4 pulls the decode from the Creative Attributes
+  handoff or `--grain adnames --include-associated-objects`; Fields 6 and 7
+  keep ads-grain with the flag and the right paths; a standing note under the
+  map says spend rows with `.adName: null` mean a wrong extraction key, never
+  an empty account. The same response-shape note sits in the Data-Query Guide's
+  `motion meta ads` section, and the Creative Attributes playbook's
+  cache-disabled decode fallback uses adnames-grain with associated objects.
+  For navigation, every ACB field section is headed `## Field N - <name>` with
+  a contents section up top, and the saved `account-context.md` file-metadata
+  block has an explicit YAML template (`fields_confirmed`, `field_statuses`,
+  `open_flags`, `naming_decoder`) that the guard's all-confirmed check and the
+  validation gate read.
 - Validation is a training loop (validation doc v1.12, ACB v1.31, validation
   gate guard v4): the question loop and the deck build train one brain. All
   feedback routes through a durability test — judgment rules heal ACB fields,
