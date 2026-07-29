@@ -208,7 +208,7 @@ home:
     fabrication, not analysis.
   - **VoC is the customer side:** why people respond the way they do — reviews, support
     conversations, community posts, and ad comments under
-    `/agent/brain/data-sources/voc/<platform>/`, surfaced through Knoweth. Ad comments are
+    `/agent/brain/<workspace>/data-sources/voc/<platform>/`, surfaced through Knoweth. Ad comments are
     the bridge: they connect performance and customer voice on the same creatives. When the
     question is why customers buy, object, or churn, the creative's content alone cannot
     answer it.
@@ -273,7 +273,7 @@ verdict — present them as a gallery of creative cards, never as a bare text li
 **Always normalize ad names on display.** A raw delimited ad name
 (`ProductX_UGC_QuestionHook_v2`) is a filter key, not a label. When referencing a creative,
 decode its name through the account's naming decoder
-(`/agent/brain/meta/naming-decoder.json`, owned by Account Context Field 4) and present the
+(`/agent/brain/<workspace>/naming-decoder.json`, owned by Account Context Field 4) and present the
 human-readable identity — product, format, hook, version, whatever the decoder carries — with
 the raw `adName` kept as a secondary reference (it stays the join key back to the data). If
 the account has no confirmed convention, present the name as-is and say so. This is the

@@ -106,11 +106,50 @@ package writes it to brain files.
 - **Ignore Motion workspace settings.** Treat workspace goal, preferred KPI, spend threshold, and
   attribution config as if they do not exist. Everything comes from auto-pulled Meta ad data and
   customer confirmation.
-- **One workspace at a time.** Every auto-pull names the account with `--workspace-id <id>`.
+- **One workspace at a time.** Every auto-pull names the account with `--workspace-id <id>`, and
+  everything it produces lands in that workspace's own folder (see below).
 - **Brain files are customer-facing account content.** Only account facts belong in them.
   Never save internal notes, CLI commands, or debugging mechanics. Per-creative content lives
   in Cacheth; it goes into a brain file only when a person explicitly asks, as a dated snapshot
   (the cache stays the source of truth for current facts).
+
+---
+
+## One folder per workspace
+
+Everything this package produces is scoped to the Motion workspace it was produced for. A
+workspace's context, naming decoder, validation state, and VoC corpus live together under
+`/agent/brain/<workspace>/`, where `<workspace>` is the workspace name lowercased with spaces as
+hyphens ("Huel EU" -> `huel-eu`), resolved from the conversation.
+
+```
+/agent/brain/
+  huel-eu/                  account-context.md, naming-decoder.json, validation.md,
+                            _tag-vocabulary.md, data-sources/voc/<platform>/...
+  motion-crew/              the same set, entirely independent
+```
+
+Why it matters: a sandbox is per organization, not per workspace, so every workspace in an org
+shares one VM and one filesystem. Multi-workspace orgs are real - agencies with a workspace per
+client, brands with a workspace per region - and each one has its own Meta connection, its own
+naming conventions, and its own customers. Writing to shared paths would mean the second
+workspace onboarded either overwrites the first's context or silently accumulates its customer
+voice into the same corpus. Per-workspace folders make onboarding a second workspace a normal,
+additive operation: it creates a folder and touches nothing that belongs to the first.
+
+Two things stay deliberately org-wide, because they describe the VM rather than an account: the
+four guard blocks in `/agent/user.md` (workspace-agnostic rules that resolve the folder per
+conversation, so they are merged once and shared) and `/agent/INDEX.md` plus
+`/agent/brain/_changelog.md` (org-wide, with entries naming their workspace). Integrations and
+stored secrets are also VM-wide, and an org can hold one account of a platform, several (one
+per workspace), or one genuinely shared - which is why VoC setup pins a human-confirmed
+account per workspace, and the folders separate the data each workspace pulls through it.
+
+Retrieval has a known gap worth stating: the automatic per-workspace Knoweth lane is injected as
+pre-context but explicit Knoweth searches query only the global and user lanes, so content filed
+only in a workspace lane cannot be searched back. Until the harness requests configured lanes on
+search, content stays in the global lane and separation comes from the folder plus a workspace tag
+on every compiled page. The folders already match the lane shape, so that change is additive.
 
 ---
 
@@ -133,7 +172,7 @@ File: `meta/meta-creative-attributes-playbook.md` (staged at `/agent/brain/meta-
 - **Runs first.** Collects facts without interpreting them.
 - **Persists to:** nothing. The provisional naming decode is a handoff to the Account Context
   Brain (Field 4), which owns it once confirmed and writes the operational decoder to
-  `/agent/brain/meta/naming-decoder.json`. **No creative files** — nothing here writes
+  `/agent/brain/<workspace>/naming-decoder.json`. **No creative files** — nothing here writes
   per-creative content to the brain (Cacheth is the system of record; person-requested snapshot
   files are a separate, explicit ask).
 - **Retrieval:** Knoweth pre-context injection first (matching creative chunks arrive in the
@@ -152,11 +191,11 @@ File: `meta/meta-account-context-brain-onboarding-package.md` (staged at `/agent
 - **Runs second.** Uses what the Creative Attributes step found (especially naming decode) as
   pre-populated proposals for confirmation, rather than starting cold. At install, only the
   autofill runs - silently; the presentation belongs to the Onboarding Walkthrough skill below.
-- **Persists to:** `/agent/brain/meta/account-context.md`, plus the operational naming decoder
-  at `/agent/brain/meta/naming-decoder.json` when a convention is confirmed (Field 4 owns it).
+- **Persists to:** `/agent/brain/<workspace>/account-context.md`, plus the operational naming decoder
+  at `/agent/brain/<workspace>/naming-decoder.json` when a convention is confirmed (Field 4 owns it).
 - **Activation:** merges a read-before-performance guard into `/agent/user.md`.
 - **Refresh:** monthly cadence plus structural-drift triggers, logged in
-  `/agent/brain/meta/_changelog.md`.
+  `/agent/brain/<workspace>/_changelog.md`.
 
 ### Onboarding Walkthrough (skill)
 Folder: `onboarding-walkthrough/`
@@ -185,7 +224,7 @@ File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta
   and the workspace's creatives are in Cacheth (cache coverage, not files). Every correction in
   the loop heals the specific Account Context Brain field behind it — never move past a wrong
   answer.
-- **Persists to:** `/agent/brain/meta/validation.md` (confirmed answers, corrections, deck
+- **Persists to:** `/agent/brain/<workspace>/validation.md` (confirmed answers, corrections, deck
   route, lock-in state, MVCE block).
 - **Activation:** merges the `runneth:meta-validation-gate` guard block into `/agent/user.md`;
   once merged, the trigger fires on its own when the prerequisites are met.
@@ -222,7 +261,7 @@ Folder: `voc-data-pull/`
 
 - **Job:** pull raw voice-of-customer data - product reviews, support conversations, surveys,
   community posts, and comments - from available VoC platforms into standardized files under
-  `/agent/brain/data-sources/voc/<platform>/`, one file per item. Recipes exist for
+  `/agent/brain/<workspace>/data-sources/voc/<platform>/`, one file per item. Recipes exist for
   Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom,
   Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord, YouTube, and Meta ad comments
   (the authoritative table is the skill's Step 1) - but the scope is customer-voice data,
@@ -238,8 +277,12 @@ Folder: `voc-data-pull/`
   stored secrets for every VoC platform (any of them may be key-stored instead of
   connected; Okendo and Stamped always are), plus the Motion connection for Meta ad
   comments - and runs the skill's "Set up the recurring sync" procedure for every reachable
-  one: one daily routine per platform (`voc-sync-<platform>`, 6am) whose first run backfills
-  and whose daily runs pull only new items. A platform connected later gets set up on ask -
+  one: one daily routine per platform per workspace (`voc-sync-<workspace>-<platform>`, 6am) whose first run backfills
+  and whose daily runs pull only new items. Platform accounts are org-level with no
+  workspace tag, so setup starts by **pinning the account**: a human confirms which
+  account belongs to this workspace (a lone connection may belong to a different
+  workspace, or be genuinely shared - both are normal), and every pull afterwards
+  addresses that exact account. A platform connected later gets set up on ask -
   nothing runs just because a platform connects.
 - **Installs to the skills root** (`/agent/.agents/skills/voc-data-pull/`), not the brain -
   see the `voc-data-pull-skill` resource in `package.json`.
@@ -262,7 +305,7 @@ Folder: `meta-ad-performance-analysis/`
   or one ad — are doing, why something is or isn't working, or to compare ads. Installing only
   stages the skill.
 - **What it leans on:** the scope rules above apply in full. Interpretation (winner metric,
-  targets, naming decode, spend floor) comes from `/agent/brain/meta/account-context.md`,
+  targets, naming decode, spend floor) comes from `/agent/brain/<workspace>/account-context.md`,
   guard-enforced — never Motion workspace settings. Metrics are pulled live via the `motion`
   CLI per the Data-Query Guide and never stored; name filters go through the confirmed naming
   decode (Field 4 / `naming-decoder.json`); every pull names the workspace with
@@ -342,5 +385,5 @@ The run order below is the human-readable description of the same lifecycle.
 - **Naming decode is the handoff point.** The Creative Attributes step detects provisional naming patterns
   from ad names and passes them to the Account Context Brain as proposals. Account Context Brain
   confirms or corrects them in Field 4 — the single interpretation owner — and writes the
-  operational decoder to `/agent/brain/meta/naming-decoder.json` (typed positions, query fields,
+  operational decoder to `/agent/brain/<workspace>/naming-decoder.json` (typed positions, query fields,
   filter patterns). Creative queries decode ad names through it at analysis time.

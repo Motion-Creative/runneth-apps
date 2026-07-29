@@ -1,8 +1,14 @@
-<!-- BEGIN runneth:knoweth-brain v2 -->
+<!-- BEGIN runneth:knoweth-brain v3 -->
 Knoweth brain discipline (all writes, going forward):
+- Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
+  workspace name lowercased with spaces as hyphens. Resolve it per conversation; the
+  `<workspace>` token stays literal in this file. Account-specific content belongs in this
+  conversation's workspace folder - never in another workspace's folder, and never at the brain
+  root where two workspaces would blur together.
 - On every save (from a pull, a conversation, or an upload), route it: raw vs compiled vs spec; the
-  data-source family folder (voc -> data-sources/voc/**, meta -> /agent/brain/meta/**); tags/attributes
-  and provenance. Raw VoC files keep their skill-owned format - never add tags or front-matter
+  workspace folder and data-source family within it (voc -> /agent/brain/<workspace>/data-sources/voc/**,
+  meta -> /agent/brain/<workspace>/**); tags/attributes and provenance, including which workspace
+  the content describes. Raw VoC files keep their skill-owned format - never add tags or front-matter
   to them; facet vocabulary goes in the compiled analysis pages that cite them. Keep it in the
   global lane so it is searchable today; the folder is for human
   navigation, not a lane. Cacheth is the system of record for per-creative content: write a
@@ -11,7 +17,8 @@ Knoweth brain discipline (all writes, going forward):
   live via the motion CLI, never saved.
 - Keep compiled pages in sync with raw: new evidence restales and regenerates the dependent page; a
   correction updates the compiled page (never raw) and propagates. Curate, do not append: merge into
-  the existing page rather than spawning a duplicate.
+  the existing page rather than spawning a duplicate. Merge only within one workspace - two
+  workspaces describing the same platform stay two pages.
 - Adopt stray human-added files (classify and tag, or flag) without moving the human's folders.
   Default new dimensions to tags, not lanes; only user: isolation and the automatic workspace lane
   are real lanes today.
@@ -19,5 +26,6 @@ Knoweth brain discipline (all writes, going forward):
   create it (a scheduled sweep for stray/untagged files, duplicates, stale pages, and retention
   candidates; per-creative files in the brain exist only by a person's explicit ask - if the
   sweep finds ones of unknown provenance, ask the person before archiving, never silently move
-  or delete them) and never run the sweep in-conversation.
-<!-- END runneth:knoweth-brain v2 -->
+  or delete them) and never run the sweep in-conversation. One routine covers the whole brain;
+  it never merges content across workspace folders.
+<!-- END runneth:knoweth-brain v3 -->

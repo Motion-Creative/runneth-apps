@@ -4,6 +4,33 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 2 - 2026-07-29
+
+Multi-workspace support: one org VM can now onboard several Motion workspaces, each
+additively, none touching another's data.
+
+- **Per-workspace layout.** Everything the package produces lands in
+  `/agent/brain/<workspace>/` (workspace name lowercased, spaces as hyphens):
+  `account-context.md`, `naming-decoder.json`, `validation.md`, `_tag-vocabulary.md`,
+  and VoC data under `/agent/brain/<workspace>/data-sources/voc/<platform>/`. The
+  brain root no longer holds any workspace's content; `_changelog.md` stays org-wide.
+- **Workspace-agnostic guards** (`account-context-guard` v3, `meta-validation-gate` v4,
+  `knoweth-organize` v3, `knoweth-brain` v3): merged into `/agent/user.md` verbatim,
+  once per VM, with no install-time token substitution. Each guard resolves the
+  workspace folder per conversation.
+- **Per-workspace activation.** Post-install records each onboarded workspace in a
+  `runneth:meta-voc-onboarded` roster block in `/agent/user.md`; the activation gate
+  checks the roster for this conversation's workspace, so a second workspace on an
+  already-guarded VM still gets its own onboarding run.
+- **Workspace-named VoC routines** (`voc-sync-<workspace>-<platform>`), each carrying
+  its workspace folder path and workspace id literally - routine runs have no
+  workspace attached to resolve.
+- **VoC account pinning.** Platform accounts are org-level with no workspace tag, and
+  one org can hold several accounts of the same platform (or share one). Setup pins a
+  human-confirmed account per workspace per platform; every sync run addresses that
+  exact account (`--account <accountId>`) and never falls back to another. Auto-pin
+  only when the org has exactly one Motion workspace.
+
 ## 1 - 2026-07-27
 
 The package as it ships:
