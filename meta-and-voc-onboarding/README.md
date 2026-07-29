@@ -123,9 +123,19 @@ workspace's context, naming decoder, validation state, and VoC corpus live toget
 
 ```
 /agent/brain/
-  huel-eu/                  account-context.md, naming-decoder.json, validation.md,
-                            _tag-vocabulary.md, data-sources/voc/<platform>/...
-  motion-crew/              the same set, entirely independent
+  huel-eu/
+    _tag-vocabulary.md
+    _changelog.md
+    data-sources/
+      meta/
+        account-context.md
+        naming-decoder.json
+        validation.md
+        _changelog.md
+      voc/
+        voice-of-customer-audit.md  # created by the later audit skill, not initial sync
+        <platform>/
+  motion-crew/              the same structure, entirely independent
 ```
 
 Why it matters: a sandbox is per organization, not per workspace, so every workspace in an org
@@ -138,8 +148,7 @@ additive operation: it creates a folder and touches nothing that belongs to the 
 
 Two things stay deliberately org-wide, because they describe the VM rather than an account: the
 four guard blocks in `/agent/user.md` (workspace-agnostic rules that resolve the folder per
-conversation, so they are merged once and shared) and `/agent/INDEX.md` plus
-`/agent/brain/_changelog.md` (org-wide, with entries naming their workspace). Integrations and
+conversation, so they are merged once and shared) and `/agent/INDEX.md`. Integrations and
 stored secrets are also VM-wide, and an org can hold one account of a platform, several (one
 per workspace), or one genuinely shared - which is why VoC setup pins a human-confirmed
 account per workspace, and the folders separate the data each workspace pulls through it.
@@ -171,7 +180,7 @@ File: `meta/meta-creative-attributes-playbook.md` (staged at `/agent/brain/meta-
 - **Runs first.** Collects facts without interpreting them.
 - **Persists to:** nothing. The provisional naming decode is a handoff to the Account Context
   Brain (Field 4), which owns it once confirmed and writes the operational decoder to
-  `/agent/brain/<workspace>/naming-decoder.json`. **No creative files** — nothing here writes
+  `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`. **No creative files** — nothing here writes
   per-creative content to the brain (Cacheth is the system of record; person-requested snapshot
   files are a separate, explicit ask).
 - **Retrieval:** Knoweth pre-context injection first (matching creative chunks arrive in the
@@ -190,11 +199,11 @@ File: `meta/meta-account-context-brain-onboarding-package.md` (staged at `/agent
 - **Runs second.** Uses what the Creative Attributes step found (especially naming decode) as
   pre-populated proposals for confirmation, rather than starting cold. At install, only the
   autofill runs - silently; the presentation belongs to the Onboarding Walkthrough skill below.
-- **Persists to:** `/agent/brain/<workspace>/account-context.md`, plus the operational naming decoder
-  at `/agent/brain/<workspace>/naming-decoder.json` when a convention is confirmed (Field 4 owns it).
+- **Persists to:** `/agent/brain/<workspace>/data-sources/meta/account-context.md`, plus the operational naming decoder
+  at `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json` when a convention is confirmed (Field 4 owns it).
 - **Activation:** merges a read-before-performance guard into `/agent/user.md`.
 - **Refresh:** monthly cadence plus structural-drift triggers, logged in
-  `/agent/brain/<workspace>/_changelog.md`.
+  `/agent/brain/<workspace>/data-sources/meta/_changelog.md`.
 
 ### Onboarding Walkthrough (skill)
 Folder: `onboarding-walkthrough/`
@@ -223,7 +232,7 @@ File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta
   and the workspace's creatives are in Cacheth (cache coverage, not files). Every correction in
   the loop heals the specific Account Context Brain field behind it — never move past a wrong
   answer.
-- **Persists to:** `/agent/brain/<workspace>/validation.md` (confirmed answers, corrections, deck
+- **Persists to:** `/agent/brain/<workspace>/data-sources/meta/validation.md` (confirmed answers, corrections, deck
   route, lock-in state, MVCE block).
 - **Activation:** merges the `runneth:meta-validation-gate` guard block into `/agent/user.md`;
   once merged, the trigger fires on its own when the prerequisites are met.
@@ -270,6 +279,9 @@ Folder: `voc-data-pull/`
 - **Own scope rules.** The Meta-only scope rules above do not apply to this part; its
   boundaries live in `voc-data-pull/SKILL.md` (read-only against platforms, bounded
   12-month pulls, PII rules).
+- **Does not create the audit.** The later Voice of Customer audit skill reads these raw files
+  and writes `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. That file
+  is intentionally absent during initial install and backfill.
 - **Fires at install.** Right after this package installs, Runneth checks which VoC
   platforms the org can reach - `integrations status --app <slug>` for each known VoC
   platform slug (the skill's Step 1 table lists them) for OAuth connections **and** the
@@ -304,7 +316,7 @@ Folder: `meta-ad-performance-analysis/`
   or one ad — are doing, why something is or isn't working, or to compare ads. Installing only
   stages the skill.
 - **What it leans on:** the scope rules above apply in full. Interpretation (winner metric,
-  targets, naming decode, spend floor) comes from `/agent/brain/<workspace>/account-context.md`,
+  targets, naming decode, spend floor) comes from `/agent/brain/<workspace>/data-sources/meta/account-context.md`,
   guard-enforced — never Motion workspace settings. Metrics are pulled live via the `motion`
   CLI per the Data-Query Guide and never stored; name filters go through the confirmed naming
   decode (Field 4 / `naming-decoder.json`); every pull names the workspace with
@@ -323,7 +335,9 @@ instruction, the staged post-install doc, and this line all point at the same fi
 carries the executable install-time sequence (reachability check, VoC sync setup, guard
 merges, Meta context steps). If the installing turn ends without running it (the package
 manager itself never runs setup), the activation instruction fires it on the first turn
-after install instead - the guard sentinels in `/agent/user.md` are the ran-already marker.
+after install instead. The per-workspace `runneth:meta-voc-onboarded` roster in
+`/agent/user.md` is the ran-already marker; guard presence alone only proves that some
+workspace on the VM was onboarded.
 The run order below is the human-readable description of the same lifecycle.
 
 ## Install and run order
@@ -347,10 +361,14 @@ The run order below is the human-readable description of the same lifecycle.
    the gate opens the validation experience on its own: the answer-and-confirm loop, the weekly
    deck, lock-in, and the MVCE gate. Onboarding is done when MVCE is on, not when data is
    connected.
-5. **Set up the VoC data sync (when asked).** For each available VoC platform, run the
-   voc-data-pull skill's "Set up the recurring sync" procedure - it creates the daily sync
-   routine and kicks the backfill in the background.
-6. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
+5. **Set up the VoC data sync during post-install.** For each reachable VoC platform, run the
+   voc-data-pull skill's "Set up the recurring sync" procedure - it pins the workspace's
+   account, creates the daily sync routine, and kicks the backfill in the background.
+6. **Run the Voice of Customer audit later in onboarding.** Once raw VoC data has landed, the
+   audit skill compiles the workspace's cross-platform customer-voice findings to
+   `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. It is not an
+   install-time artifact.
+7. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
    confirmed and data-source content has landed, organize the brain: keep shared content in the
    global lane and make it findable with tags and a naming decoder. Both the
    `runneth:knoweth-organize` and `runneth:knoweth-brain` guard blocks (staged at
@@ -359,7 +377,7 @@ The run order below is the human-readable description of the same lifecycle.
    initiative lanes today; only global, the user lane, and the workspace lane are queried. See
    `knoweth/knoweth-organize-onboarding-package.md` (staged at
    `/agent/brain/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md`).
-7. **Keep everything current.** Creative content stays current through the Cacheth sync
+8. **Keep everything current.** Creative content stays current through the Cacheth sync
    automatically. Account Context Brain on monthly cadence and structural-drift triggers. The
    weekly deck regenerates on the refresh routine agreed at lock-in. VoC data refreshes itself
    through its daily routines once set up.
@@ -384,5 +402,5 @@ The run order below is the human-readable description of the same lifecycle.
 - **Naming decode is the handoff point.** The Creative Attributes step detects provisional naming patterns
   from ad names and passes them to the Account Context Brain as proposals. Account Context Brain
   confirms or corrects them in Field 4 — the single interpretation owner — and writes the
-  operational decoder to `/agent/brain/<workspace>/naming-decoder.json` (typed positions, query fields,
+  operational decoder to `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json` (typed positions, query fields,
   filter patterns). Creative queries decode ad names through it at analysis time.

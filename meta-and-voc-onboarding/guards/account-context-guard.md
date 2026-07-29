@@ -6,7 +6,7 @@ Account context guard:
   conversation; the `<workspace>` token above stays literal in this file.
 - Before any ad-performance work for this account (rankings, "best ads," CPA/ROAS reads,
   winner or cut calls, creative performance judgments), read
-  /agent/brain/<workspace>/account-context.md first. Never read another workspace's folder to
+  /agent/brain/<workspace>/data-sources/meta/account-context.md first. Never read another workspace's folder to
   answer a question about this one.
 - If that file does not exist, or its required interpretation fields are not all [CONFIRMED],
   treat account interpretation as unknown. Offer to run the onboarding walkthrough (the

@@ -7,11 +7,13 @@ Knoweth brain discipline (all writes, going forward):
   root where two workspaces would blur together.
 - On every save (from a pull, a conversation, or an upload), route it: raw vs compiled vs spec; the
   workspace folder and data-source family within it (voc -> /agent/brain/<workspace>/data-sources/voc/**,
-  meta -> /agent/brain/<workspace>/**); tags/attributes and provenance, including which workspace
-  the content describes. Raw VoC files keep their skill-owned format - never add tags or front-matter
-  to them; facet vocabulary goes in the compiled analysis pages that cite them. Keep it in the
-  global lane so it is searchable today; the folder is for human
-  navigation, not a lane. Cacheth is the system of record for per-creative content: write a
+  meta -> /agent/brain/<workspace>/data-sources/meta/**); tags/attributes and provenance,
+  including which workspace the content describes. Raw VoC files keep their skill-owned format -
+  never add tags or front-matter to them; facet vocabulary goes in the compiled analysis pages
+  that cite them. The later cross-platform VoC audit lives only at
+  /agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md; raw syncs do not create
+  it. Keep it in the global lane so it is searchable today; the folder is for human navigation,
+  not a lane. Cacheth is the system of record for per-creative content: write a
   per-creative file only when a person explicitly asks, and treat it as a dated snapshot (the
   cache stays the retrieval source of truth for current facts). Performance metrics are pulled
   live via the motion CLI, never saved.

@@ -13,10 +13,10 @@ This skill defines how to read Meta ad performance — one ad, a set of ads, or 
 
 This skill runs inside the Meta onboarding package's contracts:
 
-- **Read `/agent/brain/<workspace>/account-context.md` first.** The account-context guard requires it before any performance work. It is the sole source of account interpretation — the winner metric, targets, naming decode, and spend floor all come from it. Never read or defer to Motion workspace settings (workspace goal, preferred KPI, spend threshold, attribution config); treat them as if they do not exist. Where this skill says "account average," the account's own confirmed winner metric and targets from account-context.md take precedence for the verdict; the averages are the comparison fabric underneath.
+- **Read `/agent/brain/<workspace>/data-sources/meta/account-context.md` first.** The account-context guard requires it before any performance work. It is the sole source of account interpretation — the winner metric, targets, naming decode, and spend floor all come from it. Never read or defer to Motion workspace settings (workspace goal, preferred KPI, spend threshold, attribution config); treat them as if they do not exist. Where this skill says "account average," the account's own confirmed winner metric and targets from account-context.md take precedence for the verdict; the averages are the comparison fabric underneath.
 - **Pull metrics live via the `motion` CLI**, per the Motion CLI Data-Query Guide installed beside the package docs. Performance metrics are never stored to files — every read is a fresh pull.
 - **Resolve the workspace explicitly.** Every pull passes `--workspace-id <id>`; never assume the default workspace.
-- **Decode names before filtering by them.** Before filtering by campaign, ad set, or ad name, read the account's naming decode — Field 4 of account-context.md and its operational appendix `/agent/brain/<workspace>/naming-decoder.json`. Wrap filter values in underscores (`_VALUE_`, not `VALUE`) when filtering `adName`; use `adsetName`/`campaignName` for those levels, per the Data-Query Guide's name-level rules.
+- **Decode names before filtering by them.** Before filtering by campaign, ad set, or ad name, read the account's naming decode — Field 4 of account-context.md and its operational appendix `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`. Wrap filter values in underscores (`_VALUE_`, not `VALUE`) when filtering `adName`; use `adsetName`/`campaignName` for those levels, per the Data-Query Guide's name-level rules.
 - **Per-creative content lives in Cacheth** (the local creative cache) — summary artifacts surfaced through Knoweth, full records (incl. transcript and AI tags) through the `motion cache` CLI. This skill writes nothing to brain files.
 - **Answer transparently.** Every analysis states which filter was applied, which signal was read, and what couldn't be confirmed.
 - **Read what the question deserves.** Per the Data-Query Guide's answering posture: if the answer is already in the data, pull it, apply the account's confirmed rules, and report it — this framework earns its place when the question asks for diagnosis or explanation. Interpretation is offered before it is delivered.
@@ -29,7 +29,7 @@ Every ad runs inside a campaign that is optimizing for one specific conversion e
 
 How to identify it:
 
-- **Account context.** `/agent/brain/<workspace>/account-context.md` is read first (per the guard above) and defines how this account judges performance; if it names the KPI, that is the answer.
+- **Account context.** `/agent/brain/<workspace>/data-sources/meta/account-context.md` is read first (per the guard above) and defines how this account judges performance; if it names the KPI, that is the answer.
 - **The campaign's optimization event setting.** The definitive source in the Meta ad data itself.
 - **Campaign naming conventions.** Most accounts encode the optimization goal in the campaign name — decode it through the account's confirmed naming decode (Field 4 / `naming-decoder.json`), never by guessing at the pattern.
 
@@ -148,9 +148,12 @@ After the efficiency read, steps 3–6 trace the viewer's path through the ad: s
 7. To explain any of it, read the creative itself — and the customer. Metrics locate where
    an ad wins or loses — the WHAT. The WHY lives in the creative's content (Cacheth: summary
    sections and hook via Knoweth injection or the `motion cache` CLI; transcript and AI tags
-   via `motion cache get-creative` only) and in the customer's voice (the ad's comments, and VoC reviews and
-   support themes) when the question is how people are responding. Tie the drop-off to what
-   the ad actually says and shows; never infer the why from the numbers alone.
+   via `motion cache get-creative` only) and in the customer's voice (the ad's comments, VoC
+   reviews, and support themes) when the question is how people are responding. After the later
+   VoC audit skill has run, read its compiled findings from
+   `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` and trace claims back
+   to the raw items it cites. Tie the drop-off to what the ad actually says and shows; never
+   infer the why from the numbers alone.
 
 The output of a good analysis isn't a list of numbers — it's a diagnosis of where in the funnel an ad wins, where it loses, and what to fix first. And it shows its work: which filter was applied, which signal was read, and what couldn't be confirmed.
 

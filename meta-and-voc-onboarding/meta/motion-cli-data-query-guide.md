@@ -273,7 +273,7 @@ verdict — present them as a gallery of creative cards, never as a bare text li
 **Always normalize ad names on display.** A raw delimited ad name
 (`ProductX_UGC_QuestionHook_v2`) is a filter key, not a label. When referencing a creative,
 decode its name through the account's naming decoder
-(`/agent/brain/<workspace>/naming-decoder.json`, owned by Account Context Field 4) and present the
+(`/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`, owned by Account Context Field 4) and present the
 human-readable identity — product, format, hook, version, whatever the decoder carries — with
 the raw `adName` kept as a secondary reference (it stays the join key back to the data). If
 the account has no confirmed convention, present the name as-is and say so. This is the

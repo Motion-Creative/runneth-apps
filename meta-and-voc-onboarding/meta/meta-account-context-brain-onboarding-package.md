@@ -45,7 +45,7 @@ Account context guard:
   conversation; the `<workspace>` token above stays literal in this file.
 - Before any ad-performance work for this account (rankings, "best ads," CPA/ROAS reads,
   winner or cut calls, creative performance judgments), read
-  /agent/brain/<workspace>/account-context.md first. Never read another workspace's folder to
+  /agent/brain/<workspace>/data-sources/meta/account-context.md first. Never read another workspace's folder to
   answer a question about this one.
 - If that file does not exist, or its required interpretation fields are not all [CONFIRMED],
   treat account interpretation as unknown. Offer to run the onboarding walkthrough (the
@@ -84,10 +84,10 @@ This context describes one workspace. Record the scope before pulling anything:
 Confirmed answers do not live in this worksheet. Runneth writes them to a durable brain file so
 future turns read them.
 
-- Create the account's `meta` folder in the brain if it does not exist. Save the filled result
-  to `/agent/brain/<workspace>/account-context.md`. If a naming convention was confirmed, the
-  operational decoder lives beside it at `/agent/brain/<workspace>/naming-decoder.json` (Field 4 owns
-  it). Per-creative content lives in Cacheth (summaries surfaced through Knoweth), not in brain files.
+- Create `/agent/brain/<workspace>/data-sources/meta/` if it does not exist. Save the filled
+  result there as `account-context.md`. If a naming convention was confirmed, the operational
+  decoder lives beside it as `naming-decoder.json` (Field 4 owns it). Per-creative content lives
+  in Cacheth (summaries surfaced through Knoweth), not in brain files.
 
 **The saved file is a prose reference document, not the worksheet.** Capture and communication are
 two different jobs. The fields-and-statuses procedure below is how Runneth captures rigorously; the
@@ -388,7 +388,7 @@ asking for more detail. A prose summary of a decoder is not sufficient.
 **Required output: the naming decoder JSON file**
 
 This field owns the account's naming interpretation; its operational output is a separate JSON
-decoder saved at `/agent/brain/<workspace>/naming-decoder.json`. Do not embed the full decoder in
+decoder saved at `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`. Do not embed the full decoder in
 `account-context.md` — it is too large for accounts with structured naming conventions.
 Reference it from `account-context.md` with a one-line note and a path link. The decoder is
 written and updated only through this field's confirmation; appending newly observed values to
@@ -470,7 +470,7 @@ the same identifier string.
 **Fields** (once, after the per-level entries)
 - Product/concept names live at: `<ad / ad set / campaign / multiple levels — AUTO, confirmed>` |
   Default filter level for bare product-name asks: `<adName unless confirmed otherwise>`
-- Decoder file: `</agent/brain/<workspace>/naming-decoder.json — written and indexed | not needed (no convention)>`
+- Decoder file: `</agent/brain/<workspace>/data-sources/meta/naming-decoder.json — written and indexed | not needed (no convention)>`
 
 ## 5. Attribution model and windows
 
@@ -674,7 +674,7 @@ two beats in sequence.
 - Deck sections: `<1. top ads | 2. by [dimension] | 3. seasonal | 4. naming breakdown>`
 - Confirmed or open: `<what the customer confirmed vs what is still pending>`
 
-On confirmation, write this as the deck-spec section of `/agent/brain/<workspace>/account-context.md`
+On confirmation, write this as the deck-spec section of `/agent/brain/<workspace>/data-sources/meta/account-context.md`
 (see "Where the filled result lives") — that is where the validation deck build reads it.
 
 This field is also where deck feedback lands. When a customer asks for a structural change
@@ -720,7 +720,7 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 - Fields confirmed: `<count>` / 9
 - Field 10 (deck spec): `<confirmed | pending — no deck build until confirmed>`
 - Flagged fields needing the customer: `<list>`
-- Written to: `/agent/brain/<workspace>/account-context.md`
+- Written to: `/agent/brain/<workspace>/data-sources/meta/account-context.md`
 - Indexed in `/agent/INDEX.md`: `<yes | no>`
 - Guard merged into `/agent/user.md`: `<yes | no>`
 

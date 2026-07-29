@@ -7,7 +7,7 @@ Knoweth organize (after the questions are answered):
   workspace's folder.
 - Organize the brain when all three gates hold; do not wait to be asked:
   (1) the account interpretation is [CONFIRMED] - check the fields-confirmed count in the
-  "File metadata" block at the end of /agent/brain/<workspace>/account-context.md;
+  "File metadata" block at the end of /agent/brain/<workspace>/data-sources/meta/account-context.md;
   (2) content has landed: the voc-sync-<workspace>-<platform> backfill reports full date-window
   coverage (not just files existing - read the latest run summary via routine history
   --id <routine-id>), and creatives are in Cacheth;
@@ -28,7 +28,6 @@ Knoweth organize (after the questions are answered):
 - Do not organize an empty brain. If content has not landed, say what is missing and route back.
 - Finish by writing the tag vocabulary + naming decoder to
   /agent/brain/<workspace>/_tag-vocabulary.md (gate 3's done-marker) and noting it in
-  /agent/brain/_changelog.md, which stays org-wide - name the workspace in the entry. When the
-  harness starts layering configured lanes (see the forward path), promote high-value tags to
-  family lanes then, not before.
+  /agent/brain/<workspace>/_changelog.md. When the harness starts layering configured lanes
+  (see the forward path), promote high-value tags to family lanes then, not before.
 <!-- END runneth:knoweth-organize v3 -->

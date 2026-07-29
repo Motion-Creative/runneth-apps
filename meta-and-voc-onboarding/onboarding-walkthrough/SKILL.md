@@ -15,7 +15,7 @@ document is the what-it-means.
 
 ## Pre-flight
 
-1. Read `/agent/brain/<workspace>/account-context.md`. Post-install writes it as a scaffold: every
+1. Read `/agent/brain/<workspace>/data-sources/meta/account-context.md`. Post-install writes it as a scaffold: every
    field header, autofilled facts, blockers recorded next to the fields they block.
 2. If the scaffold does not exist or the autofill never ran, run the ACB package's Step 0
    (brand context pull) and Step 1 (the nine field pulls) first — silently, then present.
@@ -96,7 +96,7 @@ Just answer what you know — I'll write the context file from your responses.
 ## After the presentation
 
 - Handle answers and corrections per the ACB package's field rules, and persist them to
-  `/agent/brain/<workspace>/account-context.md` as they confirm.
+  `/agent/brain/<workspace>/data-sources/meta/account-context.md` as they confirm.
 - Once Fields 4, 7, and 9 are confirmed, offer Field 10's two beats (marketing calendar, then
   reporting structure) while the context is fresh — per the ACB package's Field 10 section.
   If the person is done for now, stop; the beats run at deck time instead (the Meta Validation

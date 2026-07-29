@@ -3,7 +3,7 @@ name: voc-data-pull
 description: |
   Pull raw voice-of-customer data - product reviews, support conversations, surveys,
   community posts, and comments - from an available VoC platform into standardized files in
-  the org's brain, one file per item. Use when ANY VoC platform - one with a recipe
+  the current workspace's brain folder, one file per item. Use when ANY VoC platform - one with a recipe
   (Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom,
   Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord, YouTube) or any other
   reachable platform whose data is customer voice - is reachable by any path - OAuth
@@ -17,9 +17,9 @@ description: |
 # VoC Data Pull
 
 Pull raw voice-of-customer (VoC) items from a connected platform and write them into the
-org's brain as standardized files: **one file per review, support ticket/conversation, or ad
-comment**, each with a metadata header and the content body. Creative strategy packages build
-on these files, so shape consistency matters more than volume.
+current workspace's brain folder as standardized files: **one file per review, support
+ticket/conversation, or ad comment**, each with a metadata header and the content body.
+Creative strategy packages build on these files, so shape consistency matters more than volume.
 
 ## When to use
 
@@ -56,6 +56,10 @@ the window rules below fully determine what to pull.
 - **Raw data files are separate from integration guides.** Never write pulled data into
   `/agent/brain/integrations/<source>/` - the integration guide spec explicitly forbids raw
   dumps in guides. VoC data lives only under `/agent/brain/<workspace>/data-sources/voc/`.
+- **The later audit is not a pull output.** The Voice of Customer audit skill runs later in
+  onboarding, after raw data has landed. It writes
+  `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. This raw-pull skill
+  never creates or updates that file, and its absence during install or backfill is expected.
 - **PII: leave `author_contact` null.** The unified template keeps the field, but the policy
   call on storing customer emails is pending. Do not populate it until told the policy allows
   it. Raw platform payloads are NOT persisted in output files (see the file format below), so
@@ -170,6 +174,10 @@ shared root would not overwrite - it would silently accumulate two brands' revie
 corpus, which is worse. Under the workspace folder, all VoC pulls live under the shared
 `voc/` parent, one flat folder per platform, no type subfolders. Use the platform's registry
 slug as the folder name (`judge_me`, `gorgias_oauth`, ...; use `meta-ads` for ad comments).
+The later Voice of Customer audit is the one non-item artifact at the `voc/` root:
+`/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. It is created by the
+later audit skill, not by these pull or recurring-sync procedures. Raw platform folders remain
+items-only.
 The filename prefix carries the source type:
 
 - Reviews: `/agent/brain/<workspace>/data-sources/voc/<platform>/review-<external_id>.md`
@@ -178,11 +186,10 @@ The filename prefix carries the source type:
 - Community posts/comments (Reddit): `/agent/brain/<workspace>/data-sources/voc/reddit/post-<external_id>.md`
   and `/agent/brain/<workspace>/data-sources/voc/reddit/comment-<external_id>.md`
 
-Every path is keyed by the item's `external_id` and nothing else - this is the contract
-that re-pull dedupe, ticket overwrite, and the recurring-sync incremental window all depend
-on, so it holds even when the org brain has an existing folder convention under
-`data-sources/`: adopt the surrounding folder layout if one exists, but keep the id-keyed
-filenames, and say so in the report. Do not invent additional hierarchy beyond the above.
+Every raw-item path is keyed by the item's `external_id` and nothing else - this is the
+contract that re-pull dedupe, ticket overwrite, and the recurring-sync incremental window all
+depend on. Always use the workspace-scoped path above; never adopt a different surrounding
+layout or invent additional hierarchy.
 
 Re-pull write policy, per source type:
 

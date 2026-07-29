@@ -11,9 +11,11 @@ additively, none touching another's data.
 
 - **Per-workspace layout.** Everything the package produces lands in
   `/agent/brain/<workspace>/` (workspace name slugged (lowercase; non-alphanumeric runs become one hyphen; trim hyphens)):
-  `account-context.md`, `naming-decoder.json`, `validation.md`, `_tag-vocabulary.md`,
-  and VoC data under `/agent/brain/<workspace>/data-sources/voc/<platform>/`. The
-  brain root no longer holds any workspace's content; `_changelog.md` stays org-wide.
+  the Meta interpretation layer under `data-sources/meta/` (`account-context.md`,
+  `naming-decoder.json`, `validation.md`, `_changelog.md`), VoC data under
+  `data-sources/voc/<platform>/`, the later compiled VoC audit at
+  `data-sources/voc/voice-of-customer-audit.md`, and `_tag-vocabulary.md` at the workspace
+  root alongside that workspace's general `_changelog.md`.
 - **Workspace-agnostic guards** (`account-context-guard` v3, `meta-validation-gate` v4,
   `knoweth-organize` v3, `knoweth-brain` v3): merged into `/agent/user.md` verbatim,
   once per VM, with no install-time token substitution. Each guard resolves the

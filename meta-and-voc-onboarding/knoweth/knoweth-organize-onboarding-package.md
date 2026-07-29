@@ -36,7 +36,7 @@ Knoweth organize (after the questions are answered):
   workspace's folder.
 - Organize the brain when all three gates hold; do not wait to be asked:
   (1) the account interpretation is [CONFIRMED] - check the fields-confirmed count in the
-  "File metadata" block at the end of /agent/brain/<workspace>/account-context.md;
+  "File metadata" block at the end of /agent/brain/<workspace>/data-sources/meta/account-context.md;
   (2) content has landed: the voc-sync-<workspace>-<platform> backfill reports full date-window
   coverage (not just files existing - read the latest run summary via routine history
   --id <routine-id>), and creatives are in Cacheth;
@@ -57,9 +57,8 @@ Knoweth organize (after the questions are answered):
 - Do not organize an empty brain. If content has not landed, say what is missing and route back.
 - Finish by writing the tag vocabulary + naming decoder to
   /agent/brain/<workspace>/_tag-vocabulary.md (gate 3's done-marker) and noting it in
-  /agent/brain/_changelog.md, which stays org-wide - name the workspace in the entry. When the
-  harness starts layering configured lanes (see the forward path), promote high-value tags to
-  family lanes then, not before.
+  /agent/brain/<workspace>/_changelog.md. When the harness starts layering configured lanes
+  (see the forward path), promote high-value tags to family lanes then, not before.
 <!-- END runneth:knoweth-organize v3 -->
 ```
 
@@ -75,11 +74,13 @@ Knoweth brain discipline (all writes, going forward):
   root where two workspaces would blur together.
 - On every save (from a pull, a conversation, or an upload), route it: raw vs compiled vs spec; the
   workspace folder and data-source family within it (voc -> /agent/brain/<workspace>/data-sources/voc/**,
-  meta -> /agent/brain/<workspace>/**); tags/attributes and provenance, including which workspace
-  the content describes. Raw VoC files keep their skill-owned format - never add tags or front-matter
-  to them; facet vocabulary goes in the compiled analysis pages that cite them. Keep it in the
-  global lane so it is searchable today; the folder is for human
-  navigation, not a lane. Cacheth is the system of record for per-creative content: write a
+  meta -> /agent/brain/<workspace>/data-sources/meta/**); tags/attributes and provenance,
+  including which workspace the content describes. Raw VoC files keep their skill-owned format -
+  never add tags or front-matter to them; facet vocabulary goes in the compiled analysis pages
+  that cite them. The later cross-platform VoC audit lives only at
+  /agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md; raw syncs do not create
+  it. Keep it in the global lane so it is searchable today; the folder is for human navigation,
+  not a lane. Cacheth is the system of record for per-creative content: write a
   per-creative file only when a person explicitly asks, and treat it as a dated snapshot (the
   cache stays the retrieval source of truth for current facts). Performance metrics are pulled
   live via the motion CLI, never saved.
@@ -102,7 +103,7 @@ Knoweth brain discipline (all writes, going forward):
 ### Activation checklist (verify it actually fired)
 Because this activates by a run following the README rather than by an automatic trigger, verify it landed:
 1. Both sentinels `runneth:knoweth-organize` and `runneth:knoweth-brain` are present in `/agent/user.md`.
-2. The organize step ran for this workspace: `/agent/brain/<workspace>/_tag-vocabulary.md` exists (the tag vocabulary + naming decoder, and the durable done-marker) and is noted in `/agent/brain/_changelog.md`.
+2. The organize step ran for this workspace: `/agent/brain/<workspace>/_tag-vocabulary.md` exists (the tag vocabulary + naming decoder, and the durable done-marker) and is noted in `/agent/brain/<workspace>/_changelog.md`.
 3. The `brain-maintenance` routine exists (`routine list --search "brain-maintenance"`).
 If any is missing, activation is incomplete; finish it before calling the package done.
 
@@ -134,7 +135,7 @@ The run order is owned by the package README ("Install and run order", at `/agen
 
 ## 1. The two-layer brain: raw and compiled
 Knowledge has two layers and flows one way.
-- **raw = evidence.** Source material, never rewritten in substance. It lives in one of two places: as **brain files** under `data-sources/<family>/...` (file conventions owned by the family's own package - for VoC that is the voc-data-pull skill; the folders are for navigation, and today all of it sits in the `global` lane), or in a **harness-backed store** when the platform has one. Meta creative content lives in a harness-backed store: complete per-creative records (identity, summary, hook, transcript, AI tags, naming) in **Cacheth** — a hydration layer behind the `motion cache` CLI, transparent to the agent. Knoweth indexes the summary artifacts Cacheth generates (identity, ad names, copy, summary text), so summary-level creative context surfaces through Knoweth; transcripts and AI tags stay CLI-only. Performance metrics are not stored at all - they are pulled live through the `motion` CLI (the Motion CLI Data-Query Guide is the contract). Nothing in the package writes per-creative files to the brain; the brain-side Meta layer is interpretation only (`account-context.md` plus its operational decoder `naming-decoder.json`). A per-creative file appears in the brain only when a person explicitly asked for one — a dated snapshot, with the cache the retrieval source of truth for current facts.
+- **raw = evidence.** Source material, never rewritten in substance. It lives in one of two places: as **brain files** under `/agent/brain/<workspace>/data-sources/<family>/...` (file conventions owned by the family's own package - for VoC that is the voc-data-pull skill; the folders are for navigation, and today all of it sits in the `global` lane), or in a **harness-backed store** when the platform has one. Meta creative content lives in a harness-backed store: complete per-creative records (identity, summary, hook, transcript, AI tags, naming) in **Cacheth** — a hydration layer behind the `motion cache` CLI, transparent to the agent. Knoweth indexes the summary artifacts Cacheth generates (identity, ad names, copy, summary text), so summary-level creative context surfaces through Knoweth; transcripts and AI tags stay CLI-only. Performance metrics are not stored at all - they are pulled live through the `motion` CLI (the Motion CLI Data-Query Guide is the contract). Nothing in the package writes per-creative files to the brain; the brain-side Meta layer is interpretation only (`account-context.md` plus its operational decoder `naming-decoder.json`). A per-creative file appears in the brain only when a person explicitly asked for one — a dated snapshot, with the cache the retrieval source of truth for current facts.
 - **compiled = understanding.** Agent-maintained to a schema: the interpretation specs and the synthesized analysis (segments, personas, performance reads). The human corrects it in conversation, never hand-edits it. The agent may create, rewrite, merge, and delete compiled pages within the schema.
 - **One-way flow: raw to compiled, never back.** Evidence is the source of truth; a compiled page is the current understanding of it. When they disagree, fix the compiled page, not the evidence.
 - **Curate, do not just append.** Merge duplicates, delete dead pages.
@@ -155,13 +156,13 @@ Two consequences drive everything below. **Tags/attributes are a ranking signal,
 
 ### The answer standard: route by where the evidence lives, then combine
 Every onboarding/validation question resolves to one of two evidence homes; classify first, then combine the mechanisms.
-- **Knoweth-indexed (brain files):** VoC (`<workspace>/data-sources/voc/**`), the Meta interpretation layer (`<workspace>/account-context.md` plus its operational decoder `<workspace>/naming-decoder.json`), and asset-library. Answered directly: lane gate + lexical (tags/keywords) + dense.
+- **Knoweth-indexed (brain files):** VoC (`/agent/brain/<workspace>/data-sources/voc/**`), the Meta interpretation layer (`/agent/brain/<workspace>/data-sources/meta/account-context.md` plus its operational decoder `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`), and asset-library. Answered directly: lane gate + lexical (tags/keywords) + dense.
 - **Store- or CLI-backed:** Meta creative content in **Cacheth** — summary-level artifacts are in the Knoweth index, but AI tags and transcripts are CLI-only (`motion cache get-creative`); performance metrics via live `motion` CLI pulls (per the Motion CLI Data-Query Guide). Answered by those query paths, with Knoweth supplying the interpretation lane and summary-level creative context.
 
 In every join below, the winner metric and all interpretation come from `account-context.md` (per the account-context guard); Motion workspace settings the CLI can return (workspace goal, preferred KPI, spend threshold) are never used as interpretation.
 
 Two rules before applying any filter:
-- **Read the naming decode first.** Before filtering by campaign, ad set, or ad name, read the account's naming conventions — `account-context.md` (Field 4) and its operational decoder `/agent/brain/<workspace>/naming-decoder.json` (typed positions, query fields, filter patterns like `_VALUE_`) — and filter on the decoded meaning, not a guessed substring.
+- **Read the naming decode first.** Before filtering by campaign, ad set, or ad name, read the account's naming conventions — `account-context.md` (Field 4) and its operational decoder `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json` (typed positions, query fields, filter patterns like `_VALUE_`) — and filter on the decoded meaning, not a guessed substring.
 - **Match the signal to the question.** Structural questions (funnel stage, audience, product mapping, campaign role) filter on campaign/ad-set names through the decode. Creative questions (format, hook type, content type, angle) use Cacheth tags and content — ad names may not encode any of that. When both carry the signal (e.g. a funnel stage encoded in the name and tagged in the summary), cross-check them; when they disagree, say so instead of picking one silently.
 
 Routing by question type:
@@ -171,7 +172,7 @@ Routing by question type:
 - "Performance by campaign / product" -> motion CLI + `meta` naming decode (which campaigns map to which product).
 - "Themes in winning ads (from AI tags + summaries)" -> motion CLI (winners) + Cacheth (AI tags/summaries) + `meta` account-context (winner def). AI tags live in Cacheth, not the Knoweth index - route tag/theme questions through Cacheth; do not expect Knoweth's index to contain them.
 - "What are we testing / scaling / graduating" -> motion CLI (spend state) + `meta` account-context (the graduation rule, still a flagged/needed field).
-- "Why are our winners working / why do customers respond" -> motion CLI (what is winning) + Cacheth (what the creative says and shows) + `voc` (why customers respond: reviews, support themes) - and ad comments (`<workspace>/data-sources/voc/<platform>/`) connect performance and customer voice on the same creatives in near-real time. Treat performance and VoC as one system: performance shows what is winning, VoC explains why.
+- "Why are our winners working / why do customers respond" -> motion CLI (what is winning) + Cacheth (what the creative says and shows) + `voc` (why customers respond: reviews, support themes) - and ad comments (`/agent/brain/<workspace>/data-sources/voc/<platform>/`) connect performance and customer voice on the same creatives in near-real time. Treat performance and VoC as one system: performance shows what is winning, VoC explains why.
 
 **Show the work.** Any answer that ranked, filtered, or interpreted states in plain language: which filter it applied (and the decode behind it), which signal it read (names, tags, transcript, reviews - and when freshness matters, how fresh: Cacheth records carry per-layer hydration timestamps), and what it could not confirm. One plain sentence alongside the answer, not a template. Never deliver a bare number that hides a judgment call.
 
@@ -231,15 +232,18 @@ A lane is the only hard boundary, and today it is a partial one: the automatic `
   <workspace>/                                     # one folder per Motion workspace, named with the
                                                    # workspace name slug (doc intro). Everything account-specific
                                                    # lives inside it; two workspaces never share a file.
-    account-context.md                             # compiled interpretation (9 fields incl. the confirmed naming
-                                                   # decode + spend floor / winner-cut criteria)
-    naming-decoder.json                            # Field 4's operational decoder, only if a convention is confirmed
     _tag-vocabulary.md                             # tag vocabulary + naming decoder; the organize done-marker
-    validation.md                                  # validation state (MVCE gate, confirmations, corrections)
-    _changelog.md
-    data-sources/                                  # raw evidence for this workspace; folders for navigation
+    _changelog.md                                  # this workspace's general brain-organization history
+    data-sources/                                  # this workspace's evidence + compiled layers; folders for navigation
+      meta/                                        # the Meta interpretation layer
+        account-context.md                         # compiled interpretation (9 fields incl. the confirmed naming
+                                                   # decode + spend floor / winner-cut criteria)
+        naming-decoder.json                        # Field 4's operational decoder, only if a convention is confirmed
+        validation.md                              # validation state (MVCE gate, confirmations, corrections)
+        _changelog.md                              # Meta-specific refresh and re-validation history
       voc/<platform>/                              # items only, id-keyed; format owned by the voc-data-pull skill.
                                                    # No non-item files (the sync's window checks read this folder)
+      voc/voice-of-customer-audit.md               # later cross-platform onboarding audit; absent during raw sync
       voc/<platform>-context.md                    # compiled VoC analysis (segments, personas, keywords, quotes)
                                                    # - beside the item folders, never inside them
       asset-library/<integration>/file-<id>.md     # creative/asset files; another data-source family
@@ -248,7 +252,6 @@ A lane is the only hard boundary, and today it is a partial one: the automatic `
                                                    # pulled live via the motion CLI
   integrations/<source>/                          # source guide specs; raw dumps forbidden here   [not indexed]
   team/<person>.md  team/user-map.json            # people are org-wide, not per workspace
-  _changelog.md                                    # org-wide brain log; entries name the workspace
 /agent/INDEX.md                                    # org-wide index; entries name the workspace
 ```
 ### Declaring the config (real format, from the Knoweth service)
@@ -264,7 +267,7 @@ The lane count matters because every authorized lane is scored per query; keep t
 ## 5. File metadata (findability and provenance, not a filter)
 File metadata is **not a Knoweth query filter.** Retrieval runs on lane (today `global`, `user:<userId>`, and the workspace) plus lexical/dense search over the text - and metadata is text, wherever it sits in the file. It earns its place for four things only: lexical findability (facet words become searchable text), provenance (`sources` cite the exact raw file), chunk-standalone context (a chunk is retrieved without its neighbors), and agent-side filtering of returned files. Keep it lean and do not restate what the path or config already encode.
 
-**Raw VoC files: the format is owned by the voc-data-pull skill (`/agent/.agents/skills/voc-data-pull/SKILL.md`) - never add front-matter to them.** Their metadata block sits at the bottom of the file; it is text, so Knoweth searches it exactly as it would a yaml header. Do not convert, duplicate, or extend it. Facet vocabulary the unified record does not carry (segment/persona assignments, brand tags, decoded product names) belongs in the compiled VoC analysis pages that cite the raw items, never injected into raw files.
+**Raw VoC files: the format is owned by the voc-data-pull skill (`/agent/.agents/skills/voc-data-pull/SKILL.md`) - never add front-matter to them.** Their metadata block sits at the bottom of the file; it is text, so Knoweth searches it exactly as it would a yaml header. Do not convert, duplicate, or extend it. Facet vocabulary the unified record does not carry (segment/persona assignments, brand tags, decoded product names) belongs in the compiled VoC analysis pages that cite the raw items, never injected into raw files. The later Voice of Customer audit skill compiles cross-platform findings to `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`; raw syncs never create it.
 
 **Compiled pages (analysis, spec) - the front-matter this doc owns:** `page_type: compiled | spec`, `substance: facts | interpretation`, `sources: [...]` citing raw, `last_compiled`, `confidence`, and `tags: [<brand tag>, segment-<name>, product-<name>, ...]` (searchable facets, not structured filters). `lane:` / `project:` keys are forward-path tags only - today content sits in the `global` lane and they bite only once the harness layers configured lanes. Meta interpretation pages point at the Cacheth creative and the campaign KPI rather than embedding creative data.
 
@@ -272,9 +275,9 @@ File metadata is **not a Knoweth query filter.** Retrieval runs on lane (today `
 
 ## 6. Save routing and refresh
 On new information, decide in order:
-1. **Evidence with no harness store** (VoC item, asset file, transcript, note) -> the family's own file contract: VoC items follow the voc-data-pull skill (id-keyed files under `<workspace>/data-sources/voc/<platform>/`, written by the sync routine, not ad hoc); other families use `<workspace>/data-sources/<family>/<integration>/<type>-<id>.md` (e.g. `<workspace>/data-sources/asset-library/<integration>/file-<id>.md`). Append/overwrite by id (idempotent), never rewrite substance, indexed.
+1. **Evidence with no harness store** (VoC item, asset file, transcript, note) -> the family's own file contract: VoC items follow the voc-data-pull skill (id-keyed files under `/agent/brain/<workspace>/data-sources/voc/<platform>/`, written by the sync routine, not ad hoc); other families use `/agent/brain/<workspace>/data-sources/<family>/<integration>/<type>-<id>.md` (e.g. `/agent/brain/<workspace>/data-sources/asset-library/<integration>/file-<id>.md`). Append/overwrite by id (idempotent), never rewrite substance, indexed.
 2. **Meta creatives** -> Cacheth, summary artifacts surfaced via Knoweth (transcripts and AI tags via the `motion cache` CLI); performance metrics are pulled live via the motion CLI, never saved. A per-creative brain file is written only on a person's explicit ask, as a dated snapshot; the cache stays the retrieval source of truth for current facts.
-3. **Compiled understanding** (segments, personas, performance read, a fact) -> the matching compiled page; merge/rewrite, cite raw, follow the schema.
+3. **Compiled understanding** (segments, personas, performance read, a fact) -> the matching compiled page; cross-platform VoC findings go to `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`, platform-specific VoC findings go to `/agent/brain/<workspace>/data-sources/voc/<platform>-context.md`, and Meta interpretation stays under `/agent/brain/<workspace>/data-sources/meta/`. Merge/rewrite, cite raw, follow the schema.
 4. **How-to-read a source/metric/dashboard** -> a spec in `integrations/` (reference, unindexed).
 5. **Preference or standing instruction** -> `team/<person>`. **One-off scratch** -> do not persist.
 Enforce one-way flow; regenerate a compiled page from evidence when corrected, never hand-patch; update the index on durable saves.
@@ -296,8 +299,8 @@ The costly-to-reverse decision is the lane set; that is exactly why the default 
 
 ## 8. Standard specs: what they are and how to set them up
 A **Standard spec** is a canonical, triggerable setup for one capability, stood up the same way on every VM: the raw ingestion contract, the compiled schema, the questions to ask the human, and the validation. Three initial Standards:
-- **Meta (Meta and Voice of Customer Onboarding, three steps).** Step 1 Creative Attributes: one enriched record per active creative (identity, summary, hook, transcript, AI tags, naming) held in Cacheth, its summary artifacts surfaced via Knoweth (transcripts and AI tags via the `motion cache` CLI), with performance pulled live via the motion CLI (the Motion CLI Data-Query Guide, installed beside this doc, is the query contract); no per-creative files are written to the brain. Step 2 Account Context Brain (`/agent/brain/<workspace>/account-context.md`): the interpretation layer, nine fields, with the naming decode confirmed as the handoff from Step 1 (its operational output is `/agent/brain/<workspace>/naming-decoder.json`) and Field 9's four captures (ranking metric, CPA target, winner/cut criteria incl. the spend floor, default reporting window); Field 10 (reporting structure + marketing calendar, synthesized from Fields 4, 7, and 9) is the deck spec — it gates the validation deck, not the question loop. Step 3 Validation: the answer-and-confirm loop, the weekly deck built from the Field 10 spec, and the MVCE (minimum viable context engine) gate. Ask the human the account idiosyncrasies platform settings cannot capture: the real success metric, which conversion event judges winners and whether products roll up, attribution windows, the cut rule, per-campaign KPI differences, naming clarifications. Validate: performance questions answer with numbers that reconcile to source.
-- **Voice of Customer.** Raw is owned end-to-end by the voc-data-pull skill at `/agent/.agents/skills/voc-data-pull/SKILL.md` (folder convention, file format, unified metadata record, PII rules, sync routine). Compiled is the analysis layer (`<workspace>/data-sources/voc/<platform>-context.md`, beside the platform item folders, never inside them): segments, emerging segments, keywords, quotes, personas, each tracing to items. Ask the human: canonical sources, which personas are established vs aspirational, off-limits claims. Validate: every claim traces to a real verbatim.
+- **Meta (Meta and Voice of Customer Onboarding, three steps).** Step 1 Creative Attributes: one enriched record per active creative (identity, summary, hook, transcript, AI tags, naming) held in Cacheth, its summary artifacts surfaced via Knoweth (transcripts and AI tags via the `motion cache` CLI), with performance pulled live via the motion CLI (the Motion CLI Data-Query Guide, installed beside this doc, is the query contract); no per-creative files are written to the brain. Step 2 Account Context Brain (`/agent/brain/<workspace>/data-sources/meta/account-context.md`): the interpretation layer, nine fields, with the naming decode confirmed as the handoff from Step 1 (its operational output is `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`) and Field 9's four captures (ranking metric, CPA target, winner/cut criteria incl. the spend floor, default reporting window); Field 10 (reporting structure + marketing calendar, synthesized from Fields 4, 7, and 9) is the deck spec — it gates the validation deck, not the question loop. Step 3 Validation: the answer-and-confirm loop, the weekly deck built from the Field 10 spec, and the MVCE (minimum viable context engine) gate. Ask the human the account idiosyncrasies platform settings cannot capture: the real success metric, which conversion event judges winners and whether products roll up, attribution windows, the cut rule, per-campaign KPI differences, naming clarifications. Validate: performance questions answer with numbers that reconcile to source.
+- **Voice of Customer.** Raw is owned end-to-end by the voc-data-pull skill at `/agent/.agents/skills/voc-data-pull/SKILL.md` (folder convention, file format, unified metadata record, PII rules, sync routine). The later Voice of Customer audit skill compiles cross-platform findings to `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`; it is absent during initial sync. Platform-specific compiled analysis may live beside it at `/agent/brain/<workspace>/data-sources/voc/<platform>-context.md`, never inside the item folders. These compiled pages carry segments, emerging segments, keywords, quotes, and personas, each tracing to items. Ask the human: canonical sources, which personas are established vs aspirational, off-limits claims. Validate: every claim traces to a real verbatim.
 - **Brain and Knoweth setup (this document).** Raw is the connected-data probe; compiled is the org-understanding page plus the specs; it lays the seeded skeleton and the default overlay.
 
 The spec files are short reference pages the human fills in with the agent's help. Fill-in loop: connect the data, teach the agent the idiosyncrasies, visualize to validate, confirm against the question set.
@@ -311,7 +314,7 @@ The spec files are short reference pages the human fills in with the agent's hel
 2. **Write the org-understanding page** from that data, each line citing evidence; flag unknowns as asks; assume platform settings are wrong and re-ask.
 3. **Keep shared content in the `global` lane** and set the tag vocabulary + naming decoder (family lanes are a forward path, not carved today).
 4. **Decide the facets** per brand (segments, products, campaigns, KPI) from the questions.
-5. **Seed the load-bearing compiled pages first:** org-understanding, the naming decoder / meta interpretation, the VoC analysis layer, the question validator. Content-first, not empty scaffolding.
+5. **Seed the load-bearing compiled pages when their evidence is ready:** org-understanding, the naming decoder / Meta interpretation, and the question validator; after raw VoC data lands, the later Voice of Customer audit skill writes `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. Content-first, not empty scaffolding.
 6. **Validate and run the loop** (section 11).
 
 Setup experience: **act, do not be "too meta."** Do the work and surface results; do not narrate what you are about to do and ask permission at each step. Autofill everything you can, then surface only the 3-8 gap questions the human must answer; the CSM or customer answers them through their own process.
@@ -323,7 +326,7 @@ Setup experience: **act, do not be "too meta."** Do the work and surface results
 2. **Inventory dependencies** (routines, apps that reference paths) before moving or re-tagging.
 3. **Audit lanes.** Collapse any lane-per-platform or lane-per-workstream mess back into `global` + tags; those custom lanes are not queried today, so their content is likely dark. Keep only `user:` isolation lanes and the automatic workspace lane.
 4. **Migrate in safe order: tags first, then projects, then lanes.** Never delete a lane holding unique indexed content without re-homing it.
-5. **Move source dumps into `data-sources/`**; per-creative files in the brain exist only by a person's explicit ask (see the Cacheth gotcha) - if any are of unknown provenance, ask the person before archiving, never silently move or delete them; stop indexing specs.
+5. **Move workspace source dumps into `/agent/brain/<workspace>/data-sources/`**; per-creative files in the brain exist only by a person's explicit ask (see the Cacheth gotcha) - if any are of unknown provenance, ask the person before archiving, never silently move or delete them; stop indexing specs.
 6. **Fill or remove empty scaffolding.**
 7. **Dry-run, apply, then verify what is actually readable** and run the validator.
 
@@ -378,7 +381,7 @@ Two mechanisms keep the brain organized after day one, and both are set up by th
 ---
 
 ## 14. Worked example (illustrative)
-A brand asks "top ads for Product A last week." Runneth pulls performance through the motion CLI, ranks by the account's winner metric (defined in `account-context.md`, not a Motion workspace setting), pulls creative identity from Cacheth, and reads the interpretation page (`<workspace>/account-context.md`, in `global`) for how Product A is judged plus the naming decoder for angle/hook/format. A VoC question ("what are one-star reviewers saying about Product A") searches the `global` lane over `<workspace>/data-sources/voc/<platform>/review-*`, ranked lexically on the metadata block's rating field and the product/segment terms from the tag vocabulary, with agent-side filtering. Neither carves a lane. When the human corrects an interpretation, the compiled page regenerates from the cited raw; the raw is never edited.
+A brand asks "top ads for Product A last week." Runneth pulls performance through the motion CLI, ranks by the account's winner metric (defined in `account-context.md`, not a Motion workspace setting), pulls creative identity from Cacheth, and reads the interpretation page (`/agent/brain/<workspace>/data-sources/meta/account-context.md`, in `global`) for how Product A is judged plus the naming decoder for angle/hook/format. A VoC question ("what are one-star reviewers saying about Product A") reads `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` when the later audit exists and searches the `global` lane over `/agent/brain/<workspace>/data-sources/voc/<platform>/review-*` for cited raw, ranked lexically on rating/product/segment terms with agent-side filtering. Neither carves a lane. When the human corrects an interpretation, the compiled page regenerates from the cited raw; the raw is never edited.
 
 ---
 

@@ -17,6 +17,14 @@ resolve to - never from a prior install, a removed guard block, or another conve
 org VM holds several workspace folders side by side and they never merge: a second workspace
 onboarding is normal, not a conflict.
 
+Inside that workspace folder, data-source families are siblings under `data-sources/`:
+Meta interpretation files live in `data-sources/meta/` and VoC files live in
+`data-sources/voc/`. In particular, the Account Context Brain is always
+`/agent/brain/<workspace>/data-sources/meta/account-context.md`.
+The later Voice of Customer audit skill writes
+`/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` after raw VoC data has
+landed. Post-install and the raw sync routines do not create it; its initial absence is expected.
+
 Idempotency has two parts, because the guards are VM-wide while everything else is
 per-workspace:
 
@@ -29,12 +37,13 @@ per-workspace:
   when other workspace folders are already populated and other workspaces are listed in the
   roster. Never read, copy, rename, or overwrite another workspace's folder to serve this one.
   If the roster does not list this workspace but
-  `/agent/brain/<workspace>/account-context.md` already exists, a previous run died before
+  `/agent/brain/<workspace>/data-sources/meta/account-context.md` already exists, a previous run died before
   step 6: resume rather than restart - keep the existing file, fill what is missing, and
   finish through step 6.
-- **Renames:** if this workspace's folder is missing but another `/agent/brain/*/`
-  account-context.md records this workspace's id in its metadata, the workspace was renamed -
-  move that folder to the current name instead of onboarding from scratch.
+- **Renames:** if this workspace's folder is missing but another
+  `/agent/brain/*/data-sources/meta/account-context.md` records this workspace's id in its
+  metadata, the workspace was renamed - move that folder to the current name instead of
+  onboarding from scratch.
 
 ## The install-time sequence, in order
 
@@ -123,7 +132,7 @@ per-workspace:
 4. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
    creative content layer (Cacheth + query paths), detect naming patterns as provisional
    proposals for the next step. Every cache call carries this workspace's id, and the
-   provisional decode is written to `/agent/brain/<workspace>/naming-decoder.json`. The
+   provisional decode is written to `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`. The
    procedure is
    `/agent/brain/meta-and-voc-onboarding/meta-creative-attributes-playbook.md`
    (its Step 2 is the install-time part). It ships as a brain document - there is no
@@ -134,7 +143,7 @@ per-workspace:
    Autofill every field possible from live data - silently. Do not present the findings,
    do not ask the gap questions, do not run the walkthrough; the onboarding-walkthrough
    skill owns all of that and fires later, on a human's yes. **Persist
-   before you stop:** write `/agent/brain/<workspace>/account-context.md` in the saved-file
+   before you stop:** write `/agent/brain/<workspace>/data-sources/meta/account-context.md` in the saved-file
    format the account-context playbook defines (staged at
    `/agent/brain/meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md`;
    Section 3: a prose reference document,
