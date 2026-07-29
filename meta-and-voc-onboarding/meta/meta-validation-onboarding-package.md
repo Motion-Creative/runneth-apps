@@ -6,7 +6,7 @@
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
 
 This is the third part of the Meta onboarding package. It runs after the
-**Account Context Brain** (`/agent/brain/meta/account-context.md`) and the
+**Account Context Brain** (`/agent/brain/<workspace>/data-sources/meta/account-context.md`) and the
 **creative content layer** (Cacheth, summaries surfaced through Knoweth) are in place.
 
 The one-line model:
@@ -25,7 +25,7 @@ person catches the ball. This part is the catch.
 
 The question loop and the deck build are **one training loop over one brain**. Every piece of
 feedback the customer gives during either is a training signal for
-`/agent/brain/meta/account-context.md` (and its satellites: the naming decoder, Field 10) —
+`/agent/brain/<workspace>/data-sources/meta/account-context.md` (and its satellites: the naming decoder, Field 10) —
 never a fix to apply to the output directly. The deck is a rendering of the context: the only
 way to fix the deck is to fix the context and regenerate. The loop converges when the brain
 produces answers and a deck the team recognizes as their own on the first try — corrections
@@ -78,19 +78,23 @@ shown for context and must stay identical to the staged file.
 
 ```
 <!-- BEGIN runneth:meta-validation-gate v4 -->
-Meta validation gate (workspace <workspaceId>):
+Meta validation gate:
 
-- When the Account Context Brain (/agent/brain/meta/account-context.md) has all required fields
-  [CONFIRMED] and the creative content layer resolves (creatives in Cacheth surfaced through
-  Knoweth - or, where the sandbox cache feature is disabled, live content pulls per the
-  Cacheth Command Reference's ladder), and validation has not yet been completed
-  (/agent/brain/meta/validation.md missing or MVCE state = off), open the validation experience
-  described in the Meta Validation onboarding package. Do not wait to be asked.
+- Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
+  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`). Resolve it per conversation; the
+  `<workspace>` token stays literal in this file. Every path below is inside this
+  conversation's workspace folder, and each workspace validates independently.
+- When the Account Context Brain (/agent/brain/<workspace>/data-sources/meta/account-context.md) has all required
+  fields [CONFIRMED] and the creative content layer resolves (the workspace's creatives in
+  Cacheth, surfaced through Knoweth - or, where the sandbox cache feature is disabled, live
+  content pulls per the Cacheth Command Reference's ladder), and validation has not yet been
+  completed (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
+  experience described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
   the customer has confirmed Runneth's answers to their starter questions, the weekly deck is
   built, live, and approved by the customer, a refresh routine keeps the deck updated on an agreed
   cadence, and Slack is connected so the team can ask questions. Record that state in
-  /agent/brain/meta/validation.md.
+  /agent/brain/<workspace>/data-sources/meta/validation.md.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
 - A deck change request is a context correction too: route it to the field behind it
@@ -107,7 +111,7 @@ Meta validation gate (workspace <workspaceId>):
 Do not start validation until both are true:
 
 1. **Account Context Brain is `[CONFIRMED]`** - check the fields-confirmed count in the "File
-   metadata" block at the end of `/agent/brain/meta/account-context.md`. All nine required interpretation fields signed off
+   metadata" block at the end of `/agent/brain/<workspace>/data-sources/meta/account-context.md`. All nine required interpretation fields signed off
    by a person. If any field is still `[AUTO]` or `[FLAGGED]`, finish that first. Validating
    against a guessed lens teaches the customer the wrong thing.
 2. **The creative content layer resolves.** In the normal case the workspace's creatives are
@@ -135,7 +139,7 @@ the sync, not files.
 
 ## 4. Where the result lives (persistence)
 
-Save the validation record to `/agent/brain/meta/validation.md`. It captures:
+Save the validation record to `/agent/brain/<workspace>/data-sources/meta/validation.md`. It captures:
 
 - The starter questions the customer chose to validate, and their confirmed answers.
 - Every context correction made during the loop (which Account Context Brain field changed, and
@@ -197,7 +201,7 @@ or adds.** These are the foundational questions, not frequent queries. The defau
 3. What themes show up in our winning ads? (from AI tags and creative summaries)
 4. What are we testing right now, and what's ready to scale?
 5. Show me all our [product] ads — using a real product or concept name from this account.
-6. When `/agent/brain/data-sources/voc/voice-of-customer-audit.md` exists: What are
+6. When `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` exists: What are
    customers telling us they love, object to, or misunderstand — and which of our current
    ads speak to those signals?
 
@@ -269,8 +273,8 @@ Rules for the loop:
   one-line answer-register note in account-context.md's "at a glance" section — the guard
   makes every future performance answer load it. See the Data-Query Guide's answering
   posture.
-- Every correction is logged to `/agent/brain/meta/validation.md` and applied to
-  `/agent/brain/meta/account-context.md` so the fix is durable.
+- Every correction is logged to `/agent/brain/<workspace>/data-sources/meta/validation.md` and applied to
+  `/agent/brain/<workspace>/data-sources/meta/account-context.md` so the fix is durable.
 
 ## Step 3 — Build the weekly deck (the artifact)
 
@@ -352,7 +356,7 @@ Validation is complete, and the Minimum Viable Context Engine is on, when all fi
 4. A refresh routine keeps the deck updated on an agreed cadence.
 5. Slack is connected so the team can ask Runneth questions.
 
-Record the state in `/agent/brain/meta/validation.md`:
+Record the state in `/agent/brain/<workspace>/data-sources/meta/validation.md`:
 
 ```yaml
 mvce_state: on            # on | off
@@ -400,7 +404,9 @@ confidence, worth a follow-up, not a silent pass.
 - **Re-validate** when the account changes in a way that could break an answer: a new primary
   conversion event, a naming-system change, a new product line, or a materially different funnel. Re-running
   the affected questions in the loop is enough; a full re-onboard is not.
-- Log re-validations in `/agent/brain/meta/_changelog.md`, the same convention the other parts use.
+- Log re-validations in
+  `/agent/brain/<workspace>/data-sources/meta/_changelog.md`, the same convention the other
+  Meta parts use.
 
 ---
 

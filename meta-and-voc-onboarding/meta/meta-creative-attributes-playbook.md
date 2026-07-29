@@ -33,7 +33,7 @@ creative content itself.
 
 - A working **creative content layer**: Runneth knows what Cacheth holds and how to query it.
 - A provisional **naming decode**, handed to the Account Context Brain as Field 4 proposals.
-  Once confirmed, the decode lives in `/agent/brain/meta/account-context.md` — this step
+  Once confirmed, the decode lives in `/agent/brain/<workspace>/data-sources/meta/account-context.md` — this step
   persists nothing itself.
 - **No creative files** — nothing here writes per-creative content to the brain (Cacheth is the
   system of record; person-requested snapshot files are a separate, explicit ask).
@@ -172,7 +172,7 @@ The provisional decode is a handoff — this playbook writes nothing to the brai
 `/agent/INDEX.md` entry is needed here (per-creative content is in Cacheth, and Knoweth
 surfaces its summary artifacts without an index step). On confirmation, the Account Context Brain (Field 4, the
 single owner of account interpretation) saves the result in `account-context.md` and writes
-the operational decoder to `/agent/brain/meta/naming-decoder.json` — typed positions, query
+the operational decoder to `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json` — typed positions, query
 fields, and filter patterns per the Field 4 spec. Anything decoding an ad name at analysis
 time reads the decoder through Field 4.
 
@@ -192,14 +192,22 @@ automatically. What remains is event-triggered:
 
 ## Multi-workspace
 
-This package supports **one Meta workspace per sandbox**. The brain files
-(`/agent/brain/meta/account-context.md`, `/agent/brain/meta/naming-decoder.json`) and the
-merged guard headers all describe a single workspace - the one resolved at install. If
-the sandbox is already set up for a different workspace (the guard headers name it), do
-not improvise per-workspace copies or rewrite the guards: stop and report that this
-sandbox belongs to another workspace, and let a person decide. The creative content
-layer is unaffected either way: Cacheth's cache projects are workspace-scoped, and every
-cache query runs against the resolved workspace.
+Every workspace gets its own folder, always - single-workspace orgs simply have one of them.
+`<workspace>` is the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`),
+resolved from the conversation you are in:
+
+- `/agent/brain/<workspace>/data-sources/meta/account-context.md`
+- `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`
+- `/agent/brain/<workspace>/data-sources/voc/<platform>/`
+
+Onboarding a second workspace on the same VM is normal. It adds a folder and touches nothing in
+the first one: never copy, rename, or overwrite another workspace's files to serve this one, and
+never read another workspace's folder to answer a question about this one. The guard blocks in
+`/agent/user.md` are workspace-agnostic and shared, so they are merged once per VM and resolve
+the folder per conversation.
+
+The creative content layer needs no extra scoping: Cacheth's cache projects are already
+workspace-scoped, and every cache query runs against the resolved workspace.
 
 ---
 
@@ -207,11 +215,11 @@ cache query runs against the resolved workspace.
 
 | What | Where |
 |---|---|
-| Account Context Brain (incl. confirmed naming decode, Field 4) | `/agent/brain/meta/account-context.md` |
-| Naming decoder (Field 4's operational output) | `/agent/brain/meta/naming-decoder.json` |
+| Account Context Brain (incl. confirmed naming decode, Field 4) | `/agent/brain/<workspace>/data-sources/meta/account-context.md` |
+| Naming decoder (Field 4's operational output) | `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json` |
 | Per-creative content | Cacheth (summary artifacts surfaced via Knoweth; brain files only as person-requested snapshots) |
 | Brain index | `/agent/INDEX.md` |
-| Change log | `/agent/brain/meta/_changelog.md` |
+| Change log | `/agent/brain/<workspace>/data-sources/meta/_changelog.md` |
 
 | What | Command / approach |
 |---|---|

@@ -212,9 +212,9 @@ home:
     call. Cacheth holds no performance data: stating a number from memory or from a summary
     is fabrication, not analysis.
   - **VoC is the customer side:** why people respond the way they do. Read
-    `/agent/brain/data-sources/voc/voice-of-customer-audit.md` first when it exists, then
+    `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` first when it exists, then
     inspect the raw reviews, support conversations, community posts, and ad comments it
-    cites under `/agent/brain/data-sources/voc/<platform>/`. If raw VoC exists but the
+    cites under `/agent/brain/<workspace>/data-sources/voc/<platform>/`. If raw VoC exists but the
     manual audit has not run, use the relevant raw evidence and offer the `voc-audit` skill;
     never silently run it. Ad comments are the bridge: they connect performance and
     customer voice on the same creatives. When the question is why customers buy, object,
@@ -280,7 +280,7 @@ verdict — present them as a gallery of creative cards, never as a bare text li
 **Always normalize ad names on display.** A raw delimited ad name
 (`ProductX_UGC_QuestionHook_v2`) is a filter key, not a label. When referencing a creative,
 decode its name through the account's naming decoder
-(`/agent/brain/meta/naming-decoder.json`, owned by Account Context Field 4) and present the
+(`/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`, owned by Account Context Field 4) and present the
 human-readable identity — product, format, hook, version, whatever the decoder carries — with
 the raw `adName` kept as a secondary reference (it stays the join key back to the data). If
 the account has no confirmed convention, present the name as-is and say so. This is the

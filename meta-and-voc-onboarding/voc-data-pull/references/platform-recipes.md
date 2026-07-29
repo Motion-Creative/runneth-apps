@@ -8,8 +8,8 @@ and **doc-grounded** (provider docs, unprobed - verify with a bounded call befor
 promising data). Recipes are best-effort guidance, not law: the live API is the truth,
 adaptation is expected, and a stale recipe must never stop a pull (see the skill's Step 2
 mandate). Registry slugs are the Builder integration registry's; use them as `--app`
-values and as the `data-sources/voc/<platform>/` folder name. A VoC platform with no
-section in this file is still in scope: pull it through the skill's no-recipe path
+values and as the `/agent/brain/<workspace>/data-sources/voc/<platform>/` folder name. A VoC
+platform with no section in this file is still in scope: pull it through the skill's no-recipe path
 (Step 2) - live API, unified template, same boundaries.
 
 Pagination defaults for every platform: page size 100 (or the platform max), and a
