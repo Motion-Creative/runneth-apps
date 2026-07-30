@@ -6,6 +6,7 @@ name: Validate
 
 on:
   pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
   push:
     branches: [main]
 
@@ -49,3 +50,5 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build (frontend + server)
         run: pnpm build
+      - name: Test server security behavior
+        run: pnpm --filter use-case-library-server test
