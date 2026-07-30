@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.12 — completed Voice of Customer Audits feed validation questions, answers, and recommendations (July 2026)
+### Version 1.13 — account-specific question generation, batch pre-answer, answer format contract (July 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
@@ -141,7 +141,8 @@ the sync, not files.
 
 Save the validation record to `/agent/brain/<workspace>/data-sources/meta/validation.md`. It captures:
 
-- The starter questions the customer chose to validate, and their confirmed answers.
+- The question set the customer validated — the generated baseline and account-specific
+  questions plus any they added — and their confirmed answers.
 - Every context correction made during the loop (which Account Context Brain field changed, and
   what it changed to).
 - The weekly deck: its route, its structure, the reference it was built from, and the
@@ -193,14 +194,23 @@ artifact; the loop is the proof.
 
 ## Step 2 — The answer-and-confirm loop (the catch)
 
-Present the starter questions Runneth can answer today. **Runneth proposes; the customer confirms
-or adds.** These are the foundational questions, not frequent queries. The default set:
+### Question generation — before the loop starts
+
+Generate the question set from this account's confirmed context. This happens silently; the
+customer sees a numbered list, never the generation step. **Runneth proposes; the customer
+confirms or adds.** These are the foundational questions, not frequent queries.
+
+**The baseline set always runs** — it tests the foundation:
 
 1. What are our top winning ads this week?
-2. How is performance by campaign / product?
-3. What themes show up in our winning ads? (from AI tags and creative summaries)
-4. What are we testing right now, and what's ready to scale?
-5. Show me all our [product] ads — using a real product or concept name from this account.
+2. How is performance by [the confirmed reporting dimensions from Field 10 — real names,
+   never "campaign / product"]?
+3. What themes show up in our winning ads? (creative summaries and AI tags — the one
+   question that reads the creative content layer)
+4. What are we testing right now in [the confirmed testing bucket from Field 7], and what's
+   ready to scale?
+5. Show me all our [product] ads — using a real product or concept name from the confirmed
+   naming decoder.
 6. When `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` exists: What are
    customers telling us they love, object to, or misunderstand — and which of our current
    ads speak to those signals?
@@ -228,29 +238,86 @@ Field 4 confirmed default), and must not silently treat the product as a campaig
 If the customer corrects the read, the fix lands in Field 4 (naming conventions) like any
 other correction.
 
-**When Field 10 is confirmed, anchor questions 2 and 4 in what's already known:**
-- Question 2: replace "by campaign / product" with the confirmed reporting dimensions from
-  Field 10. If the account slices by product, ask about the real product lines by name ("How
-  is [product line A] performing vs [product line B]?") — never generically.
-- Question 4: reference active seasonal campaigns from the Field 10 marketing calendar. If a
-  campaign is currently running or approaching, name it ("[seasonal campaign] is active and
-  [next one] is coming up — how are those tracking against your expectations?").
+**Field 10 anchors the baseline.** Questions 2 and 4 read the confirmed context directly:
+the real reporting dimensions and product lines by name ("How is [product line A] performing
+vs [product line B]?"), and active or approaching campaigns from the Field 10 marketing
+calendar ("[seasonal campaign] is active and [next one] is coming up — how are those
+tracking against your expectations?"). When Field 10 is not yet confirmed (the
+questions-only path never requires it), fall back to the dimensions confirmed in Fields 4
+and 7 — still this account's real names, never a generic "campaign / product."
 
-Invite the customer to add any question that matters to them that's missing. Capture the final
-set.
+**Then derive account-specific questions from the confirmed naming decoder and funnel map.**
+For each `segment_filter` dimension in `naming-decoder.json` with at least 3 creatives and
+meaningful spend in the current 7-day window (both computed from the primary pull below — no
+extra calls), generate one performance question using the dimension's real `known_values`:
+"How is [value A] performing against [value B] and [value C] on [the primary KPI]?" Skip a
+dimension with only one known value or too small a spend spread to compare. Add the
+winner/cut question anchored on Field 9's confirmed floor ("Is [top ad] a winner yet —
+against the $[floor] / [N]-day rule?") and the testing-pipeline question from Field 7
+("What's running in [testing bucket], when did each ad launch, and how is the last 7
+days?").
 
-Then, one question at a time:
+The result is typically 7–12 questions. Present the numbered set and invite the customer to
+add any question that matters to them that's missing. Capture the final set.
 
-1. **Answer it** from the Account Context Brain + the creative content layer, using the
-   account's own interpretation (their metrics, their naming, their targets). For Question 6
-   and any customer-side WHY question the customer adds, also read the saved Voice of
-   Customer Audit and verify against its cited raw VoC evidence.
-2. **Ask the confirm:** "Is that right? Am I missing anything?"
-3. **On a yes:** note the confirmed answer and move to the next question.
-4. **On a correction:** route it through the durability test (the training-loop principle
+### Pre-answer the set in batch
+
+Once the final set is captured, pull everything before presenting any answer:
+
+- **Primary pull:** one `motion meta insights` call — `--filter` to Field 7's primary
+  campaigns, `--include-metrics`, `--table-kpi` on the account's confirmed primary KPI key,
+  attribution windows from Field 5 when they differ from the default, **no `--limit`**.
+  Before any totals or all-ads claim, check the returned file's `totalCount` against the
+  rows received; if they differ, say the read is partial. This one file answers the
+  top-ads, dimension, and reporting-dimension questions — dimension slices are computed
+  from returned rows through the naming decoder (`--group-by` supports nothing but
+  `creative`; grouping is always client-side).
+- **Testing pull:** the same shape filtered to Field 7's testing bucket. Covers the
+  testing-pipeline question.
+- **Lifetime pull (conditional):** only when Field 9's spend floor is lifetime, one
+  wider-range pull for the winner/cut question — a 7-day window cannot prove a lifetime
+  floor.
+- **Creative content (the themes question only):** through the creative content layer's
+  ladder as written in the Cacheth Command Reference — Knoweth-injected context first,
+  `motion cache search-summaries` by theme text next, `motion cache get-creative` per
+  confirmed winner for AI tags and transcripts (one `--creative-id` per call; tags live
+  only on the full record), the live rung only when the cache cannot serve.
+
+Answer every question from these files, using the account's own interpretation (their
+metrics, their naming, their targets). For Question 6 and any customer-side WHY question
+the customer adds, also read the saved Voice of Customer Audit and verify against its cited
+raw VoC evidence. Then present the full Q&A together — not one question at a time.
+
+### Answer format contract
+
+Every answer in the set, in this order:
+
+1. **The exact question** — bold, verbatim as presented in the set.
+2. **2–4 bullets** — lead with the call, support with specifics. No prose paragraphs.
+3. **A table** when comparing 3 or more items (dimension values, formats, campaigns).
+4. **A creative gallery** per the Data-Query Guide's presenting-creatives contract whenever
+   the answer names specific ads — cards carry the decoded name, the primary KPI value, and
+   spend. Winner / Watch / Cut labels appear only on the winner/cut question's gallery:
+   Field 9's criteria apply when a winner/cut question is asked, never as a stamp on every
+   card.
+
+One line of synthesis after the data is allowed when something is genuinely worth calling
+out — an outlier, an unexpected gap, a pattern worth acting on. Skip it when the data
+speaks for itself.
+
+### Running the loop
+
+Present the full pre-answered Q&A, then confirm per question, in order — "Is that right?
+Am I missing anything?":
+
+1. **On a yes:** record the confirmed answer in `validation.md` and move to the next.
+2. **On a correction:** route it through the durability test (the training-loop principle
    above). A current-state remark shapes this answer only; a durable rule heals the specific
    Account Context Brain field behind the miss. Update the field, say plainly what you
-   changed, then re-answer and re-confirm before moving on.
+   changed, then re-answer and re-confirm before moving on. Re-answer from the
+   already-pulled files when the correction changes interpretation (a different winner
+   metric re-ranks existing rows); re-pull only when the correction changes the pull itself
+   (a corrected attribution window or campaign filter invalidates the file).
 
 Rules for the loop:
 
@@ -363,6 +430,8 @@ mvce_state: on            # on | off
 validated_on: <date>
 signed_off_by: <person>
 starter_questions_confirmed: <count>
+account_specific_questions_generated: <count>
+account_specific_questions_confirmed: <count>
 questions_clean: <n of m — latest answer confirmed without correction>
 context_corrections: <total>
 deck_rebuilds: <count>
@@ -420,6 +489,8 @@ confidence, worth a follow-up, not a silent pass.
   be captured as an Account Context Brain field (fits field 6 test batching or field 9
   winner/cut criteria) so the deck produces that snapshot consistently. Until it is captured,
   treat that snapshot as `[FLAGGED]` and say the rule is still needed rather than guessing it.
+  In the question loop, the testing-pipeline question reports what is running and its
+  last-7-day performance and makes no scale recommendations until the rule is captured.
 - Interpretation precedence is unchanged: when the deck and the Account Context Brain disagree on
   what "best" or "winner" means, the Account Context Brain wins.
 

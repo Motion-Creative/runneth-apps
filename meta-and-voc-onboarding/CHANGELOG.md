@@ -109,7 +109,23 @@ The package as it ships:
   block has an explicit YAML template (`fields_confirmed`, `field_statuses`,
   `open_flags`, `naming_decoder`) that the guard's all-confirmed check and the
   validation gate read.
-- Validation is a training loop (validation doc v1.12, ACB v1.31, validation
+- Validation generates its question set from the confirmed account context
+  (doc v1.13) instead of a fixed list: the baseline questions parameterized with
+  the account's real reporting dimensions, testing bucket, and decoder names,
+  plus one derived question per filterable decoder dimension with at least 3
+  creatives and meaningful 7-day spend, a Field 9 winner/cut probe, and a
+  Field 7 testing-pipeline question - typically 7-12 total, customer additions
+  invited. Answers are pre-filled in batch before any are shown: one primary-
+  bucket insights pull (no `--limit`, `totalCount` checked before all-ads
+  claims), one testing-bucket pull, a conditional wider pull when Field 9's
+  floor is lifetime, and creative content through the content layer's ladder
+  (`get-creative` per winner for tags). The full Q&A presents together and
+  confirms per question under a fixed answer format contract: verbatim
+  question, 2-4 bullets, table at 3+ comparisons, gallery with decoded names
+  when ads are named - Winner/Watch/Cut labels only on the winner/cut
+  question. The testing-pipeline question makes no scale recommendations until
+  the testing-to-scaling rule is captured.
+- Validation is a training loop (validation doc v1.13, ACB v1.32, validation
   gate guard v4): the question loop and the deck build train one brain. All
   feedback routes through a durability test — judgment rules heal ACB fields,
   standing preferences land in the register note or Field 10, current-state

@@ -237,11 +237,13 @@ Folder: `onboarding-walkthrough/`
 ### Meta Validation
 File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta-and-voc-onboarding/meta-validation-onboarding-package.md`)
 
-- **Job:** prove Runneth understood the account. The answer-and-confirm loop on the customer's
-  starter questions (including the name-level probe: "show me all our [product] ads," with the
-  filtered name level shown), the weekly deck build pre-filled from the Field 10 deck spec (no
-  deck without it; questions-only customers never need it), lock-in (deck approval, refresh
-  routine, Slack), and the MVCE gate.
+- **Job:** prove Runneth understood the account. The answer-and-confirm loop on a question
+  set generated from the confirmed account context — the baseline questions (including the
+  name-level probe: "show me all our [product] ads," with the filtered name level shown)
+  plus account-specific questions derived from the naming decoder and funnel map, all
+  pre-answered in batch and presented together — the weekly deck build pre-filled from the
+  Field 10 deck spec (no deck without it; questions-only customers never need it), lock-in
+  (deck approval, refresh routine, Slack), and the MVCE gate.
 - **Runs third, gated.** Starts only when all nine Account Context Brain fields are confirmed
   and the creative content layer resolves (creatives in Cacheth — or live content pulls where
   the sandbox cache feature is disabled; cache coverage, not files). Every correction in
