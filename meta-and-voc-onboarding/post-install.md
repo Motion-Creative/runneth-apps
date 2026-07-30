@@ -12,12 +12,15 @@ asked.
 Everything this package persists lives in one folder per Motion workspace:
 `/agent/brain/<workspace>/`, where `<workspace>` is the name of the workspace this
 conversation operates in, slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`).
-Resolve that name from this conversation's own context - the workspace attached to this
-conversation, the one its Motion commands resolve to - never from a prior install, a removed
-guard block, or another conversation. Existing `/agent/brain/<workspace>/` folders, roster
-entries, and `voc-sync-<workspace>-*` routine names are records of whichever workspaces
-onboarded *earlier* - on a multi-workspace VM another workspace's state is always present,
-and none of it is evidence of which workspace this conversation serves. One
+That name has exactly one source of truth: the `Default workspace:` line in the
+`Motion context:` section of this conversation's system prompt, which states the workspace
+name and workspaceId. Before anything else, say which workspace you resolved - name,
+workspaceId, and the slug - taken from that line; every later step uses those three values.
+If that line is null, ask which workspace to onboard and stop until answered. Nothing else
+identifies the workspace: not the `runneth:meta-voc-onboarded` roster, not existing
+`/agent/brain/<workspace>/` folders, not `voc-sync-<workspace>-*` routine names, not a prior
+install or another conversation - those record whichever workspaces onboarded *earlier*, and
+on a multi-workspace VM another workspace's state is always present. One
 org VM holds several workspace folders side by side and they never merge: a second workspace
 onboarding is normal, not a conflict.
 
