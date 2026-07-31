@@ -11,7 +11,7 @@ one the runtime binds it to. It is stated in two places that always agree - the
 `Default workspace:` line in the `Motion context:` section of this system prompt
 (name and workspaceId), and the `MOTION_WORKSPACE_ID` environment variable the runtime
 injects into every Bash call (the id every bare `motion` command resolves to). For this
-gate, read the name from the `Default workspace:` line and slug it - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`). If that line is null, ask which workspace to onboard before
+gate, read the name from the `Default workspace:` line and slug it - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). If that line is null, ask which workspace to onboard before
 doing anything else - never guess. Nothing else identifies the workspace: not the
 roster below, not `/agent/brain/` folders, not routine names - those record *earlier*
 onboardings, which on a multi-workspace VM always exist. Then look in this system
@@ -20,7 +20,7 @@ like:
 
 ```
 <!-- BEGIN runneth:meta-voc-onboarded -->
-meta-and-voc-onboarding has completed for these workspaces: huel-eu, motion-crew
+meta-and-voc-onboarding has completed for these workspaces: bramblewick-nyc, st-fig-co
 <!-- END runneth:meta-voc-onboarded -->
 ```
 

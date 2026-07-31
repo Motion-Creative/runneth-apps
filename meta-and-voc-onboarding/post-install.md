@@ -12,7 +12,7 @@ executes.
 
 Everything this package persists lives in one folder per Motion workspace:
 `/agent/brain/<workspace>/`, where `<workspace>` is the name of the workspace this
-conversation operates in, slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`).
+conversation operates in, slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`).
 **Step 0 - resolve the workspace mechanically.** This is the sequence's first action,
 before any other work: no other Motion commands, no routine listing, no brain-file reads,
 no `/agent/user.md` reads or writes until it is done. Run:
@@ -185,7 +185,7 @@ step 1 starts: the workspace name, workspaceId, and slug every step below uses c
    not the worksheet) with every autofilled field and the provisional naming decode. Record
    the workspace name and workspace id in the file's metadata block - that is what makes a
    later rename recoverable. Index it in `/agent/INDEX.md` with the playbook's aliases,
-   each alias qualified by the workspace ("Huel EU account context") because the index is
+   each alias qualified by the workspace ("Bramblewick NYC account context") because the index is
    VM-wide and two workspaces' entries must never read as the same document. This file gets
    written even when the
    live pulls are entirely blocked by API errors: all field headers with whatever is

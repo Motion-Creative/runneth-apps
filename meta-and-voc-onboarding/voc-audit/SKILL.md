@@ -43,7 +43,7 @@ for each source's bias.
 The audit is scoped to one Motion workspace. Resolve the workspace folder first:
 `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's workspace name
 slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen,
-trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`).
+trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`).
 
 The package's canonical source is:
 

@@ -130,11 +130,11 @@ cache); nothing in this package writes it to brain files.
 
 Everything this package produces is scoped to the Motion workspace it was produced for. A
 workspace's context, naming decoder, validation state, and VoC corpus live together under
-`/agent/brain/<workspace>/`, where `<workspace>` is the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`), resolved from the conversation.
+`/agent/brain/<workspace>/`, where `<workspace>` is the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`), resolved from the conversation.
 
 ```
 /agent/brain/
-  huel-eu/
+  bramblewick-nyc/
     _tag-vocabulary.md
     _changelog.md
     data-sources/
@@ -147,7 +147,7 @@ workspace's context, naming decoder, validation state, and VoC corpus live toget
         voice-of-customer-audit.md  # created by the later audit skill, not initial sync
         <platform>/                 # one folder per pulled platform, one file per item
         meta-ad-comments/           # standard pull of every onboarding, one file per creative
-  motion-crew/              the same structure, entirely independent
+  st-fig-co/                the same structure, entirely independent
 ```
 
 Why it matters: a sandbox is per organization, not per workspace, so every workspace in an org
