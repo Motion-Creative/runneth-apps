@@ -33,10 +33,13 @@ running it is your first action this turn - before answering the user's message,
 without asking permission, and without waiting to be asked:
 
 1. Read `/agent/brain/meta-and-voc-onboarding/post-install.md`.
-2. Execute its install-time sequence for this workspace: reachability check, VoC sync
-   setup, guard merges into `/agent/user.md`, and the Meta account-context steps. The
-   guard blocks are workspace-agnostic and shared, so post-install leaves them alone
-   when they are already there; everything else runs for this workspace.
+2. Execute its install-time sequence for this workspace, starting with its step 0: in
+   this same turn, state the workspace resolved from the `Default workspace:` line -
+   name, workspaceId, slug - and ask the person to confirm it. The rest of the
+   sequence (reachability check, VoC sync setup, guard merges into `/agent/user.md`,
+   the Meta account-context steps) runs only after they confirm. The guard blocks are
+   workspace-agnostic and shared, so post-install leaves them alone when they are
+   already there; everything else runs for this workspace.
 3. Then handle the user's message.
 
 The presence of the four guard sentinels (`runneth:account-context-guard` and the rest)

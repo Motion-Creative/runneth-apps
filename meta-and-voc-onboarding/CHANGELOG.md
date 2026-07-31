@@ -68,13 +68,17 @@ The package as it ships:
   cache feature is disabled - so cache-disabled sandboxes still decode names,
   validate, and organize instead of being permanently gated. Metrics pulls stay
   lean (no content flags); content joins from the cache on `creativeId`.
-- Post-install runs silently in the installing conversation: reachability check
+- Post-install opens with step 0: it states the target workspace - name and
+  workspaceId from the `Default workspace:` line of the conversation's Motion
+  context, the single source of truth - and waits for the person to confirm it
+  before anything else executes. It then runs silently in the installing
+  conversation: reachability check
   (`integrations status --app <slug>` per known VoC platform, stored secrets,
   Meta workspace connection), one daily `voc-sync-<workspace>-<platform>` routine
   per reachable platform with the first run kicked, single-Write guard merge into
   `/agent/user.md` with an anti-duplication check, Creative Attributes, and the
-  Account Context Brain autofill persisted to disk - asking nothing except the
-  account-pinning confirmation when ownership cannot be auto-resolved. It ends
+  Account Context Brain autofill persisted to disk - asking nothing else except
+  the account-pinning confirmation when ownership cannot be auto-resolved. It ends
   with a status-only report (one line per part, question count, no findings or
   question text) and the verbatim invitation "Are you ready to begin your
   onboarding?".

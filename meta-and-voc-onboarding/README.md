@@ -60,16 +60,19 @@ Never copy files by hand - the package manager stages everything.
 **What to send Runneth (copy-paste - this exact shape matters).** The install message
 must carry the kickoff clause itself: installing stages files, but the post-install
 sequence (VoC sync routines, guard merges, Meta account context) runs only when the
-conversation tells it to. Canonical message:
+conversation tells it to. It also names the target workspace, so the conversation text
+itself says which workspace the install is for; post-install's step 0 checks that name
+against the conversation's own workspace, confirms it with the person, and stops on any
+mismatch. Canonical message:
 
-> Install the meta-and-voc-onboarding package: run
+> Install the meta-and-voc-onboarding package for the <workspace name> workspace: run
 > `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"`,
 > then read `/agent/brain/meta-and-voc-onboarding/post-install.md` and execute its
 > install-time sequence in this conversation.
 
 Branch-testing variant (same clause, different ref):
 
-> Install the meta-and-voc-onboarding package: run
+> Install the meta-and-voc-onboarding package for the <workspace name> workspace: run
 > `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#<branch>"`,
 > then read `/agent/brain/meta-and-voc-onboarding/post-install.md` and execute its
 > install-time sequence in this conversation.
@@ -379,7 +382,8 @@ Folder: `meta-ad-performance-analysis/`
 **Run [`post-install.md`](post-install.md) the moment this package's files land - every
 install, no exceptions.** Installing is the trigger - the manifest's `activation` package
 instruction, the staged post-install doc, and this line all point at the same file, which
-carries the executable install-time sequence (reachability check, VoC sync setup, guard
+carries the executable install-time sequence (step 0 workspace confirmation, reachability
+check, VoC sync setup, guard
 merges, Meta context steps). If the installing turn ends without running it (the package
 manager itself never runs setup), the activation instruction fires it on the first turn
 after install instead. The per-workspace `runneth:meta-voc-onboarded` roster in
@@ -391,7 +395,10 @@ The run order below is the human-readable description of the same lifecycle.
 
 1. **Install the package** with one `package install` call (see "How to install" above);
    never copy files by hand. Staging the files
-   does not self-run anything - the post-install run right after it does. Nothing in this package writes per-creative files to the brain —
+   does not self-run anything - the post-install run right after it does. That run opens
+   with step 0: it states the target workspace - name and workspaceId from the
+   conversation's Motion context - and waits for the person to confirm it before anything
+   else executes. Nothing in this package writes per-creative files to the brain —
    creative content lives in Cacheth; its summary artifacts are surfaced through Knoweth.
 2. **Set up VoC data syncs.** For each reachable customer-voice source, pin the workspace's
    account, create the daily `voc-sync-<workspace>-<platform>` routine, and kick the first
