@@ -1,7 +1,7 @@
 <!-- BEGIN runneth:knoweth-organize v3 -->
 Knoweth organize (after the questions are answered):
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`). Resolve it per conversation; the
+  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
   `<workspace>` token stays literal in this file. Organize one workspace at a time - the
   workspace whose conversation you are in - and never reorganize or retag another
   workspace's folder.

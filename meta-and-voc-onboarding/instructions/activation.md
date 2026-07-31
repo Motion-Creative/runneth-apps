@@ -6,13 +6,21 @@ do" questions. No other system-prompt guidance (web handoff, conversational
 guidance, anything else) exempts you from this gate.
 
 The check is per workspace, because this package onboards one Motion workspace at a
-time and an org VM can hold several. Resolve this conversation's workspace folder
-name - the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`) - then look in this system prompt, which already includes the saved
-contents of `/agent/user.md`, for a block like:
+time and an org VM can hold several. This conversation has exactly one workspace: the
+one the runtime binds it to, stated on the `Default workspace:` line in the
+`Motion context:` section of this system prompt (name and workspaceId) - the same
+workspace every bare `motion` command in this conversation resolves to. Read the name
+from that line and slug it - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). If that line is null, ask which workspace to onboard before
+doing anything else - never guess. Nothing else identifies the workspace: not the
+roster below, not `/agent/brain/` folders, not routine names, not remembered context
+from other conversations - those record *earlier*
+onboardings, which on a multi-workspace VM always exist. Then look in this system
+prompt, which already includes the saved contents of `/agent/user.md`, for a block
+like:
 
 ```
 <!-- BEGIN runneth:meta-voc-onboarded -->
-meta-and-voc-onboarding has completed for these workspaces: huel-eu, motion-crew
+meta-and-voc-onboarding has completed for these workspaces: bramblewick-nyc, st-fig-co
 <!-- END runneth:meta-voc-onboarded -->
 ```
 
@@ -27,10 +35,13 @@ running it is your first action this turn - before answering the user's message,
 without asking permission, and without waiting to be asked:
 
 1. Read `/agent/brain/meta-and-voc-onboarding/post-install.md`.
-2. Execute its install-time sequence for this workspace: reachability check, VoC sync
-   setup, guard merges into `/agent/user.md`, and the Meta account-context steps. The
-   guard blocks are workspace-agnostic and shared, so post-install leaves them alone
-   when they are already there; everything else runs for this workspace.
+2. Execute its install-time sequence for this workspace, starting with its step 0:
+   quote the `Default workspace:` line from this prompt's `Motion context:` section
+   verbatim and state the name, workspaceId, and slug taken from it, before anything
+   else in the sequence (reachability check, VoC sync setup, guard merges into
+   `/agent/user.md`, the Meta account-context steps) runs. The guard
+   blocks are workspace-agnostic and shared, so post-install leaves them alone when
+   they are already there; everything else runs for this workspace.
 3. Then handle the user's message.
 
 The presence of the four guard sentinels (`runneth:account-context-guard` and the rest)

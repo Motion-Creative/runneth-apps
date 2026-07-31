@@ -5,15 +5,36 @@ sync setup and the Meta context work (Creative Attributes, then the Account Cont
 Run the sequence below at the first opportunity after the package's files land: in the
 installing turn if you are reading this then, otherwise on the first turn where the
 package's activation instruction is visible. Either way, run it without waiting to be
-asked.
+asked. Its step 0 states the target workspace - read from this conversation's own
+Motion context - before anything else executes.
 
 ## Resolve the workspace folder first
 
 Everything this package persists lives in one folder per Motion workspace:
 `/agent/brain/<workspace>/`, where `<workspace>` is the name of the workspace this
-conversation operates in, slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`).
-Resolve that name from this conversation's own context - the workspace its Motion commands
-resolve to - never from a prior install, a removed guard block, or another conversation. One
+conversation operates in, slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`).
+**Step 0 - read the workspace off the conversation's own context.** This is the
+sequence's first action, before any other work: no Motion commands, no routine listing,
+no brain-file reads, no `/agent/user.md` reads or writes until it is done. This system
+prompt's `Motion context:` section contains a `Default workspace:` line stating the
+workspace name and workspaceId the runtime bound to this conversation - the same
+workspace every bare `motion` command resolves to when `--workspace-id` is omitted, so
+it cannot disagree with where the data actually lives. Quote that line verbatim, exactly
+as it appears in this prompt, then state the slug derived from its name. Those three
+values - name, workspaceId, slug - are the workspace for every later step, and nothing
+downstream may re-resolve them from anything else. If that line is null or absent, ask
+which workspace to onboard and stop until answered - never guess.
+
+Nothing else identifies the workspace: not the `runneth:meta-voc-onboarded` roster, not
+existing `/agent/brain/<workspace>/` folders, not `voc-sync-<workspace>-*` routine names,
+not a prior install or another conversation, not remembered context or anything memory
+or a brain search returns - those record whichever workspaces onboarded *earlier*, and
+on a multi-workspace VM another workspace's state is always present. If the workspace
+you are about to write down came from any of those, it is wrong: read the
+`Default workspace:` line again and use exactly what it says. Another
+workspace's folders and routines are also not a resume signal: whether this run is a fresh
+install or a resume is decided only after step 0 resolves the workspace, and only by the
+resolved workspace's own roster entry and files. One
 org VM holds several workspace folders side by side and they never merge: a second workspace
 onboarding is normal, not a conflict.
 
@@ -52,6 +73,10 @@ per-workspace:
   onboarding from scratch.
 
 ## The install-time sequence, in order
+
+Step 0 - the workspace readout defined above - has already happened before step 1
+starts: the workspace name, workspaceId, and slug every step below uses came from the
+`Default workspace:` line of this conversation's `Motion context:` section, nowhere else.
 
 1. **Check what the org can reach.** `integrations status --app <slug>` for each known
    VoC platform slug (the voc-data-pull skill's Step 1 table lists them; `integrations
@@ -158,7 +183,7 @@ per-workspace:
    not the worksheet) with every autofilled field and the provisional naming decode. Record
    the workspace name and workspace id in the file's metadata block - that is what makes a
    later rename recoverable. Index it in `/agent/INDEX.md` with the playbook's aliases,
-   each alias qualified by the workspace ("Huel EU account context") because the index is
+   each alias qualified by the workspace ("Bramblewick NYC account context") because the index is
    VM-wide and two workspaces' entries must never read as the same document. This file gets
    written even when the
    live pulls are entirely blocked by API errors: all field headers with whatever is

@@ -60,7 +60,10 @@ Never copy files by hand - the package manager stages everything.
 **What to send Runneth (copy-paste - this exact shape matters).** The install message
 must carry the kickoff clause itself: installing stages files, but the post-install
 sequence (VoC sync routines, guard merges, Meta account context) runs only when the
-conversation tells it to. Canonical message:
+conversation tells it to. The message never needs to name a workspace: post-install's
+step 0 reads it off the `Default workspace:` line of the conversation's own Motion
+context - the workspace the runtime bound the conversation to.
+Canonical message:
 
 > Install the meta-and-voc-onboarding package: run
 > `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"`,
@@ -128,11 +131,11 @@ cache); nothing in this package writes it to brain files.
 
 Everything this package produces is scoped to the Motion workspace it was produced for. A
 workspace's context, naming decoder, validation state, and VoC corpus live together under
-`/agent/brain/<workspace>/`, where `<workspace>` is the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`), resolved from the conversation.
+`/agent/brain/<workspace>/`, where `<workspace>` is the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`), resolved from the conversation.
 
 ```
 /agent/brain/
-  huel-eu/
+  bramblewick-nyc/
     _tag-vocabulary.md
     _changelog.md
     data-sources/
@@ -145,7 +148,7 @@ workspace's context, naming decoder, validation state, and VoC corpus live toget
         voice-of-customer-audit.md  # created by the later audit skill, not initial sync
         <platform>/                 # one folder per pulled platform, one file per item
         meta-ad-comments/           # standard pull of every onboarding, one file per creative
-  motion-crew/              the same structure, entirely independent
+  st-fig-co/                the same structure, entirely independent
 ```
 
 Why it matters: a sandbox is per organization, not per workspace, so every workspace in an org
@@ -381,7 +384,8 @@ Folder: `meta-ad-performance-analysis/`
 **Run [`post-install.md`](post-install.md) the moment this package's files land - every
 install, no exceptions.** Installing is the trigger - the manifest's `activation` package
 instruction, the staged post-install doc, and this line all point at the same file, which
-carries the executable install-time sequence (reachability check, VoC sync setup, guard
+carries the executable install-time sequence (step 0 workspace resolution, reachability
+check, VoC sync setup, guard
 merges, Meta context steps). If the installing turn ends without running it (the package
 manager itself never runs setup), the activation instruction fires it on the first turn
 after install instead. The per-workspace `runneth:meta-voc-onboarded` roster in
@@ -393,7 +397,11 @@ The run order below is the human-readable description of the same lifecycle.
 
 1. **Install the package** with one `package install` call (see "How to install" above);
    never copy files by hand. Staging the files
-   does not self-run anything - the post-install run right after it does. Nothing in this package writes per-creative files to the brain —
+   does not self-run anything - the post-install run right after it does. That run opens
+   with step 0: it quotes the `Default workspace:` line from the conversation's Motion
+   context verbatim and states the name, workspaceId, and slug taken from it before
+   anything else executes - existing folders, rosters, routines, and remembered context
+   never identify the workspace. Nothing in this package writes per-creative files to the brain —
    creative content lives in Cacheth; its summary artifacts are surfaced through Knoweth.
 2. **Set up VoC data syncs.** For each reachable customer-voice source, pin the workspace's
    account, create the daily `voc-sync-<workspace>-<platform>` routine, and kick the first

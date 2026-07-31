@@ -10,7 +10,7 @@ The one-line model:
 
 Throughout this doc, `<workspace>` means the folder for one Motion workspace under `/agent/brain/`,
 named with the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9
-becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`).
+becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`).
 It is resolved per conversation, never hardcoded: one org VM holds a folder per onboarded workspace
 and they never merge.
 
@@ -30,7 +30,7 @@ This is the last setup step of the combined run and the first line of ongoing ma
 <!-- BEGIN runneth:knoweth-organize v3 -->
 Knoweth organize (after the questions are answered):
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`). Resolve it per conversation; the
+  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
   `<workspace>` token stays literal in this file. Organize one workspace at a time - the
   workspace whose conversation you are in - and never reorganize or retag another
   workspace's folder.
@@ -70,7 +70,7 @@ Knoweth organize (after the questions are answered):
 <!-- BEGIN runneth:knoweth-brain v3 -->
 Knoweth brain discipline (all writes, going forward):
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`). Resolve it per conversation; the
+  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
   `<workspace>` token stays literal in this file. Account-specific content belongs in this
   conversation's workspace folder - never in another workspace's folder, and never at the brain
   root where two workspaces would blur together.

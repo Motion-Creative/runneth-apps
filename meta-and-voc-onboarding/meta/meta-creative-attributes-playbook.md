@@ -196,7 +196,7 @@ automatically. What remains is event-triggered:
 ## Multi-workspace
 
 Every workspace gets its own folder, always - single-workspace orgs simply have one of them.
-`<workspace>` is the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`),
+`<workspace>` is the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`),
 resolved from the conversation you are in:
 
 - `/agent/brain/<workspace>/data-sources/meta/account-context.md`

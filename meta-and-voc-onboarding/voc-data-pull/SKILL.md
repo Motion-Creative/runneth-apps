@@ -169,7 +169,7 @@ silently. A missing recipe is never a reason to stop.
 ### Folder convention
 
 Root: `/agent/brain/<workspace>/data-sources/voc/<platform>/`, where `<workspace>` is the
-Motion workspace this pull belongs to, slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`). **Every pull is scoped to one workspace.** The workspace folder is the boundary that
+Motion workspace this pull belongs to, slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). **Every pull is scoped to one workspace.** The workspace folder is the boundary that
 keeps two brands' customer voice apart: a pull for one workspace never writes into another's
 folder, and pulls are never merged into a shared root. Items are keyed by `external_id`, so a
 shared root would not overwrite - it would silently accumulate two brands' reviews into one
