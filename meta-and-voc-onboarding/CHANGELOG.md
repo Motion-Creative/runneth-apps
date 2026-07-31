@@ -68,11 +68,12 @@ The package as it ships:
   cache feature is disabled - so cache-disabled sandboxes still decode names,
   validate, and organize instead of being permanently gated. Metrics pulls stay
   lean (no content flags); content joins from the cache on `creativeId`.
-- Post-install opens with step 0: it states the target workspace - name and
-  workspaceId from the `Default workspace:` line of the conversation's Motion
-  context, the single source of truth - and waits for the person to confirm it
-  before anything else executes. It then runs silently in the installing
-  conversation: reachability check
+- Post-install opens with step 0: it resolves the target workspace mechanically -
+  `printenv MOTION_WORKSPACE_ID` for the id the runtime injects into every Bash
+  call, the matching `motion workspaces` entry for the name - states name,
+  workspaceId, and slug, and only then proceeds. Existing folders, rosters, and
+  routine names never identify the workspace. It then runs silently in the
+  installing conversation: reachability check
   (`integrations status --app <slug>` per known VoC platform, stored secrets,
   Meta workspace connection), one daily `voc-sync-<workspace>-<platform>` routine
   per reachable platform with the first run kicked, single-Write guard merge into

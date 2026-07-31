@@ -5,35 +5,38 @@ sync setup and the Meta context work (Creative Attributes, then the Account Cont
 Run the sequence below at the first opportunity after the package's files land: in the
 installing turn if you are reading this then, otherwise on the first turn where the
 package's activation instruction is visible. Either way, run it without waiting to be
-asked. The one pause it contains is its own step 0: confirming the target workspace
-with the person before anything else executes.
+asked. Its step 0 resolves the target workspace mechanically before anything else
+executes.
 
 ## Resolve the workspace folder first
 
 Everything this package persists lives in one folder per Motion workspace:
 `/agent/brain/<workspace>/`, where `<workspace>` is the name of the workspace this
 conversation operates in, slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Huel EU" -> `huel-eu`, "Mr. Beast" -> `mr-beast`).
-That name has exactly one source of truth: the `Default workspace:` line in the
-`Motion context:` section of this conversation's system prompt, which states the workspace
-name and workspaceId.
+**Step 0 - resolve the workspace mechanically.** This is the sequence's first action,
+before any other work: no other Motion commands, no routine listing, no brain-file reads,
+no `/agent/user.md` reads or writes until it is done. Run:
 
-**Step 0 - confirm the workspace with the person.** This is the sequence's first action,
-before any other tool call: no Motion commands, no routine listing, no brain-file reads, no
-`/agent/user.md` reads or writes until it is done. State what the `Default workspace:` line
-says - name, workspaceId, and the slug you derived - and ask the person to confirm that
-this install is for that workspace. Then wait for their answer. If the install message
-itself names a workspace ("for the <name> workspace"), it must match that line; on any
-mismatch, or if the line is null, say so and ask which workspace to onboard - never guess
-and never break the tie yourself. Every later step uses the confirmed name, workspaceId,
-and slug; nothing downstream may re-resolve them.
+```
+printenv MOTION_WORKSPACE_ID
+```
+
+The value it prints is this conversation's workspaceId. The runtime injects that variable
+into every Bash call, and it is the same id every bare `motion` command resolves to when
+`--workspace-id` is omitted - it cannot disagree with where the data actually lives. Then
+run `motion workspaces` and take the name of the workspace whose id equals that value
+exactly; slug that name for the folder. State all three - name, workspaceId, slug - and
+proceed: every later step uses those three values, and nothing downstream may re-resolve
+them from anything else. If `MOTION_WORKSPACE_ID` is unset, this conversation has no
+workspace: ask which workspace to onboard and stop until answered - never guess.
 
 Nothing else identifies the workspace: not the `runneth:meta-voc-onboarded` roster, not
 existing `/agent/brain/<workspace>/` folders, not `voc-sync-<workspace>-*` routine names,
 not a prior install or another conversation - those record whichever workspaces onboarded
 *earlier*, and on a multi-workspace VM another workspace's state is always present. Another
 workspace's folders and routines are also not a resume signal: whether this run is a fresh
-install or a resume is decided only after the workspace is confirmed, and only by the
-confirmed workspace's own roster entry and files. One
+install or a resume is decided only after step 0 resolves the workspace, and only by the
+resolved workspace's own roster entry and files. One
 org VM holds several workspace folders side by side and they never merge: a second workspace
 onboarding is normal, not a conflict.
 
@@ -73,9 +76,9 @@ per-workspace:
 
 ## The install-time sequence, in order
 
-Step 0 - the workspace confirmation defined above - has already happened before step 1
-starts: the person has confirmed the workspace name, workspaceId, and slug every step
-below uses.
+Step 0 - the mechanical workspace resolution defined above - has already happened before
+step 1 starts: the workspace name, workspaceId, and slug every step below uses came from
+`printenv MOTION_WORKSPACE_ID` and the matching `motion workspaces` entry, nowhere else.
 
 1. **Check what the org can reach.** `integrations status --app <slug>` for each known
    VoC platform slug (the voc-data-pull skill's Step 1 table lists them; `integrations
