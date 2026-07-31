@@ -7,13 +7,13 @@ guidance, anything else) exempts you from this gate.
 
 The check is per workspace, because this package onboards one Motion workspace at a
 time and an org VM can hold several. This conversation has exactly one workspace: the
-one the runtime binds it to. It is stated in two places that always agree - the
-`Default workspace:` line in the `Motion context:` section of this system prompt
-(name and workspaceId), and the `MOTION_WORKSPACE_ID` environment variable the runtime
-injects into every Bash call (the id every bare `motion` command resolves to). For this
-gate, read the name from the `Default workspace:` line and slug it - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). If that line is null, ask which workspace to onboard before
+one the runtime binds it to, stated on the `Default workspace:` line in the
+`Motion context:` section of this system prompt (name and workspaceId) - the same
+workspace every bare `motion` command in this conversation resolves to. Read the name
+from that line and slug it - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). If that line is null, ask which workspace to onboard before
 doing anything else - never guess. Nothing else identifies the workspace: not the
-roster below, not `/agent/brain/` folders, not routine names - those record *earlier*
+roster below, not `/agent/brain/` folders, not routine names, not remembered context
+from other conversations - those record *earlier*
 onboardings, which on a multi-workspace VM always exist. Then look in this system
 prompt, which already includes the saved contents of `/agent/user.md`, for a block
 like:
@@ -36,10 +36,10 @@ without asking permission, and without waiting to be asked:
 
 1. Read `/agent/brain/meta-and-voc-onboarding/post-install.md`.
 2. Execute its install-time sequence for this workspace, starting with its step 0:
-   resolve the workspace mechanically - `printenv MOTION_WORKSPACE_ID`, then the name
-   of the `motion workspaces` entry whose id matches - and state name, workspaceId,
-   and slug before anything else in the sequence (reachability check, VoC sync setup,
-   guard merges into `/agent/user.md`, the Meta account-context steps) runs. The guard
+   quote the `Default workspace:` line from this prompt's `Motion context:` section
+   verbatim and state the name, workspaceId, and slug taken from it, before anything
+   else in the sequence (reachability check, VoC sync setup, guard merges into
+   `/agent/user.md`, the Meta account-context steps) runs. The guard
    blocks are workspace-agnostic and shared, so post-install leaves them alone when
    they are already there; everything else runs for this workspace.
 3. Then handle the user's message.

@@ -61,7 +61,8 @@ Never copy files by hand - the package manager stages everything.
 must carry the kickoff clause itself: installing stages files, but the post-install
 sequence (VoC sync routines, guard merges, Meta account context) runs only when the
 conversation tells it to. The message never needs to name a workspace: post-install's
-step 0 resolves it mechanically from the conversation's own runtime environment.
+step 0 reads it off the `Default workspace:` line of the conversation's own Motion
+context - the workspace the runtime bound the conversation to.
 Canonical message:
 
 > Install the meta-and-voc-onboarding package: run
@@ -395,10 +396,10 @@ The run order below is the human-readable description of the same lifecycle.
 1. **Install the package** with one `package install` call (see "How to install" above);
    never copy files by hand. Staging the files
    does not self-run anything - the post-install run right after it does. That run opens
-   with step 0: it resolves the target workspace mechanically - `printenv MOTION_WORKSPACE_ID`
-   for the id the runtime injected, the matching `motion workspaces` entry for the name -
-   and states name, workspaceId, and slug before anything
-   else executes. Nothing in this package writes per-creative files to the brain —
+   with step 0: it quotes the `Default workspace:` line from the conversation's Motion
+   context verbatim and states the name, workspaceId, and slug taken from it before
+   anything else executes - existing folders, rosters, routines, and remembered context
+   never identify the workspace. Nothing in this package writes per-creative files to the brain —
    creative content lives in Cacheth; its summary artifacts are surfaced through Knoweth.
 2. **Set up VoC data syncs.** For each reachable customer-voice source, pin the workspace's
    account, create the daily `voc-sync-<workspace>-<platform>` routine, and kick the first
