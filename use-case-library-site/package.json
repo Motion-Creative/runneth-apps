@@ -11,7 +11,7 @@
     "dev:frontend": "pnpm --filter use-case-library-frontend dev",
     "dev:server": "pnpm --filter use-case-library-server dev"
   },
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@11.8.0",
   "engines": {
     "node": ">=20.11"
   }
