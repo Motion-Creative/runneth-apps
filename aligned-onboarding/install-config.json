@@ -1,8 +1,8 @@
 {
   "schema": "1.0",
   "id": "aligned-onboarding",
-  "version": "1.0.0",
-  "description": "Teaches Runneth how a customer reads their Meta ad account, then builds one enriched record per active creative. Stages three instruction docs into the brain (Account Context Brain, Creative Corpus playbook, Motion CLI data-query guide) plus a thin orchestration skill. Activation merges a read-before-performance guard into /agent/user.md and runs the guided nine-field fill-in. Reuses the corpus-search tool from the library for filterable retrieval rather than bundling it. Meta only.",
+  "version": "1.0.1",
+  "description": "Teaches Runneth how a customer reads their Meta ad account, then builds one enriched record per active creative. Stages three instruction docs into the brain (Account Context Brain, Creative Corpus playbook, Motion CLI data-query guide), a thin orchestration skill, and a deterministic exporter that resolves records by source ID, preserves requested creative-summary content across incomplete retries, and retains protected Account Context naming and Spend State projections across ad-name changes. Activation merges a read-before-performance guard into /agent/user.md and runs the guided nine-field fill-in. Reuses the corpus-search tool from the library for filterable retrieval rather than bundling it. Meta only.",
   "requires": {
     "runtime": "any Runneth sandbox",
     "preinstalled": [],
@@ -23,6 +23,12 @@
       "to": "/agent/.agents/skills/aligned-onboarding/SKILL.md",
       "on_exists": "overwrite",
       "purpose": "Orchestration skill. Activates the account-context guard, runs the nine-field fill-in, then builds and maintains the creative corpus. Triggered by prompts like 'run aligned onboarding' or 'set up my Meta account context'."
+    },
+    {
+      "from": "bin/export-creative-corpus.mjs",
+      "to": "/agent/.agents/skills/aligned-onboarding/bin/export-creative-corpus.mjs",
+      "on_exists": "overwrite",
+      "purpose": "Deterministic exporter for Motion Meta insights JSON. Resolves existing records by source ID, validates every non-null summary section, preserves prior complete Motion enrichment when retries omit it, and retains protected Account Context naming and Spend State projections across ad-name changes."
     },
     {
       "from": "README.md",
@@ -50,6 +56,12 @@
     }
   ],
   "changelog": [
+    {
+      "version": "1.0.1",
+      "date": "2026-07-22",
+      "type": "patch",
+      "notes": "Creative Corpus pulls and enriched transcript retries request adDescription, hookOrHeadline, creativeBreakdown, and messagingAndPositioning explicitly. The installed exporter resolves records by source ID, validates stringified payloads, preserves complete Motion sections when retries omit them, safely moves renamed records, and retains protected Account Context naming and custom-threshold Spend State projections."
+    },
     {
       "version": "1.0.0",
       "date": "2026-07-21",

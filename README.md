@@ -54,6 +54,12 @@ legacy directory directly.
 the recently merged onboarding flow keeps its source and referenced
 dependencies while it is migrated to the package contract.
 
+Validate its deterministic creative-corpus export with:
+
+```bash
+node --test aligned-onboarding/test/export-creative-corpus.test.mjs
+```
+
 ## Library website
 
 `use-case-library-site/` remains deployed as a rebuilding page. Its archived

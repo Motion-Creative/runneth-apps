@@ -1,0 +1,34 @@
+{
+  "totalCount": 1,
+  "providerTotalCount": 1,
+  "creatives": [
+    {
+      "id": "creative-static-ridge",
+      "adName": "Ridge Static All Sections",
+      "format": "image",
+      "isActive": true,
+      "launchDate": "2026-06-15T00:00:00.000Z",
+      "campaignName": "Evergreen Prospecting",
+      "adsetName": "Broad",
+      "spendState": {
+        "state": "scaling"
+      },
+      "metrics": {
+        "spend": 4200
+      },
+      "summary": {
+        "adDescription": "AD_DESCRIPTION_SENTINEL: a static product-led ad.",
+        "hookOrHeadline": "{\"headline\":\"HOOK_SENTINEL: built for the long haul\",\"textOverlayHook\":[{\"line\":\"OVERLAY_SENTINEL: carry less\"}]}",
+        "creativeBreakdown": "{\"storyline\":[{\"line\":\"STORYLINE_SENTINEL: the product moves from desk to pocket\"}],\"visualStyle\":\"VISUAL_STYLE_SENTINEL: high-contrast studio still\",\"visualsUsed\":[{\"line\":\"VISUALS_SENTINEL: wallet beside scattered cards\"}],\"brandDescription\":\"BRAND_FRAMING_SENTINEL: durable everyday carry\",\"productDescription\":\"PRODUCT_FRAMING_SENTINEL: slim metal wallet\",\"fontsEffectsLanguage\":{\"language\":\"English\",\"fontsUsed\":\"FONT_SENTINEL: condensed sans serif\",\"effectsUsed\":\"EFFECT_SENTINEL: hard shadow\"}}",
+        "messagingAndPositioning": "{\"ctas\":\"CTA_SENTINEL: Shop now\",\"offer\":\"OFFER_SENTINEL: lifetime guarantee\",\"benefits\":[\"BENEFIT_SENTINEL: less pocket bulk\"],\"features\":[\"FEATURE_SENTINEL: RFID blocking\"],\"painPoints\":\"PAIN_POINT_SENTINEL: bulky leather wallets\",\"socialProof\":[\"SOCIAL_PROOF_SENTINEL: over two million sold\"],\"stageOfFunnel\":\"FUNNEL_SENTINEL: consideration\",\"desiredOutcomes\":\"DESIRED_OUTCOME_SENTINEL: carry essentials comfortably\",\"emotionalAndAudienceInsight\":{\"emotions\":[\"EMOTION_SENTINEL: confidence\"],\"culturalContext\":[\"CULTURAL_CONTEXT_SENTINEL: everyday carry\"],\"intendedAudience\":\"AUDIENCE_SENTINEL: practical minimalists\",\"persuasionTactics\":[\"PERSUASION_SENTINEL: problem-solution contrast\"]}}"
+      },
+      "glossaryTags": [
+        {
+          "categoryName": "Visual Format",
+          "valueName": "TAG_SENTINEL: Product Focus",
+          "definition": "The product is the primary visual subject."
+        }
+      ]
+    }
+  ]
+}
