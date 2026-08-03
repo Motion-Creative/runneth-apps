@@ -1,3 +1,9 @@
 packages:
   - frontend
   - server
+
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true
+
+minimumReleaseAge: 2880
