@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useNavigate, useParams } from 'react-router'
 
 import { fetchCatalog } from './api'
 import { Modal } from './Modal'

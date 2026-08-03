@@ -2,7 +2,7 @@
 # Final image: one Node process serving the API and the static SPA on $PORT.
 
 # ─── Builder ─────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:22.22-alpine AS builder
 WORKDIR /app
 
 # pnpm via corepack (pinned to packageManager in package.json).
@@ -28,7 +28,7 @@ RUN pnpm --filter use-case-library-server build
 RUN pnpm --filter use-case-library-server deploy --prod /app/bundle
 
 # ─── Runtime ─────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS runtime
+FROM node:22.22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
