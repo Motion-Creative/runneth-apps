@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "creative-strategy-foundations-1.0",
+  "indexRevision": "2026-08-03-01",
   "packages": [
     {
       "id": "creative-strategy-foundations",
       "name": "Creative Strategy Foundations",
       "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
-      "version": "1.0",
+      "version": "1",
       "packageManagerVersion": 1,
       "categories": [
         "baseline"
