@@ -20,14 +20,14 @@ Use this skill to turn data, research, and creative review into decisions, not j
 
 ### Choose the lightest valid path
 
-- For benchmark or peer-comparison requests, use `motion benchmark-compare` first and treat `/runneth/references/creative-benchmarks.md` as the source of truth.
+- For supported creative benchmark or peer-comparison requests, use `motion benchmark-compare` first and treat `/runneth/references/creative-benchmarks.md` as the source of truth. Do not use it for CTR, CPC, CPM, ROAS, CPA, thumbstop, hook rate, conversion rate, or platform-specific rate benchmarks.
 - For standard own-account analysis, use the standard Motion hot path already included in the current session prompt.
 - For TikTok-specific performance analysis, use the TikTok branch of the standard Motion hot path.
 - For competitor or inspirational-brand analysis, use the competitor branch of that same Motion hot path.
 - If the user references a specific Meta competitor ad, call `motion meta competitor-ad-insights --ad-library-creative-id <id> --include-glossary --with-summary`.
 - For uploaded-creative review:
   - read uploaded images directly
-  - use `ls ./uploads/` and then `motion analyze-media` for uploaded videos
+  - use `ls ./uploads/` and then `motion analyze-media` with repeated `--filename` flags or `--folder` for uploaded videos
 - For market or review research, use `WebSearch` and `WebFetch` following `/runneth/references/researching--review-mining.md`.
 - Gather brand context only when it materially sharpens interpretation, review, or strategist explanation.
 
@@ -37,7 +37,7 @@ Use this skill to turn data, research, and creative review into decisions, not j
 - `/runneth/references/creative-strategy-engine.md` when the ask needs structural mapping across pain, desire, persona, angle, audience, or stage
 - `/runneth/references/creative-benchmarks.md` for benchmark interpretation and next-test logic
 - `/runneth/references/researching--review-mining.md` for customer-language extraction and review synthesis
-- `/runneth/references/html-generation--design-system.md` only when the chosen deliverable is HTML or when you need a reusable visual component or layout pattern
+- `/runneth/references/design-system.md` only when the chosen deliverable is HTML or when you need a Web Awesome visual component or layout pattern
 
 ### Match the depth to the ask
 
@@ -48,7 +48,7 @@ Use this skill to turn data, research, and creative review into decisions, not j
 - If they want principle or teaching help, answer the question directly first, then support it with data only when the example genuinely improves the explanation.
 - If they ask about combos, use the pattern extraction steps from `/runneth/references/creative-analysis.md`.
 - If they want a teardown of a specific ad, go deep on that ad instead of broad account coverage.
-- If they ask for benchmark plus diagnosis, start with `motion benchmark-compare` and only pull own-account examples if they materially improve the answer.
+- If they ask for supported creative benchmark plus diagnosis, start with `motion benchmark-compare` and only pull own-account examples if they materially improve the answer.
 
 ### Judgment rules
 
@@ -101,7 +101,7 @@ Open by reflecting what source material you actually used in natural language. F
 
 If the response is data-grounded, add a short "What mattered" block before the main analysis or deliverable. Keep it to 2 to 4 bullets. Separate validated data from inference when both appear.
 
-Every response that references specific ads must show them visually. For inline responses, use the active surface's visual presentation for the creatives in the same turn. For HTML artifacts, embed the creatives directly using the Creative Cards pattern from `/runneth/references/html-generation--design-system.md`. For Markdown artifacts, keep the document readable first and place `motionUrl` links or compact supporting references directly beside the insight they support.
+Every response that references specific ads must show them visually. For inline responses, use the active surface's visual presentation for the creatives in the same turn. For HTML artifacts, embed the creatives directly using the creative card pattern from `/runneth/references/components/creative-card.md`. For Markdown artifacts, keep the document readable first and place `motionUrl` links or compact supporting references directly beside the insight they support.
 
 Visual evidence rules:
 
