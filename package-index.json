@@ -20,7 +20,7 @@
       },
       "installPolicy": "auto",
       "updatePolicy": "auto",
-      "uninstallPolicy": "allowed"
+      "uninstallPolicy": "protected"
     }
   ]
 }
