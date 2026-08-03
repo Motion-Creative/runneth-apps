@@ -38,8 +38,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: pnpm
-          cache-dependency-path: use-case-library-site/pnpm-lock.yaml
 
       - name: Audit dependencies
         run: pnpm audit --audit-level critical
