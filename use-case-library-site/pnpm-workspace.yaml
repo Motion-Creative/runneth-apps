@@ -7,5 +7,3 @@ allowBuilds:
   esbuild: true
 
 minimumReleaseAge: 2880
-minimumReleaseAgeIgnoreMissingTime: true
-minimumReleaseAgeStrict: true

@@ -6,7 +6,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # pnpm via corepack (pinned to packageManager in package.json).
-RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.34.5 --activate
 
 # Build tools for native modules (better-sqlite3 falls back to source build
 # if no prebuilt for our libc/arch is shipped).
