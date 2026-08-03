@@ -1,5 +1,26 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "initial-empty",
-  "packages": []
+  "indexRevision": "creator-intel-0.1.0",
+  "packages": [
+    {
+      "id": "creator-intel",
+      "name": "Creator Intel",
+      "description": "Workspace-scoped creator roster, review, refresh, and casting guidance for Runneth.",
+      "version": "0.1.0",
+      "categories": [
+        "creative-strategy"
+      ],
+      "installPolicy": "manual",
+      "packageManagerVersion": 1,
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "packages/creator-intel",
+        "ref": "main"
+      },
+      "updatePolicy": "manual",
+      "uninstallPolicy": "allowed"
+    }
+  ]
 }

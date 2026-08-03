@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "creator-intel",
+  "name": "Creator Intel",
+  "version": "0.1.0",
+  "description": "Workspace-scoped creator roster, review, refresh, and casting guidance for Runneth.",
+  "installPolicy": "manual",
+  "updatePolicy": "manual",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "behavior-instruction",
+      "type": "package_instruction",
+      "sourcePath": "instructions/behavior.md"
+    },
+    {
+      "id": "creator-intel-skills",
+      "type": "directory",
+      "sourcePath": "skills",
+      "target": {
+        "root": "agent_skills",
+        "path": "creator-intel"
+      },
+      "executablePaths": []
+    },
+    {
+      "id": "creator-intel-reference",
+      "type": "directory",
+      "sourcePath": "brain",
+      "target": {
+        "root": "agent_brain",
+        "path": "creator-intel-reference"
+      },
+      "executablePaths": []
+    }
+  ]
+}
