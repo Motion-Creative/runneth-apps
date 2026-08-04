@@ -14,20 +14,42 @@ triggers:
 
 This skill handles standalone creator questions. It does not silently intercept every brief.
 
-## Output order
+## Output structure
 
-1. Confirmed roster creators first.
-2. Credible ecosystem candidates second.
-3. Honest no-fit result when the roster or ecosystem does not support the ask.
+Visible output must use these sections in this order:
+
+1. **My recommendation**
+2. **Your roster**
+3. **New creators to source**
+4. **Next move**
+
+If the concept is stronger without a creator, include **No creator needed** inside **My recommendation** and explain why.
 
 ## Hard rules
 
+- Roster creators come first.
 - Never pad to quotas.
 - Never surface disqualified creators.
 - Respect hard eligibility filters such as lived experience, required props, credentials, comedy, authority, vulnerability, or documentation.
 - Distinguish roster reuse, new sourcing, and creatorless AI or B-roll production.
 - Creator performance claims require exclusive verified mapping and sufficient evidence.
 - Shared and unresolved mapping remains visible but cannot support a strong creator-performance claim.
+- In customer-facing output, explain plainly how much spend is tied confidently to creators and where the evidence is shared or uncertain.
+
+## What each creator entry must include
+
+For every suggested creator, include:
+
+- concept, persona, and delivery fit
+- creative proof
+- performance signal with spend and measurement window
+- rights status
+- main watchout
+- whether this is roster reuse or new sourcing
+
+If paid rights are unknown, say exactly:
+
+> Paid usage rights are unknown. Confirm them before shortlisting.
 
 ## Ecosystem matching limits
 
@@ -54,6 +76,7 @@ Do not claim unavailable fields such as creator type, audience demographics, bra
 
 - Use the stored workspace performance policy.
 - Keep Meta and Northbeam comparisons separate.
+- Lead with spend as the reliability and priority lens.
 - Recompute rates from totals.
 - State mapped coverage before making broad claims.
 - If coverage is low, narrow the claim to mapped creator evidence rather than account-wide language.

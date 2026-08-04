@@ -1,17 +1,18 @@
 ---
 name: refresh-creator-corpus
-description: Manually refresh creator evidence, freshness metadata, and pending review queues for one activated workspace. Use only for explicit refresh asks or for a separately approved scheduled refresh.
+description: Update Creator Intel for one activated workspace by refreshing creator evidence, freshness metadata, and pending review queues. Use only for an explicit manual update or for a separately approved scheduled refresh.
 triggers:
   phrases:
     - refresh creator evidence
     - refresh creator intel for
     - update creator evidence
+    - update creator intel
   intent: Refresh evidence and freshness state without changing trusted roster or rights.
 ---
 
-# Refresh creator corpus
+# Update Creator Intel
 
-Refresh updates evidence only. Trusted roster, relationship, rights, and recommendation decisions remain human-owned.
+Update Creator Intel refreshes evidence only. Trusted roster, relationship, rights, and recommendation decisions remain human-owned.
 
 ## Hard rules
 
@@ -20,6 +21,8 @@ Refresh updates evidence only. Trusted roster, relationship, rights, and recomme
 - Refresh must never silently create or change trusted identities, relationships, rights, or disqualifications.
 - Maintain per-source freshness and partial-failure state. Do not collapse the run into one fake global timestamp.
 - Use the stored workspace id on every Motion pull.
+- Keep Meta and Northbeam separate.
+- Use 30, 90, and 365 day language only. Never call 365 days all-time.
 
 ## What refresh may update
 
@@ -38,8 +41,6 @@ Refresh updates evidence only. Trusted roster, relationship, rights, and recomme
 
 ## Evidence refresh rules
 
-- Keep Meta and Northbeam separate.
-- Use 30, 90, and 365 day language only. Never call 365 days all-time.
 - Include spend-bearing ads without synced Motion creative assets in eligible and unassigned accounting.
 - Recalculate rates from totals. Never average ROAS, CTR, or CPA.
 - Store date range, source, currency, attribution settings, filters, grain, matched coverage, and metric definitions alongside each snapshot.
@@ -47,3 +48,14 @@ Refresh updates evidence only. Trusted roster, relationship, rights, and recomme
 ## Failure handling
 
 If one source fails, record the failure on that source only and keep successful source updates. A search or tool error is not an empty result.
+
+## Manual update completion
+
+A manual update must always confirm completion and summarize these sections:
+
+- **What changed**
+- **Needs your review**
+- **Could not refresh**
+- **What stayed unchanged**
+
+If nothing changed, a manual update still says it finished and that nothing changed. Only a scheduled refresh may stay quiet when nothing changed.

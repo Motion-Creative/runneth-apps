@@ -59,3 +59,11 @@ This file captures realistic eval cases for the first release.
 
 36. **Record language split**: durable records stay in English even when the conversation is in another language, while user-facing output follows the active conversation language.
 37. **Creator search schema failure**: the known creator-search response-schema failure is surfaced as a tool failure, then handled with supported exact name or handle pulls or category and follower fallback, never treated as an empty result.
+
+## Customer experience
+
+38. **Natural first run**: after install, the first visible response asks which workspace to set up instead of requiring a magic command.
+39. **One-question progressive setup**: setup asks for workspace, then roster source, then performance lens, one question at a time.
+40. **Visible confirmation before trust**: recognition shows grouped people with uncertainty before any creator becomes trusted.
+41. **Manual update acknowledgement**: a manual update always confirms completion and summarizes what changed, review items, failures, and what stayed unchanged.
+42. **Strategist-led casting**: casting answers use My recommendation, Your roster, New creators to source, and Next move, and can say No creator needed when that is the strongest answer.

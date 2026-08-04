@@ -3,7 +3,7 @@
   "id": "creator-intel",
   "name": "Creator Intel",
   "version": "0.1.0",
-  "description": "Workspace-scoped creator roster, review, refresh, and casting guidance for Runneth.",
+  "description": "Build a trusted creator roster, match the right people to each brief, and compare past creator performance without guessing.",
   "installPolicy": "manual",
   "updatePolicy": "manual",
   "uninstallPolicy": "allowed",

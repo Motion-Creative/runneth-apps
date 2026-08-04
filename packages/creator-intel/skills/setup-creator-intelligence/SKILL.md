@@ -1,16 +1,19 @@
 ---
 name: setup-creator-intelligence
-description: Activate creator intelligence for one exact Motion workspace and create empty customer-owned state outside package ownership. Use only when someone explicitly says “set up creator intelligence for <workspace>” or clearly asks to activate one named workspace.
+description: Activate Creator Intel for one exact Motion workspace and create empty customer-owned state outside package ownership. Use when someone asks to set up their creator roster, organize their creators, build a creator roster, or activate Creator Intel for a workspace.
 triggers:
   phrases:
     - set up creator intelligence for
     - activate creator intelligence for
+    - set up my creator roster
+    - help me organize our creators
+    - build our creator roster
   intent: Activate one exact workspace and seed empty customer-owned creator-intel state.
 ---
 
-# Setup creator intelligence
+# Setup Creator Intel
 
-This skill activates creator intelligence for **one exact Motion workspace**. It is the only skill that creates customer-owned mutable state, and it creates **empty state only**.
+This skill activates Creator Intel for **one exact Motion workspace**. It is the only skill that creates customer-owned mutable state, and it creates **empty state only**.
 
 ## Hard rules
 
@@ -21,6 +24,9 @@ This skill activates creator intelligence for **one exact Motion workspace**. It
 - Setup does not create a refresh routine by default.
 - Setup never pulls creator data and never creates performance snapshots.
 - `refresh-creator-corpus` exclusively owns data pulls and snapshot creation.
+- Ask one setup question at a time.
+- Use the current requester as `setupOwner` unless they explicitly name someone else.
+- Standing eligibility rules are optional during setup. If they are not given here, defer them until the first real brief or casting ask.
 
 ## What setup creates
 
@@ -38,18 +44,22 @@ Seed these customer-owned records when missing, preserving existing files when p
 - `refresh-state.json`: per-source freshness and partial-failure state
 - `audit.jsonl`: append-only setup, review, refresh, and merge history
 
-## Questions setup must resolve
+## Question order
 
-1. Which exact Motion workspace should be activated?
-2. What explicit source should creator recognition start from first, for example tracker, handle list, or ad-name evidence?
-3. Which explicit comparison policy should populate `performancePolicies`, for example Meta only, Northbeam only, or source-specific policies for both?
-4. What hard eligibility rules should filter recommendations, for example genuine lived experience, required props, credentials, comedy, authority, vulnerability, or documentation?
-5. Who owns future refresh decisions for this workspace and should be stored as `setupOwner`?
+Ask these in order, one at a time:
+
+1. Which exact Motion workspace should I set up?
+2. Where does your current creator roster live first, for example a tracker, handle list, or another source?
+3. How should I judge creator performance for this workspace, for example Meta only, Northbeam only, or separate views for both?
+
+Optional only if useful during setup:
+
+4. Are there any standing must-have creator rules I should remember for later, such as lived experience, required props, credentials, comedy, authority, vulnerability, or documentation?
 
 ## Output after setup
 
-- Confirm the workspace is now active.
-- State where mutable records live.
-- Say that trusted roster is still empty until review decisions are applied.
-- Say that setup created empty state only and did not pull creator data or performance snapshots.
-- Offer the next explicit step, usually recognition from a named source.
+Start the visible completion with:
+
+> Creator Intel is ready for [workspace]. Nothing has been imported or approved yet, and I have not pulled performance data. Next, send me your current roster or point me to where it lives.
+
+Then confirm the selected performance view and that the current requester owns future roster decisions unless they named someone else.

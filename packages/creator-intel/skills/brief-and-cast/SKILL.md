@@ -1,6 +1,6 @@
 ---
 name: brief-and-cast
-description: Run the explicit combined workflow that writes a brief and recommends creators for one activated workspace. Use only when the user clearly asks for both the brief and the casting recommendation together.
+description: Run the explicit combined workflow that writes a brief and recommends creators for one activated workspace. Use only when the user clearly asks for both the brief and the creator recommendation together.
 triggers:
   phrases:
     - brief and cast this concept
@@ -31,7 +31,10 @@ This skill owns the combined workflow only when the customer explicitly asks for
 
 ## Combined output requirements
 
-- Separate the creative brief from the creator recommendation block.
+- Keep the creative brief separate from the casting recommendation.
+- Mirror the strategist-led casting structure with these sections in order: **My recommendation**, **Your roster**, **New creators to source**, **Next move**.
 - Label each suggested creator as roster reuse or new sourcing.
-- Flag unresolved rights or mapping issues directly on the recommendation.
+- For every creator, include concept, persona, and delivery fit, creative proof, performance signal with spend and measurement window, rights status, and the main watchout.
+- Include **No creator needed** when the brief is stronger without a creator.
+- Flag unresolved rights and any shared or uncertain performance evidence directly on the recommendation.
 - Return fewer names when the evidence does not support more.

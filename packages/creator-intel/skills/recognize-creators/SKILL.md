@@ -1,18 +1,19 @@
 ---
 name: recognize-creators
-description: Turn explicit source material into pending creator identity proposals for one already-activated workspace. Use when someone provides or names a tracker, handle list, creator roster, ad names, or other explicit source to review.
+description: Turn explicit source material into pending creator identity proposals for one already-activated workspace. Use when someone wants to build the roster from a tracker, handle list, creator roster, ad names, or another explicit source.
 triggers:
   phrases:
     - recognize creators from
     - review this creator tracker
     - scan these ad names for creators
     - import this creator roster
+    - build the roster from
   intent: Propose creator identities from explicit source material without trusting them automatically.
 ---
 
 # Recognize creators
 
-This skill proposes creator identities from **explicit source material**. It does not activate a workspace and it does not apply trust decisions.
+This skill helps build the roster from **explicit source material**. It does not activate a workspace and it does not apply trust decisions.
 
 ## Hard rules
 
@@ -21,6 +22,7 @@ This skill proposes creator identities from **explicit source material**. It doe
 - New or removed upstream entries never silently mutate confirmed local decisions.
 - Every new proposal enters `pending-review.json` with a stable `candidateId` and evidence trail.
 - A valid creator without a Motion profile stays usable as unresolved. Do not drop them for missing Motion enrichment.
+- Show 10 people or fewer per visible batch.
 
 ## How to build proposals
 
@@ -42,13 +44,16 @@ Every proposal must include:
 - mapping status, such as `human-confirmed`, `exclusive`, `shared`, `unresolved`, or `naming-rule-inference`
 - ambiguity notes, for example same first name, editor-looking token, unknown handle, or duplicate profile candidates
 
-## What this skill returns
+## Visible review bundle
 
-A review bundle that clearly separates:
+The customer-facing review bundle must:
 
-- high-confidence candidates
-- ambiguous candidates
-- unresolved candidates
-- conflicts with already confirmed local decisions
+- summarize total counts up front
+- show the people before asking for approval
+- group visible people into these sections only: **Ready to confirm**, **Needs your input**, **Could not match**, **Conflicts**
+- show, for each visible person: name, handle, matched profile when available, source, and the exact uncertainty
+- keep each batch to 10 people or fewer
 
-It must end by routing the user to **review creator identities**. It does not ask broad catch-all questions beyond the named source.
+End the visible bundle with exactly:
+
+> Confirm the clear matches, or correct anyone by name. Anything you do not mention will stay pending.

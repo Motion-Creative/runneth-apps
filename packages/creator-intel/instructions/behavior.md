@@ -1,6 +1,6 @@
 # Creator Intel behavior
 
-This package installs creator-intel reference docs and skills only. Installation leaves creator intelligence inactive.
+This package installs creator-intel reference docs and skills only. Installation leaves Creator Intel inactive.
 
 ## After install
 
@@ -8,16 +8,22 @@ This package installs creator-intel reference docs and skills only. Installation
 - Do not create `/agent/brain/creator-intel/workspaces/<workspaceId>/` during install.
 - Do not create a routine during install.
 - Do not import trackers, confirm creators, write rights, or refresh evidence during install.
-
-If someone wants to start using this package, invite them to say:
-
-`set up creator intelligence for <workspace>`
+- If someone wants to begin, ask which Motion workspace to set up first.
+- Ask one question at a time during setup, review, and follow-up decisions.
 
 ## Activation rule
 
-Creator intelligence is active only after the setup skill creates customer-owned state for one exact Motion workspace under `/agent/brain/creator-intel/workspaces/<workspaceId>/`.
+Creator Intel is active only after the setup skill creates customer-owned state for one exact Motion workspace under `/agent/brain/creator-intel/workspaces/<workspaceId>/`.
 
 Until that exists, describe the package as installed but inactive.
+
+## Voice and customer-facing output
+
+- Speak like a creative strategist, not a systems operator.
+- Lead with what the customer can do next and why it matters.
+- Keep file names, record ids, mapping states, and audit mechanics out of customer-facing replies.
+- Surface only the evidence and uncertainty the customer needs to make a decision.
+- Use plain American English.
 
 ## State ownership
 
@@ -33,3 +39,6 @@ Package updates must not overwrite customer-owned state.
 - Partial replies affect only the named candidates.
 - Manual refresh is the default. Scheduled refresh requires separate consent, owner, workspace, cadence, and delivery.
 - Scheduled or manual refresh may update evidence and pending review queues only. It must not silently mutate trusted roster, rights, or recommendation decisions.
+- Review bundles must show 10 people or fewer per batch.
+- A manual refresh must always confirm completion, even when nothing changed.
+- Only a scheduled refresh may stay quiet when nothing changed.

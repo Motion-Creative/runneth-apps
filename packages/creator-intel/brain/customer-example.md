@@ -1,33 +1,18 @@
-# Northstar Skin human-in-the-loop example
+# Northstar Skin customer example
 
-This example preserves the concrete Northstar Skin user story Vamsi asked to keep from the earlier design walk-through.
-
-## Starting point
-
-Assume the customer is **Northstar Skin**. They have:
-
-- a creator tracker with 14 people
-- creator names in some Meta ad names
-- a few creators who are not in Motion's creator directory
-- asset rights recorded inconsistently
-- Meta as the primary performance source
-- no scheduled refresh yet
+This example shows the intended first-run experience for a team using Creator Intel for the first time.
 
 ## 1. Install ends inactive
 
 **Runneth**
 
-> Creator intelligence is installed, but it is not active yet. Nothing has been imported or changed.
->
-> To activate it, tell me which Motion workspace to set up.
+> Creator Intel is installed, but it is not active yet. Which Motion workspace should I set up first?
 
 **Customer**
 
-> set up creator intelligence for Northstar Skin
+> Northstar Skin
 
-Setup resolves one exact Motion workspace and creates customer-owned state only for that workspace.
-
-## 2. The trusted roster source is established
+## 2. Setup asks one question at a time
 
 **Runneth**
 
@@ -35,100 +20,112 @@ Setup resolves one exact Motion workspace and creates customer-owned state only 
 
 **Customer**
 
-> We have a Google Sheet. Creator names are also included in our ad names.
+> In a Google Sheet. We also have creator names in some ad names.
 
 **Runneth**
 
-> I'll treat the tracker as the authority. Ad names can propose additional creators, but they cannot confirm anyone automatically.
-
-This is the key human-in-the-loop rule. The tracker is intentional source material. Ad names are supporting evidence only.
-
-## 3. Naming rules are confirmed, not guessed globally
-
-After reading the tracker and a sample of recent ad names, Runneth says:
-
-> I found what looks like a creator field and a separate editor field in your naming convention.
->
-> Should I use the creator field to propose matches while ignoring names in the editor field?
+> How should I judge creator performance for this workspace: Meta only, Northbeam only, or separate views for both?
 
 **Customer**
 
-> Yes.
-
-That decision is saved for Northstar Skin only. It is not treated as a rule for other workspaces.
-
-## 4. Performance policy is separated from identity
+> Meta only for now.
 
 **Runneth**
 
-> What should I use when comparing creators: Meta results or your external attribution source?
+> Creator Intel is ready for Northstar Skin. Nothing has been imported or approved yet, and I have not pulled performance data. Next, send me your current roster or point me to where it lives.
+
+## 3. The first roster review shows people before approval
+
+Northstar sends the tracker.
+
+**Runneth**
+
+> I found 14 people in the tracker. 8 look clear, 3 need your input, 2 could not match, and 1 conflicts with someone you already work with.
+>
+> **Ready to confirm**
+> - Maya Chen, @mayaskin. Matched profile: Maya Chen. Source: roster sheet. Uncertainty: none.
+> - Alina Ross, @alinaroutine. Matched profile: Alina Ross. Source: roster sheet. Uncertainty: none.
+>
+> **Needs your input**
+> - Jess, @jessglows. Matched profile: Jessica Lowe. Source: roster sheet plus ad names. Uncertainty: this handle could refer to two creators with the same first name.
+>
+> **Could not match**
+> - Sam Patel, no handle listed. Matched profile: none. Source: roster sheet. Uncertainty: missing handle and no clear public profile.
+>
+> **Conflicts**
+> - Lena Hart, @lenahart. Matched profile: Lena Hart. Source: ad names. Uncertainty: the tracker marks Lena inactive, but recent ads suggest current usage.
+>
+> Confirm the clear matches, or correct anyone by name. Anything you do not mention will stay pending.
+
+## 4. Review decisions stay narrow
 
 **Customer**
 
-> Meta purchases and cost per purchase.
+> Confirm Maya and Alina. Leave Jess pending. Sam is our editor, not a creator.
 
-Runneth stores the source, metrics, attribution settings, and currency for this workspace. Identity decisions and performance policy remain separate records.
+**Runneth**
 
-## 5. Recognition creates proposals, not trusted facts
+> I confirmed Maya Chen and Alina Ross as trusted creators. Jess is still pending because the handle is ambiguous. Sam Patel was removed from creator review and marked as an editor. Lena Hart is still pending because the tracker and ad evidence disagree. Rights were unchanged.
 
-Runneth reads the tracker and scans recent relevant ads. It returns a review bundle like this:
+## 5. Rights are a separate follow-up
 
-> I found:
->
-> - 14 people in your tracker
-> - 11 exact creator matches
-> - 3 tracker creators with no Motion profile
-> - 4 possible additional creators from ad names
-> - 2 names that may be editors
-> - 1 handle that could refer to two different people
->
-> Nobody has been added to the trusted roster yet.
+Northstar confirms Lena as a creator relationship later, but rights are still unclear.
 
-This is where the human-in-the-loop step matters. Even high-confidence ad-name matches stay pending until Northstar confirms them.
+**Runneth**
 
-## 6. Review decisions are applied narrowly
+> What can you use this creator for: brand ads, partnership ads from their account, organic content, or are you not sure?
 
-Northstar replies:
+**Customer**
 
-> Confirm the 11 exact matches.
->
-> Reject the 2 editor names.
->
-> Leave the ambiguous handle pending.
->
-> Add paid-media rights as unknown for the 3 creators without Motion profiles.
+> Organic content for sure. Not sure on paid yet.
 
-Runneth updates only those named records. The remaining candidates stay pending. Silence does not confirm anything else.
+**Runneth**
 
-## 7. First casting answer stays honest
+> Got it. I saved Lena for organic content and left paid rights unknown.
+
+## 6. Casting reads like strategy, not a database
 
 Later, Northstar asks:
 
-> Who should we cast for our barrier-repair testimonial concept?
+**Customer**
 
-Runneth answers in two tiers:
+> Who should we cast for a barrier-repair testimonial from someone with sensitive skin?
 
-1. confirmed roster creators first, limited to creators with matching evidence and acceptable rights state
-2. ecosystem candidates second, using supported Motion discovery fields only
+**Runneth**
 
-If only one trusted roster creator fits, Runneth returns one. It does not pad the answer to three.
+> **My recommendation**
+> Start with Maya Chen. She is the cleanest fit for a firsthand, sensitive-skin testimonial, and her strongest evidence is already in the exact kind of direct-response read you want. Paid usage rights are unknown. Confirm them before shortlisting.
+>
+> **Your roster**
+> - Maya Chen, roster reuse. Fit: strong for sensitive-skin proof and calm testimonial delivery. Creative proof: past creator ads leaned into before-and-after texture language without sounding scripted. Performance signal: $8.4k spend over the last 90 days on Meta-mapped ads. Rights status: organic confirmed, paid unknown. Main watchout: keep the script grounded in real skin texture, not polished beauty language.
+> - Lena Hart, roster reuse. Fit: good if you want a slightly more polished creator voice. Creative proof: recent ads show stronger top-of-funnel pull than close-rate proof. Performance signal: $3.1k spend over the last 30 days on Meta-mapped ads. Rights status: organic confirmed, paid unknown. Main watchout: not the best choice if the brief needs deeper lived-experience detail.
+>
+> **New creators to source**
+> - Jess Lowe, new sourcing. Fit: promising for sensitive-skin storytelling if you confirm the right profile first. Creative proof: category and tagline fit, but the identity is still unresolved. Performance signal: no trusted workspace performance read yet. Rights status: unknown. Main watchout: identity still needs your confirmation before I would shortlist her.
+>
+> **Next move**
+> Confirm whether Maya has paid usage rights. If not, I would either source one more sensitive-skin creator or rewrite this into a creatorless founder-plus-texture concept.
 
-## 8. Refresh stays manual until Northstar opts in
+## 7. Manual updates always acknowledge completion
 
-If a new creator handle appears in several recent ad names, refresh does not silently add them. It creates a pending item and asks:
+Later, Northstar asks for a refresh.
 
-> I found a possible new roster creator in five recent ads. Should I add them, and is the relationship UGC, whitelisting, or both?
+**Customer**
 
-If nothing meaningful changed, refresh stays quiet.
+> Update Creator Intel for Northstar Skin.
 
-## Why this example matters
+**Runneth**
 
-The product works because the customer does not need to trust an automatic black box. Northstar can see:
-
-- what came from the tracker
-- what came from ad names
-- what remains unresolved
-- which decisions are human-confirmed
-- which rights are still unknown
-
-That is the minimum bar for a creator-intel system that customers can rely on.
+> Update Creator Intel is complete for Northstar Skin.
+>
+> **What changed**
+> - I found 2 new ad-name candidates and refreshed the latest Meta evidence.
+>
+> **Needs your review**
+> - 1 creator still needs a handle confirmation before they can enter the roster.
+>
+> **Could not refresh**
+> - Nothing. Every selected source refreshed successfully.
+>
+> **What stayed unchanged**
+> - Your trusted roster, relationship decisions, and rights stayed exactly the same.

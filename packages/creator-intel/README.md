@@ -1,8 +1,26 @@
 # Creator Intel
 
-Creator Intel gives a customer one workspace-scoped place to recognize trusted creators, review uncertain identities, refresh evidence, and make roster-first casting decisions.
+Build a trusted creator roster, match the right people to each brief, and compare past creator performance without guessing.
 
-This draft package was prepared for Vamsi's creator-intel build review.
+Creator Intel gives a team one trusted place for each Motion workspace to:
+
+- organize the creators they already trust
+- review uncertain matches before they become part of the roster
+- keep evidence fresh without silently changing approvals
+- compare creator performance honestly, with source and coverage limits intact
+- cast the right person for a concept, or say when no creator is the better move
+
+## What the first run should feel like
+
+After install, Creator Intel is available but still inactive.
+
+On the first real use, Runneth should naturally:
+
+1. ask which Motion workspace to set up
+2. ask where the current roster lives
+3. ask how the team wants creator performance judged
+
+That setup flow asks one question at a time. It creates empty workspace state only. It does not import a roster, approve creators, or pull performance data.
 
 ## First version scope
 
@@ -14,7 +32,9 @@ This draft package was prepared for Vamsi's creator-intel build review.
 - Suggest creators in two tiers: confirmed roster first, credible ecosystem candidates second.
 - Support an explicit combined brief-plus-casting workflow.
 
-## What install does
+## Maintainer notes
+
+### Install boundaries
 
 Install stages only these package-owned files:
 
@@ -31,15 +51,7 @@ Install does **not**:
 - refresh evidence
 - change trusted roster or rights state
 
-## How activation starts
-
-After install, Runneth should invite the customer to say:
-
-`set up creator intelligence for <workspace>`
-
-Setup is the first point that may create customer-owned state, and it must do so only for the named Motion workspace.
-
-## Durable storage model
+### State boundaries
 
 Package-owned reference docs install to:
 
@@ -49,13 +61,13 @@ Customer-owned mutable state is created later by setup at:
 
 - `/agent/brain/creator-intel/workspaces/<workspaceId>/`
 
-That separation is hard requirement. Package install, update, reinstall, and uninstall must not overwrite customer decisions.
+That separation is a hard requirement. Package install, update, reinstall, and uninstall must not overwrite customer decisions.
 
 ## Main jobs
 
-1. **Set up creator intelligence**: activate one workspace and seed empty customer-owned state.
+1. **Set up Creator Intel**: activate one workspace and seed empty customer-owned state.
 2. **Recognize creators**: turn explicit source material into pending identity proposals.
 3. **Review creator identities**: apply human confirmation, correction, merge, and disqualification decisions.
-4. **Refresh creator evidence**: update evidence and pending queues only.
+4. **Update Creator Intel**: refresh evidence and pending queues only.
 5. **Suggest creators**: answer standalone casting and creator-performance asks.
 6. **Brief and cast**: run the explicit combined workflow when the customer asks for both.
