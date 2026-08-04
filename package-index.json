@@ -1,5 +1,44 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "initial-empty",
-  "packages": []
+  "indexRevision": "2026-08-04-01",
+  "packages": [
+    {
+      "id": "creative-strategy-foundations",
+      "name": "Creative Strategy Foundations",
+      "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
+      "version": "2",
+      "packageManagerVersion": 1,
+      "categories": [
+        "baseline"
+      ],
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "creative-strategy-foundations",
+        "ref": "main"
+      },
+      "installPolicy": "auto",
+      "updatePolicy": "auto",
+      "uninstallPolicy": "protected"
+    },
+    {
+      "id": "meta-and-voc-onboarding",
+      "name": "Meta and Voice of Customer Onboarding",
+      "version": "1",
+      "description": "INSTALLER: the moment this package installs, read /agent/brain/meta-and-voc-onboarding/post-install.md and execute its install-time sequence in the installing conversation - installing is the trigger; do not wait to be asked. The Meta and Voice of Customer onboarding package. Manual install only (installPolicy: manual): an agent installs it with one explicit package install call of its GitHub source. Stages the onboarding docs and ready-made guard blocks into /agent/brain/meta-and-voc-onboarding/, plus the voc-data-pull, voc-audit, meta-ad-performance-analysis, and onboarding-walkthrough skills into the skills root. Post-install first quotes the Default workspace line from the conversation's Motion context verbatim - the workspace the runtime bound the conversation to, never one recalled from folders, rosters, routines, or memory - and states the name, workspaceId, and slug taken from it, then runs the reachability check, creates one daily VoC sync routine per reachable platform per workspace - each pinned to a human-confirmed platform account, since accounts are org-level and ownership is never inferred (files land under /agent/brain/<workspace>/data-sources/voc/<platform>/) - merges the four guard blocks into /agent/user.md, runs the Meta account-context autofill silently, and records the workspace in the runneth:meta-voc-onboarded roster in /agent/user.md; it ends by asking 'Are you ready to begin your onboarding?' - the walkthrough presentation fires only on a human's yes, via the onboarding-walkthrough skill. The first complete VoC backfill offers the manual Voice of Customer Audit; the audit runs only on a person's yes and saves a compiled page for validation and future customer-side WHY questions. Outside those human-gated runs, nothing self-runs. Meta only, one workspace at a time. Everything the package produces is scoped to that workspace's own folder, /agent/brain/<workspace>/, so a second workspace in the same org onboards additively without touching the first. The staged guard files are workspace-agnostic and merged verbatim - nothing in them is substituted at install time; they resolve the workspace folder per conversation.",
+      "categories": [],
+      "packageManagerVersion": 1,
+      "installPolicy": "manual",
+      "updatePolicy": "auto",
+      "uninstallPolicy": "allowed",
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "meta-and-voc-onboarding",
+        "ref": "main"
+      }
+    }
+  ]
 }

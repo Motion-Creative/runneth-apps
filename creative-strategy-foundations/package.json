@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "creative-strategy-foundations",
+  "name": "Creative Strategy Foundations",
+  "version": "2",
+  "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
+  "installPolicy": "auto",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "protected",
+  "resources": [
+    { "id": "analyzing", "type": "directory", "sourcePath": "skills/analyzing", "target": { "root": "agent_brain", "path": "skills/creative-strategy-foundations/analyzing" }, "executablePaths": [] },
+    { "id": "briefing", "type": "directory", "sourcePath": "skills/briefing", "target": { "root": "agent_brain", "path": "skills/creative-strategy-foundations/briefing" }, "executablePaths": [] },
+    { "id": "creative-generation", "type": "directory", "sourcePath": "skills/creative-generation", "target": { "root": "agent_brain", "path": "skills/creative-strategy-foundations/creative-generation" }, "executablePaths": [] },
+    { "id": "core-creative-skills", "type": "package_instruction", "sourcePath": "instructions/core-creative-skills.md" }
+  ]
+}
