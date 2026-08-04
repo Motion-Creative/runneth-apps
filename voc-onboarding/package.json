@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "voc-onboarding",
+  "name": "Voice of Customer Onboarding",
+  "version": "1",
+  "description": "INSTALLER: the moment this package installs, read /agent/brain/voc-onboarding/post-install.md and follow it - it announces the install and states the trigger phrase; nothing else runs at install time. The Voice of Customer onboarding package. Manual install only (installPolicy: manual): an agent installs it with one explicit package install call of its GitHub source. Stages this README and post-install.md into /agent/brain/voc-onboarding/, plus the voc-data-pull, voc-audit, and voc-onboarding-walkthrough skills into the skills root. The package is fully human-triggered: a person saying 'run voice of customer onboarding' (or any ask to begin, resume, or check on VoC onboarding) invokes the voc-onboarding-walkthrough skill, which resolves the workspace from the conversation's own Motion context, finds every reachable VoC platform (OAuth, stored key, or Motion native - a connected Meta workspace counts, since ad comments are customer voice), pins a human-confirmed platform account per workspace, creates one daily voc-sync-<workspace>-<platform> routine per reachable platform with the first run kicked (files land under /agent/brain/<workspace>/data-sources/voc/<platform>/), and, once data lands, presents the per-integration Voice of Customer summary and offers the Voice of Customer Audit by previewing its plan. The first complete backfill also offers the audit once, asynchronously. The audit runs only on a person's yes or explicit request and saves one compiled page at /agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md. Outside those human-triggered runs, nothing self-runs - this package merges no guards and never touches /agent/user.md. One workspace at a time; everything it produces is scoped to that workspace's own folder, so a second workspace in the same org onboards additively without touching the first.",
+  "installPolicy": "manual",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "readme",
+      "type": "file",
+      "sourcePath": "README.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "voc-onboarding/README.md"
+      }
+    },
+    {
+      "id": "post-install",
+      "type": "file",
+      "sourcePath": "post-install.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "voc-onboarding/post-install.md"
+      }
+    },
+    {
+      "id": "voc-data-pull-skill",
+      "type": "directory",
+      "sourcePath": "voc-data-pull",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_skills",
+        "path": "voc-data-pull"
+      }
+    },
+    {
+      "id": "voc-audit-skill",
+      "type": "directory",
+      "sourcePath": "voc-audit",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_skills",
+        "path": "voc-audit"
+      }
+    },
+    {
+      "id": "voc-onboarding-walkthrough-skill",
+      "type": "file",
+      "sourcePath": "voc-onboarding-walkthrough/SKILL.md",
+      "executable": false,
+      "target": {
+        "root": "agent_skills",
+        "path": "voc-onboarding-walkthrough/SKILL.md"
+      }
+    }
+  ]
+}
