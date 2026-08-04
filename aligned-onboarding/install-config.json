@@ -26,25 +26,25 @@
     },
     {
       "from": "README.md",
-      "to": "/agent/brain/aligned-onboarding/README.md",
+      "to": "/agent/brain/meta/README.md",
       "on_exists": "overwrite",
       "purpose": "Package overview: how the two parts relate and the install/run order."
     },
     {
       "from": "account-context-brain.md",
-      "to": "/agent/brain/aligned-onboarding/account-context-brain.md",
+      "to": "/agent/brain/meta/account-context-brain.md",
       "on_exists": "overwrite",
       "purpose": "The Account Context Brain fill-in package: nine required interpretation fields, how Runneth pulls and confirms them, and the prose output shape saved to /agent/brain/meta/account-context.md."
     },
     {
       "from": "creative-corpus-playbook.md",
-      "to": "/agent/brain/aligned-onboarding/creative-corpus-playbook.md",
+      "to": "/agent/brain/meta/creative-corpus-playbook.md",
       "on_exists": "overwrite",
       "purpose": "The Creative Corpus playbook: how to build and maintain one enriched Markdown record per active creative under /agent/brain/meta/creatives/."
     },
     {
       "from": "motion-cli-data-query-guide.md",
-      "to": "/agent/brain/aligned-onboarding/motion-cli-data-query-guide.md",
+      "to": "/agent/brain/meta/motion-cli-data-query-guide.md",
       "on_exists": "overwrite",
       "purpose": "Supporting reference: the canonical contract for pulling Meta data through the motion CLI. Brand-agnostic, carries no account IDs."
     }

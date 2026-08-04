@@ -21,11 +21,13 @@ files: they do different jobs, persist to different places, and refresh on diffe
 ## Where the package files live
 
 These instruction files (this overview, the Account Context Brain, the Creative Corpus, and the
-Motion CLI Data-Query Guide) are the package itself, not its output. They live in the Brain outside
-the `meta` folder structure; the exact folder for them is not fixed yet and can be decided later.
-corpus-search is a bundled tool, not an instruction file, and installs under
-`/agent/tools/corpus-search/`. The `meta` folder holds only what Runneth generates from running the
-package: the filled account context and the per-creative files.
+Motion CLI Data-Query Guide) are the package itself, not its output. They install into the
+`/agent/brain/meta/` folder, the same home as the output Runneth generates, so the interpretation
+lens and the material it governs live side by side. The package docs keep their own filenames
+(`README.md`, `account-context-brain.md`, `creative-corpus-playbook.md`,
+`motion-cli-data-query-guide.md`) and never collide with the generated files (`account-context.md`,
+`creatives/`, `_changelog.md`). corpus-search is a bundled tool, not an instruction file, and
+installs under `/agent/tools/corpus-search/`.
 
 ---
 
