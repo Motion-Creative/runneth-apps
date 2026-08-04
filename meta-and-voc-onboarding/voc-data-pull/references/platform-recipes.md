@@ -95,6 +95,7 @@ Use relative paths through the proxy (the connected account carries the API host
 
 - Auth: customer API key stored as a secret; call with `secure-fetch`. "Connect" for Okendo
   means storing a key.
+- Secret key: `OKENDO_API_KEY`.
 - Discovery: the store id.
 - List: `GET https://api.okendo.io/v1/stores/{storeId}/reviews` - cursor-paginated.
 - Field mapping (doc-grounded; confirm names against a real key): `rating` <- `rating`;
@@ -105,12 +106,61 @@ Use relative paths through the proxy (the connected account carries the API host
 ## stamped (secrets path - NOT in Pipedream's catalog)
 
 - Auth: customer API key + storeHash, via `secure-fetch`.
+- Secret keys: `STAMPED_API_KEY` (the private key) and `STAMPED_STORE_HASH`. Probe
+  `STAMPED_API_KEY` for reachability; collect both.
 - List: `GET /api/v2/dashboard/reviews?storeHash=...` (dashboard API). Pagination:
   page-numbered via a `page` param (doc-grounded - verify against a real key).
 - Field mapping (doc-grounded; confirm against a real key): `rating` <- `reviewRating`;
   body <- `reviewMessage`; `title` <- `reviewTitle`; `product_ref` <- `productId`
   (`productTitle` also exists); `author_name` <- `author`; `created_at` <- `dateCreated`;
   `verified` <- `reviewVerifiedType`; `source_url` <- null (no permalink documented).
+
+## bazaarvoice (secrets path - NOT in Pipedream's catalog)
+
+- Auth: Conversations API passkey stored as a secret; call with `secure-fetch`. Enterprise
+  brands often run Bazaarvoice instead of a Shopify-style review app - it is in scope like
+  any other reviews platform.
+- Secret key: `BAZAARVOICE_API_KEY` (the Conversations API passkey).
+- List (doc-grounded; confirm against a real key):
+  `GET https://api.bazaarvoice.com/data/reviews.json?apiversion=5.4&passkey=<key>&Sort=SubmissionTime:desc&Limit=100&Offset=N` -
+  offset-paginated, newest-first. The passkey rides as a query param, not a header.
+- Field mapping (doc-grounded; confirm against a real key): `rating` <- `Rating`;
+  body <- `ReviewText`; `title` <- `Title`; `author_name` <- `UserNickname`;
+  `created_at` <- `SubmissionTime`; `verified` <- the verified-purchaser badge in
+  `Badges`; `product_ref` <- `ProductId`; `source_url` <- null (no permalink documented).
+
+## Long-tail reviews and survey platforms (secrets path, no dedicated recipe)
+
+These are real VoC platforms the reachability check must probe like any other - never
+skip one because it has no section here. Each is a stored-secret platform with the
+canonical key name shown; on a hit, pull it through the skill's no-recipe path (resolve
+endpoints from the platform's own API docs, map onto the unified record, mark doc-grounded
+assumptions in the setup report).
+
+- `loox` - `LOOX_API_KEY`. Shopify reviews app; writes `review` files.
+- `fera` - `FERA_API_KEY`. Reviews app; writes `review` files.
+- `feefo` - `FEEFO_API_KEY`. Reviews platform; writes `review` files.
+- `powerreviews` - `POWERREVIEWS_API_KEY`. Enterprise reviews; writes `review` files.
+- `shopper_approved` - `SHOPPER_APPROVED_API_KEY`. Reviews platform; writes `review` files.
+- `provesource` - `PROVESOURCE_API_KEY`. Social-proof/reviews; writes `review` files.
+- `qualtrics` - `QUALTRICS_API_TOKEN`. Surveys; responses map onto the review shape
+  (score -> `rating` when rated). Per-account data-center host - get it from the customer,
+  never guess it.
+
+Google Customer Reviews has no static-key API (it lives behind Google Merchant Center
+OAuth); if a customer runs it and no OAuth path is connected, record it as a reachability
+gap in the setup report rather than probing a key that cannot exist.
+
+## typeform (Pipedream OAuth: `typeform`) - doc-grounded, verify on first connect. Surveys.
+
+- Survey responses map onto the review shape (rating-scale answers -> `rating`, free-text
+  answers -> body), same rule as Hotjar.
+- Discovery: `GET /forms` for form ids. List: `GET /forms/{form_id}/responses` -
+  page-token paginated, newest-first via `sort=submitted_at,desc`.
+- Field mapping (doc-grounded): `created_at` <- `submitted_at`; body <- the concatenated
+  text answers; `rating` <- the first rating/opinion-scale answer when present;
+  `author_name`/`verified`/`product_ref` <- null unless the form captures them;
+  `source_url` <- null.
 
 ## gorgias (registry: `gorgias_oauth`) - live-verified. Support conversations, not reviews.
 
