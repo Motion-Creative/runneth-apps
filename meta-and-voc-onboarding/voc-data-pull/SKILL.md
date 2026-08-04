@@ -79,20 +79,22 @@ Two connection paths exist and the pull mechanics differ:
 | Motion native | Meta ad comments | `motion meta creative-comments` (no Runneth connect involved) |
 
 The path is how this customer set the platform up, not a property of the platform: any
-VoC platform may arrive as an OAuth connection **or** a stored secret, so an
-availability check always checks both `integrations status --app <slug>` and the stored
-secrets - for
-every VoC platform in the table, not just the secrets-only ones (those have no
-Pipedream app). The secret store cannot be listed (the runtime refuses
-Bash reads of `/agent/.runtime/secrets`, and neither `secret` nor `secure-fetch` has a
-list command): probe per platform by attempting its secret key
-(`secret run --env KEY=<SECRET_KEY> -- true`, or a bounded `secure-fetch run`) and treat
-a "secret not available" error as not stored. **Every platform's key name is defined**,
-so a missing name is never a reason to skip a platform's probe: each recipe in
-`references/platform-recipes.md` states its `Secret key:` name(s), and any platform
-without one uses the canonical form `<PLATFORM>_API_KEY` (uppercase, underscores -
-`LOOX_API_KEY`, `FEEFO_API_KEY`). The secret-collection flow requests keys under these
-same names, so what gets stored is what the probe finds.
+VoC platform may arrive as an OAuth connection **or** a stored secret, so the
+availability check reads the whole inventory, both paths. Bare `integrations status`
+(no `--app`) reports everything: the OAuth connections **and the runtime secret store's
+key names with each key's allowed hosts** (values stay sealed; only `secure-fetch` can
+use them). Recognize VoC platforms from that inventory by reading it, not by matching a
+naming scheme: a key named `OKENDO_TEN` is still Okendo, and a key whose allowed host
+is `api.okendo.io` is Okendo no matter what it is called. The name and the host each
+independently identify the platform - judge from both, against the whole table above
+plus anything else that is plainly a customer-voice platform. Never mark a key-stored
+platform unreachable without having read the full inventory. The exact-name probe
+(`secret run --env KEY=<SECRET_KEY> -- true`, or a bounded `secure-fetch run`) is for
+confirming a specific key works before building on it - it is not the discovery
+mechanism. When the secret-collection flow stores a **new** key, it names it in the
+canonical form from the platform's recipe (`Secret key:` line, else
+`<PLATFORM>_API_KEY`), so the inventory stays easy to read - but discovery never
+depends on those names.
 
 **Accounts are org-level; ownership is per workspace.** Connections live on the org's VM
 with no workspace tag, and one org can hold several accounts of the same platform - or one

@@ -84,22 +84,21 @@ Step 0 - the workspace readout defined above - has already happened before step 
 starts: the workspace name, workspaceId, and slug every step below uses came from the
 `Default workspace:` line of this conversation's `Motion context:` section, nowhere else.
 
-1. **Check what the org can reach.** `integrations status --app <slug>` for each known
-   VoC platform slug (the voc-data-pull skill's Step 1 table lists them; `integrations
-   list --query <term>` finds any others) for OAuth connections, plus the stored secrets
-   for **every** VoC platform (any platform may be key-stored instead of connected), plus
-   whether a Meta workspace is connected. The secret store cannot be listed - the runtime
-   refuses Bash reads of `/agent/.runtime/secrets`, and neither `secret` nor
-   `secure-fetch` has a list command.    The only probe that counts is running each
-   key-stored platform's secret key: `secret run --env KEY=<SECRET_KEY> -- true`
-   (or that platform's bounded `secure-fetch run` from the skill). Every platform's key
-   name is defined - the recipe's `Secret key:` line, or the canonical
-   `<PLATFORM>_API_KEY` when no recipe names one - so an "undocumented key name" is
-   never a reason to skip a probe. A "secret not
-   available" error means not stored. A refused `ls`, a `--help` read, or any other
-   indirect check proves nothing and is never grounds to mark a platform unreachable -
-   every key-stored platform in the skill's table gets its key probed this way before
-   this step is done. VoC scope is customer-voice
+1. **Check what the org can reach.** Run bare `integrations status` (no `--app`) and
+   read the whole report: it lists the OAuth connections **and the runtime secret
+   store's key names with each key's allowed hosts** - the full inventory of what this
+   VM can talk to (values stay sealed; only `secure-fetch` can use them). Then
+   `integrations status --app <slug>` for per-platform OAuth detail, and whether a Meta
+   workspace is connected. Recognize VoC platforms in that inventory by reading it with
+   judgment, not by matching key names to a scheme: a stored key named `OKENDO_TEN`, or
+   any key whose allowed host is `api.okendo.io`, is an Okendo credential no matter
+   what the key is called - the key name and the allowed host each independently
+   identify the platform. Judge every connection and key against the voc-data-pull
+   skill's Step 1 table and against plain sense: anything that is a reviews, support,
+   survey, or community platform is customer voice. Never mark a platform unreachable
+   without having read the full inventory first. A bounded `secure-fetch run` (or
+   `secret run --env KEY=<SECRET_KEY> -- true`) confirms a specific key works before
+   building on it - confirmation, not discovery. VoC scope is customer-voice
    data, not the skill's recipe list - a reachable reviews/support/community platform with
    no recipe still counts. Integrations and stored secrets are VM-wide, so a platform
    reachable for one workspace is reachable here too; what changes per workspace is where
