@@ -1,7 +1,25 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "aligned-onboarding-1.1.0",
+  "indexRevision": "2026-08-03-01-aligned-onboarding-1.1.0",
   "packages": [
+    {
+      "id": "creative-strategy-foundations",
+      "name": "Creative Strategy Foundations",
+      "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
+      "version": "1",
+      "packageManagerVersion": 1,
+      "categories": ["baseline"],
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "creative-strategy-foundations",
+        "ref": "main"
+      },
+      "installPolicy": "auto",
+      "updatePolicy": "auto",
+      "uninstallPolicy": "protected"
+    },
     {
       "id": "aligned-onboarding",
       "name": "Aligned Onboarding",
@@ -16,6 +34,7 @@
         "path": "aligned-onboarding",
         "ref": "main"
       },
+      "installPolicy": "manual",
       "updatePolicy": "manual",
       "uninstallPolicy": "allowed"
     }

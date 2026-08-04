@@ -22,15 +22,17 @@
  *   FLAG_TO_EMAIL                    — flag recipient (default support@motionapp.com)
  *   FLAG_FROM_EMAIL                  — flag sender (default onboarding@resend.dev)
  *   IP_HASH_SECRET                   — server-side salt for hashing IPs (rate-limit cohort key)
+ *   TRUST_PROXY_HOPS (default 0)     — trusted reverse-proxy hops; 0 disables proxy trust
  */
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import Fastify from 'fastify'
-import fastifyStatic from '@fastify/static'
-import fastifyMultipart from '@fastify/multipart'
 import fastifyFormbody from '@fastify/formbody'
+import fastifyMultipart from '@fastify/multipart'
+import fastifyRateLimit from '@fastify/rate-limit'
+import fastifyStatic from '@fastify/static'
 
 import { assembleCatalog, cacheStats, clearCache, loadUseCaseDetail } from './github.js'
 import {
@@ -72,7 +74,32 @@ const HOW_TO_BUILD_THE_BRAIN_HTML = readFileSync(resolve(__dirname, 'how-to-buil
 const HOW_TO_PROMPT_HTML = readFileSync(resolve(__dirname, 'how-to-prompt-masterfully.html'), 'utf-8')
 const ATC_GROWTH_HTML = readFileSync(resolve(__dirname, 'ai-training-club-marketers-growth.html'), 'utf-8')
 
-const server = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' } })
+const parseTrustProxyHops = (value: string | undefined): number | false => {
+  const hops = Number(value ?? 0)
+  if (!Number.isInteger(hops) || hops < 0) {
+    throw new Error('TRUST_PROXY_HOPS must be a non-negative integer')
+  }
+  return hops === 0 ? false : hops
+}
+
+const ADMIN_RATE_LIMIT_WINDOW = '1 minute'
+
+export const ADMIN_RATE_LIMITS = {
+  // Database wipes should be exceptional and require the strictest ceiling.
+  destructive: { max: 3, timeWindow: ADMIN_RATE_LIMIT_WINDOW },
+  // Dashboard polling and navigation need enough headroom for normal use.
+  read: { max: 120, timeWindow: ADMIN_RATE_LIMIT_WINDOW },
+  // File transfers and archive generation have progressively higher resource costs.
+  download: { max: 60, timeWindow: ADMIN_RATE_LIMIT_WINDOW },
+  archive: { max: 10, timeWindow: ADMIN_RATE_LIMIT_WINDOW },
+} as const
+
+export const server = Fastify({
+  logger: { level: process.env.LOG_LEVEL ?? 'info' },
+  trustProxy: parseTrustProxyHops(process.env.TRUST_PROXY_HOPS),
+})
+
+await server.register(fastifyRateLimit, { global: false })
 
 server.log.info(`reviews db: ${dbPath}`)
 
@@ -510,148 +537,176 @@ const checkDashboardAuth = (req: { query: unknown; headers: Record<string, unkno
 // Admin endpoint to clear all submissions. Useful for cleaning up after
 // development churn. Requires the dashboard token plus an explicit
 // confirm=yes guard so it never fires by accident.
-server.delete('/api/brain-submissions/all', async (req, reply) => {
-  if (!checkDashboardAuth(req)) {
-    reply.code(401)
-    return { error: 'unauthorized' }
-  }
-  const q = req.query as { confirm?: string }
-  if (q.confirm !== 'yes') {
-    reply.code(400)
-    return { error: 'missing_confirmation', message: 'Append ?confirm=yes to wipe all submissions.' }
-  }
-  const result = wipeAllSubmissions()
-  return { ok: true, deletedSubmissions: result.submissions, deletedFiles: result.files }
-})
+server.delete(
+  '/api/brain-submissions/all',
+  { config: { rateLimit: ADMIN_RATE_LIMITS.destructive } },
+  async (req, reply) => {
+    if (!checkDashboardAuth(req)) {
+      reply.code(401)
+      return { error: 'unauthorized' }
+    }
+    const q = req.query as { confirm?: string }
+    if (q.confirm !== 'yes') {
+      reply.code(400)
+      return { error: 'missing_confirmation', message: 'Append ?confirm=yes to wipe all submissions.' }
+    }
+    const result = wipeAllSubmissions()
+    return { ok: true, deletedSubmissions: result.submissions, deletedFiles: result.files }
+  },
+)
 
-server.get('/brain-submissions', async (req, reply) => {
-  if (!checkDashboardAuth(req)) {
-    reply.code(401)
+server.get(
+  '/brain-submissions',
+  { config: { rateLimit: ADMIN_RATE_LIMITS.read } },
+  async (req, reply) => {
+    if (!checkDashboardAuth(req)) {
+      reply.code(401)
+      reply.header('content-type', 'text/html; charset=utf-8')
+      return '<html><body style="font-family:sans-serif;padding:40px;color:#171717"><h2>Unauthorized</h2><p>Append <code>?token=YOUR_TOKEN</code> to the URL.</p></body></html>'
+    }
+    const q = req.query as { csm?: string }
+    const csm = typeof q.csm === 'string' ? q.csm.toLowerCase() : ''
+    const validCsm = csm && ((CSM_ROSTER as readonly string[]).includes(csm) || csm === 'unassigned') ? csm : ''
+    const submissions = listSubmissions(200, validCsm || undefined)
+    const counts = countSubmissionsByCsm()
     reply.header('content-type', 'text/html; charset=utf-8')
-    return '<html><body style="font-family:sans-serif;padding:40px;color:#171717"><h2>Unauthorized</h2><p>Append <code>?token=YOUR_TOKEN</code> to the URL.</p></body></html>'
-  }
-  const q = req.query as { csm?: string }
-  const csm = typeof q.csm === 'string' ? q.csm.toLowerCase() : ''
-  const validCsm = csm && ((CSM_ROSTER as readonly string[]).includes(csm) || csm === 'unassigned') ? csm : ''
-  const submissions = listSubmissions(200, validCsm || undefined)
-  const counts = countSubmissionsByCsm()
-  reply.header('content-type', 'text/html; charset=utf-8')
-  reply.header('cache-control', 'no-store')
-  return renderDashboard({
-    submissions,
-    counts,
-    activeCsm: validCsm || 'all',
-    roster: CSM_ROSTER as readonly string[],
-    token: BRAIN_DASHBOARD_TOKEN,
-  })
-})
+    reply.header('cache-control', 'no-store')
+    return renderDashboard({
+      submissions,
+      counts,
+      activeCsm: validCsm || 'all',
+      roster: CSM_ROSTER as readonly string[],
+      token: BRAIN_DASHBOARD_TOKEN,
+    })
+  },
+)
 
-server.get('/api/brain-submissions', async (req, reply) => {
-  if (!checkDashboardAuth(req)) {
-    reply.code(401)
-    return { error: 'unauthorized' }
-  }
-  const q = req.query as { since?: string; csm?: string }
-  const since = q.since
-  const csm = typeof q.csm === 'string' ? q.csm.toLowerCase() : ''
-  const validCsm = csm && ((CSM_ROSTER as readonly string[]).includes(csm) || csm === 'unassigned') ? csm : ''
-  const subs = since ? listSubmissionsSince(since) : listSubmissions(200, validCsm || undefined)
-  return { submissions: subs }
-})
+server.get(
+  '/api/brain-submissions',
+  { config: { rateLimit: ADMIN_RATE_LIMITS.read } },
+  async (req, reply) => {
+    if (!checkDashboardAuth(req)) {
+      reply.code(401)
+      return { error: 'unauthorized' }
+    }
+    const q = req.query as { since?: string; csm?: string }
+    const since = q.since
+    const csm = typeof q.csm === 'string' ? q.csm.toLowerCase() : ''
+    const validCsm = csm && ((CSM_ROSTER as readonly string[]).includes(csm) || csm === 'unassigned') ? csm : ''
+    const subs = since ? listSubmissionsSince(since) : listSubmissions(200, validCsm || undefined)
+    return { submissions: subs }
+  },
+)
 
-server.get<{ Params: { id: string } }>('/api/brain-submissions/:id/files', async (req, reply) => {
-  if (!checkDashboardAuth(req)) {
-    reply.code(401)
-    return { error: 'unauthorized' }
-  }
-  const id = Number(req.params.id)
-  if (!Number.isFinite(id)) {
-    reply.code(400)
-    return { error: 'bad_id' }
-  }
-  return { files: listFilesForSubmission(id) }
-})
+server.get<{ Params: { id: string } }>(
+  '/api/brain-submissions/:id/files',
+  { config: { rateLimit: ADMIN_RATE_LIMITS.read } },
+  async (req, reply) => {
+    if (!checkDashboardAuth(req)) {
+      reply.code(401)
+      return { error: 'unauthorized' }
+    }
+    const id = Number(req.params.id)
+    if (!Number.isFinite(id)) {
+      reply.code(400)
+      return { error: 'bad_id' }
+    }
+    return { files: listFilesForSubmission(id) }
+  },
+)
 
-server.get<{ Params: { id: string; fileId: string } }>('/api/brain-submissions/:id/files/:fileId/download', async (req, reply) => {
-  if (!checkDashboardAuth(req)) {
-    reply.code(401)
-    return { error: 'unauthorized' }
-  }
-  const fileId = Number(req.params.fileId)
-  if (!Number.isFinite(fileId)) {
-    reply.code(400)
-    return { error: 'bad_id' }
-  }
-  const f = getFileBytes(fileId)
-  if (!f) {
-    reply.code(404)
-    return { error: 'not_found' }
-  }
-  reply.header('content-type', f.mime_type || 'application/octet-stream')
-  reply.header('content-disposition', `attachment; filename="${f.filename.replace(/"/g, '')}"`)
-  reply.header('cache-control', 'no-store')
-  return f.data
-})
+server.get<{ Params: { id: string; fileId: string } }>(
+  '/api/brain-submissions/:id/files/:fileId/download',
+  { config: { rateLimit: ADMIN_RATE_LIMITS.download } },
+  async (req, reply) => {
+    if (!checkDashboardAuth(req)) {
+      reply.code(401)
+      return { error: 'unauthorized' }
+    }
+    const fileId = Number(req.params.fileId)
+    if (!Number.isFinite(fileId)) {
+      reply.code(400)
+      return { error: 'bad_id' }
+    }
+    const f = getFileBytes(fileId)
+    if (!f) {
+      reply.code(404)
+      return { error: 'not_found' }
+    }
+    reply.header('content-type', f.mime_type || 'application/octet-stream')
+    reply.header('content-disposition', `attachment; filename="${f.filename.replace(/"/g, '')}"`)
+    reply.header('cache-control', 'no-store')
+    return f.data
+  },
+)
 
-server.get<{ Params: { id: string } }>('/api/brain-submissions/:id/zip', async (req, reply) => {
-  if (!checkDashboardAuth(req)) {
-    reply.code(401)
-    return { error: 'unauthorized' }
-  }
-  const id = Number(req.params.id)
-  if (!Number.isFinite(id)) {
-    reply.code(400)
-    return { error: 'bad_id' }
-  }
-  const files = listFilesForSubmission(id)
-  if (files.length === 0) {
-    reply.code(404)
-    return { error: 'no_files' }
-  }
-  const fullFiles = getFilesByIds(files.map((f) => f.id))
-  reply.header('content-type', 'application/zip')
-  reply.header('content-disposition', `attachment; filename="brain-submission-${id}.zip"`)
-  reply.header('cache-control', 'no-store')
-  const archive = archiver('zip', { zlib: { level: 6 } })
-  archive.on('warning', (err) => server.log.warn({ err }, 'zip warning'))
-  archive.on('error', (err) => server.log.error({ err }, 'zip error'))
-  for (const f of fullFiles) {
-    archive.append(f.data, { name: `${f.section_key}/${f.filename}` })
-  }
-  archive.finalize()
-  return reply.send(archive)
-})
+server.get<{ Params: { id: string } }>(
+  '/api/brain-submissions/:id/zip',
+  { config: { rateLimit: ADMIN_RATE_LIMITS.archive } },
+  async (req, reply) => {
+    if (!checkDashboardAuth(req)) {
+      reply.code(401)
+      return { error: 'unauthorized' }
+    }
+    const id = Number(req.params.id)
+    if (!Number.isFinite(id)) {
+      reply.code(400)
+      return { error: 'bad_id' }
+    }
+    const files = listFilesForSubmission(id)
+    if (files.length === 0) {
+      reply.code(404)
+      return { error: 'no_files' }
+    }
+    const fullFiles = getFilesByIds(files.map((f) => f.id))
+    reply.header('content-type', 'application/zip')
+    reply.header('content-disposition', `attachment; filename="brain-submission-${id}.zip"`)
+    reply.header('cache-control', 'no-store')
+    const archive = archiver('zip', { zlib: { level: 6 } })
+    archive.on('warning', (err) => server.log.warn({ err }, 'zip warning'))
+    archive.on('error', (err) => server.log.error({ err }, 'zip error'))
+    for (const f of fullFiles) {
+      archive.append(f.data, { name: `${f.section_key}/${f.filename}` })
+    }
+    archive.finalize()
+    return reply.send(archive)
+  },
+)
 
 // POST form variant for the dashboard "Download selected (.zip)" button.
-server.post('/api/brain-submissions/zip-form', async (req, reply) => {
-  if (!checkDashboardAuth(req)) {
-    reply.code(401)
-    return { error: 'unauthorized' }
-  }
-  const body = req.body as { file_ids?: string } | undefined
-  const idsStr = body?.file_ids || ''
-  const ids = idsStr.split(',').map((s) => Number(s.trim())).filter((n) => Number.isFinite(n) && n > 0)
-  if (ids.length === 0) {
-    reply.code(400)
-    return { error: 'no_files' }
-  }
-  const fullFiles = getFilesByIds(ids)
-  if (fullFiles.length === 0) {
-    reply.code(404)
-    return { error: 'not_found' }
-  }
-  reply.header('content-type', 'application/zip')
-  reply.header('content-disposition', `attachment; filename="brain-files-${Date.now()}.zip"`)
-  reply.header('cache-control', 'no-store')
-  const archive = archiver('zip', { zlib: { level: 6 } })
-  archive.on('warning', (err) => server.log.warn({ err }, 'zip warning'))
-  archive.on('error', (err) => server.log.error({ err }, 'zip error'))
-  for (const f of fullFiles) {
-    archive.append(f.data, { name: `sub-${f.submission_id}/${f.section_key}/${f.filename}` })
-  }
-  archive.finalize()
-  return reply.send(archive)
-})
+server.post(
+  '/api/brain-submissions/zip-form',
+  { config: { rateLimit: ADMIN_RATE_LIMITS.archive } },
+  async (req, reply) => {
+    if (!checkDashboardAuth(req)) {
+      reply.code(401)
+      return { error: 'unauthorized' }
+    }
+    const body = req.body as { file_ids?: string } | undefined
+    const idsStr = body?.file_ids || ''
+    const ids = idsStr.split(',').map((s) => Number(s.trim())).filter((n) => Number.isFinite(n) && n > 0)
+    if (ids.length === 0) {
+      reply.code(400)
+      return { error: 'no_files' }
+    }
+    const fullFiles = getFilesByIds(ids)
+    if (fullFiles.length === 0) {
+      reply.code(404)
+      return { error: 'not_found' }
+    }
+    reply.header('content-type', 'application/zip')
+    reply.header('content-disposition', `attachment; filename="brain-files-${Date.now()}.zip"`)
+    reply.header('cache-control', 'no-store')
+    const archive = archiver('zip', { zlib: { level: 6 } })
+    archive.on('warning', (err) => server.log.warn({ err }, 'zip warning'))
+    archive.on('error', (err) => server.log.error({ err }, 'zip error'))
+    for (const f of fullFiles) {
+      archive.append(f.data, { name: `sub-${f.submission_id}/${f.section_key}/${f.filename}` })
+    }
+    archive.finalize()
+    return reply.send(archive)
+  },
+)
 
 // Static frontend.
 await server.register(fastifyStatic, {
@@ -683,8 +738,11 @@ server.setNotFoundHandler((request, reply) => {
 const PORT = Number(process.env.PORT ?? 3000)
 const HOST = process.env.HOST ?? '0.0.0.0'
 
-server.listen({ port: PORT, host: HOST }).catch((err) => {
-  server.log.error(err)
-  process.exit(1)
-})
+const isMainModule = process.argv[1] !== undefined && resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+if (isMainModule) {
+  server.listen({ port: PORT, host: HOST }).catch((err) => {
+    server.log.error(err)
+    process.exit(1)
+  })
+}
 

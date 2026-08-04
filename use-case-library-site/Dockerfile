@@ -2,11 +2,11 @@
 # Final image: one Node process serving the API and the static SPA on $PORT.
 
 # ─── Builder ─────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:22.22-alpine AS builder
 WORKDIR /app
 
 # pnpm via corepack (pinned to packageManager in package.json).
-RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.34.5 --activate
 
 # Build tools for native modules (better-sqlite3 falls back to source build
 # if no prebuilt for our libc/arch is shipped).
@@ -25,10 +25,10 @@ RUN pnpm --filter use-case-library-server build
 
 # pnpm deploy bundles the server with only its production node_modules,
 # its built dist/, and its built public/ at the bundle root.
-RUN pnpm --filter use-case-library-server deploy --prod /app/bundle
+RUN pnpm --filter use-case-library-server deploy --prod --legacy /app/bundle
 
 # ─── Runtime ─────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS runtime
+FROM node:22.22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000

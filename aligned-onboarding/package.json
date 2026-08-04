@@ -4,6 +4,7 @@
   "name": "Aligned Onboarding",
   "version": "1.1.0",
   "description": "Teaches Runneth how a customer reads their Meta ad account, captures customer-specific report/dashboard setup, and saves durable creative context when useful.",
+  "installPolicy": "manual",
   "updatePolicy": "manual",
   "uninstallPolicy": "allowed",
   "resources": [

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 
 import { CTA } from "./CTA";
 import { Illustration } from "./Illustration";
