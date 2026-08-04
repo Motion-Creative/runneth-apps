@@ -102,9 +102,10 @@ the current turn.
 
 The established indexed reporting/app setup file for this workspace owns report and dashboard
 packaging: standard views, saved-report trust, metric order, thresholds, date windows, taxonomy,
-creative evidence requirements, visual expectations, and delivery cadence. It defers to explicit
-current-turn instructions and to a named saved Motion report unless the report-dashboard context says
-that report is not trusted or should be adapted.
+creative evidence requirements, visual expectations, generated-app quality standards, reusable
+component roles, and delivery cadence. It defers to explicit current-turn instructions and to a
+named saved Motion report unless the report-dashboard context says that report is not trusted or
+should be adapted.
 
 The Creative Corpus reads the Account Context Brain for interpretation and the Report Dashboard
 Setup for report-surface evidence requirements. It never re-derives either one. When the corpus and

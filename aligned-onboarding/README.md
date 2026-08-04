@@ -79,7 +79,7 @@ File: `report-dashboard-setup.md`
 - **Job:** capture how this customer wants Runneth to build report, dashboard, app, and weekly-readout
   surfaces so they do not repeat the same preferences every time. It covers standard views, trusted
   sources, metrics, thresholds, date windows, taxonomy, creative evidence, visual standards, cadence,
-  and validation questions.
+  generated-app quality standards, reusable component roles, and validation questions.
 - **How it runs:** reads the Account Context Brain first, inspects any saved Motion report metadata
   and existing app/routine registry entries when available, then asks a short confirmation with a
   person. It captures only customer-facing preferences and labels uncertain items as open.
@@ -171,7 +171,10 @@ similar. Everything shares one index, kept separate by the `kind` tag (`creative
 - The Account Context Brain is the lens, Report Dashboard Setup is the packaging rulebook, and the
   Creative Corpus is the material. A dashboard request uses the Account Context Brain to decide what
   "best" means, Report Dashboard Setup to decide which view, metric order, thresholds, and evidence
-  belong on the surface, then the Creative Corpus to reason about the specific creatives.
+  belong on the surface, then the Creative Corpus to reason about the specific creatives. Report
+  Dashboard Setup also carries the app-quality floor for readable labels, stable cards, explicit
+  media states, visible caveats, and the component roles that should map onto the active app
+  scaffold.
 - The Account Context Brain's read-before-performance guard is what forces the lens to be loaded
   before any performance work. Report Dashboard Setup adds the read-before-reporting preferences.
   The Creative Corpus is surfaced automatically by default Brain retrieval when creatives are

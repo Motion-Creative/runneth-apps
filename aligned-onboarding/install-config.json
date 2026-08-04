@@ -40,7 +40,7 @@
       "from": "report-dashboard-setup.md",
       "to": "/agent/brain/aligned-onboarding/report-dashboard-setup.md",
       "on_exists": "overwrite",
-      "purpose": "The Report Dashboard Setup package: customer-specific standard views, saved-report trust, authoritative sources, metrics, thresholds, date windows, taxonomy, creative evidence, visual standards, cadence, and validation surface saved to the package default or the established indexed reporting/app setup file."
+      "purpose": "The Report Dashboard Setup package: customer-specific standard views, saved-report trust, authoritative sources, metrics, thresholds, date windows, taxonomy, creative evidence, visual standards, generated-app quality floor, reusable component roles, cadence, and validation surface saved to the package default or the established indexed reporting/app setup file."
     },
     {
       "from": "creative-corpus-playbook.md",
