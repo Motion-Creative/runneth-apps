@@ -196,8 +196,15 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    the last thing done before the report and only after steps 4 and 5 actually persisted. If
    the roster block is absent, add it; if it exists, append this workspace to its list and
    leave the existing names alone - never rewrite the list to hold only this workspace.
-   Compose the whole file from the copy in your system prompt plus this change, touch nothing
-   outside the sentinels, and check the payload for a doubled base document before writing:
+   Compose the whole file from its current contents plus this change - current as of this
+   moment in the turn, not as of the turn's start. If step 3 wrote the file this turn, build
+   on the exact payload that Write sent: it already carries the four guard blocks, and the
+   copy in your system prompt predates it. Only when nothing has written the file this turn
+   is the system-prompt copy still current. Touch nothing
+   outside the sentinels, and check the payload before writing: the base document appears
+   exactly once, and every guard sentinel merged this turn is present - a payload missing
+   blocks that step 3 just wrote was composed from the stale copy; rebuild it, never write
+   it. The roster block:
 
    > `<!-- BEGIN runneth:meta-voc-onboarded -->`
    > `meta-and-voc-onboarding has completed for these workspaces: <workspace>[, <workspace>...]`
@@ -253,8 +260,8 @@ Mechanics for every step above: when a step updates `/agent/INDEX.md` or any oth
 existing file, do not use the edit/patch tool - it fails validation on this VM. Read the
 file and write it back whole (python for mechanical splices, the file-write tool for
 short files). Prefer scripted file assembly over retyping staged content anywhere -
-except `/agent/user.md`, which Bash cannot touch at all (step 3's single Write is the
-only way).
+except `/agent/user.md`, which Bash cannot touch at all (the file-write tool is the only
+mechanism - the single Writes in steps 3 and 6).
 
 If nothing is reachable at all: say so and stop. Do not watch or poll; when a platform is
 connected later, setup runs on ask.
