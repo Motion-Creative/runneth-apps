@@ -25,7 +25,7 @@ RUN pnpm --filter use-case-library-server build
 
 # pnpm deploy bundles the server with only its production node_modules,
 # its built dist/, and its built public/ at the bundle root.
-RUN pnpm --filter use-case-library-server deploy --prod /app/bundle
+RUN pnpm --filter use-case-library-server deploy --prod --legacy /app/bundle
 
 # ─── Runtime ─────────────────────────────────────────────────────────────────
 FROM node:22.22-alpine AS runtime
