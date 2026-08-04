@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.14 — no-overlap validation doors: questions-first default, deck-first proves through deck review (August 2026)
+### Version 1.15 — questions always run first, deck becomes a closing soft offer; the analysis window is the customer's call, asked at kickoff and persisted (August 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
@@ -77,7 +77,7 @@ package's post-install run does this in its single scripted guard merge). The bl
 shown for context and must stay identical to the staged file.
 
 ```
-<!-- BEGIN runneth:meta-validation-gate v5 -->
+<!-- BEGIN runneth:meta-validation-gate v6 -->
 Meta validation gate:
 
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
@@ -91,13 +91,14 @@ Meta validation gate:
   completed (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
   experience described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
-  the customer has confirmed Runneth's answers - through the question loop or, on the deck-first
-  path, through the deck review - the weekly deck is built, live, and approved by the customer, a
-  refresh routine keeps the deck updated on an agreed cadence, and Slack is connected so the team
-  can ask questions. Record that state in
+  the customer has confirmed Runneth's answers through the question loop, the weekly deck is
+  built, live, and approved by the customer, a refresh routine keeps the deck updated on an
+  agreed cadence, and Slack is connected so the team can ask questions. Record that state in
   /agent/brain/<workspace>/data-sources/meta/validation.md.
-- A person asking for a deck or report has chosen the deck-first path: build the deck. Validation
-  happens through the deck review - never answer a deck request with a questionnaire first.
+- The question loop always runs first. Never proactively offer or lead with the weekly deck
+  before the question set has been run and confirmed - the deck is a soft offer at the end. A
+  person who explicitly asks for a deck or report still gets one (Field 10 confirmed first),
+  but the question loop still runs to complete validation.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
 - A deck change request is a context correction too: route it to the field behind it
@@ -106,7 +107,7 @@ Meta validation gate:
   context - never hand-edit the deck output. Durable corrections in any later conversation get
   the same routing; one-off or current-state remarks shape the answer or the current render,
   never the file.
-<!-- END runneth:meta-validation-gate v5 -->
+<!-- END runneth:meta-validation-gate v6 -->
 ```
 
 ## 2. Prerequisites (hard gate)
@@ -176,39 +177,37 @@ This runs as a warm, guided conversation, not a form. Runneth leads; the custome
 Once the gate fires, Runneth opens in plain language. The intent, in Runneth's own words:
 
 > "Your account context and creative library are locked in. Now I'd love for us to validate that
-> I actually have everything I need to answer the questions you'll ask me about Meta. Two ways we
-> can start, your pick."
+> I actually have everything I need to answer the questions you'll ask me about Meta. Here's the
+> list of questions I can already answer for you today — we can start there and confirm I'm
+> reading the account the way you do."
 
-Then offer the two doors, back to back:
+**Ask for the date range before anything is pulled.** The lookback window for the validation
+analysis is the customer's call — Runneth never silently picks one. At the kickoff, before
+the question set is pre-answered, ask what date range they want to look at, suggesting last
+14, last 30, or last 90 days as the common choices. The confirmed answer is the window for
+every validation pull, with one exception: the conditional lifetime pull for a lifetime
+spend floor (Step 2), which is driven by the account's own winner/cut rule, never a default.
+Persist the confirmed window as a one-line note in `account-context.md`'s "at a glance"
+section (beside the answer-register note) so future data questions default to the customer's
+stated window instead of re-asking or assuming; a window the customer names in a later
+question still wins for that answer.
 
-- **Questions-first (the default when the customer has no preference):** "Here's the list of
-  questions I can already answer for you today. We can start there and confirm I'm reading
-  the account the way you do." The loop (Step 2) runs, and the deck then builds directly
-  from the confirmed answers — deck review covers look and feel and spec approval, not a
-  repeat of the questions.
-- **Deck-first:** read Field 10 (the deck spec in `account-context.md`) before offering this
-  door. If Field 10 is confirmed, lead with what's already known: "Based on your account
-  context, I have a deck spec ready — [the confirmed sections, cadence, and exclusions from
-  Field 10]. I can build it now. If you have an existing deck you'd like me to match for look
-  and feel, share it and I'll use that as the visual reference." If Field 10 is not yet
-  confirmed, say so and run its two beats first (they synthesize from already-confirmed fields
-  — two questions, no new pull), then build.
-
-Let the customer choose, and record the choice as `validation_path` in `validation.md`. **The
-two doors never both run in full — someone who asks for a deck gets a deck, not a
-questionnaire first.** On the deck-first path, do not run the upfront question loop: the deck
-itself is the proof, and the answer-and-confirm mechanics run through the deck review —
-every correction raised there routes through Step 2's durability test and field homes
-exactly the same way. The generated question set stays available afterward for anything the
-deck did not touch; offer it once the deck is approved, never force it. A person who arrives
-already asking for a deck or report has picked the deck-first door — skip the two-door offer
-and build.
+**The question loop always runs first.** The loop (Step 2) runs, and the deck then builds
+directly from the confirmed answers — deck review covers look and feel and spec approval,
+not a repeat of the questions. The deck is never led with and never positioned as the
+expected next step: it is a soft offer once the question set has been run and confirmed
+(Step 3). A person who explicitly asks for a deck or report at any point still gets one —
+read Field 10 first (if it is not confirmed, run its two beats: they synthesize from
+already-confirmed fields — two questions, no new pull), then build. An explicit early deck
+does not replace the loop: corrections raised in its review route through Step 2's
+durability test and field homes exactly the same way, and the question set still runs to
+complete validation.
 
 ## Step 2 — The answer-and-confirm loop (the catch)
 
-This step runs in full on the questions-first path. On the deck-first path, its mechanics —
-the durability test, the field homes, the correction routing — apply to the deck review
-instead (Step 4); the upfront loop itself is skipped.
+This step always runs, and it runs before any deck is offered. Its mechanics — the
+durability test, the field homes, the correction routing — also govern every correction
+raised later in deck review (Step 4).
 
 ### Question generation — before the loop starts
 
@@ -218,7 +217,7 @@ confirms or adds.** These are the foundational questions, not frequent queries.
 
 **The baseline set always runs** — it tests the foundation:
 
-1. What are our top winning ads this week?
+1. What are our top winning ads over [the customer's confirmed window]?
 2. How is performance by [the confirmed reporting dimensions from Field 10 — real names,
    never "campaign / product"]?
 3. What themes show up in our winning ads? (creative summaries and AI tags — the one
@@ -264,24 +263,27 @@ and 7 — still this account's real names, never a generic "campaign / product."
 
 **Then derive account-specific questions from the confirmed naming decoder and funnel map.**
 For each `segment_filter` dimension in `naming-decoder.json` with at least 3 creatives and
-meaningful spend in the current 7-day window (both computed from the primary pull below — no
-extra calls), generate one performance question using the dimension's real `known_values`:
-"How is [value A] performing against [value B] and [value C] on [the primary KPI]?" Skip a
-dimension with only one known value or too small a spend spread to compare. Add the
-winner/cut question anchored on Field 9's confirmed floor ("Is [top ad] a winner yet —
-against the $[floor] / [N]-day rule?") and the testing-pipeline question from Field 7
-("What's running in [testing bucket], when did each ad launch, and how is the last 7
-days?").
+meaningful spend in the customer's confirmed window (both computed from the primary pull
+below — no extra calls), generate one performance question using the dimension's real
+`known_values`: "How is [value A] performing against [value B] and [value C] on [the primary
+KPI]?" Skip a dimension with only one known value or too small a spend spread to compare.
+Add the winner/cut question anchored on Field 9's confirmed floor ("Is [top ad] a winner yet
+— against the $[floor] / [N]-day rule?") and the testing-pipeline question from Field 7
+("What's running in [testing bucket], when did each ad launch, and how is [the customer's
+confirmed window] looking?").
 
 The result is typically 7–12 questions. Present the numbered set and invite the customer to
 add any question that matters to them that's missing. Capture the final set.
 
 ### Pre-answer the set in batch
 
-Once the final set is captured, pull everything before presenting any answer:
+Once the final set is captured, pull everything before presenting any answer. Every pull
+uses the customer's confirmed window from Step 1 — never a window Runneth picked — with the
+one exception noted below:
 
-- **Primary pull:** one `motion meta insights` call — `--filter` to Field 7's primary
-  campaigns, `--include-metrics`, `--table-kpi` on the account's confirmed primary KPI key,
+- **Primary pull:** one `motion meta insights` call — `--date-range` on the customer's
+  confirmed window, `--filter` to Field 7's primary campaigns, `--include-metrics`,
+  `--table-kpi` on the account's confirmed primary KPI key,
   attribution windows from Field 5 when they differ from the default, **no `--limit`**.
   Before any totals or all-ads claim, check the returned file's `totalCount` against the
   rows received; if they differ, say the read is partial. This one file answers the
@@ -291,8 +293,9 @@ Once the final set is captured, pull everything before presenting any answer:
 - **Testing pull:** the same shape filtered to Field 7's testing bucket. Covers the
   testing-pipeline question.
 - **Lifetime pull (conditional):** only when Field 9's spend floor is lifetime, one
-  wider-range pull for the winner/cut question — a 7-day window cannot prove a lifetime
-  floor.
+  wider-range pull for the winner/cut question — the customer's confirmed window cannot
+  prove a lifetime floor. This is the one pull that ignores the confirmed window, and it is
+  driven by the account's own winner/cut rule, never a default Runneth chose.
 - **Creative content (the themes question only):** through the creative content layer's
   ladder as written in the Cacheth Command Reference — Knoweth-injected context first,
   `motion cache search-summaries` by theme text next, `motion cache get-creative` per
@@ -359,20 +362,26 @@ Rules for the loop:
 - Every correction is logged to `/agent/brain/<workspace>/data-sources/meta/validation.md` and applied to
   `/agent/brain/<workspace>/data-sources/meta/account-context.md` so the fix is durable.
 
-## Step 3 — Build the weekly deck (the artifact)
+## Step 3 — Offer the weekly deck (the artifact)
+
+**The deck is offered, never led with.** Once the question set has been run and every answer
+confirmed, close the loop with a soft offer, in Runneth's own words — "want me to build the
+weekly deck?" — never as the expected next step. Runneth never proactively offers the deck
+before the questions are done; a customer who explicitly asks for a deck at any point still
+gets one (per Step 1), but the ask has to be theirs. A customer who only wants the question
+loop can skip the deck — and Field 10 — entirely.
 
 **The deck is gated on Field 10.** Read Field 10 (the deck spec) before gathering anything. If
 it is confirmed, the deck's structure, cadence, and exclusions are already known — pre-fill
 from it and do not re-ask. If it is not confirmed, run Field 10's two beats right here (they
 synthesize from already-confirmed fields — two questions, no new pull), then build. No deck is
-built without a confirmed Field 10. A customer who only wants the question loop can skip the
-deck — and Field 10 — entirely.
+built without a confirmed Field 10.
 
-Then move to the deck:
+On a yes, move to the deck:
 
-> "Now the fun part. I have your deck spec ready — [the confirmed sections from Field 10]. I'm
-> going to build it now. The one thing I still need: do you have an existing deck you'd like me
-> to match for look and feel? If not, I'll use the Motion default."
+> "I have your deck spec ready — [the confirmed sections from Field 10]. I'm going to build it
+> now. The one thing I still need: do you have an existing deck you'd like me to match for
+> look and feel? If not, I'll use the Motion default."
 
 Gather only what Field 10 does not already answer:
 
@@ -380,11 +389,10 @@ Gather only what Field 10 does not already answer:
   structure. Structure comes from Field 10.
 - **Look and feel.** MotionUI by default, playable videos, equal-size creative cards.
 
-Do not re-gather sections, snapshots, or date controls — Field 10 already answered them. On
-the questions-first path the deck builds from the already-confirmed answers, and the review
-is about the artifact. On the deck-first path the review is also where the validation proof
-happens: corrections raised there are the answer-and-confirm loop, routed through the same
-durability test.
+Do not re-gather sections, snapshots, or date controls — Field 10 already answered them. The
+deck builds from the already-confirmed answers, and the review is about the artifact: look
+and feel and spec approval, not a repeat of the questions. Corrections raised in the review
+are still context corrections, routed through the same durability test and field homes.
 
 Build it on the report component library so the layout is proven, not hand-rolled. The deck
 reads Field 10 for its structure and sections, the creative content layer (Cacheth, via
@@ -433,9 +441,9 @@ Validation is complete, and the Minimum Viable Context Engine is on, when all fi
 
 1. Must-have Meta context sources are connected and set to refresh (the Account Context Brain on
    its cadence; the creative cache syncs itself).
-2. The customer's confirmations are **clean** for the chosen path. Questions-first: every
-   question in the final set is clean — its latest answer was confirmed without correction.
-   Deck-first: every correction raised in deck review is resolved and the re-render confirmed.
+2. The customer's confirmations are **clean**: every question in the final set is clean —
+   its latest answer was confirmed without correction — and every correction raised in deck
+   review is resolved and the re-render confirmed.
    Corrections along the way are the loop working, not a failure; a correction (in the loop
    or during deck review) re-opens only the questions or deck sections it touched, which are
    re-answered and re-confirmed. Never re-ask the full set to prove cleanliness — a
@@ -451,7 +459,6 @@ Record the state in `/agent/brain/<workspace>/data-sources/meta/validation.md`:
 mvce_state: on            # on | off
 validated_on: <date>
 signed_off_by: <person>
-validation_path: <questions-first | deck-first>
 starter_questions_confirmed: <count>
 account_specific_questions_generated: <count>
 account_specific_questions_confirmed: <count>
@@ -513,7 +520,8 @@ confidence, worth a follow-up, not a silent pass.
   winner/cut criteria) so the deck produces that snapshot consistently. Until it is captured,
   treat that snapshot as `[FLAGGED]` and say the rule is still needed rather than guessing it.
   In the question loop, the testing-pipeline question reports what is running and its
-  last-7-day performance and makes no scale recommendations until the rule is captured.
+  performance over the customer's confirmed window and makes no scale recommendations until
+  the rule is captured.
 - Interpretation precedence is unchanged: when the deck and the Account Context Brain disagree on
   what "best" or "winner" means, the Account Context Brain wins.
 

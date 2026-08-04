@@ -265,6 +265,11 @@ a rung only when it cannot serve:
 
 - **Cacheth first, always.** In the healthy state — the overwhelming default — rungs 1–3
   answer everything and rung 4 never fires.
+- **One clear failure means fall through, never retry-loop.** When a cache command errors,
+  reports an empty/unbuilt cache, or is missing the record, that first unambiguous failure is
+  the signal to move down the ladder — do not re-run the same command against a cache that is
+  erroring or dead hoping it recovers mid-question. The cache gets its retry on the *next*
+  question, after a refresh has had a chance to land.
 - **Falling through repairs, not just rescues.** On a transient failure, kick
   `motion cache refresh` in the background so the cache serves next time. The live rung
   answers one question; it never becomes the habit.
@@ -282,4 +287,6 @@ a rung only when it cannot serve:
   the pull) and read the content from the cache, joined on `creativeId`.
 - **Say which rung served** (the show-the-work rule): a content claim reads differently when
   it came from a live pull instead of the cache, and the customer can only question
-  freshness they can see.
+  freshness they can see. When the live rung fired, state it plainly: name the cache rung
+  that failed and say the answer came from the live path — e.g. "the local cache errored on
+  this read, so this comes from a live Motion pull."

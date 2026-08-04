@@ -1,4 +1,4 @@
-<!-- BEGIN runneth:meta-validation-gate v5 -->
+<!-- BEGIN runneth:meta-validation-gate v6 -->
 Meta validation gate:
 
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
@@ -12,13 +12,14 @@ Meta validation gate:
   completed (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
   experience described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
-  the customer has confirmed Runneth's answers - through the question loop or, on the deck-first
-  path, through the deck review - the weekly deck is built, live, and approved by the customer, a
-  refresh routine keeps the deck updated on an agreed cadence, and Slack is connected so the team
-  can ask questions. Record that state in
+  the customer has confirmed Runneth's answers through the question loop, the weekly deck is
+  built, live, and approved by the customer, a refresh routine keeps the deck updated on an
+  agreed cadence, and Slack is connected so the team can ask questions. Record that state in
   /agent/brain/<workspace>/data-sources/meta/validation.md.
-- A person asking for a deck or report has chosen the deck-first path: build the deck. Validation
-  happens through the deck review - never answer a deck request with a questionnaire first.
+- The question loop always runs first. Never proactively offer or lead with the weekly deck
+  before the question set has been run and confirmed - the deck is a soft offer at the end. A
+  person who explicitly asks for a deck or report still gets one (Field 10 confirmed first),
+  but the question loop still runs to complete validation.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
 - A deck change request is a context correction too: route it to the field behind it
@@ -27,4 +28,4 @@ Meta validation gate:
   context - never hand-edit the deck output. Durable corrections in any later conversation get
   the same routing; one-off or current-state remarks shape the answer or the current render,
   never the file.
-<!-- END runneth:meta-validation-gate v5 -->
+<!-- END runneth:meta-validation-gate v6 -->

@@ -32,6 +32,12 @@ command's flags change.
     side, and VoC (reviews, support conversations, ad comments) says why from the customer
     side. Never explain performance from metrics alone, and never claim performance from
     cached content. See "Answering WHAT vs answering WHY."
+11. **The lookback window is the customer's call.** Never silently pick a `--date-range` for
+    a performance question. A window named in the question always wins; otherwise use the
+    confirmed default window from `account-context.md`'s "at a glance" section. If neither
+    exists, ask before pulling — last 14, 30, or 90 days are the common choices. Long
+    windows like `last_365d` are for the onboarding autofill's account characterization,
+    never a default for answering questions.
 
 ---
 

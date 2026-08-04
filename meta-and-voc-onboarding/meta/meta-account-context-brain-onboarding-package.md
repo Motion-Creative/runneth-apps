@@ -125,7 +125,10 @@ per-product targets with the team), not as flag noise. Use this order:
 3. **At a glance:** a few bullets a human can skim: last refreshed, confidence, fields confirmed
    (count / 9), and any open flags. Once learned, this is also where the one-line
    answer-register note lives (how this team likes their answers — e.g. "numbers first,
-   interpretation on request"), written by the validation loop's register corrections.
+   interpretation on request"), written by the validation loop's register corrections, and
+   the one-line date-window note (the analysis window the customer confirmed at the
+   validation kickoff — e.g. "default lookback: last 30 days"), which future data questions
+   default to unless the person names a different window.
 4. **The nine fields**, in order.
 5. **The deck spec (only once Field 10 is confirmed):** a short section carrying Field 10's
    saved output — marketing calendar, reporting cadence, exclusions, and deck sections — in the

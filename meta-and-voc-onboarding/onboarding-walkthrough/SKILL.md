@@ -30,26 +30,27 @@ fixed. This schema governs the one full fill-in presentation. Follow-up turns, c
 and refresh runs are ordinary conversation and do not re-run the three parts.
 
 **Part 1 — Opening frame.** Two beats in order: brand story (from `motion brand-context`,
-never inferred from ad names), then account findings (from the field pulls). 4–6 sentences of
+never inferred from ad names), then account findings (from the field pulls). 2–3 sentences of
 prose, no heading, never a list, never longer. Write it like a sharp analyst briefing a new
 teammate on the account — never like a system log or a status report. The "no list, no
 heading" rule applies to Part 1 only.
 
 **Part 2 — Field sections.** One section per field, in field order. Sanctioned consolidations
 (Fields 1–3 under a confirmed attribution tool) count as one section. Each section is: a bold
-plain-language heading (never "Field N," never a status badge), the pulled findings grounded
-in this account's real data, then at most one question as the section's last line — bold, so
-it can't be missed. A field the pull fully settles gets no question: say what you know and
-move on. Two questions are allowed only when one section genuinely covers two distinct
-confirmations (Field 4's two decoder confirmations; Field 10's two beats, when they run in
-this conversation); more than two means the section is too broad — split it or cut a question. Lead with what you know: the ratio
+plain-language heading (never "Field N," never a status badge), then 2–4 bullets — lead with
+the read, support with this account's real names and numbers, no prose paragraphs — then at
+most one question as the section's last line — bold, so it can't be missed. A field the pull
+fully settles gets no question: say what you know in the bullets and move on. Two questions
+are allowed only when one section genuinely covers two distinct confirmations (Field 4's two
+decoder confirmations; Field 10's two beats, when they run in this conversation); more than
+two means the section is too broad — split it or cut a question. Lead with what you know: the ratio
 should feel like mostly settled reads with a few specific things still open.
 
-Within a section, use the format the data deserves: prose for a settled one-sentence read, a
-table or bullet list when the field contains structured data the customer needs to scan and
-confirm. Never force prose onto a table. The naming-conventions section always includes the
-full breakdown per Field 4's presentation rule in the ACB package — it is never compressed to
-a settled one-liner, even when the decoder is confirmed.
+Two exceptions to the bullets. A table replaces them when the field contains structured data
+the customer needs to scan and confirm — never force bullets onto a table. And the
+naming-conventions section always includes the full breakdown per Field 4's presentation
+rule in the ACB package — it is never compressed to a settled one-liner, even when the
+decoder is confirmed.
 
 **Part 3 — Closing TLDR.** Under the bold heading **Questions for you:**, a numbered list of
 every open question from Part 2, one line each, in the order they appeared. Close with this
@@ -61,16 +62,19 @@ from this block without scrolling back.
 **Skeleton (structure is literal; every `<...>` is account-specific):**
 
 ```
-<Brand story: 2–3 sentences — what they sell, who they sell to, what makes them distinct.>
-<Account findings: 1–3 sentences — spend scale, creative volume, naming system quality,
-attribution status. Include total spend and creative count.>
+<Opening frame: 2–3 sentences of prose — brand story (what they sell, who they sell to, what
+makes them distinct), then account findings (spend scale, creative volume, naming system
+quality, attribution status). Include total spend and creative count.>
 
 **<Plain-language topic heading>**
-<What the pull found here, with this account's real names and numbers.>
+- <The read this section leads with.>
+- <Supporting finding, with this account's real names and numbers.>
+- <Another finding, if the field has one.>
 **<The one question this leaves open?>**
 
 **<Next topic heading>**
-<Findings. This field is settled by the pull — one line on how it will be read, no question.>
+- <Findings, 2–4 bullets. This field is settled by the pull — the bullets say how it will be
+  read, no question.>
 
 <...one section per remaining field, in field order...>
 
@@ -82,9 +86,10 @@ Just answer what you know — I'll write the context file from your responses.
 
 **Before sending, verify:**
 - Three parts, in order, nothing before the opening frame or after the closing line.
-- Part 1 is 4–6 sentences of prose — not a list, no heading (Part 1 only; Part 2 sections
-  use tables and bullets where the data calls for them).
+- Part 1 is 2–3 sentences of prose — not a list, no heading (Part 1 only).
 - Part 2 sections are in field order; consolidated sections count as one.
+- Every Part 2 section is 2–4 bullets under its bold heading — no prose paragraphs — except
+  where a table carries structured data the customer needs to scan and confirm.
 - The naming-conventions section carries the full breakdown (Field 4's presentation rule),
   never a prose summary of the decoder.
 - No field numbers, status badges, or worksheet labels anywhere.

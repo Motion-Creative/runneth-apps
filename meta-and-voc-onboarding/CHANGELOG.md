@@ -4,6 +4,37 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 2 - 2026-08-04
+
+Concise onboarding presentation, customer-owned date ranges, questions before the
+deck, and the fallback ladder made self-contained:
+
+- **Scannable walkthrough presentation.** The fill-in's opening frame is now 2-3
+  sentences (was 4-6), and every field section presents as 2-4 bullets - lead with
+  the read, support with the account's real names and numbers, no prose
+  paragraphs. Tables stay where the data is structured, and the naming-conventions
+  section still carries the full Field 4 decoder breakdown. Skeleton and pre-send
+  checklist updated to enforce the new shape. The closing "Questions for you" TLDR
+  is unchanged.
+- **The date range is the customer's call.** Validation kickoff asks what window
+  to analyze (last 14, 30, or 90 days as the common choices) before any pull, and
+  persists the confirmed window as a one-line "at a glance" note in
+  `account-context.md` so future data questions default to it. Every hard-coded
+  7-day window in the validation doc now reads the confirmed window; the
+  conditional lifetime pull remains the one exception, driven by Field 9's
+  winner/cut rule (validation doc v1.15).
+- **Questions always run before the deck offer.** The two validation doors are
+  gone: the question loop is the default and always runs first, and the deck build
+  is a soft offer after the set is confirmed - never led with. An explicit deck
+  request still gets one, and no deck is built without a confirmed Field 10
+  (`meta-validation-gate` v6).
+- **Creative-content fallback ladder hardened in the Cacheth Command Reference.**
+  Two rules added: one clear cache failure means fall through to the live rung,
+  never retry-loop a dead cache; and a live fall-through names the rung that
+  failed. The agent-builder PRD that proposed moving this enforcement into the
+  Motion CLI was removed from the repo - it was a handoff artifact, not package
+  content.
+
 ## 1 - 2026-07-29
 
 The package as it ships:
