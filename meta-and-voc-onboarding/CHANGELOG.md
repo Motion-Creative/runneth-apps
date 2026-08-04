@@ -28,7 +28,7 @@ The package as it ships:
   `_changelog.md`. A second workspace in the same org onboards additively without
   touching the first.
 - **Workspace-agnostic guards** (`account-context-guard` v3, `meta-validation-gate`
-  v4, `knoweth-organize` v3, `knoweth-brain` v3): merged into `/agent/user.md`
+  v5, `knoweth-organize` v3, `knoweth-brain` v3): merged into `/agent/user.md`
   verbatim, once per VM, with no install-time token substitution. Each guard
   resolves the workspace folder per conversation. Post-install records each
   onboarded workspace in a `runneth:meta-voc-onboarded` roster block in
@@ -47,7 +47,14 @@ The package as it ships:
   layer across reviews, support conversations, ad comments, community posts,
   surveys, and other synced customer voice. It requires 200 total entries, produces
   five creative-strategy buckets, and adds evidence-backed personas for products
-  with 200 or more entries. It saves one canonical compiled page at
+  with 200 or more entries. Buckets 1-4 are numbered lists of distinct standalone
+  findings, never flowing paragraphs; quotes, where they appear, are verbatim and
+  attributed inline (name, star rating, source file) without mandating one per
+  point, and an empty bucket gets an explicit no-signal line instead of a
+  manufactured entry - in the chat output and the saved brain page alike. Offers
+  preview the method (split by product, score 1-5, the five buckets, personas)
+  and invite additions and reference docs such as existing personas, which the
+  run honors. It saves one canonical compiled page at
   `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`, with
   Knoweth metadata and raw-item citations, indexed in `/agent/INDEX.md`. The
   workspace's first fully covered VoC backfill offers the audit once and records
@@ -85,17 +92,21 @@ The package as it ships:
   onboarding?".
 - The walkthrough presentation (opening frame, field sections, closing TLDR)
   lives in the `onboarding-walkthrough` skill and fires only on a human's yes to
-  that invitation or an explicit ask to begin/resume onboarding. After the
-  account-context questions are handled, the walkthrough is proactive about
-  customer voice: it presents a Voice of Customer summary without being asked -
-  one line per integration with platform, kind of voice, items synced, products
-  spanned, and date coverage ("Judge.me: 1,240 reviews across 6 products") -
-  then explains what the audit entails (the five buckets, per-product personas
-  at 200+ entries, the compiled page, and its gate) and hands the person the
-  manual trigger. Data ready means the direct question (logging the
-  `voc-audit-offer` entry if absent); an existing audit gets a rerun offer with
-  what has synced since; an incomplete backfill still gets the summary and
-  explanation with the run deferred.
+  that invitation or an explicit ask to begin/resume onboarding. Customer voice
+  is the walkthrough's closing beat and never cuts the Meta onboarding short: it
+  runs only after the account-context questions are handled and Field 10 has
+  been offered. The walkthrough is proactive about it - a Voice of Customer
+  summary without being asked, one line per integration with platform, kind of
+  voice, items synced, products spanned, and date coverage ("Judge.me: 1,240
+  reviews across 6 products") - then offers the audit by previewing its plan in
+  Runneth's own words (split by product, score 1-5, the five buckets named
+  plainly, personas, the compiled page and its gate) and closing with an
+  invitation to add anything or supply reference docs. Data ready means the
+  offer (logging the `voc-audit-offer` entry if absent); an existing audit gets
+  a rerun offer with what has synced since; an incomplete backfill still gets
+  the summary and preview with the run deferred. A yes mid-onboarding queues
+  the audit until the Meta thread completes - a detour, never an exit. The
+  sync routine's first-backfill offer previews the same plan.
 - The Account Context Brain's field-to-command map names the real extraction
   keys, verified against agent-builder's response schemas (fixes from the first
   real customer-VM install report): ads-grain rows carry no
@@ -130,8 +141,19 @@ The package as it ships:
   when ads are named - Winner/Watch/Cut labels only on the winner/cut
   question. The testing-pipeline question makes no scale recommendations until
   the testing-to-scaling rule is captured.
-- Validation is a training loop (validation doc v1.13, ACB v1.32, validation
-  gate guard v4): the question loop and the deck build train one brain. All
+- Validation opens on two doors that never both run in full (doc v1.14, gate
+  guard v5): questions-first is the default - the loop runs and the deck then
+  builds from the confirmed answers, with deck review covering look and feel
+  and spec approval rather than repeating the questions. Deck-first means a
+  person asking for a deck or report gets the deck built right away - never a
+  questionnaire first - and the validation proof runs through the deck review,
+  where every correction routes through the same durability test and field
+  homes; the generated question set stays available afterward, offered but
+  never forced. The chosen door is recorded as `validation_path` in
+  `validation.md`, and the guard enforces the deck-request routing in the
+  always-loaded layer.
+- Validation is a training loop (validation doc v1.14, ACB v1.32, validation
+  gate guard v5): the question loop and the deck build train one brain. All
   feedback routes through a durability test — judgment rules heal ACB fields,
   standing preferences land in the register note or Field 10, current-state
   facts shape the answer only, one-offs are applied and forgotten. Deck change
@@ -140,10 +162,12 @@ The package as it ships:
   from context and is never hand-edited directly (one-offs touch the current
   render only and revert on refresh — said out loud; standing look-and-feel
   lives in validation.md's deck record, where the refresh routine reads it).
-  MVCE requires every question clean (latest answer confirmed without
-  correction — corrections re-open only the questions they touch, never a full
-  re-run) and spec-level deck approval; validation.md tracks questions clean,
-  total corrections, and deck rebuilds. The loop continues past MVCE: durable
+  MVCE requires clean confirmations for the chosen path - questions-first,
+  every question clean (latest answer confirmed without correction —
+  corrections re-open only the questions they touch, never a full re-run);
+  deck-first, every deck-review correction resolved and the re-render
+  confirmed - and spec-level deck approval; validation.md tracks questions
+  clean, total corrections, and deck rebuilds. The loop continues past MVCE: durable
   corrections in any later conversation get the same routing, no scheduled
   check-ins.
 - Meta reachability is connection-status-driven: a connected Meta workspace gets

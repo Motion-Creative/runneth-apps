@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.13 — account-specific question generation, batch pre-answer, answer format contract (July 2026)
+### Version 1.14 — no-overlap validation doors: questions-first default, deck-first proves through deck review (August 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly deck. This is the "catch" in Connect → Train → Validate.**
@@ -77,7 +77,7 @@ package's post-install run does this in its single scripted guard merge). The bl
 shown for context and must stay identical to the staged file.
 
 ```
-<!-- BEGIN runneth:meta-validation-gate v4 -->
+<!-- BEGIN runneth:meta-validation-gate v5 -->
 Meta validation gate:
 
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
@@ -91,10 +91,13 @@ Meta validation gate:
   completed (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
   experience described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
-  the customer has confirmed Runneth's answers to their starter questions, the weekly deck is
-  built, live, and approved by the customer, a refresh routine keeps the deck updated on an agreed
-  cadence, and Slack is connected so the team can ask questions. Record that state in
+  the customer has confirmed Runneth's answers - through the question loop or, on the deck-first
+  path, through the deck review - the weekly deck is built, live, and approved by the customer, a
+  refresh routine keeps the deck updated on an agreed cadence, and Slack is connected so the team
+  can ask questions. Record that state in
   /agent/brain/<workspace>/data-sources/meta/validation.md.
+- A person asking for a deck or report has chosen the deck-first path: build the deck. Validation
+  happens through the deck review - never answer a deck request with a questionnaire first.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
 - A deck change request is a context correction too: route it to the field behind it
@@ -103,7 +106,7 @@ Meta validation gate:
   context - never hand-edit the deck output. Durable corrections in any later conversation get
   the same routing; one-off or current-state remarks shape the answer or the current render,
   never the file.
-<!-- END runneth:meta-validation-gate v4 -->
+<!-- END runneth:meta-validation-gate v5 -->
 ```
 
 ## 2. Prerequisites (hard gate)
@@ -178,6 +181,11 @@ Once the gate fires, Runneth opens in plain language. The intent, in Runneth's o
 
 Then offer the two doors, back to back:
 
+- **Questions-first (the default when the customer has no preference):** "Here's the list of
+  questions I can already answer for you today. We can start there and confirm I'm reading
+  the account the way you do." The loop (Step 2) runs, and the deck then builds directly
+  from the confirmed answers — deck review covers look and feel and spec approval, not a
+  repeat of the questions.
 - **Deck-first:** read Field 10 (the deck spec in `account-context.md`) before offering this
   door. If Field 10 is confirmed, lead with what's already known: "Based on your account
   context, I have a deck spec ready — [the confirmed sections, cadence, and exclusions from
@@ -185,14 +193,22 @@ Then offer the two doors, back to back:
   and feel, share it and I'll use that as the visual reference." If Field 10 is not yet
   confirmed, say so and run its two beats first (they synthesize from already-confirmed fields
   — two questions, no new pull), then build.
-- **Questions-first:** "Or, here's the list of questions I can already answer for you today. We
-  can start there and confirm I'm reading the account the way you do."
 
-Let the customer choose. If they pick deck-first, still run the answer-and-confirm loop (Step 2)
-on the questions the deck implies, so the context gets validated either way. The deck is the
-artifact; the loop is the proof.
+Let the customer choose, and record the choice as `validation_path` in `validation.md`. **The
+two doors never both run in full — someone who asks for a deck gets a deck, not a
+questionnaire first.** On the deck-first path, do not run the upfront question loop: the deck
+itself is the proof, and the answer-and-confirm mechanics run through the deck review —
+every correction raised there routes through Step 2's durability test and field homes
+exactly the same way. The generated question set stays available afterward for anything the
+deck did not touch; offer it once the deck is approved, never force it. A person who arrives
+already asking for a deck or report has picked the deck-first door — skip the two-door offer
+and build.
 
 ## Step 2 — The answer-and-confirm loop (the catch)
+
+This step runs in full on the questions-first path. On the deck-first path, its mechanics —
+the durability test, the field homes, the correction routing — apply to the deck review
+instead (Step 4); the upfront loop itself is skipped.
 
 ### Question generation — before the loop starts
 
@@ -364,7 +380,11 @@ Gather only what Field 10 does not already answer:
   structure. Structure comes from Field 10.
 - **Look and feel.** MotionUI by default, playable videos, equal-size creative cards.
 
-Do not re-gather sections, snapshots, or date controls — Field 10 already answered them.
+Do not re-gather sections, snapshots, or date controls — Field 10 already answered them. On
+the questions-first path the deck builds from the already-confirmed answers, and the review
+is about the artifact. On the deck-first path the review is also where the validation proof
+happens: corrections raised there are the answer-and-confirm loop, routed through the same
+durability test.
 
 Build it on the report component library so the layout is proven, not hand-rolled. The deck
 reads Field 10 for its structure and sections, the creative content layer (Cacheth, via
@@ -413,9 +433,11 @@ Validation is complete, and the Minimum Viable Context Engine is on, when all fi
 
 1. Must-have Meta context sources are connected and set to refresh (the Account Context Brain on
    its cadence; the creative cache syncs itself).
-2. Every question in the final set is **clean** — its latest answer was confirmed without
-   correction. Corrections along the way are the loop working, not a failure; a correction
-   (in the loop or during deck review) re-opens only the questions it touched, which are
+2. The customer's confirmations are **clean** for the chosen path. Questions-first: every
+   question in the final set is clean — its latest answer was confirmed without correction.
+   Deck-first: every correction raised in deck review is resolved and the re-render confirmed.
+   Corrections along the way are the loop working, not a failure; a correction (in the loop
+   or during deck review) re-opens only the questions or deck sections it touched, which are
    re-answered and re-confirmed. Never re-ask the full set to prove cleanliness — a
    question stays clean until a correction touches it.
 3. The weekly deck is built, live, and approved at the spec level — as regenerated from
@@ -429,6 +451,7 @@ Record the state in `/agent/brain/<workspace>/data-sources/meta/validation.md`:
 mvce_state: on            # on | off
 validated_on: <date>
 signed_off_by: <person>
+validation_path: <questions-first | deck-first>
 starter_questions_confirmed: <count>
 account_specific_questions_generated: <count>
 account_specific_questions_confirmed: <count>

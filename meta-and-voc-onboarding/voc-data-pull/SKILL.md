@@ -377,7 +377,7 @@ folder state:
 
    ```
    routine add --name "voc-sync-<workspace>-<platform>" \
-     --delivery "Daily incremental success: no notification - the deliverable is the files under /agent/brain/<workspace>/data-sources/voc/<platform>/. On the first fully covered backfill across any voc-sync-<workspace>-* routine, if /agent/brain/<workspace>/_changelog.md does not already contain a voc-audit-offer entry, send one brief note to web conversation <conversation-id>: name the source that finished, say the customer voice is ready, and ask 'Would you like me to run a Voice of Customer Audit?' Then append a dated voc-audit-offer entry to /agent/brain/<workspace>/_changelog.md. Never run the audit without a person's yes. If the run fails, the pinned account is disconnected, or coverage is incomplete, send a brief note to the same conversation with conversation send --to <conversation-id>." \
+     --delivery "Daily incremental success: no notification - the deliverable is the files under /agent/brain/<workspace>/data-sources/voc/<platform>/. On the first fully covered backfill across any voc-sync-<workspace>-* routine, if /agent/brain/<workspace>/_changelog.md does not already contain a voc-audit-offer entry, send one brief note to web conversation <conversation-id>: name the source that finished, say the customer voice is ready, and offer a Voice of Customer Audit by previewing the plan in your own words - it will separate every entry by product, score each 1-5 for usefulness, and break the strong ones into five buckets (pain points, trigger moments, objections, transformations, standout language) plus personas per qualifying product - then ask whether they'd like anything added or have existing docs (like personas) to use as reference. Then append a dated voc-audit-offer entry to /agent/brain/<workspace>/_changelog.md. Never run the audit without a person's yes. If the run fails, the pinned account is disconnected, or coverage is incomplete, send a brief note to the same conversation with conversation send --to <conversation-id>." \
      --prompt "Run the voc-data-pull skill for <platform> as a recurring sync run for Motion workspace <workspace> (workspace id <workspaceId>). Pull only from the pinned account <accountName> (account id <accountId>): pass --account <accountId> on every integrations proxy call and never use another account of this platform, even if others are connected. Write every file under /agent/brain/<workspace>/data-sources/voc/<platform>/ and nowhere else; pass --workspace-id <workspaceId> on Motion commands that take it. Follow the skill's Recurring sync rules exactly - they define the pull window, disconnect handling, and coverage reporting." \
      --cron "0 6 * * *"
    ```
@@ -440,7 +440,9 @@ skill flow:
 - **Delivery**: daily incremental success is silent - the files are the deliverable and the
   run summary is recorded in run history. The first of this workspace's
   `voc-sync-<workspace>-*` runs to complete full backfill coverage sends one offer to the
-  delivery conversation: "Would you like me to run a Voice of Customer Audit?" Before
+  delivery conversation — not a bare yes/no question but a short preview of what the audit
+  will do (split by product, score 1–5, the five buckets, personas), closing with an
+  invitation to add anything or supply reference docs such as existing personas. Before
   sending, check `/agent/brain/<workspace>/_changelog.md` for a `voc-audit-offer` entry; if
   found, stay silent. After sending, append a dated `voc-audit-offer` entry naming the
   source whose backfill completed. This is an offer only: never run the audit until a

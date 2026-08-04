@@ -225,11 +225,13 @@ Folder: `onboarding-walkthrough/`
   conversation that opens with the brand story and account findings, walks the field
   sections (tables where the data calls for them, the full naming breakdown always), and
   closes with the questions TLDR. Owns the required output schema; the ACB package owns the
-  fields it presents. After the account-context questions, it proactively presents the
-  Voice of Customer summary - one line per integration with item counts, product coverage,
-  and dates ("Judge.me: 1,240 reviews across 6 products") - then explains what the Voice of
-  Customer Audit entails and hands the person the manual trigger; the audit runs only on
-  their yes.
+  fields it presents. Once the Meta beats are done (account-context questions handled,
+  Field 10 offered), it closes by proactively presenting the Voice of Customer summary -
+  one line per integration with item counts, product coverage, and dates ("Judge.me: 1,240
+  reviews across 6 products") - then offers the Voice of Customer Audit by previewing its
+  plan (split by product, score 1-5, the five buckets, personas) and asking whether to add
+  anything or use existing docs as reference; the audit runs only on their yes, and never
+  cuts the Meta onboarding short.
 - **Runs on demand - does not fire at install.** Post-install ends by asking "Are you ready
   to begin your onboarding?"; a yes (from anyone, in any conversation, whenever it comes)
   invokes this skill. Typically a CSM triggers it live on the onboarding call. An
@@ -240,13 +242,16 @@ Folder: `onboarding-walkthrough/`
 ### Meta Validation
 File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta-and-voc-onboarding/meta-validation-onboarding-package.md`)
 
-- **Job:** prove Runneth understood the account. The answer-and-confirm loop on a question
-  set generated from the confirmed account context — the baseline questions (including the
-  name-level probe: "show me all our [product] ads," with the filtered name level shown)
-  plus account-specific questions derived from the naming decoder and funnel map, all
-  pre-answered in batch and presented together — the weekly deck build pre-filled from the
-  Field 10 deck spec (no deck without it; questions-only customers never need it), lock-in
-  (deck approval, refresh routine, Slack), and the MVCE gate.
+- **Job:** prove Runneth understood the account. Two doors, never both in full: the
+  answer-and-confirm loop on a question set generated from the confirmed account context —
+  the baseline questions (including the name-level probe: "show me all our [product] ads,"
+  with the filtered name level shown) plus account-specific questions derived from the
+  naming decoder and funnel map, all pre-answered in batch and presented together — or
+  deck-first, where a person asking for a deck gets the deck built right away and the
+  validation proof runs through the deck review, never a questionnaire first. Then the
+  weekly deck pre-filled from the Field 10 deck spec (no deck without it; questions-only
+  customers never need it), lock-in (deck approval, refresh routine, Slack), and the MVCE
+  gate.
 - **Runs third, gated.** Starts only when all nine Account Context Brain fields are confirmed
   and the creative content layer resolves (creatives in Cacheth — or live content pulls where
   the sandbox cache feature is disabled; cache coverage, not files). Every correction in
@@ -333,13 +338,17 @@ Folder: `voc-audit/`
 
 - **Job:** analyze synced reviews, support conversations, ad comments, community posts, and
   other customer voice into five creative-strategy buckets: pain points, trigger moments,
-  addressable objections, transformations, and standout customer language. Products with at
-  least 200 entries also receive evidence-backed personas.
+  addressable objections, transformations, and standout customer language. Buckets 1-4 are
+  numbered lists of distinct standalone findings — quotes, where they appear, verbatim and
+  attributed inline (name, rating, source file), with an explicit no-signal line for empty
+  buckets — and the same structure lands in the saved brain page, not just the chat view.
+  Products with at least 200 entries also receive evidence-backed personas.
 - **Runs manually.** The first completed VoC backfill offers it once, and the onboarding
   walkthrough presents the per-integration Voice of Customer summary with the same offer;
-  a yes or an explicit request such as "run a VoC audit" invokes the skill. Connecting a
-  source, syncing files, or completing onboarding never runs it automatically. The audit
-  requires at least 200 total entries.
+  both offers preview the method and invite additions and reference docs (existing
+  personas especially), which the run honors. A yes or an explicit request such as "run a
+  VoC audit" invokes the skill. Connecting a source, syncing files, or completing
+  onboarding never runs it automatically. The audit requires at least 200 total entries.
 - **Reads raw evidence from:** `/agent/brain/<workspace>/data-sources/voc/<platform>/`.
 - **Persists compiled insight to:**
   `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. The skill rewrites this one

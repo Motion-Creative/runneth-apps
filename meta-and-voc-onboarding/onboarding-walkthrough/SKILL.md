@@ -97,9 +97,15 @@ Just answer what you know — I'll write the context file from your responses.
 
 - Handle answers and corrections per the ACB package's field rules, and persist them to
   `/agent/brain/<workspace>/data-sources/meta/account-context.md` as they confirm.
-- **Present the Voice of Customer summary — proactively, not on request.** This beat stays
-  separate from the fixed three-part presentation; it runs once the account-context
-  questions are handled. Inspect this workspace's platform folders under
+- Once Fields 4, 7, and 9 are confirmed, offer Field 10's two beats (marketing calendar, then
+  reporting structure) while the context is fresh — per the ACB package's Field 10 section.
+  If the person is done for now, stop; the beats run at deck time instead (the Meta Validation
+  package handles that). No deck is built until Field 10 is confirmed.
+- **Then, with the Meta beats done, present the Voice of Customer summary — proactively, not
+  on request.** This is the walkthrough's closing beat, separate from the fixed three-part
+  presentation, and it never cuts the Meta onboarding short: it runs only after the
+  account-context questions are handled and the Field 10 offer has been made (or declined).
+  Inspect this workspace's platform folders under
   `/agent/brain/<workspace>/data-sources/voc/` and its `voc-sync-<workspace>-*` routines,
   then tell the person what customer voice the brain actually holds: one line per
   integration — the platform, what kind of voice it carries, how many items are synced, how
@@ -107,29 +113,33 @@ Just answer what you know — I'll write the context file from your responses.
   across 6 products, May 2025 – July 2026." If a backfill is still running, present the
   counts so far and say the sync is still filling in. If no VoC integration is connected
   for this workspace, say that in one line and move on — no audit offer.
-- **Then offer the Voice of Customer Audit, explaining what it entails.** In two or three
-  sentences: the audit mines the synced customer voice into five creative-strategy buckets
-  — pain points, trigger moments, objections before purchasing, transformations, and
-  standout customer language — builds evidence-backed personas for each product with 200 or
-  more entries, and saves one compiled page the brain reads afterward for customer-side WHY
-  questions and validation. Name its gate: it needs at least 200 total entries and a
-  completed backfill. Then put the trigger in the person's hands:
+- **Then offer the Voice of Customer Audit by previewing the plan, in Runneth's own words —
+  never a script.** The offer walks through what the audit will actually do with this
+  workspace's data: now that the reviews and comments are in, Runneth would like to run an
+  audit — it will separate every entry by product, score each 1–5 for usefulness, and break
+  the strong ones into five buckets, named plainly (pain points — what was wrong before
+  they bought; trigger moments — what actually made them pull the trigger; objections —
+  what nearly stopped them; transformations — what changed after; standout language — the
+  best verbatim lines kept in one swipe file), plus evidence-backed personas for each
+  product with 200 or more entries, saved as one compiled page the brain reads for
+  customer-side WHY questions and validation. Close the preview by handing the plan to the
+  person: would they like anything added, and do they have existing docs to use as
+  reference (existing personas especially)? Then the trigger is theirs:
   - **Data ready, no audit yet:** check whether
     `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` exists; if not,
-    ask "Would you like me to run the Voice of Customer Audit?" If
-    `/agent/brain/<workspace>/_changelog.md` has no `voc-audit-offer` entry, append a dated
-    one. A yes invokes the `voc-audit` skill.
+    make the offer above. If `/agent/brain/<workspace>/_changelog.md` has no
+    `voc-audit-offer` entry, append a dated one. A yes invokes the `voc-audit` skill,
+    carrying any additions and reference docs the person named.
   - **An audit already exists:** say when it last ran and roughly how much new customer
     voice has synced since, and offer a rerun instead.
   - **Backfill incomplete or under 200 entries:** still present the summary and the
-    explanation, then say the audit will be ready when coverage completes — never start it
+    preview, then say the audit will be ready when coverage completes — never start it
     against a partial backfill.
 
   The audit runs only on a person's yes here or an explicit later request — never because
-  the walkthrough completed.
-- Once Fields 4, 7, and 9 are confirmed, offer Field 10's two beats (marketing calendar, then
-  reporting structure) while the context is fresh — per the ACB package's Field 10 section.
-  If the person is done for now, stop; the beats run at deck time instead (the Meta Validation
-  package handles that). No deck is built until Field 10 is confirmed.
+  the walkthrough completed. The audit is a detour, never an exit: if any Meta onboarding
+  business is still open in this conversation when the yes lands, say the audit is queued,
+  finish the Meta thread, then run it — the validation gate still fires on its own once the
+  fields confirm, whether or not the audit ran.
 - An interrupted walkthrough resumes on the next invocation: pre-flight reads the file and
   presents only what is still open.

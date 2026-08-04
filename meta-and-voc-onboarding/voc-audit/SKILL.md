@@ -22,6 +22,12 @@ This skill is always manual:
 - If an affirmative answer arrives before the initial backfill is complete, say the audit
   will be ready when coverage completes. Do not poll or run against a partial backfill.
 - A rerun is also manual. New daily VoC files do not silently regenerate the audit.
+- The package's offers preview this skill's method (split by product, score 1–5, the five
+  buckets, personas) and invite additions and reference docs. Honor both: a requested
+  addition becomes part of this run's output, and supplied reference docs (existing
+  personas, positioning docs, brand guidelines) are read before analyzing — map evidence
+  onto existing persona names where they genuinely fit, note where the evidence diverges,
+  and never force findings into a reference frame the data does not support.
 
 ## What counts as VoC
 
@@ -119,9 +125,17 @@ that plainly and record the sample size; never present a sample as an exhaustive
 
 ## Step 5 — Extract the five insight buckets
 
-Run all five buckets separately for each product or service. In Buckets 1–4, group similar
-insights, name the theme, and summarize the cross-entry pattern in two or three sentences.
-Do not print quotes inside Buckets 1–4; route every selected quote to Bucket 5.
+Run all five buckets separately for each product or service. In Buckets 1–4, present each
+bucket as a **numbered list of distinct findings** — Product → bucket → 1, 2, 3 — never one
+flowing paragraph. Each numbered point is a standalone finding stated in one or two clear
+sentences, not a blended narrative; a reader must be able to scan the list and take any
+point on its own. When a finding is supported by a quote, the quote is unambiguously
+verbatim and attributed inline — exact customer wording with the reviewer's name, star
+rating where the source has one, and the raw source file — never paraphrased or folded into
+prose where it is unclear who said what. A quote is not required on every point; the list
+must be scannable and the quotes that do appear must be clean and attributable. A bucket
+with no real finding gets one explicit line saying so ("No strong signal in this bucket for
+this product") — never a manufactured entry to fill the template.
 
 ### Bucket 1 — Pain points
 
@@ -199,7 +213,10 @@ Write or replace this single canonical file:
 `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`
 
 This file is compiled understanding, not raw evidence. Never edit the source item files.
-Use the Knoweth compiled-page contract:
+The saved page uses the same structure as the chat output — numbered standalone findings
+per bucket with verbatim attributed quotes inline and explicit no-signal lines — not a
+paragraph-summary rewrite; the readable structure applies everywhere the audit lands, not
+just the conversation view. Use the Knoweth compiled-page contract:
 
 ```yaml
 ---
@@ -248,20 +265,23 @@ Entries received: [X] | Analyzed: [X] | Discarded (score 1): [X]
 PRODUCT / SERVICE: [Name]
 
 PAIN POINTS
-[Theme]
-[Two- or three-sentence evidence-backed summary]
+1. [Standalone finding, one or two sentences]
+   "[Exact quote]" — [Name], [X]★ · [source file]
+2. [Standalone finding — a quote is optional, not required per point]
+3. [Standalone finding]
 
 TRIGGER MOMENTS
-[Theme]
-[Summary]
+1. [Standalone finding]
+   "[Exact quote]" — [Name], [X]★ · [source file]
+2. [Standalone finding]
 
 OBJECTIONS BEFORE PURCHASING
-[Theme]
-[Summary]
+1. [Standalone finding]
+2. [Standalone finding]
 
 TRANSFORMATIONS
-[Theme]
-[Summary]
+No strong signal in this bucket for this product.
+[Use this explicit line when a bucket has no real finding — never a manufactured entry]
 
 STANDOUT LANGUAGE AND AD-READY PHRASES
 "[Exact quote]" — [attribution] · [why it stands out] · [source]
@@ -279,8 +299,9 @@ OPERATIONAL FLAGS
 [Only when loud non-creative friction exists]
 ```
 
-Keep all verbatim language in the standout-language section rather than scattering quotes
-through the theme summaries.
+Quotes may support individual findings inline, always verbatim and attributed; the
+standout-language swipe file still collects the strongest lines in one place regardless of
+where they also appear.
 
 ## How downstream work uses the audit
 
@@ -302,6 +323,8 @@ for live performance metrics or the creative content layer.
 - Clearly separate repeated evidence from inference.
 - Treat source bias explicitly.
 - Never present sampled analysis as exhaustive.
-- Never invent a persona or theme to fill a template.
+- Never invent a persona, finding, or theme to fill a template — an empty bucket says so
+  explicitly instead.
+- Every numbered point stands alone; no blended multi-finding narratives.
 - Every quoted phrase remains verbatim and attributable.
 - Every durable claim in the saved audit traces to raw VoC evidence.
