@@ -84,11 +84,12 @@ Step 0 - the workspace readout defined above - has already happened before step 
 starts: the workspace name, workspaceId, and slug every step below uses came from the
 `Default workspace:` line of this conversation's `Motion context:` section, nowhere else.
 
-1. **Check what the org can reach.** Run bare `integrations status` (no `--app`) and
-   read the whole report: it lists the OAuth connections **and the runtime secret
-   store's key names with each key's allowed hosts** - the full inventory of what this
-   VM can talk to (values stay sealed; only `secure-fetch` can use them). Then
-   `integrations status --app <slug>` for per-platform OAuth detail, and whether a Meta
+1. **Check what the org can reach.** Read the full inventory of what this VM can talk
+   to, both halves: the OAuth connections (`integrations status --app <slug>` per
+   platform; `integrations list` for the catalog) **and the runtime secret store's key
+   names with each key's allowed hosts** - the runtime exposes that metadata even
+   though the values stay sealed (only `secure-fetch` can use them). Surface the secret
+   inventory however this VM provides it and read it in full. Also check whether a Meta
    workspace is connected. Recognize VoC platforms in that inventory by reading it with
    judgment, not by matching key names to a scheme: a stored key named `OKENDO_TEN`, or
    any key whose allowed host is `api.okendo.io`, is an Okendo credential no matter

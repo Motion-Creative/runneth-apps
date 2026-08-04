@@ -80,10 +80,11 @@ Two connection paths exist and the pull mechanics differ:
 
 The path is how this customer set the platform up, not a property of the platform: any
 VoC platform may arrive as an OAuth connection **or** a stored secret, so the
-availability check reads the whole inventory, both paths. Bare `integrations status`
-(no `--app`) reports everything: the OAuth connections **and the runtime secret store's
-key names with each key's allowed hosts** (values stay sealed; only `secure-fetch` can
-use them). Recognize VoC platforms from that inventory by reading it, not by matching a
+availability check reads the whole inventory, both paths: the OAuth connections
+(`integrations status --app <slug>`) **and the runtime secret store's key names with
+each key's allowed hosts** - metadata the runtime exposes even though the values stay
+sealed (only `secure-fetch` can use them); surface it however this VM provides it and
+read it in full. Recognize VoC platforms from that inventory by reading it, not by matching a
 naming scheme: a key named `OKENDO_TEN` is still Okendo, and a key whose allowed host
 is `api.okendo.io` is Okendo no matter what it is called. The name and the host each
 independently identify the platform - judge from both, against the whole table above

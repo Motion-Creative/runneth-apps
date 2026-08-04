@@ -133,7 +133,7 @@ Use relative paths through the proxy (the connected account carries the API host
 
 These are real VoC platforms the reachability check must recognize like any other -
 never skip one because it has no section here. Discovery is the secret-store inventory
-(key names and allowed hosts from bare `integrations status`), read with judgment; the
+(the runtime-exposed key names and allowed hosts), read with judgment; the
 canonical key name shown is what the secret-collection flow uses when storing a new key
 for the platform. On a hit, pull it through the skill's no-recipe path (resolve
 endpoints from the platform's own API docs, map onto the unified record, mark doc-grounded
