@@ -26,8 +26,8 @@ unchanged.
 
 - `package-index.json` and its schema-v1 validator;
 - canonical package payloads as they are merged;
-- `aligned-onboarding`, `corpus-search`, and `building-integrations` as a
-  temporary compatibility set;
+- `meta-and-voc-onboarding` and `building-integrations` as a temporary
+  compatibility set;
 - the Runneth Library rebuilding-page site;
 - scripts and GitHub workflows; and
 - repository documentation.
@@ -35,9 +35,12 @@ unchanged.
 Legacy use cases that have no active package migration are available only from
 the archive branch and snapshot tag.
 
-Aligned Onboarding is intentionally retained with both directories referenced
-by its instructions. Do not remove any member of that set until a replacement
-package carries the same behavior and dependencies.
+Meta and Voice of Customer Onboarding is intentionally retained with `building-integrations`,
+which its instructions reference. `corpus-search` was removed with the v2
+onboarding package: retrieval runs on Knoweth with summaries in Cacheth
+(staging), and no remaining instruction depends on it. Do not remove
+`building-integrations` until a replacement package carries the same behavior
+and dependencies.
 
 ## Archived migration candidates
 
@@ -51,13 +54,13 @@ snapshot tag. They must return to `main` only as schema-v1 packages:
 | Permissions | Complete the active rework and add a schema-v1 manifest |
 
 They are not package-manager installable until a canonical package payload,
-matching `runneth-package.json`, and `package-index.json` entry are merged.
+matching `package.json`, and `package-index.json` entry are merged.
 
 ## Package acceptance criteria
 
 Every package pull request must:
 
-1. add one package payload and schema-v1 `runneth-package.json`;
+1. add one package payload and schema-v1 `package.json`;
 2. add a matching `package-index.json` entry;
 3. reference only existing relative paths without symlinks;
 4. target a supported root (`agent_apps`, `agent_brain`, `agent_skills`, or
