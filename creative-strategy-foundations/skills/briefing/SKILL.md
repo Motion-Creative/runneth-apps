@@ -32,7 +32,7 @@ Use this skill to turn an approved or newly formed concept into a production-rea
 
 - `/runneth/references/hook-generation--standards.md` for hook quality and pressure checks
 - `/runneth/references/creative-strategy-engine.md` only when the brief needs audience, stage, or context adaptation or clearer strategic mapping
-- `/runneth/references/design-system.md` only when the output is HTML or the user needs a Web Awesome layout or reusable visual component pattern
+- `/runneth/references/html-generation--design-system.md` only when the output is HTML or the user needs a visual example layout or reusable visual component pattern
 
 ### Build missing concept elements inline
 
@@ -107,7 +107,7 @@ For execution-ready file outputs:
 - use HTML only when the user explicitly asks for HTML, or when the deliverable should be a page the user opens in the browser or be visually rich enough that Markdown is the wrong fit
 - use PDF only when the user explicitly asks for it, or when fixed-layout output is clearly the point
 
-Briefing owns the workflow; when the deliverable should be a browser-openable page, hand off rendering and serving to `app-builder`; when the user explicitly asked for standalone HTML source or a downloadable HTML file, hand off to `html-generation`. Do not skip the briefing workflow and jump straight to bare rendering.
+When HTML is the chosen format, briefing owns the workflow and then hands off to `html-generation` as the rendering layer. Do not skip straight to bare `html-generation`.
 
 Do not duplicate artifact content inline. Write a brief preamble, then reference the artifact.
 

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "creative-strategy-foundations",
   "name": "Creative Strategy Foundations",
-  "version": "1",
+  "version": "1.0.1",
   "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
   "installPolicy": "auto",
   "updatePolicy": "auto",
