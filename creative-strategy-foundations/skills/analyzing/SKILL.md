@@ -37,7 +37,7 @@ Use this skill to turn data, research, and creative review into decisions, not j
 - `/runneth/references/creative-strategy-engine.md` when the ask needs structural mapping across pain, desire, persona, angle, audience, or stage
 - `/runneth/references/creative-benchmarks.md` for benchmark interpretation and next-test logic
 - `/runneth/references/researching--review-mining.md` for customer-language extraction and review synthesis
-- `/runneth/references/design-system.md` only when the chosen deliverable is HTML or when you need a Web Awesome visual component or layout pattern
+- `/runneth/references/html-generation--design-system.md` only when the chosen deliverable is HTML or when you need a reusable visual component or layout pattern
 
 ### Match the depth to the ask
 
@@ -101,7 +101,7 @@ Open by reflecting what source material you actually used in natural language. F
 
 If the response is data-grounded, add a short "What mattered" block before the main analysis or deliverable. Keep it to 2 to 4 bullets. Separate validated data from inference when both appear.
 
-Every response that references specific ads must show them visually. For inline responses, use the active surface's visual presentation for the creatives in the same turn. For HTML artifacts, embed the creatives directly using the creative card pattern from `/runneth/references/components/creative-card.md`. For Markdown artifacts, keep the document readable first and place `motionUrl` links or compact supporting references directly beside the insight they support.
+Every response that references specific ads must show them visually. For inline responses, use the active surface's visual presentation for the creatives in the same turn. For HTML artifacts, embed the creatives directly using the Creative Cards pattern from `/runneth/references/html-generation--design-system.md`. For Markdown artifacts, keep the document readable first and place `motionUrl` links or compact supporting references directly beside the insight they support.
 
 Visual evidence rules:
 

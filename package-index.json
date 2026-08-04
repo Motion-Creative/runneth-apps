@@ -6,7 +6,7 @@
       "id": "creative-strategy-foundations",
       "name": "Creative Strategy Foundations",
       "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
-      "version": "1",
+      "version": "2",
       "packageManagerVersion": 1,
       "categories": [
         "baseline"
