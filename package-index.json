@@ -1,5 +1,26 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "initial-empty",
-  "packages": []
+  "indexRevision": "2026-08-03-01",
+  "packages": [
+    {
+      "id": "creative-strategy-foundations",
+      "name": "Creative Strategy Foundations",
+      "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
+      "version": "1",
+      "packageManagerVersion": 1,
+      "categories": [
+        "baseline"
+      ],
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "creative-strategy-foundations",
+        "ref": "main"
+      },
+      "installPolicy": "auto",
+      "updatePolicy": "auto",
+      "uninstallPolicy": "protected"
+    }
+  ]
 }
