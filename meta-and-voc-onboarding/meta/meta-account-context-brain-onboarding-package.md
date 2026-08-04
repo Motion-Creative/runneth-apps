@@ -434,22 +434,29 @@ query.
 
 **Presentation rule for Field 4 (the fill-in section for this field)**
 
-If a naming decoder exists (from Creative Attributes or a prior fill-in run), embed the full
-filterable-field table inline in the section. Do not summarize it in prose. Format it as two
-parts:
+**The naming breakdown is always a table — never bullets, never prose.** Whatever the
+detection found, the customer scans and corrects it as rows, one tag or position per row.
+
+When a naming decoder exists (from Creative Attributes or a prior fill-in run), embed the
+full filterable-field table inline in the section, in two parts:
 
 - **Part A — Filterable dimensions** (one row per `segment_filter` field): Field | Known
   values. These are the dimensions the team can ask about by name.
 - **Part B — Context-only fields** (one row per `context_only` or metadata field): Field |
   What it captures. These are visible in names but not used for filtering.
 
-Follow with the campaign and ad set naming format (one line each, with an example). Then ask
-the two confirmation questions as the section's final bold line. If the decoder does not
-exist, describe what was detected in prose and ask the customer to confirm or correct the
-structure.
+When the detection found multiple schemas rather than one convention, each schema gets its
+own table (Tag | Meaning, one row per tag), with a one-line lead-in naming the schema and
+where it appears — never a bullet list of tags per schema. When no reliable pattern was
+detected at all, present what was found as a table of the observed name shapes with one
+example each, and ask the customer to confirm or correct the structure.
 
-The customer must be able to scan this table and correct a value or a field type without
-asking for more detail. A prose summary of a decoder is not sufficient.
+Follow with the campaign and ad set naming format (one line each, with an example). Then ask
+the two confirmation questions as the section's final bold line.
+
+The customer must be able to scan the table and correct a value, a tag meaning, or a field
+type without asking for more detail. A prose or bullet summary of a decoder is not
+sufficient.
 
 **Required output: the naming decoder JSON file**
 
@@ -714,20 +721,28 @@ mention) and run the beats at report time in validation instead.
 
 **What to present**
 
-Present in two beats, back to back.
+Present in two beats, back to back. Each beat has a fixed output shape — follow it every
+time this field presents, in the walkthrough's Part 2 or at report time in validation.
 
-*Beat 1 — Marketing calendar (auto-detected):* State what was detected. Propose the calendar
-with the detected campaign types and their launch windows. When no seasonal pattern is
-detected, say so plainly and describe the cadence the naming data does show instead (rolling
-test batches, standing campaign types that stay open) — never manufacture a calendar. Then
-ask one question: whether there is anything coming up not yet visible in the account (a
-launch, a promo, a seasonal push), or whether the account runs without a fixed marketing
-calendar.
+*Beat 1 — Marketing calendar (auto-detected).* Open with the bold label **Marketing
+calendar** followed by a parenthetical naming the source (e.g. "(detected from your campaign
+launch dates):"). Then the calendar as a table — Period | What's running — one row per
+detected launch window in chronological order, plus a final Year-round row for standing
+campaign types that stay open. When no seasonal pattern is detected, replace the table with
+a plain statement that says so and describes the cadence the naming data does show instead
+(rolling test batches, standing campaign types) — never manufacture a calendar. Close the
+beat with one bold question, alone on its own line: whether there is anything coming up not
+yet visible in the account (a launch, a promo, a seasonal push), or whether the account runs
+without a fixed marketing calendar.
 
-*Beat 2 — Reporting structure (auto-synthesized):* Present the synthesized picture as a
-bulleted summary, then propose the four standard report sections as the starting report
-structure. Then ask one question: whether this matches the full picture and what the ideal
-report would add.
+*Beat 2 — Reporting structure (auto-synthesized).* Open with the bold label **Reporting
+structure** followed by a parenthetical naming the source (e.g. "(synthesized from your
+confirmed setup):"), then a one-line lead-in ("Here's the report I'd build from what you've
+confirmed:"). Then the proposed sections as a numbered list — each item starts with the
+section name in bold, then a dash and how that section reads on this account's real data
+(the metrics, dimensions, and thresholds already confirmed in Fields 4, 7, and 9). Close the
+beat with one bold question, alone on its own line: whether this matches the full picture
+and what cadence the report should run on (weekly, biweekly).
 
 The four standard sections to propose for every account, adapted to the account's data:
 1. Top ads of the period — by funnel stage or by campaign

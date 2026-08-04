@@ -39,7 +39,9 @@ heading" rule applies to Part 1 only.
 (Fields 1–3 under a confirmed attribution tool) count as one section. Each section is: a bold
 plain-language heading (never "Field N," never a status badge), then 2–4 bullets — lead with
 the read, support with this account's real names and numbers, no prose paragraphs — then at
-most one question as the section's last line — bold, so it can't be missed. A field the pull
+most one question, bold, standing alone as the section's last line. The question is never
+appended to the end of a finding bullet and never shares a line with an observation — it
+gets its own line, so it can't be missed. A field the pull
 fully settles gets no question: say what you know in the bullets and move on. Two questions
 are allowed only when one section genuinely covers two distinct confirmations (Field 4's two
 decoder confirmations; Field 10's two beats); more than
@@ -48,16 +50,19 @@ should feel like mostly settled reads with a few specific things still open.
 
 Two exceptions to the bullets. A table replaces them when the field contains structured data
 the customer needs to scan and confirm — never force bullets onto a table. And the
-naming-conventions section always includes the full breakdown per Field 4's presentation
-rule in the ACB package — it is never compressed to a settled one-liner, even when the
-decoder is confirmed.
+naming-conventions section is **always a table** per Field 4's presentation rule in the ACB
+package — the full breakdown as rows (one table per schema when there are several), never
+bullets, never prose, and never compressed to a settled one-liner, even when the decoder is
+confirmed.
 
 **Field 10 is a Part 2 section like the rest — the last one, in field order.** Its
-section carries the two beats per the ACB package's Field 10 rules: the marketing calendar
-read (what the naming data shows — a detected seasonal pattern, or plainly that there is
-none and what cadence the data does show instead), then the synthesized reporting structure
-with the proposed starting report sections — each beat ending in its one bold question, both
-landing in the closing TLDR with the rest. The synthesis reads the provisional naming
+section carries the two beats in the fixed output shape the ACB package's Field 10 rules
+define: the marketing calendar as a bold label plus a Period | What's running table (or a
+plain no-seasonal-pattern statement when the data shows none), then the reporting structure
+as a bold label, a one-line lead-in, and the proposed report sections as a numbered list
+grounded in this account's confirmed reads — each beat ending in its one bold question on
+its own line, both landing in the closing TLDR with the rest. That shape replaces the 2–4
+bullet contract for this section. The synthesis reads the provisional naming
 decode, so it requires decoded ad names: when the decode carries nothing to synthesize from
 (no ad names, no dimension or campaign-type reads), skip the section entirely — no question,
 no mention — and Field 10's beats run at report time inside validation instead. Corrections
@@ -82,13 +87,39 @@ quality, attribution status). Include total spend and creative count.>
 - <The read this section leads with.>
 - <Supporting finding, with this account's real names and numbers.>
 - <Another finding, if the field has one.>
-**<The one question this leaves open?>**
+
+**<The one question this leaves open — alone on its own line, never tacked onto a bullet?>**
 
 **<Next topic heading>**
 - <Findings, 2–4 bullets. This field is settled by the pull — the bullets say how it will be
   read, no question.>
 
+**<Naming-conventions heading>**
+<One-line lead-in: what the names encode and how reliable the pattern is.>
+
+| <Field / Tag> | <Known values / Meaning> |
+| --- | --- |
+| <one row per tag or position — the full breakdown, one table per schema if several> | <...> |
+
+**<Field 4's confirmation questions, bold, as the last line?>**
+
 <...one section per remaining field, in field order...>
+
+**Marketing calendar** <(source, e.g. "detected from your campaign launch dates"):>
+
+| Period | What's running |
+| --- | --- |
+| <launch window, chronological> | <what runs in it> |
+| Year-round | <standing campaign types that stay open> |
+
+**<Beat 1's question — anything coming up not yet in the account?>**
+
+**Reporting structure** <(source, e.g. "synthesized from your confirmed setup"):>
+Here's the report I'd build from what you've confirmed:
+1. **<Section name>** — <how it reads on this account's confirmed data>
+2. **<Section name>** — <...>
+
+**<Beat 2's question — does this match, and what cadence should the report run on?>**
 
 **Questions for you:**
 1. <Open question, one line, same order as above>
@@ -101,12 +132,17 @@ Just answer what you know — I'll write the context file from your responses.
 - Part 1 is 2–3 sentences of prose — not a list, no heading (Part 1 only).
 - Part 2 sections are in field order; consolidated sections count as one.
 - Every Part 2 section is 2–4 bullets under its bold heading — no prose paragraphs — except
-  where a table carries structured data the customer needs to scan and confirm.
-- The naming-conventions section carries the full breakdown (Field 4's presentation rule),
-  never a prose summary of the decoder.
+  where a table carries structured data the customer needs to scan and confirm, and except
+  the Field 10 section, which follows its fixed two-beat shape (calendar table, then
+  numbered report sections).
+- The naming-conventions section carries the full breakdown as a table — one table per
+  schema when there are several (Field 4's presentation rule) — never bullets or a prose
+  summary of the decoder.
 - No field numbers, status badges, or worksheet labels anywhere.
 - At most one bold question per section (two only for the sanctioned Field 4 and Field 10
   sections); settled fields have none.
+- Every question stands alone on its own line — no question is appended to a finding bullet
+  or shares a line with an observation.
 - The TLDR lists every open question from Part 2, in appearance order, and ends with the
   verbatim closing line.
 
