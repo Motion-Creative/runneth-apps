@@ -90,9 +90,12 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    for **every** VoC platform (any platform may be key-stored instead of connected), plus
    whether a Meta workspace is connected. The secret store cannot be listed - the runtime
    refuses Bash reads of `/agent/.runtime/secrets`, and neither `secret` nor
-   `secure-fetch` has a list command. The only probe that counts is running each
-   key-stored platform's documented secret key: `secret run --env KEY=<SECRET_KEY> -- true`
-   (or that platform's bounded `secure-fetch run` from the skill). A "secret not
+   `secure-fetch` has a list command.    The only probe that counts is running each
+   key-stored platform's secret key: `secret run --env KEY=<SECRET_KEY> -- true`
+   (or that platform's bounded `secure-fetch run` from the skill). Every platform's key
+   name is defined - the recipe's `Secret key:` line, or the canonical
+   `<PLATFORM>_API_KEY` when no recipe names one - so an "undocumented key name" is
+   never a reason to skip a probe. A "secret not
    available" error means not stored. A refused `ls`, a `--help` read, or any other
    indirect check proves nothing and is never grounds to mark a platform unreachable -
    every key-stored platform in the skill's table gets its key probed this way before
