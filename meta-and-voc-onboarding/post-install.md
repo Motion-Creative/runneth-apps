@@ -87,9 +87,10 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
 1. **Check what the org can reach.** Read the full inventory of what this VM can talk
    to, both halves: the OAuth connections (`integrations status --app <slug>` per
    platform; `integrations list` for the catalog) **and the runtime secret store's key
-   names with each key's allowed hosts** - the runtime exposes that metadata even
-   though the values stay sealed (only `secure-fetch` can use them). Surface the secret
-   inventory however this VM provides it and read it in full. Also check whether a Meta
+   names with each key's allowed hosts** - the runtime injects that metadata into this
+   conversation's context as the runtime-secrets block (values stay sealed; only
+   `secure-fetch` can use them). Read that block from context - no command fetches it.
+   Also check whether a Meta
    workspace is connected. Recognize VoC platforms in that inventory by reading it with
    judgment, not by matching key names to a scheme: a stored key named `OKENDO_TEN`, or
    any key whose allowed host is `api.okendo.io`, is an Okendo credential no matter
