@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-03-01",
+  "indexRevision": "2026-08-03-01-aligned-onboarding-1.1.0",
   "packages": [
     {
       "id": "creative-strategy-foundations",
@@ -8,9 +8,7 @@
       "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
       "version": "1",
       "packageManagerVersion": 1,
-      "categories": [
-        "baseline"
-      ],
+      "categories": ["baseline"],
       "source": {
         "type": "github",
         "owner": "Motion-Creative",
@@ -21,6 +19,24 @@
       "installPolicy": "auto",
       "updatePolicy": "auto",
       "uninstallPolicy": "protected"
+    },
+    {
+      "id": "aligned-onboarding",
+      "name": "Aligned Onboarding",
+      "description": "Teaches Runneth how a customer reads their Meta ad account, captures customer-specific report/dashboard setup, and saves durable creative context when useful.",
+      "version": "1.1.0",
+      "packageManagerVersion": 1,
+      "categories": ["agent-foundations"],
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "aligned-onboarding",
+        "ref": "main"
+      },
+      "installPolicy": "manual",
+      "updatePolicy": "manual",
+      "uninstallPolicy": "allowed"
     }
   ]
 }

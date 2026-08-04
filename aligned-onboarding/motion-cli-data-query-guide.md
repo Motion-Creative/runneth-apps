@@ -24,6 +24,9 @@ command's flags change.
 7. **Check completeness before "all" / totals claims.** If `providerTotalCount > totalCount`, or
    `totalCount` hit your `--limit`, say the pull may be partial.
 8. **Omit `--limit`** unless the user asked for a bounded top-N, exact count, or sample size.
+9. **Use `motion reports` for saved report metadata.** Do not WebFetch auth-walled Motion report
+   URLs. If the customer names or links a saved report, parse the visible report ID when present or
+   list saved reports and match the returned metadata.
 
 ---
 
@@ -185,6 +188,14 @@ rates/costs (CTR, CPC, CPM, ROAS, CPA, thumbstop).
 - `motion meta adset-diversity-scores` / `motion meta adset-diversity-by-ads --adset-id <id>` — creative variety
 - `motion meta competitor-ad-insights --ad-library-creative-id <id>` — one Meta ad-library competitor creative
 - `motion analyze-media --filename <f>` / `--folder <dir>` — analyze uploaded video (last resort vs `--include-transcript`)
+
+### Saved reports in Report Dashboard Setup
+
+Use `motion reports` and `motion reports --report-id <id>` to inspect saved report configuration
+for customer-named dashboards. Record the report title, purpose, platform, date behavior, metric
+basis, grouping, and visible report ID or URL in `/agent/brain/meta/report-dashboard-context.md`
+only when the customer says that report is a trusted starting point. Saved report metadata can guide
+view shape; it does not override current-turn instructions or the customer's report-dashboard setup.
 
 ## Inspo (competitor / inspiration)
 
