@@ -1,0 +1,270 @@
+---
+// Context Kit board. Client-rendered so it mirrors mutable brain state without a rebuild.
+// Tabbed sections, white cards, state carried by status pills, cards open by default.
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Context Kit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style is:global>
+      :root{
+        --bg:#fbfbfa;--surface:#f4f4f2;--card:#ffffff;
+        --border:#ececeb;--border-strong:#d8d8d6;
+        --ink:#1c1c1a;--low:#5f5f5b;--muted:#8a8a85;
+        --primary:#bdee63;--primary-deep:#a6db4a;--lime-surface:#f2f9df;--lime-border:#dcefb4;--lime-ink:#37401c;
+        --amber-surface:#fff7e6;--amber-border:#f0d59a;--amber-badge:#f2b035;
+        --sky-surface:#eef6fb;--sky-border:#c3e0ee;--sky-ink:#245b73;
+        --r-sm:8px;--r-md:12px;
+        --shadow-sm:0 1px 2px rgba(24,24,20,.05);
+        --shadow-md:0 6px 20px rgba(24,24,20,.08);
+        --font:"Inter",ui-sans-serif,system-ui,-apple-system,sans-serif;
+      }
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+      svg{display:block}
+      .wrap{max-width:840px;margin:0 auto;padding:44px 24px 100px}
+      h1{font-weight:800;letter-spacing:-.035em;line-height:1.05}
+      .lede{font-size:14.5px;color:var(--low);max-width:540px;margin-top:11px}
+      .hcard{border:1px solid var(--border);background:var(--card);border-radius:16px;padding:26px 28px 22px;box-shadow:var(--shadow-sm)}
+      .hcard h1{font-size:clamp(25px,3vw,30px)}
+      .prog{margin-top:18px}
+      .prog-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+      .prog-top .n{font-size:14px;font-weight:700}
+      .prog-top .n b{color:#4e6a28}
+      .prog-top .p{font-size:12.5px;color:var(--muted);font-weight:600}
+      .bar{height:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;overflow:hidden}
+      .bar>span{display:block;height:100%;background:var(--primary);border-radius:100px;transition:width .9s cubic-bezier(.16,.84,.44,1)}
+      .rail{display:flex;gap:8px;margin-top:16px}
+      .lvl{flex:1;display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--bg)}
+      .lvl.passed{background:var(--lime-surface);border-color:var(--lime-border)}
+      .lvl.current{border-color:var(--primary);box-shadow:0 0 0 3px var(--lime-surface)}
+      .lvl.locked{opacity:.5}
+      .lvl .dot{width:24px;height:24px;border-radius:100px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--surface);color:var(--muted);flex-shrink:0}
+      .lvl.passed .dot{background:var(--primary);color:var(--lime-ink)}
+      .lvl.current .dot{background:var(--ink);color:#fff}
+      .lvl .dot svg{width:13px;height:13px}
+      .lvl .lt{font-size:12.5px;font-weight:700;line-height:1.2}
+      .lvl .ls{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:700;margin-top:2px}
+      @media(max-width:640px){.rail{flex-direction:column}}
+      .nudge{display:flex;align-items:center;gap:13px;margin-top:16px;padding:13px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-sm)}
+      .nudge .ic{width:32px;height:32px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--low);flex-shrink:0}
+      .nudge .ic svg{width:16px;height:16px}
+      .nudge .nh{font-size:13.5px;font-weight:600}
+      .nudge .ns{font-size:12.5px;color:var(--muted);margin-top:1px}
+      .tabs{display:flex;gap:2px;margin-top:24px;border-bottom:1px solid var(--border)}
+      .tab{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:7px;padding:13px 6px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;font-family:var(--font);font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:color .15s,border-color .15s}
+      .tab .tl{overflow:hidden;text-overflow:ellipsis}
+      .tab:hover{color:var(--low)}
+      .tab.active{color:var(--ink);border-bottom-color:var(--ink)}
+      .tab .tc{flex-shrink:0;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:100px;background:var(--surface);color:var(--muted)}
+      .tab.active .tc{background:var(--lime-surface);color:var(--lime-ink)}
+      @media(max-width:660px){.tabs{overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tab{flex:0 0 auto;padding-left:14px;padding-right:14px}}
+      .sec-intro{margin:22px 2px 14px}
+      .sec-intro .st-title{font-size:16px;font-weight:800;letter-spacing:-.02em}
+      .sec-intro .st-sub{font-size:13px;color:var(--low);margin-top:3px}
+      .grid{display:flex;flex-direction:column;gap:10px}
+      .card{border:1px solid var(--border);border-radius:var(--r-md);background:var(--card);box-shadow:var(--shadow-sm);transition:box-shadow .18s,border-color .18s}
+      .card:hover{box-shadow:var(--shadow-md);border-color:var(--border-strong)}
+      summary.card-main{display:flex;align-items:center;gap:16px;padding:15px 18px;cursor:pointer;list-style:none}
+      summary.card-main::-webkit-details-marker{display:none}
+      .card-main .txt{flex:1;min-width:0}
+      .cname{font-weight:700;font-size:14.5px;letter-spacing:-.01em}
+      .cwhy{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+      .st{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 11px;border-radius:100px;flex-shrink:0;white-space:nowrap;border:1px solid transparent}
+      .st svg{width:12px;height:12px}
+      .st.confirmed,.st.imported{background:var(--lime-surface);color:var(--lime-ink);border-color:var(--primary-deep)}
+      .st.drafted{background:var(--amber-surface);color:#7a5406;border-color:var(--amber-badge)}
+      .st.inferred{background:var(--sky-surface);color:var(--sky-ink);border-color:var(--sky-border)}
+      .st.missing{background:var(--surface);color:var(--muted);border-color:var(--border-strong)}
+      .open{flex-shrink:0;width:28px;height:28px;border-radius:100px;border:1px solid var(--border-strong);background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--low);transition:transform .25s,background .18s,color .18s}
+      .open svg{width:15px;height:15px}
+      .card[open] .open{transform:rotate(180deg);background:var(--ink);color:#fff;border-color:var(--ink)}
+      .card-panel{margin:0 14px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;font-size:13px;color:var(--low);line-height:1.55;max-height:460px;overflow:auto}
+      .card-panel h2,.card-panel h3{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:12px 0 5px;padding-bottom:3px;border-bottom:1px solid var(--border);font-weight:700}
+      .card-panel h2:first-child,.card-panel h3:first-child{margin-top:0}
+      .card-panel p{margin:6px 0}
+      .card-panel ul,.card-panel ol{margin:5px 0 5px 16px}
+      .card-panel li{margin:3px 0;line-height:1.6}
+      .card-panel blockquote{margin:8px 0;padding:8px 12px;background:var(--surface);border-left:3px solid var(--border-strong);border-radius:0 6px 6px 0;color:var(--low);font-size:12.5px;font-style:italic}
+      .card-panel table{border-collapse:collapse;width:100%;margin:10px 0;font-size:12.5px}
+      .card-panel th{background:var(--surface);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px 10px;border:1px solid var(--border);text-align:left}
+      .card-panel td{padding:6px 10px;border:1px solid var(--border);vertical-align:top}
+      .card-panel td:first-child{font-weight:600}
+      .card-panel hr{border:0;border-top:1px solid var(--border);margin:10px 0}
+      .card-panel .empty{color:var(--muted);font-style:italic}
+      .source-note{font-size:11.5px;color:var(--muted);font-style:italic;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--border);line-height:1.55}
+      .enrich{display:flex;gap:8px;align-items:flex-start;margin-top:12px;padding:10px 12px;border:1px dashed var(--sky-border);border-radius:var(--r-sm);background:var(--sky-surface);color:var(--sky-ink);font-size:12px;line-height:1.45}
+      .thought-starters{margin-top:13px;padding-top:13px;border-top:1px solid var(--border)}
+      .ts-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+      .ts-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:5px;margin:0}
+      .ts-list li{font-size:13px;padding:7px 10px 7px 28px;position:relative;background:var(--surface);border-radius:7px;border:1px solid var(--border);line-height:1.5}
+      .ts-list li::before{content:"\2192";position:absolute;left:10px;top:8px;color:var(--muted);font-size:12px}
+      .empty{color:var(--muted);font-style:italic}
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="hcard">
+        <h1 id="page-title">Your Context Kit</h1>
+        <p class="lede" id="lede">Your brand, the way Runneth sees you. Confirm what we pulled, review what we drafted, and add the few things only you know. Everything gets saved to your brain and makes every answer better.</p>
+        <div class="prog" id="prog"></div>
+        <div class="rail" id="rail"></div>
+      </div>
+      <div class="nudge" id="nudge">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></span>
+        <div>
+          <div class="nh">Already have this in Google Drive or Notion?</div>
+          <div class="ns">Say so in chat and Runneth pulls your brand docs directly.</div>
+        </div>
+      </div>
+      <div class="tabs" id="tabs"></div>
+      <div class="sec-intro" id="sec-intro"></div>
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <script is:inline type="text/javascript">
+      const BASE = "/context-kit";
+      const statusLabel = { confirmed:"Confirmed", imported:"Imported", inferred:"Confirm this", drafted:"Review draft", missing:"Not added" };
+      const ICONS = {
+        chevron:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>",
+        check:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M20 6L9 17l-5-5'/></svg>"
+      };
+      const BUCKETS = [
+        { key:"A", tab:"Auto-filled", title:"What Motion already knows", sub:"Pulled from your setup. Confirm to lock each one in." },
+        { key:"B", tab:"Drafted for you", title:"What Runneth figured out", sub:"Built from your data. Correct anything that's off." },
+        { key:"C", tab:"Only you know", title:"Only you know these", sub:"Runneth walks you through each one in chat." },
+        { key:"D", tab:"Your tools", title:"How you use your tools", sub:"Your rules for each connected source." },
+      ];
+      const DONE = ["confirmed","imported"];
+      let STATE = { items:[] }, active = 0;
+      function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+      function inline(s){return esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/(^|[^*])\*(?!\*)(.+?)\*(?!\*)/g,"$1<em>$2</em>");}
+      function md(src){
+        const lines=(src||"").replace(/\r/g,"").split("\n");
+        let html="",list=null,tbl=null;
+        const closeList=()=>{ if(list){ html+="</"+list+">"; list=null; } };
+        const closeTbl=()=>{ if(tbl){ html+="</tbody></table>"; tbl=null; } };
+        const closeAll=()=>{ closeList(); closeTbl(); };
+        for(let raw of lines){
+          const line=raw.replace(/\s+$/,"");
+          if(!line.trim()){ closeAll(); continue; }
+          const trow=line.trim();
+          if(/^\|(.+)\|$/.test(trow)){
+            const cells=trow.slice(1,-1).split("|").map(c=>c.trim());
+            if(cells.every(c=>/^:?-{2,}:?$/.test(c))) continue;
+            if(!tbl){ closeList(); tbl="th"; html+="<table><thead><tr>"+cells.map(c=>"<th>"+inline(c)+"</th>").join("")+"</tr></thead><tbody>"; continue; }
+            html+="<tr>"+cells.map(c=>"<td>"+inline(c)+"</td>").join("")+"</tr>"; continue;
+          } else closeTbl();
+          if(/^#{2,3}\s+/.test(line)){ closeAll(); const lvl=line.startsWith("### ")?3:2; html+="<h"+lvl+">"+inline(line.replace(/^#{2,3}\s+/,""))+"</h"+lvl+">"; continue; }
+          if(/^#\s+/.test(line)){ closeAll(); html+="<h2>"+inline(line.replace(/^#\s+/,""))+"</h2>"; continue; }
+          if(/^---+$/.test(line.trim())){ closeAll(); html+="<hr>"; continue; }
+          if(/^>\s?/.test(line)){ closeList(); html+="<blockquote>"+inline(line.replace(/^>\s?/,""))+"</blockquote>"; continue; }
+          let m;
+          if((m=line.match(/^\s*[-*]\s+(.*)$/))){ if(list!=="ul"){ closeList(); list="ul"; html+="<ul>"; } html+="<li>"+inline(m[1])+"</li>"; continue; }
+          if((m=line.match(/^\s*\d+\.\s+(.*)$/))){ if(list!=="ol"){ closeList(); list="ol"; html+="<ol>"; } html+="<li>"+inline(m[1])+"</li>"; continue; }
+          closeList(); html+="<p>"+inline(line)+"</p>";
+        }
+        closeAll(); return html;
+      }
+      function emptyMsg(item){
+        if(item.bucket==="A") return "Not confirmed yet. Tell Runneth \"confirm my "+esc(item.label)+"\" in chat to lock it in.";
+        if(item.bucket==="B") return "Runneth hasn't researched this yet. Say \"build my Context Kit\" in chat and Runneth will draft it for you.";
+        if(item.bucket==="D") return "Connected, but no rules yet. Tell Runneth how you want "+esc(item.label)+" used.";
+        return "Only you can answer this one. Say \"fill in my "+esc(item.label)+"\" in chat and Runneth will walk you through it.";
+      }
+      function enrichHtml(item){ return item.enrich ? "<div class='enrich'>\u2728 <span><strong>Tip:</strong> "+esc(item.enrich)+"</span></div>" : ""; }
+      function sourceNoteHtml(item){ return item.sourceNote ? "<div class='source-note'>"+esc(item.sourceNote)+"</div>" : ""; }
+      function thoughtHtml(item){
+        if(!(item.thoughtStarters && item.thoughtStarters.length)) return "";
+        return "<div class='thought-starters'><div class='ts-label'>Think through</div><ul class='ts-list'>"+item.thoughtStarters.map(t=>"<li>"+esc(t)+"</li>").join("")+"</ul></div>";
+      }
+      async function loadPanel(item, panel){
+        const filled = ["confirmed","imported","drafted"].includes(item.status);
+        const file = item.dataFile || (item.id+".md");
+        let content;
+        if(filled){
+          try{
+            const r = await fetch(BASE+"/data/"+file,{cache:"no-store"});
+            if(!r.ok) throw 0;
+            content = sourceNoteHtml(item) + md(await r.text());
+          }catch(e){
+            content = "<p class='empty'>"+ (item.bucket==="B" ? "This file hasn't been saved yet. Say \"build my Context Kit\" in chat and Runneth will fill it in." : emptyMsg(item)) +"</p>";
+          }
+        } else if(item.bucket==="A" && item.preview){
+          content = "<p>"+esc(item.preview)+"</p><p class='empty'>"+emptyMsg(item)+"</p>";
+        } else {
+          content = "<p class='empty'>"+emptyMsg(item)+"</p>" + thoughtHtml(item);
+        }
+        panel.innerHTML = content + enrichHtml(item);
+      }
+      function countFor(key){
+        const list = STATE.items.filter(i=>i.bucket===key);
+        return { total:list.length, done:list.filter(i=>DONE.includes(i.status)).length, list };
+      }
+      function renderTabs(){
+        const tabs = document.getElementById("tabs");
+        tabs.innerHTML = BUCKETS.map((b,idx)=>{
+          const c = countFor(b.key);
+          return "<button class='tab"+(idx===active?" active":"")+"' data-idx='"+idx+"'><span class='tl'>"+esc(b.tab)+
+            "</span><span class='tc'>"+c.done+"/"+c.total+"</span></button>";
+        }).join("");
+        tabs.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{ active=+t.getAttribute("data-idx"); renderTabs(); renderSection(); }));
+      }
+      function renderSection(){
+        const b = BUCKETS[active];
+        const c = countFor(b.key);
+        document.getElementById("sec-intro").innerHTML =
+          "<div class='st-title'>"+esc(b.title)+"</div><div class='st-sub'>"+esc(b.sub)+"</div>";
+        const grid = document.getElementById("grid");
+        if(!c.list.length){
+          grid.innerHTML = "<p class='empty'>Nothing here yet. Connect a tool and Runneth will draft how you want it used.</p>";
+          return;
+        }
+        grid.innerHTML = c.list.map(item=>{
+          const chipCheck = DONE.includes(item.status) ? ICONS.check : "";
+          return "<details class='card "+item.status+"' open>"+
+            "<summary class='card-main'><div class='txt'><div class='cname'>"+esc(item.label)+"</div><div class='cwhy'>"+esc(item.why||"")+"</div></div>"+
+            "<span class='st "+item.status+"'>"+chipCheck+(statusLabel[item.status]||item.status)+"</span>"+
+            "<span class='open'>"+ICONS.chevron+"</span></summary>"+
+            "<div class='card-panel' data-id='"+esc(item.id)+"'>Loading...</div></details>";
+        }).join("");
+        grid.querySelectorAll(".card").forEach(card=>{
+          const panel=card.querySelector(".card-panel");
+          const item=c.list.find(i=>i.id===panel.getAttribute("data-id"));
+          loadPanel(item,panel);
+        });
+      }
+      function renderHeader(){
+        const core = STATE.items.filter(i=>i.bucket!=="D");
+        const confirmed = core.filter(i=>DONE.includes(i.status)).length;
+        const pct = core.length ? Math.round(confirmed/core.length*100) : 0;
+        const bn = (STATE.brandName && STATE.brandName.trim()) ? STATE.brandName.trim() : "";
+        document.getElementById("page-title").textContent = bn ? bn+"'s Context Kit" : "Your Context Kit";
+        document.getElementById("lede").textContent = (bn||"Your brand")+", the way Runneth sees you. Confirm what we pulled, review what we drafted, and add the few things only you know. Everything gets saved to your brain and makes every answer better.";
+        const nudge = document.getElementById("nudge");
+        if(nudge) nudge.style.display = (confirmed===core.length && core.length>0) ? "none" : "flex";
+        document.getElementById("prog").innerHTML =
+          "<div class='prog-top'><div class='n'><b>"+confirmed+"</b> of "+core.length+" details confirmed</div><div class='p'>"+pct+"% complete</div></div>"+
+          "<div class='bar'><span style='width:"+pct+"%'></span></div>";
+        document.getElementById("rail").innerHTML = (STATE.levels||[]).map((l,idx)=>{
+          const tag = l.state==="passed"?"Done":l.state==="current"?"You're here":"Locked";
+          const dot = l.state==="passed"?ICONS.check:String(idx+1);
+          return "<div class='lvl "+l.state+"'><span class='dot'>"+dot+"</span><div><div class='lt'>"+esc(l.name)+"</div><div class='ls'>"+tag+"</div></div></div>";
+        }).join("");
+      }
+      (async ()=>{
+        try{
+          const r = await fetch(BASE+"/data/context-kit-state.json",{cache:"no-store"});
+          STATE = await r.json();
+          renderHeader(); renderTabs(); renderSection();
+        }catch(e){
+          document.getElementById("grid").innerHTML="<p class='empty'>Could not load your Context Kit state yet.</p>";
+        }
+      })();
+    </script>
+  </body>
+</html>
