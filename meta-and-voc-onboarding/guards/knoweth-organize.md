@@ -1,4 +1,4 @@
-<!-- BEGIN runneth:knoweth-organize v3 -->
+<!-- BEGIN runneth:knoweth-organize v4 -->
 Knoweth organize (after the questions are answered):
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
   workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
@@ -32,4 +32,4 @@ Knoweth organize (after the questions are answered):
   /agent/brain/<workspace>/_tag-vocabulary.md (gate 3's done-marker) and noting it in
   /agent/brain/<workspace>/_changelog.md. When the harness starts layering configured lanes
   (see the forward path), promote high-value tags to family lanes then, not before.
-<!-- END runneth:knoweth-organize v3 -->
+<!-- END runneth:knoweth-organize v4 -->

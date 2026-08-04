@@ -27,7 +27,7 @@ This is the last setup step of the combined run and the first line of ongoing ma
 **Guard 1 — organize the brain (runs once, after the questions are answered).**
 
 ```
-<!-- BEGIN runneth:knoweth-organize v3 -->
+<!-- BEGIN runneth:knoweth-organize v4 -->
 Knoweth organize (after the questions are answered):
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
   workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
@@ -61,13 +61,13 @@ Knoweth organize (after the questions are answered):
   /agent/brain/<workspace>/_tag-vocabulary.md (gate 3's done-marker) and noting it in
   /agent/brain/<workspace>/_changelog.md. When the harness starts layering configured lanes
   (see the forward path), promote high-value tags to family lanes then, not before.
-<!-- END runneth:knoweth-organize v3 -->
+<!-- END runneth:knoweth-organize v4 -->
 ```
 
 **Guard 2 — standing save and maintenance contract (always on).**
 
 ```
-<!-- BEGIN runneth:knoweth-brain v3 -->
+<!-- BEGIN runneth:knoweth-brain v4 -->
 Knoweth brain discipline (all writes, going forward):
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
   workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
@@ -107,7 +107,7 @@ Knoweth brain discipline (all writes, going forward):
   sweep finds ones of unknown provenance, ask the person before archiving, never silently move
   or delete them) and never run the sweep in-conversation. One routine covers the whole brain;
   it never merges content across workspace folders.
-<!-- END runneth:knoweth-brain v3 -->
+<!-- END runneth:knoweth-brain v4 -->
 ```
 
 ### Activation checklist (verify it actually fired)
@@ -246,7 +246,7 @@ A lane is the only hard boundary, and today it is a partial one: the automatic `
     _changelog.md                                  # this workspace's general brain-organization history
     data-sources/                                  # this workspace's evidence + compiled layers; folders for navigation
       meta/                                        # the Meta interpretation layer
-        account-context.md                         # compiled interpretation (9 fields incl. the confirmed naming
+        account-context.md                         # compiled interpretation (10 fields incl. the confirmed naming
                                                    # decode + spend floor / winner-cut criteria)
         naming-decoder.json                        # Field 4's operational decoder, only if a convention is confirmed
         validation.md                              # validation state (MVCE gate, confirmations, corrections)
@@ -309,7 +309,7 @@ The costly-to-reverse decision is the lane set; that is exactly why the default 
 
 ## 8. Standard specs: what they are and how to set them up
 A **Standard spec** is a canonical, triggerable setup for one capability, stood up the same way on every VM: the raw ingestion contract, the compiled schema, the questions to ask the human, and the validation. Three initial Standards:
-- **Meta (Meta and Voice of Customer Onboarding, three steps).** Step 1 Creative Attributes: one enriched record per active creative (identity, summary, hook, transcript, AI tags, naming) held in Cacheth, its summary artifacts surfaced via Knoweth (transcripts and AI tags via the `motion cache` CLI), with performance pulled live via the motion CLI (the Motion CLI Data-Query Guide, installed beside this doc, is the query contract); no per-creative files are written to the brain. Step 2 Account Context Brain (`/agent/brain/<workspace>/data-sources/meta/account-context.md`): the interpretation layer, nine fields, with the naming decode confirmed as the handoff from Step 1 (its operational output is `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`) and Field 9's four captures (ranking metric, CPA target, winner/cut criteria incl. the spend floor, default reporting window); Field 10 (reporting structure + marketing calendar, synthesized from Fields 4, 7, and 9) is the deck spec — it gates the validation deck, not the question loop. Step 3 Validation: the answer-and-confirm loop, the weekly deck built from the Field 10 spec, and the MVCE (minimum viable context engine) gate. Ask the human the account idiosyncrasies platform settings cannot capture: the real success metric, which conversion event judges winners and whether products roll up, attribution windows, the cut rule, per-campaign KPI differences, naming clarifications. Validate: performance questions answer with numbers that reconcile to source.
+- **Meta (Meta and Voice of Customer Onboarding, three steps).** Step 1 Creative Attributes: one enriched record per active creative (identity, summary, hook, transcript, AI tags, naming) held in Cacheth, its summary artifacts surfaced via Knoweth (transcripts and AI tags via the `motion cache` CLI), with performance pulled live via the motion CLI (the Motion CLI Data-Query Guide, installed beside this doc, is the query contract); no per-creative files are written to the brain. Step 2 Account Context Brain (`/agent/brain/<workspace>/data-sources/meta/account-context.md`): the interpretation layer, ten fields, with the naming decode confirmed as the handoff from Step 1 (its operational output is `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`) and Field 9's four captures (ranking metric, CPA target, winner/cut criteria incl. the spend floor, default reporting window); Field 10 (reporting structure + marketing calendar, synthesized from the same pulls that fill Fields 4, 7, and 9) is the report spec — it gates the validation report, not the question loop. Step 3 Validation: the answer-and-confirm loop, the weekly report built from the Field 10 spec (its form — deck, dashboard, or document — is the customer's choice), and the MVCE (minimum viable context engine) gate. Ask the human the account idiosyncrasies platform settings cannot capture: the real success metric, which conversion event judges winners and whether products roll up, attribution windows, the cut rule, per-campaign KPI differences, naming clarifications. Validate: performance questions answer with numbers that reconcile to source.
 - **Voice of Customer.** Raw is owned end-to-end by the voc-data-pull skill at `/agent/.agents/skills/voc-data-pull/SKILL.md` (folder convention, file format, unified metadata record, PII rules, sync routine). Compiled is the manually triggered Voice of Customer Audit at `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`, beside the platform item folders, never inside them: pain points, trigger moments, objections, transformations, standout language, and qualifying personas, each tracing to raw items. The `voc-audit` skill owns that schema and regenerates the one canonical page on rerun; it is absent during initial sync. Platform-specific compiled analysis may live beside it at `/agent/brain/<workspace>/data-sources/voc/<platform>-context.md`, never inside the item folders. Ask the human: canonical sources, which personas are established vs aspirational, off-limits claims. Validate: every claim and quote traces to real customer language.
 - **Brain and Knoweth setup (this document).** Raw is the connected-data probe; compiled is the org-understanding page plus the specs; it lays the seeded skeleton and the default overlay.
 

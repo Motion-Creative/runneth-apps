@@ -251,57 +251,72 @@ workspace (the index is org-wide) and aliases: `Voice of Customer Audit`, `VoC a
 workspace name. Append a dated `voc-audit-completed` entry to
 `/agent/brain/<workspace>/_changelog.md` with the evidence coverage and canonical audit path.
 
+## Step 8 — Deliver the full audit in the chat
+
+The full compiled audit is the deliverable, not a summary of it. When the audit completes,
+present the saved `voice-of-customer-audit.md` file itself in the chat — attach or render
+the markdown file so the person can open and read the entire audit — with at most a few
+lead-in lines above it (evidence scope, one or two headline findings). Closing with only a
+prose summary of highlights is a contract violation: the person must be able to read the
+full results in the chat without asking a follow-up or hunting for a file path. This
+delivery never depends on the person asking for it, and on a rerun the regenerated page is
+delivered the same way.
+
 ## Output format
 
-Produce a separate section for each product or service:
+The audit is a markdown document — headings, numbered findings, blockquoted quotes, and a
+personas table — in the chat and in the saved page alike. Produce a separate section for
+each product or service. The template is literal; every `<...>` is account-specific:
 
-```text
-VOICE OF CUSTOMER AUDIT
+```markdown
+## Voice of Customer Audit — <Workspace or brand>
 
-Evidence: [platforms and source types]
-Coverage: [date range]
-Entries received: [X] | Analyzed: [X] | Discarded (score 1): [X]
+**Evidence:** <total> entries — <platform> (<count>) + <platform> (<count>)
+**Coverage:** <date range per source>
+**Analyzed:** <analyzed count> read in depth | Discarded (score 1): <count>
+<When sampling was used, say so here plainly with the sample size.>
 
-PRODUCT / SERVICE: [Name]
+*<Grouping note, italic — e.g. "Treated as one offering because the sources carry no
+per-product tagging" — only when grouping was skipped or the split needs explaining.>*
 
-PAIN POINTS
-1. [Standalone finding, one or two sentences]
-   "[Exact quote]" — [Name], [X]★ · [source file]
-2. [Standalone finding — a quote is optional, not required per point]
-3. [Standalone finding]
+### <Product / service name — omit the heading when there is one offering>
 
-TRIGGER MOMENTS
-1. [Standalone finding]
-   "[Exact quote]" — [Name], [X]★ · [source file]
-2. [Standalone finding]
+#### Pain points
+1. **<Two-to-five-word bold lead>** — <the standalone finding, one or two sentences>.
+   > "<Exact quote>" — <Name>, <X>★ · <source file>
+2. **<Bold lead>** — <finding; a quote is optional, not required per point>.
 
-OBJECTIONS BEFORE PURCHASING
-1. [Standalone finding]
-2. [Standalone finding]
+#### Trigger moments
+1. **<Bold lead>** — <finding>.
 
-TRANSFORMATIONS
+#### Objections before purchasing
+1. **<Bold lead>** — <finding>.
+
+#### Transformations
 No strong signal in this bucket for this product.
-[Use this explicit line when a bucket has no real finding — never a manufactured entry]
+<Use this explicit line when a bucket has no real finding — never a manufactured entry.>
 
-STANDOUT LANGUAGE AND AD-READY PHRASES
-"[Exact quote]" — [attribution] · [why it stands out] · [source]
+#### Standout language
+- *"<Exact quote>"* — <attribution> · <why it stands out> · <source>
 
-PERSONAS
-[Persona name] — approximately [X]% of this product's entries
-Who: [...]
-Pain: [...]
-Trigger: [...]
-Objection: [...]
-Transformation: [...]
-Voice: [...]
+#### Personas
+| Persona | Share | Pain | Trigger | Objection | Transformation | Voice |
+|---|---|---|---|---|---|---|
+| <Name> | ~<X>% | <...> | <...> | <...> | <...> | <...> |
+<Share is an estimate of this product's entries and is labeled with "~". The "Who they
+are" context folds into the Persona/Voice cells or one line under the table.>
 
-OPERATIONAL FLAGS
-[Only when loud non-creative friction exists]
+#### Operational flags (not creative-strategy findings)
+- <Only when loud non-creative friction exists — shipping, service, site issues.>
+
+<One closing line: the saved brain page is attached above and is the canonical version
+validation and future WHY questions read.>
 ```
 
 Quotes may support individual findings inline, always verbatim and attributed; the
 standout-language swipe file still collects the strongest lines in one place regardless of
-where they also appear.
+where they also appear. Never compress the buckets into prose paragraphs — the numbered
+bold-led findings are the format.
 
 ## How downstream work uses the audit
 
@@ -328,3 +343,5 @@ for live performance metrics or the creative content layer.
 - Every numbered point stands alone; no blended multi-finding narratives.
 - Every quoted phrase remains verbatim and attributable.
 - Every durable claim in the saved audit traces to raw VoC evidence.
+- The run closes with the full audit markdown file presented in the chat — never a
+  summary alone.

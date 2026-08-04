@@ -49,14 +49,20 @@ landed. Post-install and the raw sync routines do not create it; its initial abs
 Idempotency has two parts, because the guards are VM-wide while everything else is
 per-workspace:
 
-- **Guards (step 3):** the four blocks are generic and identical for every workspace. If the
-  four sentinels are already in `/agent/user.md`, the guard merge is done for this VM - leave
-  the blocks untouched, no matter which workspace merged them, and continue with the rest.
+- **Guards (step 3):** the four blocks are generic and identical for every workspace. The
+  guard merge is done for this VM only when each of the four merged blocks in
+  `/agent/user.md` is identical to its staged guard file, sentinel lines included - then
+  leave the blocks untouched, no matter which workspace merged them, and continue with the
+  rest. A sentinel being present proves nothing by itself: an older install leaves stale
+  blocks behind, and version labels can lie (a block's paths can change without a version
+  bump), so byte-comparison against the staged file is the check that counts. If any block
+  is missing or differs from its staged file in any way, step 3 runs and replaces it.
 - **This workspace's setup (steps 1, 2, 4, 5):** done when this workspace is listed in the
   `runneth:meta-voc-onboarded` roster in `/agent/user.md` (step 6). If it is, this sequence
   already ran for this workspace - do not repeat it. The one exception is the explicit
   reinstall or upgrade the activation instruction names: then re-run the sequence for this
-  workspace as a resume, never a restart - the guard merge keeps its normal skip rule, VoC
+  workspace as a resume, never a restart - the guard merge keeps its normal rule (skip only
+  when every merged block matches its staged file; refresh any that differ), VoC
   setup skips any platform whose workspace-named routine already exists (same pinned
   account, no re-confirmation), existing brain files are kept and filled rather than
   rewritten, and the roster entry stays exactly as it is - a workspace is never listed
@@ -118,7 +124,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    `/agent/brain/<workspace>/data-sources/voc/<platform>/`, written out in full.
    **A connected Meta workspace is
    itself a reachable VoC platform** - ad comments are customer voice, pulled with
-   `motion meta creative-comments` (skill slug `meta-ad-comments`; one file per creative
+   `motion meta creative-comments` (platform slug `meta-ad-comments`; one file per creative
    under `voc/meta-ad-comments/`, at the same level as the other platform folders) - so it
    always gets a `voc-sync-<workspace>-meta-ad-comments` routine alongside the others: the
    standard pull of every onboarding, not a discovery outcome. For Meta, connected is the
@@ -136,8 +142,15 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    previous install, ignore them - canceled is terminal; never resume or reuse one, always
    create fresh. Leave other workspaces' `voc-sync-*` routines alone.
 3. **Merge all four guard blocks into `/agent/user.md` with one Write - nothing else can
-   touch that file.** Skip this step entirely if the four sentinels are already there (step 6
-   is what records this workspace). The
+   touch that file.** Skip this step entirely only if each of the four merged blocks in
+   `/agent/user.md` is identical to its staged guard file, sentinel lines included (step 6
+   is what records this workspace). Compare content, never mere presence: a sentinel
+   version that differs from the staged one is a fast first signal, but a matching version
+   proves nothing - blocks have gone stale without a version bump - so the check that
+   counts is byte-comparison of each merged block against its staged file. If any block is
+   missing, its sentinel version differs from the staged one, or its content differs from
+   the staged block in any way, run this step and replace that block. Never leave a stale
+   block in place because its sentinel is present. The
    blocks ship ready-made in
    `/agent/brain/meta-and-voc-onboarding/guards/` (`account-context-guard.md`,
    `meta-validation-gate.md`, `knoweth-organize.md`, `knoweth-brain.md`). On this VM,
@@ -152,8 +165,10 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
      Stamping an id into a guard is a corruption, not a customization: it would bind
      VM-wide rules to one workspace.
    - Compose the full new file: the current `/agent/user.md` content (from your system
-     prompt) exactly once, then each guard block. If a sentinel pair already exists in
-     the file, replace that block in place instead of appending. Touch nothing outside
+     prompt) exactly once, then each guard block. If a sentinel pair for a guard's name
+     already exists in the file - match on the `runneth:<name>` token, whatever version
+     the old sentinel lines carry - replace that whole block in place, sentinel lines
+     included, with the staged block instead of appending. Touch nothing outside
      the sentinels.
    - Check the payload before writing: the base document's opening heading appears
      exactly once, and each of the four sentinel pairs appears exactly once. A doubled
@@ -209,7 +224,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    stating its state (running in background / done / waiting on a person / skipped and
    why). The report carries no findings and no numbers of any kind: no account
    numbers or metrics, no tallies or counts (field counts, question counts, sample
-   sizes, file totals - "autofilled 7 of 9 fields" is a finding, not a status), no
+   sizes, file totals - "autofilled 7 of 10 fields" is a finding, not a status), no
    version labels (the package version is not part of the report), no naming positions
    or decoder detail (not even the shape - "a 5-position decoder" or "4 schemas
    detected" is decoder detail; say "provisional naming decode written" and stop), no
@@ -235,7 +250,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    because a VM can hold several onboarded workspaces. "Creative
    Attributes: done" is the entire line - naming what was detected, the convention's name
    or shape, a file path, or guard version numbers turns a status into a finding.
-   Wrong: "Account Context Brain: autofilled 7 of 9 fields; 4 questions need a human."
+   Wrong: "Account Context Brain: autofilled 7 of 10 fields; 4 questions need a human."
    Right: "Account Context Brain: done - remaining gaps wait for the walkthrough." The
    only permitted extensions of a bullet are its allowed states ("skipped - <why>",
    "waiting on a person - <two-or-three-word topic>", "blocked - <reason>"), never extra

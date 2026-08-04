@@ -286,8 +286,8 @@ verdict — present them as a gallery of creative cards, never as a bare text li
   `thumbnailUrl` / `videoThumbnailUrl` are the lightweight fallback when a full player is not
   warranted.
 - **Card contents:** the media, the creative's decoded name, and the metrics the answer is
-  about. In deck and report surfaces, build on MotionUI / the report component library
-  (playable videos, equal-size creative cards) — never hand-rolled layout.
+  about. In report surfaces (deck, dashboard, or document), build on MotionUI / the report
+  component library (playable videos, equal-size creative cards) — never hand-rolled layout.
 - **Pull enough rows for the gallery.** If N creatives are displayed, the pull must have
   covered at least N — check completeness per golden rule 7 before claiming "top N."
 

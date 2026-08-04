@@ -1,9 +1,9 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.15 — questions always run first, deck becomes a closing soft offer; the analysis window is the customer's call, asked at kickoff and persisted (August 2026)
+### Version 1.16 — the artifact is the weekly report, in whatever form the customer picks (deck, dashboard, or document); "deck spec" label retired (August 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
-building their weekly deck. This is the "catch" in Connect → Train → Validate.**
+building their weekly report. This is the "catch" in Connect → Train → Validate.**
 
 This is the third part of the Meta onboarding package. It runs after the
 **Account Context Brain** (`/agent/brain/<workspace>/data-sources/meta/account-context.md`) and the
@@ -23,12 +23,12 @@ person catches the ball. This part is the catch.
 
 ## The training loop (the operating principle)
 
-The question loop and the deck build are **one training loop over one brain**. Every piece of
+The question loop and the report build are **one training loop over one brain**. Every piece of
 feedback the customer gives during either is a training signal for
-`/agent/brain/<workspace>/data-sources/meta/account-context.md` (and its satellites: the naming decoder, Field 10) —
-never a fix to apply to the output directly. The deck is a rendering of the context: the only
-way to fix the deck is to fix the context and regenerate. The loop converges when the brain
-produces answers and a deck the team recognizes as their own on the first try — corrections
+`/agent/brain/<workspace>/data-sources/meta/account-context.md` (and its satellite, the naming decoder — Field 10 is one of its ten fields) —
+never a fix to apply to the output directly. The report is a rendering of the context: the only
+way to fix the report is to fix the context and regenerate. The loop converges when the brain
+produces answers and a report the team recognizes as their own on the first try — corrections
 trending to zero, not zero forever.
 
 **Route every piece of feedback through the durability test before writing anything:**
@@ -40,9 +40,9 @@ trending to zero, not zero forever.
 - **A current-state fact** ("we're testing statics right now") — use it in the answer now; it
   never enters an interpretation field. Live state belongs to live pulls.
 - **A standing preference** — about answers ("numbers first, always") → the answer-register
-  note; about the deck's structure ("never show ROAS in the deck") → Field 10; about the
-  deck's look and feel ("always dark cards") → the deck record in `validation.md`, where the
-  refresh routine reads it. An unqualified ask defaults to standing.
+  note; about the report's structure ("never show ROAS in the report") → Field 10; about the
+  report's look and feel ("always dark cards") → the report record in `validation.md`, where
+  the refresh routine reads it. An unqualified ask defaults to standing.
 - **A one-off** ("bigger chart this week") — apply it to the current render and move on;
   nothing is written, and it reverts on the next refresh — say so.
 
@@ -77,7 +77,7 @@ package's post-install run does this in its single scripted guard merge). The bl
 shown for context and must stay identical to the staged file.
 
 ```
-<!-- BEGIN runneth:meta-validation-gate v6 -->
+<!-- BEGIN runneth:meta-validation-gate v7 -->
 Meta validation gate:
 
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
@@ -91,32 +91,35 @@ Meta validation gate:
   completed (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
   experience described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
-  the customer has confirmed Runneth's answers through the question loop, the weekly deck is
-  built, live, and approved by the customer, a refresh routine keeps the deck updated on an
-  agreed cadence, and Slack is connected so the team can ask questions. Record that state in
+  the customer has confirmed Runneth's answers through the question loop, the weekly report is
+  built, live, and approved by the customer (in the form they picked — deck, dashboard, or
+  document), a refresh routine keeps the report updated on an agreed cadence, and Slack is
+  connected so the team can ask questions. Record that state in
   /agent/brain/<workspace>/data-sources/meta/validation.md.
-- The question loop always runs first. Never proactively offer or lead with the weekly deck
-  before the question set has been run and confirmed - the deck is a soft offer at the end. A
-  person who explicitly asks for a deck or report still gets one (Field 10 confirmed first),
-  but the question loop still runs to complete validation.
+- The question loop always runs first. Never proactively offer or lead with the weekly report
+  before the question set has been run and confirmed - the report is a soft offer at the end.
+  A person who explicitly asks for a report in any form (deck, dashboard, or document) still
+  gets one (Field 10 confirmed first), but the question loop still runs to complete validation.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
-- A deck change request is a context correction too: route it to the field behind it
-  (structure, cadence, or slicing -> the deck spec, Field 10; winner or metric complaints ->
-  the interpretation fields; labels -> naming), update the field, and regenerate the deck from
-  context - never hand-edit the deck output. Durable corrections in any later conversation get
-  the same routing; one-off or current-state remarks shape the answer or the current render,
-  never the file.
-<!-- END runneth:meta-validation-gate v6 -->
+- A report change request is a context correction too: route it to the field behind it
+  (structure, cadence, or slicing -> Field 10, the report spec; winner or metric complaints ->
+  the interpretation fields; labels -> naming), update the field, and regenerate the report
+  from context - never hand-edit the report output. Durable corrections in any later
+  conversation get the same routing; one-off or current-state remarks shape the answer or the
+  current render, never the file.
+<!-- END runneth:meta-validation-gate v7 -->
 ```
 
 ## 2. Prerequisites (hard gate)
 
 Do not start validation until both are true:
 
-1. **Account Context Brain is `[CONFIRMED]`** - check the fields-confirmed count in the "File
-   metadata" block at the end of `/agent/brain/<workspace>/data-sources/meta/account-context.md`. All nine required interpretation fields signed off
-   by a person. If any field is still `[AUTO]` or `[FLAGGED]`, finish that first. Validating
+1. **Account Context Brain is `[CONFIRMED]`** - check the field statuses in the "File
+   metadata" block at the end of `/agent/brain/<workspace>/data-sources/meta/account-context.md`. The interpretation
+   fields (1-9) all signed off by a person; Field 10 confirms alongside them when its
+   walkthrough section ran, but validation never waits on it - it gates only the report build.
+   If any of Fields 1-9 is still `[AUTO]` or `[FLAGGED]`, finish that first. Validating
    against a guessed lens teaches the customer the wrong thing.
 2. **The creative content layer resolves.** In the normal case the workspace's creatives are
    in Cacheth: Knoweth injects matching summaries into the turn, and
@@ -149,15 +152,16 @@ Save the validation record to `/agent/brain/<workspace>/data-sources/meta/valida
   questions plus any they added — and their confirmed answers.
 - Every context correction made during the loop (which Account Context Brain field changed, and
   what it changed to).
-- The weekly deck: its route, its structure, the reference it was built from, and the
-  standing look-and-feel preferences the customer has confirmed — the refresh routine
-  rebuilds from these, so a visual preference not recorded here is lost on the next refresh.
-- The lock-in state: deck approval, refresh routine id and cadence, Slack connection status.
+- The weekly report: its form (deck, dashboard, or document — the customer's choice), its
+  route, its structure, the reference it was built from, and the standing look-and-feel
+  preferences the customer has confirmed — the refresh routine rebuilds from these, so a
+  visual preference not recorded here is lost on the next refresh.
+- The lock-in state: report approval, refresh routine id and cadence, Slack connection status.
 - The MVCE state block (on/off, date, who signed off).
 
 Write it as a plain-language reference document, the way a sharp analyst would hand off an account
 to a teammate. State conclusions, not statuses. Index it in `/agent/INDEX.md` with aliases
-(validation, MVCE, weekly deck, starter questions, onboarding proof) and a one-line note.
+(validation, MVCE, weekly report, starter questions, onboarding proof) and a one-line note.
 
 **Write it incrementally, not at the end.** Update `validation.md` after every confirmed
 answer and every correction — never hold the record for a closing step. An interrupted
@@ -192,22 +196,23 @@ section (beside the answer-register note) so future data questions default to th
 stated window instead of re-asking or assuming; a window the customer names in a later
 question still wins for that answer.
 
-**The question loop always runs first.** The loop (Step 2) runs, and the deck then builds
-directly from the confirmed answers — deck review covers look and feel and spec approval,
-not a repeat of the questions. The deck is never led with and never positioned as the
-expected next step: it is a soft offer once the question set has been run and confirmed
-(Step 3). A person who explicitly asks for a deck or report at any point still gets one —
-read Field 10 first (if it is not confirmed, run its two beats: they synthesize from
-already-confirmed fields — two questions, no new pull), then build. An explicit early deck
+**The question loop always runs first.** The loop (Step 2) runs, and the weekly report then
+builds directly from the confirmed answers — report review covers look and feel and spec
+approval, not a repeat of the questions. The report is never led with and never positioned
+as the expected next step: it is a soft offer once the question set has been run and
+confirmed (Step 3). A person who explicitly asks for a report in any form — a deck, a
+dashboard, a document — at any point still gets one — read Field 10 first (if it is not
+confirmed, run its two beats: they synthesize from already-confirmed fields — two questions,
+no new pull), then build. An explicit early report
 does not replace the loop: corrections raised in its review route through Step 2's
 durability test and field homes exactly the same way, and the question set still runs to
 complete validation.
 
 ## Step 2 — The answer-and-confirm loop (the catch)
 
-This step always runs, and it runs before any deck is offered. Its mechanics — the
+This step always runs, and it runs before any report is offered. Its mechanics — the
 durability test, the field homes, the correction routing — also govern every correction
-raised later in deck review (Step 4).
+raised later in report review (Step 4).
 
 ### Question generation — before the loop starts
 
@@ -362,73 +367,79 @@ Rules for the loop:
 - Every correction is logged to `/agent/brain/<workspace>/data-sources/meta/validation.md` and applied to
   `/agent/brain/<workspace>/data-sources/meta/account-context.md` so the fix is durable.
 
-## Step 3 — Offer the weekly deck (the artifact)
+## Step 3 — Offer the weekly report (the artifact)
 
-**The deck is offered, never led with.** Once the question set has been run and every answer
-confirmed, close the loop with a soft offer, in Runneth's own words — "want me to build the
-weekly deck?" — never as the expected next step. Runneth never proactively offers the deck
-before the questions are done; a customer who explicitly asks for a deck at any point still
-gets one (per Step 1), but the ask has to be theirs. A customer who only wants the question
-loop can skip the deck — and Field 10 — entirely.
+**The report is offered, never led with — and its form is the customer's choice.** Once the
+question set has been run and every answer confirmed, close the loop with a soft offer, in
+Runneth's own words — "want me to build the weekly report?" — never as the expected next
+step, and never presuming a form: the report can be a deck, a dashboard, or a document,
+whichever the customer picks. Runneth never proactively offers the report before the
+questions are done; a customer who explicitly asks for one at any point still gets it (per
+Step 1), but the ask has to be theirs. A customer who only wants the question loop can skip
+the report — and Field 10 — entirely.
 
-**The deck is gated on Field 10.** Read Field 10 (the deck spec) before gathering anything. If
-it is confirmed, the deck's structure, cadence, and exclusions are already known — pre-fill
-from it and do not re-ask. If it is not confirmed, run Field 10's two beats right here (they
-synthesize from already-confirmed fields — two questions, no new pull), then build. No deck is
-built without a confirmed Field 10.
+**The report is gated on Field 10.** Read Field 10 (the report spec) before gathering
+anything. If it is confirmed, the report's structure, cadence, and exclusions are already
+known — pre-fill from it and do not re-ask. If it is not confirmed, run Field 10's two beats
+right here (they synthesize from already-confirmed fields — two questions, no new pull),
+then build. No report is built without a confirmed Field 10.
 
-On a yes, move to the deck:
+On a yes, move to the report:
 
-> "I have your deck spec ready — [the confirmed sections from Field 10]. I'm going to build it
-> now. The one thing I still need: do you have an existing deck you'd like me to match for
-> look and feel? If not, I'll use the Motion default."
+> "I have your report structure ready — [the confirmed sections from Field 10]. Two things I
+> still need: what form do you want it in — a deck, a dashboard, or a document? And do you
+> have an existing report you'd like me to match for look and feel? If not, I'll use the
+> Motion default."
 
 Gather only what Field 10 does not already answer:
 
-- **Visual reference (if any).** An existing deck to match for look and feel only — not for
-  structure. Structure comes from Field 10.
+- **Form.** Deck, dashboard, or document — the customer's call, never presumed. Record it
+  in the report record in `validation.md`; the refresh routine rebuilds in that form.
+- **Visual reference (if any).** An existing report to match for look and feel only — not
+  for structure. Structure comes from Field 10.
 - **Look and feel.** MotionUI by default, playable videos, equal-size creative cards.
 
 Do not re-gather sections, snapshots, or date controls — Field 10 already answered them. The
-deck builds from the already-confirmed answers, and the review is about the artifact: look
+report builds from the already-confirmed answers, and the review is about the artifact: look
 and feel and spec approval, not a repeat of the questions. Corrections raised in the review
 are still context corrections, routed through the same durability test and field homes.
 
-Build it on the report component library so the layout is proven, not hand-rolled. The deck
+Build it on the report component library so the layout is proven, not hand-rolled. The report
 reads Field 10 for its structure and sections, the creative content layer (Cacheth, via
 injection or the cache CLI) for creative facts (themes, hooks, tags, content), live motion CLI
 pulls for performance (spend, winners, spend state), and the Account Context Brain for how
-"best," "winner," and "ready to scale" are judged. When the deck includes customer insight,
+"best," "winner," and "ready to scale" are judged. When the report includes customer insight,
 messaging recommendations, or what-to-make-next guidance and a Voice of Customer Audit exists,
 read it and cite its evidence; never substitute it for live performance or creative content.
 
-The deck is not just output. It is the proof that Runneth connected the pieces and understood them
-well enough to produce something the team will use every week.
+The report is not just output. It is the proof that Runneth connected the pieces and understood
+them well enough to produce something the team will use every week.
 
 ## Step 4 — Lock it in (approval, refresh routine, Slack)
 
-Building the deck is not the finish line. Onboarding is complete only when the deck is something
-the team will actually live in, it keeps itself current, and the team has a place to ask Runneth
-questions. Three things, all required:
+Building the report is not the finish line. Onboarding is complete only when the report is
+something the team will actually live in, it keeps itself current, and the team has a place to
+ask Runneth questions. Three things, all required:
 
-1. **The customer approves the deck — at the spec level.** Not "it exists," but "this is the
+1. **The customer approves the report — at the spec level.** Not "it exists," but "this is the
    right structure, the right metrics, the right winners — this is how we see our
    performance." Every change request routes through the training loop before anything is
-   rebuilt: deck structure, sections, cadence, or slicing → Field 10; what counts as a winner
+   rebuilt: report structure, sections, cadence, or slicing → Field 10; what counts as a winner
    or which metric leads → the interpretation field behind it (Fields 1, 2, 9); names and
-   labels → Field 4; standing look-and-feel → the deck record in `validation.md` (the refresh
+   labels → Field 4; standing look-and-feel or a form change (deck to dashboard, dashboard to
+   doc) → the report record in `validation.md` (the refresh
    routine rebuilds from it); one-offs → this render only, reverting on refresh — say so.
-   Update the home first, then regenerate the deck from it — never hand-edit the deck output
-   directly; a hand-fixed deck reverts on its next scheduled refresh. Rebuild at the
+   Update the home first, then regenerate the report from it — never hand-edit the report
+   output directly; a hand-fixed report reverts on its next scheduled refresh. Rebuild at the
    customer's pace: piecemeal feedback can rebuild as it lands, a burst of feedback routes
    fully first and rebuilds once. A correction that changes an interpretation field re-runs
    the affected loop questions (Step 2) — only those, never the full set — before the next
    build, and does not reset approval of untouched spec sections. Aesthetics do not gate
    approval; the spec does. Their yes is the gate, not the build.
-2. **A refresh routine is set up.** With the customer, agree how often the deck should update
+2. **A refresh routine is set up.** With the customer, agree how often the report should update
    (weekly is common; some want daily) and set up a routine that refreshes it on that cadence.
-   Confirm who owns it and whose access it runs on, since it depends on the Meta connection and the
-   deck's destination.
+   Confirm who owns it and whose access it runs on, since it depends on the Meta connection and
+   the report's destination.
 3. **Slack is connected.** If the org has not connected Slack yet, get it connected so the team
    can ask Runneth questions where they already work. This is a web-app action; point them to it
    and confirm once it is done.
@@ -442,15 +453,15 @@ Validation is complete, and the Minimum Viable Context Engine is on, when all fi
 1. Must-have Meta context sources are connected and set to refresh (the Account Context Brain on
    its cadence; the creative cache syncs itself).
 2. The customer's confirmations are **clean**: every question in the final set is clean —
-   its latest answer was confirmed without correction — and every correction raised in deck
+   its latest answer was confirmed without correction — and every correction raised in report
    review is resolved and the re-render confirmed.
    Corrections along the way are the loop working, not a failure; a correction (in the loop
-   or during deck review) re-opens only the questions or deck sections it touched, which are
-   re-answered and re-confirmed. Never re-ask the full set to prove cleanliness — a
+   or during report review) re-opens only the questions or report sections it touched, which
+   are re-answered and re-confirmed. Never re-ask the full set to prove cleanliness — a
    question stays clean until a correction touches it.
-3. The weekly deck is built, live, and approved at the spec level — as regenerated from
+3. The weekly report is built, live, and approved at the spec level — as regenerated from
    context, never as hand-tweaked output.
-4. A refresh routine keeps the deck updated on an agreed cadence.
+4. A refresh routine keeps the report updated on an agreed cadence.
 5. Slack is connected so the team can ask Runneth questions.
 
 Record the state in `/agent/brain/<workspace>/data-sources/meta/validation.md`:
@@ -464,10 +475,11 @@ account_specific_questions_generated: <count>
 account_specific_questions_confirmed: <count>
 questions_clean: <n of m — latest answer confirmed without correction>
 context_corrections: <total>
-deck_rebuilds: <count>
-weekly_deck_route: <app route>
-weekly_deck_built_from: <reference | description>
-weekly_deck_approved: <yes | no>
+report_rebuilds: <count>
+weekly_report_form: <deck | dashboard | document>
+weekly_report_route: <app route>
+weekly_report_built_from: <reference | description>
+weekly_report_approved: <yes | no>
 refresh_routine_id: <routine id>
 refresh_cadence: <e.g. weekly Mon 9am | daily>
 slack_connected: <yes | no>
@@ -475,8 +487,8 @@ slack_connected: <yes | no>
 
 MVCE is binary. If any of the five is not true, the state is `off` and validation is not done.
 A questions-only customer can run the answer-and-confirm loop indefinitely without Field 10 or
-a deck — but MVCE stays off until the deck is built and approved, which requires the Field 10
-spec first.
+a report — but MVCE stays off until the report is built and approved, which requires the
+Field 10 spec first.
 
 **When MVCE flips on, pass the baton.** Validation's last act is pointing at the Knoweth
 organize part (`knoweth-organize-onboarding-package.md`, staged beside this doc): its gates
@@ -491,15 +503,15 @@ Onboarding is not handed off until the organize layer is active.
 
 The hypothesis: once MVCE is on, the customer starts asking many more questions. Question volume
 is the key onboarding success signal. Note the pre-MVCE baseline and watch for the lift after the
-deck goes live. A flat question count after validation is a sign the deck did not create
+report goes live. A flat question count after validation is a sign the report did not create
 confidence, worth a follow-up, not a silent pass.
 
 ---
 
 # Refresh and re-validation
 
-- The **weekly deck** regenerates on its cadence via the refresh routine set up in Step 4. After
-  onboarding, this is the standing weekly deck, not a one-time artifact.
+- The **weekly report** regenerates on its cadence via the refresh routine set up in Step 4.
+  After onboarding, this is the standing weekly report, not a one-time artifact.
 - **Re-validate** when the account changes in a way that could break an answer: a new primary
   conversion event, a naming-system change, a new product line, or a materially different funnel. Re-running
   the affected questions in the loop is enough; a full re-onboard is not.
@@ -511,26 +523,26 @@ confidence, worth a follow-up, not a silent pass.
 
 # Dependency on the other parts (one open item)
 
-- **The testing-to-scaling rule is a required input this part leans on.** The deck's
+- **The testing-to-scaling rule is a required input this part leans on.** The report's
   "testing / scaling / ready to scale" snapshot needs a defined rule for when a creative moves
   from testing to scaling (some teams call this graduating — use the account's own word).
   Today the only related signal is Spend State (scaling / holding / declining), which comes
   from live Motion pulls — the creative content layer holds no performance data. The rule must
   be captured as an Account Context Brain field (fits field 6 test batching or field 9
-  winner/cut criteria) so the deck produces that snapshot consistently. Until it is captured,
+  winner/cut criteria) so the report produces that snapshot consistently. Until it is captured,
   treat that snapshot as `[FLAGGED]` and say the rule is still needed rather than guessing it.
   In the question loop, the testing-pipeline question reports what is running and its
   performance over the customer's confirmed window and makes no scale recommendations until
   the rule is captured.
-- Interpretation precedence is unchanged: when the deck and the Account Context Brain disagree on
-  what "best" or "winner" means, the Account Context Brain wins.
+- Interpretation precedence is unchanged: when the report and the Account Context Brain disagree
+  on what "best" or "winner" means, the Account Context Brain wins.
 
 ---
 
 # How this actually governs Runneth (be honest about it)
 
 This file is findable reference knowledge and its guard makes the trigger fire once merged into a
-loaded layer. On its own it does not hard-enforce a schedule or a deck standard; it defines the
+loaded layer. On its own it does not hard-enforce a schedule or a report standard; it defines the
 experience and the gate. Wiring the guard into `/agent/user.md` is what makes the trigger
 always-on for the account, and that merge is admin-gated. This doc is the human-readable contract
 the CSM, the customer, and Runneth can all point at.

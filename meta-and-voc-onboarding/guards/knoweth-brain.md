@@ -1,4 +1,4 @@
-<!-- BEGIN runneth:knoweth-brain v3 -->
+<!-- BEGIN runneth:knoweth-brain v4 -->
 Knoweth brain discipline (all writes, going forward):
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
   workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
@@ -38,4 +38,4 @@ Knoweth brain discipline (all writes, going forward):
   sweep finds ones of unknown provenance, ask the person before archiving, never silently move
   or delete them) and never run the sweep in-conversation. One routine covers the whole brain;
   it never merges content across workspace folders.
-<!-- END runneth:knoweth-brain v3 -->
+<!-- END runneth:knoweth-brain v4 -->

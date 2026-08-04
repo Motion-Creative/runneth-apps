@@ -33,7 +33,7 @@ field number) lands directly on its section.
   conventions (decoder spec and presentation rule) · Field 5 — Attribution model and
   windows · Field 6 — Account structure · Field 7 — Funnel map · Field 8 — Creative
   performance metrics and benchmarks · Field 9 — Targets, thresholds and decision rules ·
-  Field 10 — Reporting structure and marketing calendar (the deck spec).
+  Field 10 — Reporting structure and marketing calendar.
 - **Derived capabilities · Context health check · Overall status · Changelog** — the
   closing sections.
 
@@ -123,18 +123,18 @@ per-product targets with the team), not as flag noise. Use this order:
 2. **One short intro paragraph, in plain language:** what this file is, that Runneth reads it
    before any Meta performance work for this account, and how to read the field statuses.
 3. **At a glance:** a few bullets a human can skim: last refreshed, confidence, fields confirmed
-   (count / 9), and any open flags. Once learned, this is also where the one-line
+   (count / 10), and any open flags. Once learned, this is also where the one-line
    answer-register note lives (how this team likes their answers — e.g. "numbers first,
    interpretation on request"), written by the validation loop's register corrections, and
    the one-line date-window note (the analysis window the customer confirmed at the
    validation kickoff — e.g. "default lookback: last 30 days"), which future data questions
    default to unless the person names a different window.
-4. **The nine fields**, in order.
-5. **The deck spec (only once Field 10 is confirmed):** a short section carrying Field 10's
-   saved output — marketing calendar, reporting cadence, exclusions, and deck sections — in the
-   same plain prose as the rest of the file. Omit the section entirely while Field 10 is
-   pending; the validation deck build reads it from here.
-6. **File metadata (last):** end the file with a `## File metadata` heading followed by the machine
+4. **The ten fields**, in order. Field 10's section carries its saved output — marketing
+   calendar, reporting cadence, exclusions, and report sections — in the same plain prose as
+   the rest of the file; while it is unconfirmed, the section states what is proposed and
+   what is still pending, like any other unconfirmed field. The validation report build reads
+   it from here.
+5. **File metadata (last):** end the file with a `## File metadata` heading followed by the machine
    contract as a fenced `yaml` code block, written from the template below.
 
 **The file-metadata machine contract.** This block is the only place statuses live in the
@@ -145,7 +145,7 @@ schema_version: 1
 workspace_id: <workspaceId>
 ad_account: <ad account name>
 last_refreshed: <YYYY-MM-DD>
-fields_confirmed: <0-9>            # count of the nine required fields at CONFIRMED
+fields_confirmed: <0-10>           # count of fields at CONFIRMED; validation starts on fields 1-9
 field_statuses:
   field_1_sources_of_truth: <CONFIRMED | AUTO | FLAGGED>
   field_2_conversion_events: <CONFIRMED | AUTO | FLAGGED>
@@ -156,13 +156,15 @@ field_statuses:
   field_7_funnel_map: <CONFIRMED | AUTO | FLAGGED>
   field_8_creative_metrics: <CONFIRMED | AUTO | FLAGGED>
   field_9_targets_thresholds: <CONFIRMED | AUTO | FLAGGED>
-  field_10_deck_spec: <CONFIRMED | PENDING>   # the deck gate — outside the nine
+  field_10_reporting: <CONFIRMED | AUTO | FLAGGED>   # gates the report build, not validation
 open_flags: []                     # plain-language open items as a list; [] when none
 naming_decoder: </agent/brain/<workspace>/data-sources/meta/naming-decoder.json — or null when no convention>
 ```
 
 The account-context guard's all-confirmed check and the validation gate read
-`fields_confirmed` and `field_statuses` from this block. The one-line answer-register note
+`fields_confirmed` and `field_statuses` from this block. "All required fields" for those
+gates means Fields 1–9, the interpretation fields: validation never waits on Field 10,
+which gates only the report build. The one-line answer-register note
 lives in the "At a glance" section, not here — do not duplicate it into the metadata.
 
 - Index it in `/agent/INDEX.md` with aliases (account context, KPI hierarchy, how we judge ads,
@@ -184,11 +186,12 @@ This is required for writing the opening frame. Do not infer brand identity from
 Store the returned brand story, product range, audience, and differentiators — the
 onboarding-walkthrough skill's opening frame is written from them.
 
-## Step 1: Run the nine field pulls
+## Step 1: Run the field pulls
 
 Run all field pulls in parallel where possible. See the Field-to-command map below for
-the exact commands per field. Every pull passes `--workspace-id <workspaceId>` and
-`--date-range last_365d` unless the field specifies otherwise.
+the exact commands per field — Fields 1–9 each have a pull; Field 10 synthesizes from
+those same pulls and needs none of its own. Every pull passes `--workspace-id <workspaceId>`
+and `--date-range last_365d` unless the field specifies otherwise.
 
 After pulling, inspect each returned file with a separate `jq` call before using the data.
 
@@ -196,8 +199,8 @@ After pulling, inspect each returned file with a separate `jq` call before using
 
 Steps 0-1 run silently at post-install: autofill every field possible, persist the scaffold,
 present nothing. The fill-in presentation - the required output schema (opening frame, field
-sections, closing TLDR), its skeleton and pre-send checklist, and the Field 10 deck-spec
-offer - is owned by the onboarding-walkthrough skill, which fires when a human says yes to
+sections including Field 10's two beats, closing TLDR), its skeleton and pre-send
+checklist - is owned by the onboarding-walkthrough skill, which fires when a human says yes to
 "Are you ready to begin your onboarding?" Present per that skill. This package defines the
 data layer the skill reads: what each field means, how to pull it, how to confirm it, and
 how to store it (including Field 4's presentation rule, which stays beside its decoder spec
@@ -269,7 +272,7 @@ answers which field and what to read from the result.
 | 7. Funnel map | `motion meta ads --grain ads --include-associated-objects`; `motion meta insights` campaign names on rows | campaign names and objectives from `associatedObjectDetails.campaigns[]` (`name`, `objective`); campaign-to-stage grouping; flag agency-managed or ASC campaigns |
 | 8. Creative performance metrics | `motion meta insights --date-range last_365d --include-metrics --table-kpi <keys>` | account averages for CPA, thumbstop, hold rate, CTR; video-only for engagement metrics |
 | 9. Targets, thresholds, decision rules | `motion meta insights --include-metrics --table-kpi <cost-per key>` | reference CPA baseline; surface material variation across product lines / campaign types |
-| 10. Reporting structure and marketing calendar (deck spec) | No new pull — synthesize from Fields 4, 7, and 9 once confirmed | marketing calendar from the decoder's campaign-type and launch-date positions; reporting structure from confirmed fields |
+| 10. Reporting structure and marketing calendar | No new pull — synthesize from the same pulls that fill Fields 4, 7, and 9 (provisional reads are enough; requires decoded ad names) | marketing calendar from the decoder's campaign-type and launch-date positions; reporting structure from the Field 4/7/9 reads |
 
 **The ads-grain response shape (read before extracting).** Rows from `motion meta ads
 --grain ads` never carry `adName`, `campaignName`, or `adsetName` keys — at any spend level.
@@ -284,11 +287,12 @@ fix the query; never read it as an empty or broken account.
 
 # Required context fields
 
-All nine fields are required. Runneth auto-pulls every one of them. There is no optional set.
-
-Field 10 is the one addition outside that set: the deck spec. It is not required to start
-validation — the question loop runs on the nine — but no deck is built without it (see
-Field 10).
+All ten fields are required. Runneth auto-fills every one of them — Fields 1–9 from their
+own pulls, Field 10 synthesized from those same pulls. There is no optional set. Field 10
+differs from the others in exactly two ways: it needs decoded ad names to synthesize (when
+the provisional decode carries nothing, its walkthrough section is skipped and its beats run
+at report time in validation), and it gates the report build, not validation — the question
+loop runs once Fields 1–9 confirm (see Field 10).
 
 ## Field 1 — Sources of truth
 
@@ -662,25 +666,33 @@ on (e.g., last 14 days, last 7 days) so Runneth doesn't have to guess.
 - Tier labels: `<Legend: $X+ / Scale: $Y-$X / Kill: <$Y — or: not used>`
 - Default reporting window: `<last N days>`
 
-## Field 10 — Reporting structure and marketing calendar (the deck spec)
+## Field 10 — Reporting structure and marketing calendar
 
 Status: `[EMPTY]`
 
-**This field is the deck gate, not a validation gate.** The validation question loop runs
-without it, but no deck is built until it is confirmed: the weekly deck's structure, cadence,
-and exclusions come from here. If validation reaches the deck build and this field is not yet
-confirmed, run its two beats right there — it synthesizes from already-confirmed fields, so it
-costs two questions, not a re-interview.
+**This field is the report gate, not a validation gate.** The validation question loop runs
+without it, but no weekly report is built until it is confirmed: the report's structure,
+cadence, and exclusions come from here (its form — deck, dashboard, or document — is the
+customer's choice, gathered at build time). It presents in the walkthrough's Part 2 as the
+last field section — two beats, two questions, landing in the closing TLDR with everything
+else, never as a separate offer and never framed as an artifact to build. If it was skipped
+there (no decoded ad names to synthesize from) and validation reaches the report build
+unconfirmed, run its two beats right there — it synthesizes from already-confirmed fields,
+so it costs two questions, not a re-interview.
 
 This field solves three root problems: (1) the reporting picture is scattered across Fields 4,
 7, and 9 but never synthesized — without this field, Runneth asks the customer to explain their
 reporting from scratch; (2) the marketing calendar is embedded in the naming convention data
 but never surfaced proactively — without this field, Runneth has no seasonal context; (3) the
-validation deck has no spec — without this field, the "build the weekly deck" step in
-validation starts with a blank sheet.
+validation report has no spec — without this field, validation's "Offer the weekly report"
+step starts with a blank sheet.
 
-Run this field last. It synthesizes from other fields and requires Fields 4, 7, and 9 to be
-confirmed before it runs.
+Run this field last, as the final Part 2 section. It synthesizes from the same pulls that
+fill Fields 4, 7, and 9 — the provisional reads are enough to present, and corrections the
+customer makes to those fields in the same conversation update this field's synthesis before
+it saves. The hard requirement is decoded ad names: when the provisional naming decode
+carries nothing to synthesize from, skip the section in the walkthrough (no question, no
+mention) and run the beats at report time in validation instead.
 
 **Auto-detect (no new Motion pull needed)**
 
@@ -705,11 +717,15 @@ confirmed before it runs.
 Present in two beats, back to back.
 
 *Beat 1 — Marketing calendar (auto-detected):* State what was detected. Propose the calendar
-with the detected campaign types and their launch windows. Then ask one question: whether there
-is anything coming up not yet visible in the account.
+with the detected campaign types and their launch windows. When no seasonal pattern is
+detected, say so plainly and describe the cadence the naming data does show instead (rolling
+test batches, standing campaign types that stay open) — never manufacture a calendar. Then
+ask one question: whether there is anything coming up not yet visible in the account (a
+launch, a promo, a seasonal push), or whether the account runs without a fixed marketing
+calendar.
 
 *Beat 2 — Reporting structure (auto-synthesized):* Present the synthesized picture as a
-bulleted summary, then propose the four standard report sections as the starting deck
+bulleted summary, then propose the four standard report sections as the starting report
 structure. Then ask one question: whether this matches the full picture and what the ideal
 report would add.
 
@@ -722,27 +738,29 @@ The four standard sections to propose for every account, adapted to the account'
    and which are not, derived automatically from the naming decoder.
 
 These four sections are a starting hypothesis, not a fixed template. Present them, let the
-customer confirm or reshape.
+customer confirm or reshape. When Beat 1 found no seasonal calendar, replace section 3 with
+the account's active campaign structure (the standing campaign pools or types) rather than
+presenting an empty seasonal section.
 
 **Why two questions, not one:** the marketing calendar and the reporting structure are separate
 confirmations. The calendar question is about completeness of external context. The reporting
-question is about the deck spec. Combining them into one question loses precision. Keep them as
+question is about the report spec. Combining them into one question loses precision. Keep them as
 two beats in sequence.
 
-**Fields (saved output — feeds the validation deck build directly)**
+**Fields (saved output — feeds the validation report build directly)**
 - Marketing calendar: `<campaign_type | launch_window | confirmed: yes/pending | notes>`
 - Reporting cadence: `<every N days>`
 - Reporting exclusions: `<confirmed list>`
-- Deck sections: `<1. top ads | 2. by [dimension] | 3. seasonal | 4. naming breakdown>`
+- Report sections: `<1. top ads | 2. by [dimension] | 3. seasonal | 4. naming breakdown>`
 - Confirmed or open: `<what the customer confirmed vs what is still pending>`
 
-On confirmation, write this as the deck-spec section of `/agent/brain/<workspace>/data-sources/meta/account-context.md`
-(see "Where the filled result lives") — that is where the validation deck build reads it.
+On confirmation, write this into Field 10's own field section of `/agent/brain/<workspace>/data-sources/meta/account-context.md`, like every other field
+(see "Where the filled result lives") — that is where the validation report build reads it.
 
-This field is also where deck feedback lands. When a customer asks for a structural change
-to the deck — sections, cadence, slicing, exclusions — during validation or any later
-conversation, the change is written here first and the deck regenerates from it. The spec's
-only home is this field, never the deck file itself (per the validation package's training
+This field is also where report feedback lands. When a customer asks for a structural change
+to the weekly report — sections, cadence, slicing, exclusions — during validation or any later
+conversation, the change is written here first and the report regenerates from it. The spec's
+only home is this field, never the report file itself (per the validation package's training
 loop).
 
 ---
@@ -779,8 +797,8 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 
 ## Overall status
 
-- Fields confirmed: `<count>` / 9
-- Field 10 (deck spec): `<confirmed | pending — no deck build until confirmed>`
+- Fields confirmed: `<count>` / 10 (no report build until Field 10 confirms; validation
+  starts on Fields 1–9)
 - Flagged fields needing the customer: `<list>`
 - Written to: `/agent/brain/<workspace>/data-sources/meta/account-context.md`
 - Indexed in `/agent/INDEX.md`: `<yes | no>`

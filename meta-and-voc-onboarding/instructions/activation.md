@@ -41,7 +41,8 @@ without asking permission, and without waiting to be asked:
    else in the sequence (reachability check, VoC sync setup, guard merges into
    `/agent/user.md`, the Meta account-context steps) runs. The guard
    blocks are workspace-agnostic and shared, so post-install leaves them alone when
-   they are already there; everything else runs for this workspace.
+   each merged block already matches its staged guard file, and refreshes any that
+   do not; everything else runs for this workspace.
 3. Then handle the user's message.
 
 The presence of the four guard sentinels (`runneth:account-context-guard` and the rest)

@@ -316,7 +316,7 @@ Use relative paths through the proxy (the connected account carries the API host
 | date bound on API | none (client-side) | none (client-side) | **`since_date`** | none (client-side) | TBD | TBD |
 | pagination | page number | page number | page number (oldest-first) | `page[after]` cursor | cursor | page number (doc-grounded) |
 | discovery step | none | businessUnitId | **appKey** | none | storeId | storeHash |
-| connection path | OAuth registry | OAuth registry | OAuth registry | **secret key** | **secret key** | **secret key** |
+| connection path | OAuth registry | OAuth registry | OAuth registry | **keys in Pipedream modal** | **secret key** | **secret key** |
 
 Reviews.io and the non-review platforms (support, engagement, community, Meta ad comments)
 are covered by their own recipe sections above rather than this review-platform table.

@@ -206,9 +206,9 @@ File: `meta/meta-creative-attributes-playbook.md` (staged at `/agent/brain/meta-
 File: `meta/meta-account-context-brain-onboarding-package.md` (staged at `/agent/brain/meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md`)
 
 - **Job:** capture how the team interprets the account — what "best" means, which numbers to
-  trust, how campaigns map to stages. Nine required fields confirmed with a person, plus
-  Field 10 (the deck spec: reporting structure and marketing calendar, synthesized from
-  confirmed fields) — it gates the validation deck, not the question loop.
+  trust, how campaigns map to stages. Ten fields confirmed with a person; Field 10
+  (reporting structure and marketing calendar) synthesizes from the other fields' pulls and
+  gates the validation report, not the question loop.
 - **Runs second.** Uses what the Creative Attributes step found (especially naming decode) as
   pre-populated proposals for confirmation, rather than starting cold. At install, only the
   autofill runs - silently; the presentation belongs to the Onboarding Walkthrough skill below.
@@ -225,8 +225,8 @@ Folder: `onboarding-walkthrough/`
   conversation that opens with the brand story and account findings, walks the field
   sections (tables where the data calls for them, the full naming breakdown always), and
   closes with the questions TLDR. Owns the required output schema; the ACB package owns the
-  fields it presents. Once the Meta beats are done (account-context questions handled,
-  Field 10 offered), it closes by proactively presenting the Voice of Customer summary -
+  fields it presents. Once the Meta beats are done (account-context questions handled),
+  it closes by proactively presenting the Voice of Customer summary -
   one line per integration with item counts, product coverage, and dates ("Judge.me: 1,240
   reviews across 6 products") - then offers the Voice of Customer Audit by previewing its
   plan (split by product, score 1-5, the five buckets, personas) and asking whether to add
@@ -247,17 +247,19 @@ File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta
   questions (including the name-level probe: "show me all our [product] ads," with the
   filtered name level shown) plus account-specific questions derived from the naming
   decoder and funnel map, all pre-answered in batch over the date window the customer
-  confirmed at kickoff and presented together. Then a soft offer of the weekly deck
-  pre-filled from the Field 10 deck spec (no deck without it; questions-only customers
-  never need it, and the deck is never led with — though an explicit ask still gets one),
-  lock-in (deck approval, refresh routine, Slack), and the MVCE gate.
-- **Runs third, gated.** Starts only when all nine Account Context Brain fields are confirmed
+  confirmed at kickoff and presented together. Then a soft offer of the weekly report —
+  in the form the customer picks: deck, dashboard, or document — pre-filled from Field 10
+  (no report without it; questions-only customers never need it, and the report is never
+  led with — though an explicit ask still gets one),
+  lock-in (report approval, refresh routine, Slack), and the MVCE gate.
+- **Runs third, gated.** Starts only when the Account Context Brain's interpretation fields
+  (1–9) are confirmed (Field 10 gates only the report build)
   and the creative content layer resolves (creatives in Cacheth — or live content pulls where
   the sandbox cache feature is disabled; cache coverage, not files). Every correction in
   the loop heals the specific Account Context Brain field behind it — never move past a wrong
   answer.
-- **Persists to:** `/agent/brain/<workspace>/data-sources/meta/validation.md` (confirmed answers, corrections, deck
-  route, lock-in state, MVCE block).
+- **Persists to:** `/agent/brain/<workspace>/data-sources/meta/validation.md` (confirmed answers, corrections, report
+  form and route, lock-in state, MVCE block).
 - **Activation:** merges the `runneth:meta-validation-gate` guard block into `/agent/user.md`;
   once merged, the trigger fires on its own when the prerequisites are met.
 - **Re-validation:** re-run the affected questions when the account changes in a way that could
@@ -428,12 +430,9 @@ The run order below is the human-readable description of the same lifecycle.
    `guards/meta-validation-gate.md`) is merged by the same post-install guard merge; once the
    Account Context Brain is fully confirmed and the creative content layer resolves,
    the gate opens the validation experience on its own: the answer-and-confirm loop, the weekly
-   deck, lock-in, and the MVCE gate. When a Voice of Customer Audit exists, validation adds
+   report, lock-in, and the MVCE gate. When a Voice of Customer Audit exists, validation adds
    its customer-voice question and uses the audit in customer-side WHY answers. Onboarding is
    done when MVCE is on, not when data is connected.
-5. **Set up the VoC data sync during post-install.** For each reachable VoC platform, run the
-   voc-data-pull skill's "Set up the recurring sync" procedure - it pins the workspace's
-   account, creates the daily sync routine, and kicks the backfill in the background.
 6. **Run the Voice of Customer audit later in onboarding.** Offered once after the workspace's
    first fully covered backfill and run only on a person's yes, the `voc-audit` skill compiles
    the workspace's cross-platform customer-voice findings to
@@ -450,7 +449,7 @@ The run order below is the human-readable description of the same lifecycle.
    `/agent/brain/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md`).
 8. **Keep everything current.** Creative content stays current through the Cacheth sync
    automatically. Account Context Brain on monthly cadence and structural-drift triggers. The
-   weekly deck regenerates on the refresh routine agreed at lock-in. VoC data refreshes itself
+   weekly report regenerates on the refresh routine agreed at lock-in. VoC data refreshes itself
    through its daily routines once set up.
 
 ---
@@ -461,7 +460,7 @@ The run order below is the human-readable description of the same lifecycle.
   uses the Account Context Brain to decide what "best" means, then the creative attributes to
   reason about the specific creatives.
 - Meta Validation is the catch. The first two steps are only proven when the customer confirms
-  Runneth's answers and approves the deck built from them; every correction in the loop lands in
+  Runneth's answers and approves the report built from them; every correction in the loop lands in
   the specific Account Context Brain field behind it, so validating and healing the context are
   the same motion.
 - The dependency runs one way for interpretation: Account Context Brain is the authority on how

@@ -4,38 +4,7 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
-## 2 - 2026-08-04
-
-Concise onboarding presentation, customer-owned date ranges, questions before the
-deck, and the fallback ladder made self-contained:
-
-- **Scannable walkthrough presentation.** The fill-in's opening frame is now 2-3
-  sentences (was 4-6), and every field section presents as 2-4 bullets - lead with
-  the read, support with the account's real names and numbers, no prose
-  paragraphs. Tables stay where the data is structured, and the naming-conventions
-  section still carries the full Field 4 decoder breakdown. Skeleton and pre-send
-  checklist updated to enforce the new shape. The closing "Questions for you" TLDR
-  is unchanged.
-- **The date range is the customer's call.** Validation kickoff asks what window
-  to analyze (last 14, 30, or 90 days as the common choices) before any pull, and
-  persists the confirmed window as a one-line "at a glance" note in
-  `account-context.md` so future data questions default to it. Every hard-coded
-  7-day window in the validation doc now reads the confirmed window; the
-  conditional lifetime pull remains the one exception, driven by Field 9's
-  winner/cut rule (validation doc v1.15).
-- **Questions always run before the deck offer.** The two validation doors are
-  gone: the question loop is the default and always runs first, and the deck build
-  is a soft offer after the set is confirmed - never led with. An explicit deck
-  request still gets one, and no deck is built without a confirmed Field 10
-  (`meta-validation-gate` v6).
-- **Creative-content fallback ladder hardened in the Cacheth Command Reference.**
-  Two rules added: one clear cache failure means fall through to the live rung,
-  never retry-loop a dead cache; and a live fall-through names the rung that
-  failed. The agent-builder PRD that proposed moving this enforcement into the
-  Motion CLI was removed from the repo - it was a handoff artifact, not package
-  content.
-
-## 1 - 2026-07-29
+## 1 - 2026-08-04
 
 The package as it ships:
 
@@ -59,9 +28,12 @@ The package as it ships:
   `_changelog.md`. A second workspace in the same org onboards additively without
   touching the first.
 - **Workspace-agnostic guards** (`account-context-guard` v3, `meta-validation-gate`
-  v5, `knoweth-organize` v3, `knoweth-brain` v3): merged into `/agent/user.md`
+  v7, `knoweth-organize` v4, `knoweth-brain` v4): merged into `/agent/user.md`
   verbatim, once per VM, with no install-time token substitution. Each guard
-  resolves the workspace folder per conversation. Post-install records each
+  resolves the workspace folder per conversation. The post-install guard merge is
+  content-based: it skips only when every merged block matches its staged file
+  byte-for-byte - a sentinel being present proves nothing - and refreshes any
+  block that differs. Post-install records each
   onboarded workspace in a `runneth:meta-voc-onboarded` roster block in
   `/agent/user.md`; the activation gate checks the roster for this conversation's
   workspace, so a second workspace on an already-guarded VM still gets its own
@@ -95,7 +67,7 @@ The package as it ships:
   duplicates. `meta-ad-performance-analysis` reads the audit for customer-side WHY
   and what-to-make-next questions; `onboarding-walkthrough` offers the audit as a
   fallback when a backfill is ready and the routine has not already offered it;
-  validation (doc v1.12) adds a conditional customer-voice starter question when
+  validation adds a conditional customer-voice starter question when
   the audit exists and uses it in customer-side WHY answers.
 - **The creative content layer** is a capability with an access contract, not a
   synonym for Cacheth: the Cacheth Command Reference defines a four-rung ladder
@@ -104,8 +76,13 @@ The package as it ships:
   live rung is failure-only - it fires when the cache errors, is empty or still
   building, or is missing the record, and is the standing path when the sandbox
   cache feature is disabled - so cache-disabled sandboxes still decode names,
-  validate, and organize instead of being permanently gated. Metrics pulls stay
-  lean (no content flags); content joins from the cache on `creativeId`.
+  validate, and organize instead of being permanently gated. Two rules keep the
+  ladder self-contained: one clear cache failure means fall through to the live
+  rung, never retry-loop a dead cache; and a live fall-through names the rung
+  that failed. Metrics pulls stay
+  lean (no content flags); content joins from the cache on `creativeId`. (The
+  agent-builder PRD that proposed moving this enforcement into the Motion CLI
+  was removed from the repo - a handoff artifact, not package content.)
 - Post-install opens with step 0: it quotes the `Default workspace:` line from
   the conversation's Motion context verbatim - the workspace the runtime bound
   the conversation to - states the name, workspaceId, and slug taken from it,
@@ -123,10 +100,17 @@ The package as it ships:
   onboarding?".
 - The walkthrough presentation (opening frame, field sections, closing TLDR)
   lives in the `onboarding-walkthrough` skill and fires only on a human's yes to
-  that invitation or an explicit ask to begin/resume onboarding. Customer voice
+  that invitation or an explicit ask to begin/resume onboarding. The
+  presentation is scannable by contract: the opening frame is 2-3 sentences,
+  and every field section presents as 2-4 bullets - lead with the read, support
+  with the account's real names and numbers, no prose paragraphs. Tables stay
+  where the data is structured, the naming-conventions section always carries
+  the full Field 4 decoder breakdown, and the skeleton and pre-send checklist
+  enforce the shape. The closing "Questions for you" TLDR lists every open
+  question from Part 2. Customer voice
   is the walkthrough's closing beat and never cuts the Meta onboarding short: it
-  runs only after the account-context questions are handled and Field 10 has
-  been offered. The walkthrough is proactive about it - a Voice of Customer
+  runs only after the account-context questions are handled (Field 10 presents
+  in Part 2 with the rest). The walkthrough is proactive about it - a Voice of Customer
   summary without being asked, one line per integration with platform, kind of
   voice, items synced, products spanned, and date coverage ("Judge.me: 1,240
   reviews across 6 products") - then offers the audit by previewing its plan in
@@ -156,11 +140,28 @@ The package as it ships:
   block has an explicit YAML template (`fields_confirmed`, `field_statuses`,
   `open_flags`, `naming_decoder`) that the guard's all-confirmed check and the
   validation gate read.
+- **Field 10 is a native tenth field** - reporting structure and marketing
+  calendar, metadata key `field_10_reporting`, its saved output in its own
+  field section of `account-context.md`. The docs speak of ten fields
+  throughout; validation starts on Fields 1-9 and Field 10 gates only the
+  report build. Its two beats (marketing calendar, reporting structure) present
+  in the walkthrough's Part 2 as the last field section - two questions landing
+  in the closing TLDR with the rest, synthesized from the provisional naming
+  decode (skipped entirely when no decoded ad names exist; the beats then run
+  at report time in validation, two questions and no new pull). Beat 1 handles
+  the no-seasonal-calendar case plainly instead of manufacturing one.
+- **The date range is the customer's call.** Validation kickoff asks what
+  window to analyze (last 14, 30, or 90 days as the common choices) before any
+  pull, and persists the confirmed window as a one-line "at a glance" note in
+  `account-context.md` so future data questions default to it. Every validation
+  pull uses the confirmed window; the conditional lifetime pull is the one
+  exception, driven by Field 9's winner/cut rule.
 - Validation generates its question set from the confirmed account context
-  (doc v1.13) instead of a fixed list: the baseline questions parameterized with
+  instead of a fixed list: the baseline questions parameterized with
   the account's real reporting dimensions, testing bucket, and decoder names,
   plus one derived question per filterable decoder dimension with at least 3
-  creatives and meaningful 7-day spend, a Field 9 winner/cut probe, and a
+  creatives and meaningful spend in the customer's confirmed window, a Field 9
+  winner/cut probe, and a
   Field 7 testing-pipeline question - typically 7-12 total, customer additions
   invited. Answers are pre-filled in batch before any are shown: one primary-
   bucket insights pull (no `--limit`, `totalCount` checked before all-ads
@@ -172,33 +173,36 @@ The package as it ships:
   when ads are named - Winner/Watch/Cut labels only on the winner/cut
   question. The testing-pipeline question makes no scale recommendations until
   the testing-to-scaling rule is captured.
-- Validation opens on two doors that never both run in full (doc v1.14, gate
-  guard v5): questions-first is the default - the loop runs and the deck then
-  builds from the confirmed answers, with deck review covering look and feel
-  and spec approval rather than repeating the questions. Deck-first means a
-  person asking for a deck or report gets the deck built right away - never a
-  questionnaire first - and the validation proof runs through the deck review,
-  where every correction routes through the same durability test and field
-  homes; the generated question set stays available afterward, offered but
-  never forced. The chosen door is recorded as `validation_path` in
-  `validation.md`, and the guard enforces the deck-request routing in the
-  always-loaded layer.
-- Validation is a training loop (validation doc v1.14, ACB v1.32, validation
-  gate guard v5): the question loop and the deck build train one brain. All
+- **The question loop always runs first, and the artifact is "the weekly
+  report" - never presumed to be a deck.** The report build is a soft offer
+  after the question set has been run and confirmed - never led with. The
+  report's form is the customer's choice (deck, dashboard, or document), asked
+  at build time and recorded in `validation.md` (`weekly_report_form`); "deck"
+  survives in the docs only as one of those form options. The walkthrough never
+  offers the report build itself - the report does not exist for the customer
+  until validation's questions are confirmed. An explicit report request at any
+  point still gets one (Field 10 confirmed first - its two beats run right
+  there when it is not), corrections raised in its review route through the
+  same durability test and field homes, and the question loop still runs to
+  complete validation. No report is built without a confirmed Field 10;
+  questions-only customers never need it.
+- Validation is a training loop (validation doc v1.16, ACB v1.32, validation
+  gate guard v7): the question loop and the report build train one brain. All
   feedback routes through a durability test — judgment rules heal ACB fields,
   standing preferences land in the register note or Field 10, current-state
-  facts shape the answer only, one-offs are applied and forgotten. Deck change
+  facts shape the answer only, one-offs are applied and forgotten. Report change
   requests are context corrections (structure/cadence/slicing to Field 10,
-  metric/winner complaints to the interpretation fields); the deck regenerates
+  metric/winner complaints to the interpretation fields); the report regenerates
   from context and is never hand-edited directly (one-offs touch the current
-  render only and revert on refresh — said out loud; standing look-and-feel
-  lives in validation.md's deck record, where the refresh routine reads it).
-  MVCE requires clean confirmations for the chosen path - questions-first,
+  render only and revert on refresh — said out loud; standing look-and-feel and
+  form live in validation.md's report record, where the refresh routine reads
+  it). MVCE requires clean confirmations:
   every question clean (latest answer confirmed without correction —
-  corrections re-open only the questions they touch, never a full re-run);
-  deck-first, every deck-review correction resolved and the re-render
-  confirmed - and spec-level deck approval; validation.md tracks questions
-  clean, total corrections, and deck rebuilds. The loop continues past MVCE: durable
+  corrections re-open only the questions they touch, never a full re-run),
+  every report-review correction resolved and the re-render
+  confirmed, and spec-level report approval; validation.md tracks questions
+  clean, total corrections, and report rebuilds (`report_rebuilds`,
+  `weekly_report_*`). The loop continues past MVCE: durable
   corrections in any later conversation get the same routing, no scheduled
   check-ins.
 - Meta reachability is connection-status-driven: a connected Meta workspace gets

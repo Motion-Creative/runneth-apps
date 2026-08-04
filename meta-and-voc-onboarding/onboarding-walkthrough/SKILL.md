@@ -18,7 +18,7 @@ document is the what-it-means.
 1. Read `/agent/brain/<workspace>/data-sources/meta/account-context.md`. Post-install writes it as a scaffold: every
    field header, autofilled facts, blockers recorded next to the fields they block.
 2. If the scaffold does not exist or the autofill never ran, run the ACB package's Step 0
-   (brand context pull) and Step 1 (the nine field pulls) first — silently, then present.
+   (brand context pull) and Step 1 (the field pulls) first — silently, then present.
 3. If the file shows all fields already confirmed, say so and offer the context health check
    instead of re-running the walkthrough.
 
@@ -42,7 +42,7 @@ the read, support with this account's real names and numbers, no prose paragraph
 most one question as the section's last line — bold, so it can't be missed. A field the pull
 fully settles gets no question: say what you know in the bullets and move on. Two questions
 are allowed only when one section genuinely covers two distinct confirmations (Field 4's two
-decoder confirmations; Field 10's two beats, when they run in this conversation); more than
+decoder confirmations; Field 10's two beats); more than
 two means the section is too broad — split it or cut a question. Lead with what you know: the ratio
 should feel like mostly settled reads with a few specific things still open.
 
@@ -51,6 +51,18 @@ the customer needs to scan and confirm — never force bullets onto a table. And
 naming-conventions section always includes the full breakdown per Field 4's presentation
 rule in the ACB package — it is never compressed to a settled one-liner, even when the
 decoder is confirmed.
+
+**Field 10 is a Part 2 section like the rest — the last one, in field order.** Its
+section carries the two beats per the ACB package's Field 10 rules: the marketing calendar
+read (what the naming data shows — a detected seasonal pattern, or plainly that there is
+none and what cadence the data does show instead), then the synthesized reporting structure
+with the proposed starting report sections — each beat ending in its one bold question, both
+landing in the closing TLDR with the rest. The synthesis reads the provisional naming
+decode, so it requires decoded ad names: when the decode carries nothing to synthesize from
+(no ad names, no dimension or campaign-type reads), skip the section entirely — no question,
+no mention — and Field 10's beats run at report time inside validation instead. Corrections
+the customer makes to Fields 4, 7, or 9 in this conversation update the Field 10 read
+before it saves.
 
 **Part 3 — Closing TLDR.** Under the bold heading **Questions for you:**, a numbered list of
 every open question from Part 2, one line each, in the order they appeared. Close with this
@@ -93,8 +105,8 @@ Just answer what you know — I'll write the context file from your responses.
 - The naming-conventions section carries the full breakdown (Field 4's presentation rule),
   never a prose summary of the decoder.
 - No field numbers, status badges, or worksheet labels anywhere.
-- At most one bold question per section (two only for a sanctioned two-beat section); settled
-  fields have none.
+- At most one bold question per section (two only for the sanctioned Field 4 and Field 10
+  sections); settled fields have none.
 - The TLDR lists every open question from Part 2, in appearance order, and ends with the
   verbatim closing line.
 
@@ -102,14 +114,17 @@ Just answer what you know — I'll write the context file from your responses.
 
 - Handle answers and corrections per the ACB package's field rules, and persist them to
   `/agent/brain/<workspace>/data-sources/meta/account-context.md` as they confirm.
-- Once Fields 4, 7, and 9 are confirmed, offer Field 10's two beats (marketing calendar, then
-  reporting structure) while the context is fresh — per the ACB package's Field 10 section.
-  If the person is done for now, stop; the beats run at deck time instead (the Meta Validation
-  package handles that). No deck is built until Field 10 is confirmed.
+- **The weekly report build is never offered in the walkthrough.** Field 10 (reporting
+  structure and marketing calendar) already presented in Part 2 with everything else — that
+  is its only appearance. The report itself does not exist for the customer until
+  validation's question loop has run and confirmed: the Meta Validation package owns the
+  report offer, at report time (its form — deck, dashboard, or document — is the customer's
+  choice there). If the person explicitly asks for a report, deck, or dashboard, the
+  validation package's rules apply (the question loop still completes validation).
 - **Then, with the Meta beats done, present the Voice of Customer summary — proactively, not
   on request.** This is the walkthrough's closing beat, separate from the fixed three-part
   presentation, and it never cuts the Meta onboarding short: it runs only after the
-  account-context questions are handled and the Field 10 offer has been made (or declined).
+  account-context questions are handled.
   Inspect this workspace's platform folders under
   `/agent/brain/<workspace>/data-sources/voc/` and its `voc-sync-<workspace>-*` routines,
   then tell the person what customer voice the brain actually holds: one line per
