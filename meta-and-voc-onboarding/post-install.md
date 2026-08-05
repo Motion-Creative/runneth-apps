@@ -156,8 +156,8 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    the staged block in any way, run this step and replace that block. Never leave a stale
    block in place because its sentinel is present. The
    blocks ship ready-made in
-   `/agent/brain/meta-and-voc-onboarding/guards/` (`account-context-guard.md`,
-   `meta-validation-gate.md`, `knoweth-organize.md`, `knoweth-brain.md`). On this VM,
+   `/agent/brain/meta-and-voc-onboarding/meta-onboarding-rules/` (`meta-analysis-account-context.md`,
+   `meta-analysis-validation.md`, `brain-organization.md`, `brain-file-conventions.md`). On this VM,
    `/agent/user.md` is walled off from Bash entirely (reads and writes are both refused -
    do not try a script) and the edit/patch tool fails validation; the file-write tool is
    the only thing that can change it, and the file's current contents are already in your

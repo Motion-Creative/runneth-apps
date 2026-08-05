@@ -89,13 +89,13 @@
       }
     },
     {
-      "id": "guards",
+      "id": "meta-onboarding-rules",
       "type": "directory",
-      "sourcePath": "guards",
+      "sourcePath": "meta-onboarding-rules",
       "executablePaths": [],
       "target": {
         "root": "agent_brain",
-        "path": "meta-and-voc-onboarding/guards"
+        "path": "meta-and-voc-onboarding/meta-onboarding-rules"
       }
     },
     {
