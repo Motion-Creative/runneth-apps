@@ -49,7 +49,7 @@ Guide, and the Cacheth Command Reference), `voc-data-pull/` (the VoC Data Pull s
 recipes, and templates), and `voc-audit/` (the manual Voice of Customer Audit skill), plus
 `knoweth/` (the organize-the-brain part that runs after the questions),
 `meta-ad-performance-analysis/` (the ad performance analysis skill),
-`onboarding-walkthrough/` (the walkthrough presentation skill), and `guards/` (the four
+`onboarding-walkthrough/` (the walkthrough presentation skill), and `meta-onboarding-rules/` (the four
 ready-made `/agent/user.md` guard blocks that post-install merges). This README
 covers all of them; `package.json` (the package manifest) maps every file to its installed location.
 
@@ -421,13 +421,13 @@ The run order below is the human-readable description of the same lifecycle.
    content layer (Cacheth + the query paths), detects naming patterns, and passes them to the
    Account Context Brain as provisional proposals. Writes nothing per-creative to the brain.
 4. **Activate and run the Account Context Brain autofill (Meta Step 2).** Its guard block (staged at
-   `guards/account-context-guard.md`) is merged into `/agent/user.md` by the post-install run's
+   `meta-onboarding-rules/meta-analysis-account-context.md`) is merged into `/agent/user.md` by the post-install run's
    single guard merge; then the autofill runs silently and persists the scaffold, drawing on
    the Creative Attributes step (if it was run) for naming proposals and creative evidence.
    Post-install ends with "Are you ready to begin your onboarding?" - the onboarding-walkthrough
    skill presents the findings and collects the human answers on the yes.
 5. **Activate and run Meta Validation (Meta Step 3).** Its validation-gate guard block (staged at
-   `guards/meta-validation-gate.md`) is merged by the same post-install guard merge; once the
+   `meta-onboarding-rules/meta-analysis-validation.md`) is merged by the same post-install guard merge; once the
    Account Context Brain is fully confirmed and the creative content layer resolves,
    the gate opens the validation experience on its own: the answer-and-confirm loop, the weekly
    report, lock-in, and the MVCE gate. When a Voice of Customer Audit exists, validation adds
@@ -442,7 +442,7 @@ The run order below is the human-readable description of the same lifecycle.
    confirmed and data-source content has landed, organize the brain: keep shared content in the
    global lane and make it findable with tags and a naming decoder. Both the
    `runneth:knoweth-organize` and `runneth:knoweth-brain` guard blocks (staged at
-   `guards/knoweth-organize.md` and `guards/knoweth-brain.md`) are merged into /agent/user.md by the
+   `meta-onboarding-rules/brain-organization.md` and `meta-onboarding-rules/brain-file-conventions.md`) are merged into /agent/user.md by the
    post-install run's single guard merge, so the organize trigger fires and save-routing/maintenance stay on. Do not carve data-source-family or
    initiative lanes today; only global, the user lane, and the workspace lane are queried. See
    `knoweth/knoweth-organize-onboarding-package.md` (staged at
