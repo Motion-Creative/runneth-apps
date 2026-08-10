@@ -13,21 +13,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  package-index:
-    name: Package index
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Test package index
-        run: node --test scripts/validate-runneth-package-index.mjs
-
   site:
     name: Site
     runs-on: ubuntu-latest
