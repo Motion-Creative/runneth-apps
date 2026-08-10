@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "id": "hook-script-mining",
+  "name": "Hook & Script Mining",
+  "version": "8",
+  "installPolicy": "manual",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "description": "Turns one competitor ad, creator post, adjacent-brand ad, or organic video/image, plus a note on why it caught someone's eye, into a classified swipe-file entry (hook tactic, headline tactic, visual format, or creative mechanic) built against this account's own real evidence, then rolls confirmed patterns into an input bank for the existing ideation engine. Stages the process docs and the hook-script-mining skill into this workspace, plus a package instruction that, on install, reads /agent/brain/hook-script-mining/instructions/activation.md and follows it - that instruction asks before touching anything and only runs the initial library build (seeding from an existing saved library where one exists, or a live Motion glossary pull where it doesn't; creative mechanics has no Motion tag, so it starts from a universal-mechanics checklist checked against real evidence and creative breakdowns) on a human yes. Every seed or submission holds for a human yes before it's written as live. One asset at a time after that, no bulk pulls in this version. Uses this account's own real ad history, including spend, to seed and rank the swipe-file library itself, but never uses paid performance data to judge creative effectiveness or make scale decisions, and never lets another account's names or figures appear in this account's library.",
+  "resources": [
+    {
+      "id": "readme",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "README.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/README.md"
+      }
+    },
+    {
+      "id": "source-and-classification",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "01-source-and-classification.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/01-source-and-classification.md"
+      }
+    },
+    {
+      "id": "pattern-library-and-concept-use",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "02-pattern-library-and-concept-use.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/02-pattern-library-and-concept-use.md"
+      }
+    },
+    {
+      "id": "worked-example",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "03-worked-example.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/03-worked-example.md"
+      }
+    },
+    {
+      "id": "bank-building-process",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "04-bank-building-process.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/04-bank-building-process.md"
+      }
+    },
+    {
+      "id": "library-confirmation",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "05-library-confirmation.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/05-library-confirmation.md"
+      }
+    },
+    {
+      "id": "hook-script-mining-skill",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "hook-script-mining/SKILL.md",
+      "target": {
+        "root": "agent_skills",
+        "path": "hook-script-mining/SKILL.md"
+      }
+    },
+    {
+      "id": "activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
+    }
+  ]
+}

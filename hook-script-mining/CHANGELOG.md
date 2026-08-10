@@ -1,0 +1,53 @@
+# Hook & Script Mining changelog
+
+Repo-side maintainer history. Never staged to customer brains. Versions are simple
+integers (`1`, `2`, ...) and bump once per package update - one version per merged
+change to the package, not per commit. Entries are newest-first.
+
+## 8 - 2026-08-10
+
+The package as it ships:
+
+- Schema-v1 `package.json` manifest, indexed in the repo root `package-index.json`
+  with a raw `github` source. `installPolicy: manual`, `updatePolicy: auto`,
+  `uninstallPolicy: allowed`, `categories: []`.
+- Stages the process docs (`README.md`, `01-source-and-classification.md`,
+  `02-pattern-library-and-concept-use.md`, `03-worked-example.md`,
+  `04-bank-building-process.md`, `05-library-confirmation.md`) into
+  `/agent/brain/hook-script-mining/`, plus the `hook-script-mining` skill into the
+  skills root, plus an install-time `package_instruction` that reads
+  `instructions/activation.md`.
+- **One save path.** The built library always lands at
+  `/agent/brain/<workspace>/hook-script-mining/`, kept separate from this account's
+  own shared hook/headline taxonomy folder. Resolves the earlier inconsistency
+  between two real installs (one had saved to the shared taxonomy folder, the other
+  to a separate `creative-scouting/`-style folder); `01` now specs this one path
+  only.
+- **Account-context aware, not account-context dependent.** Before building, reads
+  `/agent/brain/<workspace>/data-sources/meta/account-context.md` when it already
+  exists (from the Meta and Voice of Customer onboarding package), and uses its
+  confirmed naming decoder and reporting dimensions. Builds fully standalone when it
+  doesn't exist. Top-spend sorting is called out explicitly as a sampling method for
+  picking one representative seed example per tag, never a performance judgment.
+- **Cache-first creative content.** Transcript, summary, and creative-breakdown
+  pulls check `motion cache search-summaries` / `motion cache get-creative` first and
+  fall through to a live `motion meta insights` pull only on a clear cache miss,
+  error, or a sandbox with the cache feature disabled.
+- **Spend is an intentional, documented exception.** This account's own spend and
+  creative counts are saved into seed entries and confirmation tables as the
+  library's own ranking signal, an explicit exception to the standing "never save
+  spend into brain content" rule. Spend here never stands in for ad performance and
+  never drives a scale/cut call; those stay out of this package's scope entirely.
+- **Logs itself.** Once a build or update clears human confirmation, adds one line to
+  `/agent/brain/<workspace>/_changelog.md`, matching the Meta and Voice of Customer
+  onboarding package's brain-organization convention so a maintenance sweep doesn't
+  flag the new folder as stray.
+- Package description rewritten to match what the docs actually do: points install
+  behavior at `instructions/activation.md` (ask before touching anything) instead of
+  describing an immediate, unprompted run; states that creative mechanics builds from
+  a checklist plus creative breakdowns rather than "starting empty"; and states the
+  real, narrower paid-performance-data boundary (spend feeds the library's own
+  ranking, but never a performance or scale/cut judgment) instead of the broader
+  "never touches paid performance data" claim the docs contradicted.
+- One asset at a time, submission-driven, no scheduled runs. Never lets another
+  account's names, quotes, or figures appear in this account's library.
