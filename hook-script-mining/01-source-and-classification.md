@@ -52,7 +52,9 @@ requires Apify.
 1. **Check for a stored Apify credential first.** Follow the standard rule: if this
    workspace already has an Apify API token saved, use it without asking again. Never
    request a new one just because this is the first time this specific skill has
-   needed it.
+   needed it. (Connecting Apify is offered as step one of this package's setup at
+   install, so most workspaces reach this point with a token already stored; this
+   step is the catch for the ones that deferred it.)
 2. **If nothing is stored yet, walk the person through getting one, then request it
    securely:**
    - Tell them plainly: create a free Apify account at

@@ -54,11 +54,13 @@ from real submissions.
 
 ## What you need connected
 
-Motion access alone covers Step 0 (building the library from this account's own ad
-history). The moment someone submits an actual outside link, a competitor ad, a
-creator's post, an organic video, this needs an Apify account connected too, nothing
-in Motion can fetch or watch an arbitrary external video. See
-`01-source-and-classification.md`, Step 1a, for exactly how that gets set up per
+Connecting Apify is step one of this package's setup, offered at install before the
+library build. It's what lets the skill actually watch outside links (TikTok and
+Instagram videos, competitor ads, creators' posts) - nothing in Motion can fetch or
+watch an arbitrary external video. Declining at install doesn't block anything:
+Motion access alone covers the library build from this account's own ad history, and
+the first outside link someone submits will raise the connection again. See
+`01-source-and-classification.md`, Step 1a, for exactly how the token gets set up per
 account (each account connects its own token, never shared across customers).
 
 ## Read order

@@ -25,6 +25,11 @@ The package as it ships:
 - **Uninstall leaves the library.** Uninstalling removes the staged docs and the
   skill only; the built library stays at its canonical path, and a reinstall seeds
   from it instead of rebuilding.
+- **Apify connection is setup step one.** The activation offers connecting Apify
+  (via the secure credential flow, per `01` Step 1a) before the library build, so
+  the credential outside-link submissions need is in place from day one. Declining
+  blocks nothing: the build is Motion-only, and the first outside link re-raises
+  the connection.
 - **One save path.** The built library always lands at
   `/agent/brain/<workspace>/hook-script-mining/`, kept separate from this account's
   own shared hook/headline taxonomy folder. Resolves the earlier inconsistency

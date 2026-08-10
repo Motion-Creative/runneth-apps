@@ -18,20 +18,40 @@ classification, submission, and rebuild from here.
 
 **If that folder does not exist,** the library has not been built for this workspace
 yet. Do not run the first pull silently, but do not wait for a trigger phrase either.
-Say plainly what this does and ask before touching anything:
+Setup is two steps, offered in order: connect Apify, then build the library.
+
+**Step 1: connect Apify.** Check for a stored Apify API token for this workspace
+first - a workspace that already has one is never asked again; skip straight to
+step 2. If none is stored, say plainly what this package does and offer the
+connection:
 
 > Installed. This builds a swipe-file library, hook tactics, headline tactics, visual
 > formats, and creative mechanics, that you can classify new inspiration against and
 > feed back into your ideation engine.
 >
-> Would you like to begin the first step, which is pulling the last 365 days of your
-> own ads and building your library from what you've already run?
+> Step one is connecting Apify, the service that lets me actually watch the outside
+> links you'll send in (TikTok and Instagram videos, competitor ads, creators'
+> posts). Want to connect it now? It's a free account and takes about two minutes.
 
-(In a conversation later than the installing one, drop the word "Installed." and lead
-with the offer itself.)
+On a yes, walk through the connection exactly as
+`/agent/brain/hook-script-mining/01-source-and-classification.md` Step 1a describes:
+create the free account, copy the personal API token, and request it through the
+secure credential flow - never pasted into chat. On a "not yet," don't block: move to
+step 2 anyway, and the first outside link someone submits will raise the connection
+again (Step 1a's standing check).
+
+**Step 2: build the library.** Once step 1 resolves - connected or deferred - offer
+the build:
+
+> Step two: I can pull the last 365 days of your own ads and build your library from
+> what you've already run. Would you like to begin?
+
+(In a conversation later than the installing one, drop the word "Installed." from
+step 1 and lead with the offer itself; if a token is already stored, lead with the
+step 2 offer alone.)
 
 Wait for a yes. Do not run the pull, and do not present any seeded content, until that
-yes lands, in this conversation or a later one. Make the offer at most once per
+yes lands, in this conversation or a later one. Make each offer at most once per
 conversation: if the person says not yet, or asks something else first, drop it and do
 not repeat it in this same conversation. A later conversation may offer again, since
 the library still does not exist.
