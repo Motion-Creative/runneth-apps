@@ -15,8 +15,16 @@ The package as it ships:
   `02-pattern-library-and-concept-use.md`, `03-worked-example.md`,
   `04-bank-building-process.md`, `05-library-confirmation.md`) into
   `/agent/brain/hook-script-mining/`, plus the `hook-script-mining` skill into the
-  skills root, plus an install-time `package_instruction` that reads
-  `instructions/activation.md`.
+  skills root, plus a `package_instruction` (`instructions/activation.md`) that the
+  package manager surfaces in every conversation while the package is installed.
+- **Idempotent activation.** Because the package instruction is present in every
+  conversation (not delivered once at install), it gates on the built library as its
+  done-marker: silent when `/agent/brain/<workspace>/hook-script-mining/` exists,
+  and while it doesn't, offers the first build at most once per conversation and
+  drops the offer on a "not yet."
+- **Uninstall leaves the library.** Uninstalling removes the staged docs and the
+  skill only; the built library stays at its canonical path, and a reinstall seeds
+  from it instead of rebuilding.
 - **One save path.** The built library always lands at
   `/agent/brain/<workspace>/hook-script-mining/`, kept separate from this account's
   own shared hook/headline taxonomy folder. Resolves the earlier inconsistency

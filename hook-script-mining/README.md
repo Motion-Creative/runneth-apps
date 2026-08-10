@@ -79,3 +79,7 @@ shared taxonomy folder, the other used a separate `creative-scouting/`-style
 folder); `01-source-and-classification.md` now specs this one path only, so any
 install that saves somewhere else is a bug against this spec, not a live
 open question.
+
+Uninstalling this package removes the staged process docs and the skill but never
+touches the built library; a reinstall finds it at this path and seeds from it
+instead of rebuilding (per `04-bank-building-process.md`, Step 1).
