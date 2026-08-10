@@ -25,6 +25,13 @@ The package as it ships:
 - **Uninstall leaves the library.** Uninstalling removes the staged docs and the
   skill only; the built library stays at its canonical path, and a reinstall seeds
   from it instead of rebuilding.
+- **Swipe-file viewer app (optional visualization).** New staged doc
+  `06-swipe-file-app.md`: once 3-4 confirmed entries exist, the skill automatically
+  builds a browsable app over the confirmed library (one tab per axis, brand/creator
+  filters, playable evidence pulled via the workspace's Apify token) and in the same
+  turn offers a human-confirmed daily sync routine
+  (`swipe-file-app-sync-<workspace>`). Read-only: the app and its routine never add,
+  infer, or auto-confirm entries; the one-human-yes-per-entry gate is untouched.
 - **Apify connection is setup step one.** The activation offers connecting Apify
   (via the secure credential flow, per `01` Step 1a) before the library build, so
   the credential outside-link submissions need is in place from day one. Declining

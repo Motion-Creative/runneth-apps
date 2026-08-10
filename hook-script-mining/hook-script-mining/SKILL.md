@@ -9,7 +9,9 @@ description: |
   file," "classify this ad," "log this pattern," or shares a link with "I like this
   because..." Also use to build or rebuild this account's swipe-file library from its own
   real ad history before any of that, or when someone asks what's still untested from
-  what they've sent, or wants to quick-test something from a link directly.
+  what they've sent, or wants to quick-test something from a link directly, or to
+  visualize/browse an existing library as an app ("show me my swipe file," "visualize
+  my hook library," "can we see this somewhere").
 ---
 
 # Hook & Script Mining
@@ -86,6 +88,16 @@ without account history behind it yet.
    "When the note doesn't map."
 7. Hold every new entry, seeded or submitted, for a human yes per
    `05-library-confirmation.md` before it's live.
+
+## Visualizing the library as an app
+
+To browse, filter, or share the confirmed library as a playable, filterable app instead
+of reading it as markdown, read
+`/agent/brain/hook-script-mining/06-swipe-file-app.md` and follow it exactly. This is a
+read-only visualization layer over already-confirmed entries; it never adds or
+reclassifies an entry on its own. That doc also covers the automatic first build once
+3-4 confirmed entries exist, and the optional daily sync routine that keeps the app
+current as new entries get confirmed.
 
 ## Rolling entries into usable patterns
 

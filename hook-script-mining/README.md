@@ -71,6 +71,8 @@ account (each account connects its own token, never shared across customers).
 4. `03-worked-example.md`
 5. `04-bank-building-process.md`
 6. `05-library-confirmation.md`
+7. `06-swipe-file-app.md` (optional: the browsable viewer app over the confirmed
+   library, and the daily sync routine that keeps it current)
 
 ## Save location
 
