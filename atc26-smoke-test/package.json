@@ -4,7 +4,7 @@
   "name": "AI Training Camp 26 Smoke Test",
   "version": "1",
   "description": "Smoke-test package for AI Training Camp 26 category-based package intent and staged resources.",
-  "installPolicy": "manual",
+  "installPolicy": "auto",
   "updatePolicy": "auto",
   "uninstallPolicy": "allowed",
   "resources": [
