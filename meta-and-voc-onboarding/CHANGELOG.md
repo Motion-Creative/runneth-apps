@@ -4,6 +4,18 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 5 - 2026-08-11
+
+- Added the `dashboard-design` skill for building and refining Runneth dashboards and
+  app-style pages with the Web Awesome design system.
+- Split detailed implementation patterns and performance-dashboard rules into progressive
+  references so the core skill remains concise.
+- Made the design-system and bundled-reference reads a hard pre-authoring gate in every turn,
+  with an explicit stop when any reference is unavailable, and clarified `image-key` behavior
+  for creative-row and category charts.
+- Added UI metadata for skill discovery and packaged the complete skill directory into
+  `/agent/.agents/skills/dashboard-design/`.
+
 ## 4 - 2026-08-11
 
 - Removed the `ai-training-club-26` intent category from this package.
