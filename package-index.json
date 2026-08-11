@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-10-02",
+  "indexRevision": "2026-08-11-01",
   "packages": [
     {
       "id": "creative-strategy-foundations",
@@ -37,26 +37,6 @@
         "owner": "Motion-Creative",
         "repo": "runneth-apps",
         "path": "meta-and-voc-onboarding",
-        "ref": "main"
-      }
-    },
-    {
-      "id": "atc26-smoke-test",
-      "name": "AI Training Camp 26 Smoke Test",
-      "version": "1",
-      "description": "Smoke-test package for AI Training Camp 26 category-based package intent and staged resources.",
-      "categories": [
-        "ai-training-camp-26"
-      ],
-      "packageManagerVersion": 1,
-      "installPolicy": "auto",
-      "updatePolicy": "auto",
-      "uninstallPolicy": "allowed",
-      "source": {
-        "type": "github",
-        "owner": "Motion-Creative",
-        "repo": "runneth-apps",
-        "path": "atc26-smoke-test",
         "ref": "main"
       }
     }
