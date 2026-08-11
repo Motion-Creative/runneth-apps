@@ -9,26 +9,74 @@ Build polished, usable dashboards with the Runneth Web Awesome design system. Ke
 model, visual hierarchy, component selection, and interaction behavior consistent across the
 page.
 
-## Required references
-
-1. Read `/runneth/references/design-system.md` before authoring UI.
-2. Read the files under `/runneth/references/components/` for every component the page uses.
-3. Read [references/component-patterns.md](references/component-patterns.md) when implementing
-   the shell, KPI strip, gallery, chart card, settings controller, table, or tooltip behavior.
-4. Read [references/performance-dashboard-rules.md](references/performance-dashboard-rules.md)
-   before building any performance chart, performer gallery, or thumbnail-driven component.
-
 ## Build workflow
 
-1. Determine whether the page is an app-like dashboard or a top-to-bottom narrative report.
-2. Settle the data model and write the required `data/*.json` files before composing the page.
-3. Choose components from the design system rather than recreating them.
-4. Build the shell and information hierarchy.
-5. Add interactions in narrow TypeScript browser controllers.
-6. Check responsive behavior, accessibility, empty states, and data completeness.
-7. Run `app build`, then run `app verify` and confirm `dist/index.html` exists.
-8. Keep the app private through Motion authentication unless the user explicitly requests public
-   sharing.
+**Step 0 is a hard gate. Do not write any Astro source, data files, or controller code until
+all three reads in this step are complete in the current turn.**
+
+### Step 0 — Read the references (required before any markup)
+
+Read all three of the following files now, in this turn, before proceeding:
+
+1. `/runneth/references/design-system.md` — page models, component catalog, layout strategy,
+   theme rules, and handoff contract.
+2. `references/component-patterns.md` — exact implementation patterns for the app shell, KPI
+   strip, creative gallery, chart card, gear settings controller, settings panel CSS, data
+   tables, and tooltip positioning. The gear button markup, controller wiring, and settings
+   panel CSS that every chart card requires are defined here and nowhere else.
+3. `references/performance-dashboard-rules.md` — chart group count thresholds, metric
+   combination rules, representative creative selection, thumbnail safety rules, performer
+   gallery caps, chart settings requirements, common mistakes table, and the pre-handoff
+   checklist. The `image-key` rules for creative-row charts versus category charts are defined
+   here and nowhere else.
+
+Also read the file under `/runneth/references/components/` for every specific component the
+page will use (`kpi-strip.md`, `creative-card.md`, `creative-chart.md`, etc.) before writing
+markup that uses that component.
+
+Do not proceed past Step 0 until every file listed above has been read in this turn. Prior
+knowledge of these files from earlier turns is not a substitute for reading them now.
+
+If any required file is missing, unreadable, or truncated, stop and name the exact path that
+could not be read. Ask for that reference to be restored or made available. Do not produce an
+implementation plan, component recommendation, data model, markup, pseudocode, or controller
+code from the remaining references.
+
+### Step 1 — Choose the page shape
+
+Determine whether the page is an app-like dashboard or a top-to-bottom narrative report,
+then commit to one model. Never mix the two.
+
+- Dashboard or app-like: use `wa-page` with its header slot.
+- Narrative report: use `report-*` elements with no header slot.
+
+### Step 2 — Settle the data model
+
+Write the required `data/*.json` files before composing any page markup. Keep one source of
+truth per chart group and its representative creative. Use `null` for missing media and `"—"`
+for missing displayed field values. Keep raw data transformation separate from component markup.
+
+### Step 3 — Build the shell and hierarchy
+
+Compose from the scaffold elements and design system components identified in Step 0.
+Never hand-roll cards, tables, charts, modals, or form controls. Wrap the page in
+`src/layouts/Base.astro`; never duplicate the Web Awesome loader or scaffold bundle.
+
+### Step 4 — Add controllers
+
+Put chart population, gear panel toggles, gallery expansion, and hover behavior in narrow
+TypeScript controllers imported from the Astro page. Keep all per-chart gear logic in one
+controller file. Listen for `wa-change`, not `change`, on Web Awesome form controls.
+
+### Step 5 — Verify against the pre-handoff checklist
+
+Run through the checklist in `references/performance-dashboard-rules.md` before calling the
+dashboard complete. Then run `app build` and `app verify` and confirm `dist/index.html` exists.
+
+Keep the app private through Motion authentication unless the user explicitly requests public
+sharing.
+
+---
 
 ## Choose one page shape
 

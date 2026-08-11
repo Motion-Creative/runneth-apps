@@ -9,10 +9,11 @@ thumbnail-driven components.
 2. [Metric combinations](#metric-combinations)
 3. [Representative creatives](#representative-creatives)
 4. [Thumbnail safety](#thumbnail-safety)
-5. [Performer galleries](#performer-galleries)
-6. [Chart settings](#chart-settings)
-7. [Common mistakes](#common-mistakes)
-8. [Pre-handoff checklist](#pre-handoff-checklist)
+5. [Image keys by chart type](#image-keys-by-chart-type)
+6. [Performer galleries](#performer-galleries)
+7. [Chart settings](#chart-settings)
+8. [Common mistakes](#common-mistakes)
+9. [Pre-handoff checklist](#pre-handoff-checklist)
 
 ## Chart group count
 
@@ -64,6 +65,21 @@ Do not maintain separate data files or selection logic for chart thumbnails and 
 ```jq
 map(select(.thumbnailUrl | test("motionaccountassets")))
 ```
+
+## Image keys by chart type
+
+Set `image-key="thumbnail"` only when the chart rows follow one of these two contracts:
+
+- **Creative-row chart:** each row represents one creative, and `thumbnail` is that same
+  creative's stable still image. Do not substitute a different representative creative.
+- **Category chart:** each row represents a product, concept, hook, campaign, or other group,
+  and `thumbnail` comes from the single representative creative selected for that group using
+  the priority above. Reuse that same creative for any associated preview.
+
+Set a row's `thumbnail` to `null` when no stable still image satisfies the relevant contract.
+The chart must fall back to its text label. Never point `image-key` at a video URL, and never
+select a separate thumbnail source just for display. A chart's thumbnail switch must add or
+remove the `image-key` attribute without changing row data.
 
 ## Performer galleries
 
