@@ -26,6 +26,8 @@ The parts, and their operational nature:
   summarizes the synced customer voice per integration and offers the audit.
 - **Meta Validation** - human-gated proof loop.
 - **Meta Ad Performance Analysis** - on-demand diagnostic skill; nothing self-runs.
+- **Dashboard Design** - on-demand design and implementation guidance for polished Runneth
+  dashboards and app-style pages; nothing self-runs.
 - **Knoweth organize** - self-gating: fires on its own conditions once content lands; do not
   force it.
 
@@ -45,7 +47,8 @@ Guide, and the Cacheth Command Reference), `voc-data-pull/` (the VoC Data Pull s
 recipes, and templates), and `voc-audit/` (the manual Voice of Customer Audit skill), plus
 `knoweth/` (the organize-the-brain part that runs after the questions),
 `meta-ad-performance-analysis/` (the ad performance analysis skill),
-`onboarding-walkthrough/` (the walkthrough presentation skill), and `meta-onboarding-rules/` (the four
+`onboarding-walkthrough/` (the walkthrough presentation skill), `dashboard-design/` (the dashboard
+design skill and its progressive references), and `meta-onboarding-rules/` (the four
 ready-made `/agent/user.md` guard blocks that post-install merges). This README
 covers all of them; `package.json` (the package manifest) maps every file to its installed location.
 
@@ -378,6 +381,24 @@ Folder: `meta-ad-performance-analysis/`
   evidence. Analyses show their work: filter applied, signal read, what couldn't be confirmed.
 - **Installs to the skills root** (`/agent/.agents/skills/meta-ad-performance-analysis/`), not
   the brain - see the `meta-ad-performance-analysis-skill` resource in `package.json`.
+
+---
+
+## Dashboard Design (skill, own folder)
+
+Folder: `dashboard-design/`
+
+- **Job:** guide the design and implementation of polished Runneth dashboards and app-style
+  pages using the Web Awesome design system, Astro app shell, theme tokens, data-backed KPI
+  strips, creative galleries, charts, tables, and narrow browser controllers.
+- **Runs on demand - does not fire at install.** Triggered when someone asks to create,
+  redesign, review, or fix a dashboard, performance report, analytics page, or other
+  data-heavy app UI. Installing only stages the skill.
+- **Structure:** `SKILL.md` carries the core workflow and invariants; `references/` carries
+  detailed component/controller patterns and performance-dashboard rules so runtime context
+  stays focused.
+- **Installs to the skills root** (`/agent/.agents/skills/dashboard-design/`), not the brain -
+  see the `dashboard-design-skill` resource in `package.json`.
 
 ---
 
