@@ -4,6 +4,18 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 3 - 2026-08-11
+
+- Added the `ai-training-club-26` intent category.
+- Changed `installPolicy` from `manual` to `auto` so managed sync installs the
+  package on matching VMs. `updatePolicy: auto` and `uninstallPolicy: allowed`
+  are unchanged.
+- Updated the manifest and index descriptions to state the automatic-install
+  contract and fresh-conversation activation behavior explicitly.
+- Added an explicit activation consent gate: automatic installation only delivers the
+  package. Connected-account checks and persistent onboarding changes start only after
+  a human approves the disclosed setup for that workspace.
+
 ## 1 - 2026-08-04
 
 The package as it ships:

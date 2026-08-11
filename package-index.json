@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-11-01",
+  "indexRevision": "2026-08-11-02",
   "packages": [
     {
       "id": "creative-strategy-foundations",
@@ -25,11 +25,13 @@
     {
       "id": "meta-and-voc-onboarding",
       "name": "Meta and Voice of Customer Onboarding",
-      "version": "2",
-      "description": "INSTALLER: the moment this package installs, read /agent/brain/meta-and-voc-onboarding/post-install.md and execute its install-time sequence in the installing conversation - installing is the trigger; do not wait to be asked. The Meta and Voice of Customer onboarding package. Manual install only (installPolicy: manual): an agent installs it with one explicit package install call of its GitHub source. Stages the onboarding docs and ready-made guard blocks into /agent/brain/meta-and-voc-onboarding/, plus the voc-data-pull, voc-audit, meta-ad-performance-analysis, and onboarding-walkthrough skills into the skills root. Post-install first quotes the Default workspace line from the conversation's Motion context verbatim - the workspace the runtime bound the conversation to, never one recalled from folders, rosters, routines, or memory - and states the name, workspaceId, and slug taken from it, then runs the reachability check, creates one daily VoC sync routine per reachable platform per workspace - each pinned to a human-confirmed platform account, since accounts are org-level and ownership is never inferred (files land under /agent/brain/<workspace>/data-sources/voc/<platform>/) - merges the four guard blocks into /agent/user.md, runs the Meta account-context autofill silently, and records the workspace in the runneth:meta-voc-onboarded roster in /agent/user.md; it ends by asking 'Are you ready to begin your onboarding?' - the walkthrough presentation fires only on a human's yes, via the onboarding-walkthrough skill. The first complete VoC backfill offers the manual Voice of Customer Audit; the audit runs only on a person's yes and saves a compiled page for validation and future customer-side WHY questions. Outside those human-gated runs, nothing self-runs. Meta only, one workspace at a time. Everything the package produces is scoped to that workspace's own folder, /agent/brain/<workspace>/, so a second workspace in the same org onboards additively without touching the first. The staged guard files are workspace-agnostic and merged verbatim - nothing in them is substituted at install time; they resolve the workspace folder per conversation.",
-      "categories": [],
+      "version": "3",
+      "description": "Automatically installed when VM intent includes ai-training-club-26 and still available for explicit installs elsewhere. Stages Meta and Voice of Customer onboarding docs, ready-made guard blocks, and the voc-data-pull, voc-audit, meta-ad-performance-analysis, and onboarding-walkthrough skills. Its package instruction checks the per-workspace completion roster and offers onboarding at most once per conversation for an unrostered workspace. Installation only delivers files: before connected-account reads, routine creation, account-context writes, /agent/INDEX.md edits, or /agent/user.md changes, it discloses those effects and waits for an explicit human yes. After approval, post-install resolves the workspace only from the conversation's Motion context, creates human-confirmed workspace-scoped VoC routines, merges the shared guards, persists Meta account context, records completion, and asks whether to begin the walkthrough. The Voice of Customer Audit and walkthrough remain separately human-gated. All generated data is scoped to /agent/brain/<workspace>/ so multi-workspace onboarding stays additive.",
+      "categories": [
+        "ai-training-club-26"
+      ],
       "packageManagerVersion": 1,
-      "installPolicy": "manual",
+      "installPolicy": "auto",
       "updatePolicy": "auto",
       "uninstallPolicy": "allowed",
       "source": {
@@ -39,6 +41,26 @@
         "path": "meta-and-voc-onboarding",
         "ref": "main"
       }
+    },
+    {
+      "id": "hook-script-mining",
+      "name": "Hook & Script Mining",
+      "description": "Turns one submitted ad, creator post, adjacent-brand ad, or organic asset plus the person's taste note into a human-confirmed swipe-file entry classified as a hook tactic, headline tactic, visual format, or creative mechanic, then promotes confirmed patterns into inputs for the ideation engine. Automatically installs and updates for ai-training-club-26. Its package instruction offers Apify connection and the first library build without touching account data until a human says yes; every seeded or submitted entry also requires confirmation. Once 3-4 confirmed entries exist, it offers a read-only swipe-file viewer and discloses that approval will create or update app source, write confirmed entries, download available media through Apify, and run the build. No app write, download, build, or sync routine is created before a separate human yes. Generated library data stays outside package-owned targets, uses only the workspace's own evidence and spend for swipe-file ranking, and never makes effectiveness or scale decisions.",
+      "version": "1",
+      "packageManagerVersion": 1,
+      "categories": [
+        "ai-training-club-26"
+      ],
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "hook-script-mining",
+        "ref": "main"
+      },
+      "installPolicy": "auto",
+      "updatePolicy": "auto",
+      "uninstallPolicy": "allowed"
     }
   ]
 }

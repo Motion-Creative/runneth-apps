@@ -1,19 +1,16 @@
 # Meta and Voice of Customer Onboarding Package: Overview
 
-> **Manual install (beta).** This is a real indexed package: it carries a schema-v1
-> manifest and is registered in the repo's `package-index.json` with
-> `installPolicy: manual` - nothing installs it except one explicit
-> `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"` call.
-> The completed install records selected intent, so it survives VM rebuilds, and
-> `updatePolicy: auto` rolls out merged updates. A branch ref instead of `#main` is only
-> for testing an unmerged branch or PR.
+> **Managed package.** This schema-v1 package installs automatically when VM intent
+> includes `ai-training-club-26` and remains available through an explicit `package
+> install` elsewhere. `updatePolicy: auto` rolls out merged updates. A branch ref
+> instead of `#main` is only for testing an unmerged branch or PR.
 
-This is the onboarding bundle for a customer's brain. Installing it is the trigger: the
-install conversation stages this folder's files to their destinations on the VM with one
-`package install` call (per `package.json`, the package manifest - skill files to the
-skills root, docs to `/agent/brain/meta-and-voc-onboarding/`) and immediately runs the package
-for everything the org already has connected (see "After install" below); routines and
-guard blocks keep it current afterward. Its parts do two jobs, in order: **land the data** (VoC pulls into brain
+This is the onboarding bundle for a customer's brain. Installation stages this folder's
+files to their destinations on the VM (skill files to the skills root, docs to
+`/agent/brain/meta-and-voc-onboarding/`) but does not authorize account access or
+persistent setup. The activation instruction discloses the onboarding effects and waits
+for a human yes before running the package for the workspace's connected sources; routines
+and guard blocks keep it current afterward. Its parts do two jobs, in order: **land the data** (VoC pulls into brain
 files, the creative layer in Cacheth), then **teach the interpretation** (Account Context
 Brain, Validation) - with Knoweth organizing the result so retrieval stays tight.
 
@@ -23,7 +20,7 @@ The parts, and their operational nature:
 - **Voice of Customer Audit** - manual skill: turns synced customer language into durable
   creative-strategy insight after a person says yes.
 - **Creative Attributes** - establishes the creative layer (Cacheth) and naming detection.
-- **Account Context Brain** - autofill runs silently at install; the gap questions wait for
+- **Account Context Brain** - autofill runs silently after onboarding approval; the gap questions wait for
   the walkthrough.
 - **Onboarding Walkthrough** - on-demand skill: presents the findings and collects the human
   answers when someone says yes to "Are you ready to begin your onboarding?", then
@@ -57,28 +54,22 @@ covers all of them; `package.json` (the package manifest) maps every file to its
 
 Never copy files by hand - the package manager stages everything.
 
-**What to send Runneth (copy-paste - this exact shape matters).** The install message
-must carry the kickoff clause itself: installing stages files, but the post-install
-sequence (VoC sync routines, guard merges, Meta account context) runs only when the
-conversation tells it to. The message never needs to name a workspace: post-install's
-step 0 reads it off the `Default workspace:` line of the conversation's own Motion
-context - the workspace the runtime bound the conversation to.
+**What to send Runneth for an explicit install.** Installation stages files only. The
+package activation subsequently discloses the post-install effects and asks the person
+before VoC sync routines, guard merges, or Meta account-context work begins. The install
+message never needs to name a workspace: after approval, post-install step 0 reads it from
+the `Default workspace:` line of the conversation's Motion context.
 Canonical message:
 
 > Install the meta-and-voc-onboarding package: run
-> `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"`,
-> then read `/agent/brain/meta-and-voc-onboarding/post-install.md` and execute its
-> install-time sequence in this conversation.
+> `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"`.
 
 Branch-testing variant (same clause, different ref):
 
 > Install the meta-and-voc-onboarding package: run
-> `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#<branch>"`,
-> then read `/agent/brain/meta-and-voc-onboarding/post-install.md` and execute its
-> install-time sequence in this conversation.
+> `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#<branch>"`.
 
-The canonical path (`installPolicy: manual` - nothing installs this package except the
-explicit call):
+The explicit-install path outside the `ai-training-club-26` category:
 
 1. Run `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"`.
    The completed install records selected intent, so VM rebuilds reinstall the package
@@ -100,8 +91,9 @@ manager: never copy staged files by hand and never edit anything under
 `/agent/.runneth/packages/` (`installed.json`, operations, locks). Partial or hand-made
 package state is worse than a failed install.
 
-The moment the install succeeds, run [`post-install.md`](post-install.md)
-(staged at `/agent/brain/meta-and-voc-onboarding/post-install.md`) in the same conversation.
+After install, let the package activation disclose the setup and wait for a human yes.
+Only then run [`post-install.md`](post-install.md), staged at
+`/agent/brain/meta-and-voc-onboarding/post-install.md`.
 
 These instruction files are the package itself, not its output. They stay in the shared
 staged folder (`/agent/brain/meta-and-voc-onboarding/`), outside every workspace folder.
@@ -176,9 +168,9 @@ on every compiled page. The folders already match the lane shape, so that change
 
 ## The Meta parts in detail
 
-- **Fires at install.** Right after this package installs, when a Meta workspace is
-  connected, Runneth runs the Creative Attributes step and then the Account Context Brain
-  autofill - silently, per `post-install.md` - persisting the scaffold and ending with
+- **Runs after onboarding approval.** Once a human approves the activation's disclosed
+  setup and a Meta workspace is connected, Runneth runs the Creative Attributes step and
+  then the Account Context Brain autofill - silently, per `post-install.md` - persisting the scaffold and ending with
   "Are you ready to begin your onboarding?" The gap questions wait for the
   onboarding-walkthrough skill, which fires on a human's yes. Validation and Knoweth
   organize fire later from their own gates.
@@ -210,8 +202,8 @@ File: `meta/meta-account-context-brain-onboarding-package.md` (staged at `/agent
   (reporting structure and marketing calendar) synthesizes from the other fields' pulls and
   gates the validation report, not the question loop.
 - **Runs second.** Uses what the Creative Attributes step found (especially naming decode) as
-  pre-populated proposals for confirmation, rather than starting cold. At install, only the
-  autofill runs - silently; the presentation belongs to the Onboarding Walkthrough skill below.
+  pre-populated proposals for confirmation, rather than starting cold. After onboarding
+  approval, only the autofill runs silently; the presentation belongs to the Onboarding Walkthrough skill below.
 - **Persists to:** `/agent/brain/<workspace>/data-sources/meta/account-context.md`, plus the operational naming decoder
   at `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json` when a convention is confirmed (Field 4 owns it).
 - **Activation:** merges a read-before-performance guard into `/agent/user.md`.
@@ -313,7 +305,8 @@ Folder: `voc-data-pull/`
 - **Does not create the audit.** The later Voice of Customer audit skill reads these raw files
   and writes `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. That file
   is intentionally absent during initial install and backfill.
-- **Fires at install.** Right after this package installs, Runneth checks which VoC
+- **Runs after onboarding approval.** After a human approves the activation's disclosed
+  setup, Runneth checks which VoC
   platforms the org can reach - `integrations status --app <slug>` for each known VoC
   platform slug (the skill's Step 1 table lists them) for OAuth connections **and** the
   stored secrets for every VoC platform (any of them may be key-stored instead of
@@ -389,25 +382,24 @@ Folder: `meta-ad-performance-analysis/`
 
 ---
 
-## After install: the package fires itself
+## After install: offer onboarding and wait for approval
 
-**Run [`post-install.md`](post-install.md) the moment this package's files land - every
-install, no exceptions.** Installing is the trigger - the manifest's `activation` package
-instruction, the staged post-install doc, and this line all point at the same file, which
-carries the executable install-time sequence (step 0 workspace resolution, reachability
-check, VoC sync setup, guard
-merges, Meta context steps). If the installing turn ends without running it (the package
-manager itself never runs setup), the activation instruction fires it on the first turn
-after install instead. The per-workspace `runneth:meta-voc-onboarded` roster in
+The activation instruction checks the per-workspace completion roster and offers the
+setup at most once per conversation when this workspace is not listed. It states that
+onboarding will inspect connected accounts, create applicable routines, persist Meta
+context, and update shared files. Only an explicit human yes runs
+[`post-install.md`](post-install.md). Installation, reinstall, or upgrade alone is never
+consent. The per-workspace `runneth:meta-voc-onboarded` roster in
 `/agent/user.md` is the ran-already marker; guard presence alone only proves that some
 workspace on the VM was onboarded.
 The run order below is the human-readable description of the same lifecycle.
 
 ## Install and run order
 
-1. **Install the package** with one `package install` call (see "How to install" above);
-   never copy files by hand. Staging the files
-   does not self-run anything - the post-install run right after it does. That run opens
+1. **Install the package** automatically through `ai-training-club-26` intent or with one
+   explicit `package install` call (see "How to install" above); never copy files by hand.
+   Staging the files does not self-run anything. The activation discloses the setup and
+   waits for a human yes; the approved post-install run then opens
    with step 0: it quotes the `Default workspace:` line from the conversation's Motion
    context verbatim and states the name, workspaceId, and slug taken from it before
    anything else executes - existing folders, rosters, routines, and remembered context
