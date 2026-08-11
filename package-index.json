@@ -59,7 +59,7 @@
         "ref": "main"
       },
       "installPolicy": "auto",
-      "updatePolicy": "auto",
+      "updatePolicy": "manual",
       "uninstallPolicy": "allowed"
     }
   ]
