@@ -18,11 +18,13 @@ This is step 5 of the account's onboarding sequence with this package:
 4. Give it ads (the account submits real outside assets one at a time, each held for
    its own confirmation per `05-library-confirmation.md`).
 5. **Once at least 3-4 confirmed entries exist in total** (seeded, submitted, or a mix),
-   build the app automatically and hand it back, rather than waiting to be asked. Say
-   plainly that this just happened and why ("you've got N confirmed entries now, so
-   here's a browsable app over them"). This is the one exception to the general
-   don't-build-unprompted rule below, it is a deliberate onboarding milestone.
-6. **Immediately after that first automatic build succeeds**, in the same turn, offer
+   offer the app as the next onboarding milestone. Disclose that building it creates or
+   updates an app source tree, writes the confirmed library into `data/entries.json`,
+   downloads available source media through Apify, and runs `app build` and `app verify`.
+   Wait for an explicit human yes before any app write, media download, or build. A
+   direct request to build the app counts as approval after this scope is stated; an
+   ambiguous request to "see this somewhere" requires the yes.
+6. **Immediately after that first human-approved build succeeds**, in the same turn, offer
    the daily sync routine from "Keeping it current" below: state the recommended daily
    cadence, ask for the delivery destination (this conversation, a new web conversation,
    or a Slack channel/thread if Slack is connected there), and create the routine on a
@@ -30,14 +32,14 @@ This is step 5 of the account's onboarding sequence with this package:
    routine offer is part of this same onboarding milestone, not a separate ask for
    later.
 
-Outside of that first automatic build, also offer or build this when:
+Also offer or build this when:
 
 - the person asks to see, browse, visualize, or view their swipe file / hook library /
   ad stash, or asks "can we see this somewhere", or
 - the person explicitly asks for an app, dashboard, or page over the library.
 
 Do not rebuild the app from scratch on every single new entry after the first
-automatic build; update it per "Keeping it current" below instead.
+human-approved build; update it per "Keeping it current" below instead.
 
 ## What it is
 

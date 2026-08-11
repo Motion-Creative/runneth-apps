@@ -26,10 +26,11 @@ The package as it ships:
   skill only; the built library stays at its canonical path, and a reinstall seeds
   from it instead of rebuilding.
 - **Swipe-file viewer app (optional visualization).** New staged doc
-  `06-swipe-file-app.md`: once 3-4 confirmed entries exist, the skill automatically
-  builds a browsable app over the confirmed library (one tab per axis, brand/creator
-  filters, playable evidence pulled via the workspace's Apify token) and in the same
-  turn offers a human-confirmed daily sync routine
+  `06-swipe-file-app.md`: once 3-4 confirmed entries exist, the skill offers a
+  browsable app over the confirmed library (one tab per axis, brand/creator filters,
+  playable evidence pulled via the workspace's Apify token), discloses the app writes,
+  media downloads, and build, and waits for a human yes. After a human-approved build
+  succeeds, it offers a separate human-confirmed daily sync routine
   (`swipe-file-app-sync-<workspace>`). Read-only: the app and its routine never add,
   infer, or auto-confirm entries; the one-human-yes-per-entry gate is untouched.
 - **Apify connection is setup step one.** The activation offers connecting Apify

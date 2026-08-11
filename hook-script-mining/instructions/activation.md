@@ -77,11 +77,13 @@ list of what this skill will not do; state only what it does.
 This is the onboarding sequence for this package, in order: (1) connect Apify (step 1
 above), (2) begin (the step 2 build offer), (3) fill the data back (the seeded library
 from account history), (4) give it ads (one asset at a time, each confirmed), and
-(5) once at least 3-4 confirmed entries exist in total, automatically build the
-browsable app over the library and hand it back, without waiting to be asked, then
-immediately offer the daily sync routine that keeps it current, per
-`/agent/brain/hook-script-mining/06-swipe-file-app.md`. They can also ask for that app
-sooner, or ask to see it again any time after.
+(5) once at least 3-4 confirmed entries exist in total, offer the browsable app and
+explain that building it will create or update an app source tree, write confirmed
+library data into the app, download available source media through Apify, and run the
+app build. Wait for an explicit human yes before any of those operations. After the
+human-approved build succeeds, offer the separate daily sync routine that keeps it
+current, per `/agent/brain/hook-script-mining/06-swipe-file-app.md`. They can also ask
+for that app sooner, or ask to see it again any time after.
 
 Nothing about this activation writes another account's names, quotes, or figures into
 this workspace's library. Everything seeded comes from this workspace's own real

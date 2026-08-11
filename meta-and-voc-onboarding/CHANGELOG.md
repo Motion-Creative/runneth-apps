@@ -12,6 +12,9 @@ change to the package, not per commit. Entries are newest-first.
   are unchanged.
 - Updated the manifest and index descriptions to state the automatic-install
   contract and fresh-conversation activation behavior explicitly.
+- Added an explicit activation consent gate: automatic installation only delivers the
+  package. Connected-account checks and persistent onboarding changes start only after
+  a human approves the disclosed setup for that workspace.
 
 ## 1 - 2026-08-04
 

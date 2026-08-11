@@ -95,9 +95,9 @@ To browse, filter, or share the confirmed library as a playable, filterable app 
 of reading it as markdown, read
 `/agent/brain/hook-script-mining/06-swipe-file-app.md` and follow it exactly. This is a
 read-only visualization layer over already-confirmed entries; it never adds or
-reclassifies an entry on its own. That doc also covers the automatic first build once
-3-4 confirmed entries exist, and the optional daily sync routine that keeps the app
-current as new entries get confirmed.
+reclassifies an entry on its own. That doc also covers the human-confirmed first build
+offer once 3-4 confirmed entries exist, and the optional daily sync routine that keeps
+the app current as new entries get confirmed.
 
 ## Rolling entries into usable patterns
 
