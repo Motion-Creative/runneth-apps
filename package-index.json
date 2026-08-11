@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-10-06",
+  "indexRevision": "2026-08-11-03",
   "packages": [
     {
       "id": "creative-strategy-foundations",
@@ -46,7 +46,7 @@
       "id": "hook-script-mining",
       "name": "Hook & Script Mining",
       "description": "Turns one competitor ad, creator post, adjacent-brand ad, or organic video/image, plus a note on why it caught someone's eye, into a classified swipe-file entry (hook tactic, headline tactic, visual format, or creative mechanic) built against this account's own real evidence, then rolls confirmed patterns into an input bank for the existing ideation engine. Stages the process docs and the hook-script-mining skill into this workspace, plus a package instruction (instructions/activation.md, surfaced by the package manager in every conversation while this package is installed) that gates on the built library - silent once /agent/brain/<workspace>/hook-script-mining/ exists, and otherwise it asks before touching anything, offering setup in two steps: connecting Apify first (the credential that lets outside-link submissions actually be watched; declining doesn't block anything), then the initial library build (seeding from an existing saved library where one exists, or a live Motion glossary pull where it doesn't; creative mechanics has no Motion tag, so it starts from a universal-mechanics checklist checked against real evidence and creative breakdowns) on a human yes. Every seed or submission holds for a human yes before it's written as live. One asset at a time after that, no bulk pulls in this version. Once at least 3-4 confirmed entries exist, it builds a browsable swipe-file viewer app over the confirmed library (a read-only visualization that never adds or reclassifies entries) and offers a human-confirmed daily sync routine to keep it current, per the staged 06-swipe-file-app.md. Uses this account's own real ad history, including spend, to seed and rank the swipe-file library itself, but never uses paid performance data to judge creative effectiveness or make scale decisions, and never lets another account's names or figures appear in this account's library.",
-      "version": "8",
+      "version": "1",
       "packageManagerVersion": 1,
       "categories": [
         "ai-training-club-26"
@@ -59,7 +59,7 @@
         "ref": "main"
       },
       "installPolicy": "auto",
-      "updatePolicy": "manual",
+      "updatePolicy": "auto",
       "uninstallPolicy": "allowed"
     }
   ]

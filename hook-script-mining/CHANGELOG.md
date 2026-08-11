@@ -4,12 +4,12 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
-## 8 - 2026-08-10
+## 1 - 2026-08-11
 
 The package as it ships:
 
 - Schema-v1 `package.json` manifest, indexed in the repo root `package-index.json`
-  with a raw `github` source. `installPolicy: auto`, `updatePolicy: manual`,
+  with a raw `github` source. `installPolicy: auto`, `updatePolicy: auto`,
   `uninstallPolicy: allowed`, `categories: ["ai-training-club-26"]`.
 - Stages the process docs (`README.md`, `01-source-and-classification.md`,
   `02-pattern-library-and-concept-use.md`, `03-worked-example.md`,
