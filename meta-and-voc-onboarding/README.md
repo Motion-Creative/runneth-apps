@@ -1,9 +1,8 @@
 # Meta and Voice of Customer Onboarding Package: Overview
 
-> **Managed package.** This schema-v1 package installs automatically when VM intent
-> includes `ai-training-club-26` and remains available through an explicit `package
-> install` elsewhere. `updatePolicy: auto` rolls out merged updates. A branch ref
-> instead of `#main` is only for testing an unmerged branch or PR.
+> **Manual install.** This schema-v1 package is available only through an explicit
+> `package install`. `updatePolicy: auto` rolls out merged updates to installed copies.
+> A branch ref instead of `#main` is only for testing an unmerged branch or PR.
 
 This is the onboarding bundle for a customer's brain. Installation stages this folder's
 files to their destinations on the VM (skill files to the skills root, docs to
@@ -69,7 +68,7 @@ Branch-testing variant (same clause, different ref):
 > Install the meta-and-voc-onboarding package: run
 > `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#<branch>"`.
 
-The explicit-install path outside the `ai-training-club-26` category:
+The canonical install path:
 
 1. Run `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"`.
    The completed install records selected intent, so VM rebuilds reinstall the package
@@ -396,8 +395,8 @@ The run order below is the human-readable description of the same lifecycle.
 
 ## Install and run order
 
-1. **Install the package** automatically through `ai-training-club-26` intent or with one
-   explicit `package install` call (see "How to install" above); never copy files by hand.
+1. **Install the package** with one explicit `package install` call (see "How to install"
+   above); never copy files by hand.
    Staging the files does not self-run anything. The activation discloses the setup and
    waits for a human yes; the approved post-install run then opens
    with step 0: it quotes the `Default workspace:` line from the conversation's Motion
