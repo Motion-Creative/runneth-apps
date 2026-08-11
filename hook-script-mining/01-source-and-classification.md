@@ -148,9 +148,15 @@ built from scratch.
 Capture all three of the following for the identified element, never just the tag:
 
 1. **Verbatim**: the exact line or moment, transcribed for video, or the exact
-   on-screen text for a static, not paraphrased.
+   on-screen text for a static, not paraphrased. **This is the specific excerpt that
+   demonstrates the identified axis, not a full transcript or a shot-by-shot retelling
+   of the whole asset.** Pull the exact words or moment that actually shows the
+   format/mechanic/tactic in action, the same way a pattern's saved as one example
+   fill, not the whole source. If the note or classification touches more than one
+   spot in the asset, it's fine to quote more than one short excerpt, but it never
+   becomes a full paraphrase of everything that happens.
 2. **Visual**: how it's delivered, framing, setting, delivery style, on-screen text,
-   pacing.
+   pacing, for that same excerpt, not a scene-by-scene log of the entire asset.
 3. **Evidence trail**: source (creator/brand handle), and whatever popularity or
    performance signal is available. **For assets that arrived as links (Step 1a's
    path), the exact original URL is required here, every time, never optional and

@@ -25,6 +25,20 @@ The package as it ships:
 - **Uninstall leaves the library.** Uninstalling removes the staged docs and the
   skill only; the built library stays at its canonical path, and a reinstall seeds
   from it instead of rebuilding.
+- **Verbatim/Visual mean the applied excerpt, not the whole asset.** An entry quotes
+  the specific moment or line that demonstrates the tag (and describes how that
+  moment is delivered), never a full transcript or shot-by-shot retelling (`01`,
+  `05`).
+- **Structured chat proposal shape.** Ongoing-submission proposals use a spaced
+  block - one field per line (axis/tag, generalized definition, applied excerpt,
+  index row, taste note, evidence) - as the default, replacing the dense one-
+  paragraph form. Chat-side only; the app card has its own lighter shape (`05`).
+- **App scope and card shape from live feedback.** The app shows outside
+  submissions only, never Step 0 seed content (a seeded-only tag doesn't appear);
+  user-facing copy says "category," never "axis"; cards render heading, definition
+  alone, category/source tags, taste note behind a compact toggle, and the source
+  link - the verbatim excerpt stays in the data but is not a labeled card block
+  (`06`).
 - **Seed numbers come from glossary rollups.** Per-tag creative counts and spend are
   read from the pull's top-level `glossaryRollups` (`exclusive_value_only` policy)
   instead of summing row spend, so multi-tagged creatives are never double-counted

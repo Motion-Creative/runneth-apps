@@ -46,25 +46,48 @@ human-approved build; update it per "Keeping it current" below instead.
 A sandbox app (via the `app-builder` skill) that reads the account's confirmed
 `/agent/brain/<workspace>/hook-script-mining/` entries (or the legacy
 `/agent/brain/<workspace>/creative-scouting/` path on accounts seeded before this step
-existed) and renders them as browsable, playable evidence, grouped by axis.
+existed) and renders them as browsable, playable evidence, grouped by category (this
+package's internal axis field; user-facing copy always says "category," never "axis").
+
+**Scope: outside submissions only, never the Step 0 seed.** The app shows only the
+entries and examples that came from a person actually submitting an asset (a link or a
+direct upload) and confirming it through `05-library-confirmation.md`, the same
+population `new-angles-to-test.md` tracks. It never renders the Step 0 seed content
+pulled from this account's own ad history (`04-bank-building-process.md`), even when a
+tag itself was originally seeded. If a submitted example lands under a
+previously-seeded tag (an existing-bucket match per
+`02-pattern-library-and-concept-use.md` Step 1), show that tag with only its
+submitted example(s), never the seed's own-ad evidence (creative count, spend,
+top-spend example). A tag with seed evidence but zero submitted examples does not
+appear in the app at all.
 
 Baseline shape, adjust to what the account's library actually contains:
 
-- One tab per axis that has at least one entry: Hooks, Headlines, Mechanics, Visual
-  Formats. Do not pre-build an axis-specific KPI, filter, or workflow control the
-  account did not ask for.
-- An "All" tab across every axis.
+- One tab per category that has at least one entry: Hooks, Headlines, Mechanics,
+  Visual Formats. Do not pre-build a category-specific KPI, filter, or workflow control
+  the account did not ask for.
+- An "All" tab across every category.
 - Brand and Creator filters (multi-select) that apply across every tab together, plus a
-  KPI strip of simple counts (entries in view, brands represented, creators
+  KPI strip of simple counts (entries in view, categories represented, brands/creators
   represented). Do not add a testing-status filter, tab, or bulk-status control unless
   the account explicitly asks for one, several accounts have asked for exactly that and
   then asked for it removed again, it is not a default expectation.
-- Each entry renders as a card: the tag name as the heading, source (platform +
-  creator/handle), a plain-language definition of that hook tactic / mechanic / format
-  (pull from the matching reference skill, e.g. `hook-tactics`, `creative-mechanics`,
-  `visual-formats`, when the tag maps to a known one; otherwise use the account's own
-  written description from the entry file), the full verbatim transcript (or
-  description, for a static), and a link back to the original source post.
+- Each entry renders as a card, in this order: the tag name as the heading, then the
+  plain-language definition of that hook tactic / mechanic / format as the first
+  visible body text, and only the definition there, no other label or excerpt bundled
+  into that same block (pull the definition from the matching reference skill, e.g.
+  `hook-tactics`, `creative-mechanics`, `visual-formats`, when the tag maps to a known
+  one; otherwise use the account's own written description from the entry file), then
+  the category and source/brand shown as taxonomy tags (never the literal word "axis"
+  in visible copy), then the taste note collapsed behind a compact toggle (a
+  `wa-details` disclosure, not shown open by default; keep its header padding and
+  label small and token-based, e.g. `--spacing: var(--wa-space-2xs)` and
+  `var(--wa-font-size-s)` on its `::part(summary)`, so it reads as a small toggle and
+  not a bulky row), then a link back to the original source post. The saved verbatim
+  excerpt for that submission stays in the entry's underlying data
+  (`data/entries.json` and the source entry file) for reference and future rebuilds,
+  it is deliberately not rendered as its own labeled block on the card, that reads as
+  bulky and was removed after direct account feedback.
 - When an entry has a real source URL (a public Instagram/TikTok post link, for
   example), pull the actual video and a poster frame so it plays inline on the card
   instead of only linking out. Use the `APIFY_API_TOKEN` runtime secret (Instagram and
