@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "id": "meta-and-voc-onboarding",
   "name": "Meta and Voice of Customer Onboarding",
-  "version": "3",
-  "description": "Automatically installed when VM intent includes ai-training-club-26 and still available for explicit installs elsewhere. Stages Meta and Voice of Customer onboarding docs, ready-made guard blocks, and the voc-data-pull, voc-audit, meta-ad-performance-analysis, and onboarding-walkthrough skills. Its package instruction checks the per-workspace completion roster and offers onboarding at most once per conversation for an unrostered workspace. Installation only delivers files: before connected-account reads, routine creation, account-context writes, /agent/INDEX.md edits, or /agent/user.md changes, it discloses those effects and waits for an explicit human yes. After approval, post-install resolves the workspace only from the conversation's Motion context, creates human-confirmed workspace-scoped VoC routines, merges the shared guards, persists Meta account context, records completion, and asks whether to begin the walkthrough. The Voice of Customer Audit and walkthrough remain separately human-gated. All generated data is scoped to /agent/brain/<workspace>/ so multi-workspace onboarding stays additive.",
-  "installPolicy": "auto",
+  "version": "4",
+  "description": "Available only through an explicit package install. Stages Meta and Voice of Customer onboarding docs, ready-made guard blocks, and the voc-data-pull, voc-audit, meta-ad-performance-analysis, and onboarding-walkthrough skills. Its package instruction checks the per-workspace completion roster and offers onboarding at most once per conversation for an unrostered workspace. Installation only delivers files: before connected-account reads, routine creation, account-context writes, /agent/INDEX.md edits, or /agent/user.md changes, it discloses those effects and waits for an explicit human yes. After approval, post-install resolves the workspace only from the conversation's Motion context, creates human-confirmed workspace-scoped VoC routines, merges the shared guards, persists Meta account context, records completion, and asks whether to begin the walkthrough. The Voice of Customer Audit and walkthrough remain separately human-gated. All generated data is scoped to /agent/brain/<workspace>/ so multi-workspace onboarding stays additive.",
+  "installPolicy": "manual",
   "updatePolicy": "auto",
   "uninstallPolicy": "allowed",
   "resources": [

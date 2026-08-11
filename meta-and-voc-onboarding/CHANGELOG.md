@@ -4,6 +4,13 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 4 - 2026-08-11
+
+- Removed the `ai-training-club-26` intent category from this package.
+- Restored `installPolicy: manual`, so Meta and VoC onboarding is available only
+  through an explicit package install. Automatic updates for installed copies and
+  allowed uninstalls are unchanged.
+
 ## 3 - 2026-08-11
 
 - Added the `ai-training-club-26` intent category.
