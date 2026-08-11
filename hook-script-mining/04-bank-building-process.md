@@ -59,14 +59,22 @@ classifies new submissions against.
 
 For each tag value returned in Step 2's pull, on each of the three axes:
 
-1. Count creatives and sum spend for that tag.
+1. Take the creative count and spend for that tag from the pull's top-level
+   `glossaryRollups`, using the `exclusive_value_only` allocation policy - it assigns
+   a creative's spend to a tag only when that category has one value, and reports
+   multi-tagged spend separately under `ambiguous`, so totals are never
+   double-counted. Never sum row-level spend per tag: a creative carrying two tags
+   would be counted twice, and these numbers go in front of the customer in the
+   confirmation tables. Rows stay the evidence for which creatives carry the tag;
+   the rollup is the source for the numbers.
 2. Find the top-spend creative carrying that tag.
 3. Pull its transcript and summary. Check the cache first: `motion cache
    search-summaries` or `motion cache get-creative` for that creative ID. Fall
    through to a live pull only on a clear cache miss or error, or when the sandbox
-   cache feature is disabled - `motion meta insights --include-transcript
-   --summary-sections hookOrHeadline` for hook/headline tactics, `--summary-sections
-   adDescription` for visual formats.
+   cache feature is disabled - and scope it to that one creative, never a fresh
+   account-wide pull: `motion meta insights --scope creative-asset-id
+   --creative-asset-id <id> --include-transcript --summary-sections hookOrHeadline`
+   for hook/headline tactics, `--summary-sections adDescription` for visual formats.
 4. Extract the verbatim line (spoken hook, written headline, or the format's defining
    shape) and the visual description (what's actually on screen).
 5. Write one seed entry per tag with: what it is, the verbatim, the visual, and the
@@ -108,13 +116,17 @@ For each, mark it tested (with the real example) or not confirmed (no genuine ma
 found yet), don't force a weak match just to check the box.
 
 **Tier 2: find what this account does that isn't on that list.** Pull creative
-breakdowns for a stratified sample of this account's ads. Check the cache first for
+breakdowns for a bounded sample of this account's ads: the top-spend creatives
+spread across the account's visual formats (take the top 2-3 per format rather than
+the top 15 overall, so one dominant format doesn't crowd out the others), capped at
+roughly 15 creatives total via `--limit`. Only read beyond that cap if the sample
+surfaced nothing new. Check the cache first for
 each candidate creative ID (`motion cache get-creative` / `motion cache
 search-summaries`); fall through to a live pull only on a clear cache miss or error,
 or when the sandbox cache feature is disabled:
 ```
 motion meta insights --workspace-id <id> --date-range last_365d \
-  --summary-sections creativeBreakdown --sort topSpend
+  --summary-sections creativeBreakdown --sort topSpend --limit 15
 ```
 Read the actual storyline in each breakdown to identify the structural device, not the
 hook and not the visual format, the move that makes the concept land. For each new

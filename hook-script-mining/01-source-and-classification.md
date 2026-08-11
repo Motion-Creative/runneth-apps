@@ -66,9 +66,11 @@ requires Apify.
    - Request it through the secure credential flow, never ask them to paste it into
      chat. One field, labeled "Apify API token," scoped to the `api.apify.com` host.
    - Once it's saved, use it going forward without asking again.
-3. **This is a per-workspace credential.** Every account this package installs on
-   needs its own Apify token, tokens are never shared or reused across different
-   customers' installs.
+3. **One token per customer account, under the standard `APIFY_API_TOKEN` secret
+   key** - the same key every part of this package (including the swipe-file app)
+   reads. Workspaces on the same customer's VM share that one token; it is never
+   shared or reused across different customers' VMs, which per-customer sandbox
+   isolation already guarantees.
 4. **Use the token to pull the submitted link's real content** (caption, transcript,
    visible engagement) through the appropriate Apify actor for that platform before
    moving to Step 2. Classification always runs against the asset's actual content,

@@ -70,18 +70,17 @@ Baseline shape, adjust to what the account's library actually contains:
   instead of only linking out. Use the `APIFY_API_TOKEN` runtime secret (Instagram and
   TikTok scraper actors both return a direct, downloadable media URL) to fetch each
   video and poster into the app's `data/` directory as static assets; never hardcode the
-  provider's signed CDN URL directly into the page, those expire. If an entry has no
-  resolvable source link, render a text tile with the platform/handle instead of
+  provider's signed CDN URL directly into the page, those expire. Download only from
+  the HTTPS media URL the Apify actor itself returned (never a URL guessed or built by
+  hand), cap each file at roughly 50MB, and set a timeout rather than letting a fetch
+  hang. If an entry has no resolvable source link, or its fetch fails, oversizes, or
+  times out, render a text tile with the platform/handle instead of
   fabricating a video.
-- Use `/agent/brain/templates/report-design-stylesheet.md` (indexed in `/agent/INDEX.md`
-  as the default `template-source` for reports and dashboards) as the app's default
-  visual theme: warm off-white / near-black surfaces, one accent-lime highlight color
-  with the sky-lime-gold gradient reserved for anything that genuinely needs to stand
-  out, GT Standard for headlines/body and Sinvoll Sans Mono for labels/tags (substitute
-  the closest free equivalents, e.g. Space Grotesk and IBM Plex Mono, when those exact
-  fonts are not loadable in-sandbox, and say so plainly), and full rounding everywhere.
-  Only deviate from it when the account has a different established template or
-  explicitly asks for another visual direction.
+- Use `/runneth/references/design-system.md` - the runtime's standard design
+  reference, the same contract the `app-builder` skill builds against - as the app's
+  default visual theme, following what that file actually specifies rather than a
+  remembered palette. Only deviate from it when the account has a different
+  established template of its own or explicitly asks for another visual direction.
 
 Build it through the normal `app-builder` workflow: create or update the app source
 tree, write the library as `data/entries.json` (one record per confirmed entry, with

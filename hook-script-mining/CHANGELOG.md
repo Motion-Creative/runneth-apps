@@ -25,6 +25,22 @@ The package as it ships:
 - **Uninstall leaves the library.** Uninstalling removes the staged docs and the
   skill only; the built library stays at its canonical path, and a reinstall seeds
   from it instead of rebuilding.
+- **Seed numbers come from glossary rollups.** Per-tag creative counts and spend are
+  read from the pull's top-level `glossaryRollups` (`exclusive_value_only` policy)
+  instead of summing row spend, so multi-tagged creatives are never double-counted
+  in the customer-facing confirmation tables.
+- **Bounded pulls.** The cache-miss transcript fallback is scoped to the one
+  creative (`--scope creative-asset-id`), never a fresh account-wide pull; the
+  mechanics Tier 2 sample is defined (top 2-3 per visual format) and capped at ~15
+  creatives.
+- **One Apify token per customer.** The credential is org/VM-scoped under the
+  standard `APIFY_API_TOKEN` key everywhere (matching how runtime secrets actually
+  scope); "never shared" means across customers' VMs.
+- **App fetch guardrails + real design reference.** Media downloads only from the
+  actor-returned HTTPS URL with a ~50MB cap and timeout (text-tile fallback on any
+  failure), and the app themes on `/runneth/references/design-system.md` - the
+  reference that actually exists in the runtime - instead of a per-account stylesheet
+  path.
 - **URL rule scoped to links; uploads never blocked.** Field feedback: the agent
   refused to file a directly uploaded video without a source URL. The exact-URL
   requirement now applies only to assets that arrived as links (Step 1a's path); a
