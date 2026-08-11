@@ -1,12 +1,12 @@
 # Post-install: the meta-and-voc-onboarding package fires itself
 
-Installing the meta-and-voc-onboarding package is the trigger for running it - both the VoC data
-sync setup and the Meta context work (Creative Attributes, then the Account Context Brain).
-Run the sequence below at the first opportunity after the package's files land: in the
-installing turn if you are reading this then, otherwise on the first turn where the
-package's activation instruction is visible. Either way, run it without waiting to be
-asked. Its step 0 states the target workspace - read from this conversation's own
-Motion context - before anything else executes.
+Installing the meta-and-voc-onboarding package delivers this procedure; it does not
+authorize it. Run the VoC data sync setup and Meta context work below only after the
+package activation has disclosed the connected-account reads and persistent changes and
+received an explicit human yes for this workspace. If that consent is absent, stop
+without checking connections, reading account data, creating routines, or changing
+files. After consent, step 0 states the target workspace from this conversation's own
+Motion context before anything else executes.
 
 ## Resolve the workspace folder first
 
@@ -156,8 +156,8 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    the staged block in any way, run this step and replace that block. Never leave a stale
    block in place because its sentinel is present. The
    blocks ship ready-made in
-   `/agent/brain/meta-and-voc-onboarding/guards/` (`account-context-guard.md`,
-   `meta-validation-gate.md`, `knoweth-organize.md`, `knoweth-brain.md`). On this VM,
+   `/agent/brain/meta-and-voc-onboarding/meta-onboarding-rules/` (`meta-analysis-account-context.md`,
+   `meta-analysis-validation.md`, `brain-organization.md`, `brain-file-conventions.md`). On this VM,
    `/agent/user.md` is walled off from Bash entirely (reads and writes are both refused -
    do not try a script) and the edit/patch tool fails validation; the file-write tool is
    the only thing that can change it, and the file's current contents are already in your

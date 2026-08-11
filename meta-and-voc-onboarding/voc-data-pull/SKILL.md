@@ -25,11 +25,11 @@ Creative strategy packages build on these files, so shape consistency matters mo
 
 ## When to use
 
-- The meta-and-voc-onboarding package (the package that carries this skill) just finished
-  installing on this VM - that install is the ask, per its README's "After install"
-  section - or the team or user asks to set up the VoC data sync -> run the "Set up the
-  recurring sync" procedure below. Setup never happens at any other unprompted moment -
-  never just because a platform connects.
+- The meta-and-voc-onboarding activation disclosed the setup and received an explicit
+  human yes for this workspace, or the team or user explicitly asks to set up the VoC
+  data sync -> run the "Set up the recurring sync" procedure below. Package installation
+  alone is never the ask. Setup never happens at any other unprompted moment and never
+  just because a platform connects.
 - A `voc-sync-<workspace>-<platform>` routine run is executing (the normal path - see Recurring sync
   runs below).
 - The user asks to pull, refresh, or extend VoC data, or asks for reviews/support
@@ -335,8 +335,9 @@ adapter is a field-mapping exercise, not design work.
 ## Set up the recurring sync
 
 All pulling happens through one daily routine per connected platform (`voc-sync-<workspace>-<platform>`).
-**Setup runs when this package finishes installing (the install is the ask) or when asked
-directly** - never at any other unprompted moment. When triggered, do this for each
+**Setup runs after the package activation receives an explicit human yes for the
+disclosed workspace setup, or when asked directly** - installation alone is never the
+ask, and setup never runs at any other unprompted moment. When triggered, do this for each
 available VoC platform - recipe or no recipe (Step 1's scope rule), and available means
 the org can reach it by any path (OAuth connection, stored API key, or Motion native;
 Step 1 resolves which): run
