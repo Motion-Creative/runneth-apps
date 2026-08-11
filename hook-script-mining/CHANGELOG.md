@@ -25,6 +25,15 @@ The package as it ships:
 - **Uninstall leaves the library.** Uninstalling removes the staged docs and the
   skill only; the built library stays at its canonical path, and a reinstall seeds
   from it instead of rebuilding.
+- **URL rule scoped to links; uploads never blocked.** Field feedback: the agent
+  refused to file a directly uploaded video without a source URL. The exact-URL
+  requirement now applies only to assets that arrived as links (Step 1a's path); a
+  direct upload is its own watchable evidence - record platform/handle when known,
+  ask once for the original link if they have it, never block filing on it.
+- **The Apify ask says why, in human words.** The activation's step-one offer now
+  explains it plainly: Apify is what lets Runneth actually watch the posts you send
+  in; without it only the caption is visible, and it won't classify a video it
+  hasn't watched.
 - **Swipe-file viewer app (optional visualization).** New staged doc
   `06-swipe-file-app.md`: once 3-4 confirmed entries exist, the skill offers a
   browsable app over the confirmed library (one tab per axis, brand/creator filters,

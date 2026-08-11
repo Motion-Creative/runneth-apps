@@ -29,9 +29,10 @@ connection:
 > formats, and creative mechanics, that you can classify new inspiration against and
 > feed back into your ideation engine.
 >
-> Step one is connecting Apify, the service that lets me actually watch the outside
-> links you'll send in (TikTok and Instagram videos, competitor ads, creators'
-> posts). Want to connect it now? It's a free account and takes about two minutes.
+> Step one is connecting Apify. I need it to actually watch the posts you send me -
+> TikToks, Reels, competitor ads, creators' videos. Without it I can only see a
+> link's caption, and I won't classify a video I haven't actually watched. Want to
+> connect it now? It's a free account and takes about two minutes.
 
 On a yes, walk through the connection exactly as
 `/agent/brain/hook-script-mining/01-source-and-classification.md` Step 1a describes:

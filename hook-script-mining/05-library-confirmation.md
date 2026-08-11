@@ -51,8 +51,10 @@ Close every setup confirmation the same way, after the tables:
 
 ## What the gate looks like on an ongoing submission
 
-One entry at a time, plain language, and the evidence trail always names the exact
-source URL, never just the platform or creator handle:
+One entry at a time, plain language. For link submissions the evidence trail always
+names the exact source URL, never just the platform or creator handle; for directly
+uploaded files the upload is itself the evidence - name the platform and handle when
+known, and never hold the entry hostage to a URL that doesn't exist:
 
 > This looks like a [axis] match for [existing tag name] (or: a new candidate,
 > nothing existing fits). Here's what I'd save: [verbatim], [visual], [evidence

@@ -80,9 +80,10 @@ without account history behind it yet.
    differentiation tests in Step 3 of that same file.
 4. Classify the identified element against this account's own seeded taxonomy for that
    one axis (Step 4), fit an existing bucket or propose a new candidate.
-5. Write the entry (verbatim, visual, evidence trail including the exact source URL,
-   the taste note) per Step 5. The URL is required, never dropped even when the
-   other fields are already captured.
+5. Write the entry (verbatim, visual, evidence trail, the taste note) per Step 5.
+   For link submissions the exact source URL is required, never dropped even when
+   the other fields are already captured; a directly uploaded file is its own
+   watchable evidence - never block filing it on a URL it doesn't have.
 6. If the note doesn't map to hook, format, or mechanic, log it as a standalone
    observation instead of forcing a bucket, per `01-source-and-classification.md`,
    "When the note doesn't map."

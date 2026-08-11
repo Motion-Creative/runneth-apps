@@ -33,7 +33,8 @@ the start, from its own real ads.
 
 Every submission needs both:
 
-1. **The asset**: a video or image link, sent ideally in Slack.
+1. **The asset**: a video or image, sent as a link or uploaded directly, ideally in
+   Slack.
 2. **The note**: what the person actually said they liked about it, in their own
    words. This is the required input, not optional context, everything downstream
    depends on reading this note correctly.
@@ -149,18 +150,24 @@ Capture all three of the following for the identified element, never just the ta
 2. **Visual**: how it's delivered, framing, setting, delivery style, on-screen text,
    pacing.
 3. **Evidence trail**: source (creator/brand handle), and whatever popularity or
-   performance signal is available. **The exact original URL is required here, every
-   time, never optional and never dropped even when the platform, creator, and
-   verbatim are already captured.** It's what lets anyone go back and actually watch
-   the real thing later, a description of it is not a substitute for the link itself.
+   performance signal is available. **For assets that arrived as links (Step 1a's
+   path), the exact original URL is required here, every time, never optional and
+   never dropped even when the platform, creator, and verbatim are already
+   captured.** It's what lets anyone go back and see the real post in its native
+   context later, a description of it is not a substitute for the link itself.
+   **For files uploaded directly, there is no URL to require** - the uploaded asset
+   is itself the watchable evidence. Record the platform and creator/brand handle
+   when known and note that it came in as a direct upload; if the person happens to
+   have the original link, ask once and attach it, but never block filing the entry
+   on a URL that doesn't exist.
 
 Always carry the **personal taste note** forward as part of the entry. It's not just
 metadata, it's the actual reason this asset is in the library at all, and it's what
 distinguishes this library from a generic scrape.
 
 **Also append a row to `new-angles-to-test.md`.** Every entry that reaches this step
-came from an outside submission (Step 1a's link path), by definition something this
-account hasn't run itself yet. Add one row: axis, tag/name, the verbatim, the source,
+came from an outside submission (a submitted link or a direct upload), by definition
+something this account hasn't run itself yet. Add one row: axis, tag/name, the verbatim, the source,
 and the date. **This is additive, never a substitute.** The entry still gets written
 to its normal axis home in `entries/`, same confirmed submission, same moment, the
 row here is only a pointer into that entry so "what haven't we tried" has a direct
@@ -184,7 +191,8 @@ current axes were confirmed rather than assumed for this account.
   visual + evidence examples under that tag.
 - An `unclassified/` holding area for notes that didn't map to any of the three.
 - `new-angles-to-test.md`: one row per confirmed entry that came from an outside
-  submission specifically (Step 1a's link path, not Step 0's own-history seed),
+  submission specifically (a submitted link or direct upload, not Step 0's
+  own-history seed),
   across every axis, until this account actually runs a real ad using it. This is the
   direct answer to "what have I sent you that we haven't tried yet." See Step 5 for
   how a row gets added, and `02-pattern-library-and-concept-use.md` for how a row

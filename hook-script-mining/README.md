@@ -55,9 +55,10 @@ from real submissions.
 ## What you need connected
 
 Connecting Apify is step one of this package's setup, offered at install before the
-library build. It's what lets the skill actually watch outside links (TikTok and
-Instagram videos, competitor ads, creators' posts) - nothing in Motion can fetch or
-watch an arbitrary external video. Declining at install doesn't block anything:
+library build. Apify is what allows Runneth to actually watch the organic posts you
+send in (TikTok and Instagram videos, competitor ads, creators' posts) - without it,
+all it can see of a link is the caption, and it won't classify a video it hasn't
+watched. Nothing in Motion can fetch or watch an arbitrary external video. Declining at install doesn't block anything:
 Motion access alone covers the library build from this account's own ad history, and
 the first outside link someone submits will raise the connection again. See
 `01-source-and-classification.md`, Step 1a, for exactly how the token gets set up per
