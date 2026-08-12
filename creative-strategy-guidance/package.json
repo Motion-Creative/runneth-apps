@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "id": "creative-strategy-foundation-references",
-  "name": "Creative Strategy Foundation References",
+  "id": "creative-strategy-guidance",
+  "name": "Creative Strategy Guidance",
   "version": "1",
   "description": "Always-installed editable references for Runneth creative strategy capabilities.",
   "installPolicy": "auto",
@@ -14,7 +14,7 @@
       "sourcePath": "references",
       "target": {
         "root": "agent_brain",
-        "path": "creative-strategy-foundation-references"
+        "path": "creative-strategy-guidance"
       },
       "executablePaths": []
     }

@@ -22,7 +22,7 @@ The Creative Strategy Engine is the shared strategic layer that sits above execu
 This file is for shared strategy knowledge, not execution craft.
 
 - Generative and brief execution live in the installed core creative skills described by the active package instructions.
-- Hook craft and hook-stage expression live in `/agent/brain/creative-strategy-foundation-references/hook-generation--standards.md`
+- Hook craft and hook-stage expression live in `/agent/brain/creative-strategy-guidance/hook-generation--standards.md`
 
 ## When to Use It
 
@@ -279,7 +279,7 @@ The viewer is close to buying.
 - what usually works: offers, urgency, guarantees, direct calls to act
 - what usually fails: unnecessary education or long persuasion
 
-Hook-specific stage expression belongs in `/agent/brain/creative-strategy-foundation-references/hook-generation--standards.md`.
+Hook-specific stage expression belongs in `/agent/brain/creative-strategy-guidance/hook-generation--standards.md`.
 
 ## Read the Matrix
 
@@ -347,7 +347,7 @@ Once the shared strategy is clear:
 
 - use the installed core creative generation skill to build hooks, concepts, messaging, audiences, and formats
 - use the installed core briefing skill to package an approved direction into production-ready execution
-- use `/agent/brain/creative-strategy-foundation-references/hook-generation--standards.md` when the job is specifically hook craft
+- use `/agent/brain/creative-strategy-guidance/hook-generation--standards.md` when the job is specifically hook craft
 
 This engine defines:
 
