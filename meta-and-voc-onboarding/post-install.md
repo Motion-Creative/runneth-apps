@@ -297,7 +297,11 @@ connected later, setup runs on ask.
   auto-regenerates.
 - **Knoweth organize** - from the merged guard's gates, once content lands and the
   interpretation is confirmed. It runs per workspace, gated on that workspace's
-  `_tag-vocabulary.md`.
+  `_tag-vocabulary.md`. It verifies the V2 target map described in
+  `knoweth/knoweth-organize-onboarding-package.md` and applies it only through a trusted
+  assignment-and-grant operation. If that operation is unavailable, it completes the
+  human-readable folder and tag organization, reports the Knoweth assignment as pending,
+  and never creates an overlapping nested root.
 - **Meta Validation** - from its merged gate (step 3), opening on its own once the Account
   Context Brain is confirmed and the creative content layer resolves. Each workspace
   validates independently.

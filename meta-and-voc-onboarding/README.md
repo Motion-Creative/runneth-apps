@@ -129,6 +129,10 @@ workspace's context, naming decoder, validation state, and VoC corpus live toget
 
 ```
 /agent/brain/
+  runneth.md                # global identity-to-person-home resolver, created when needed
+  team/
+    <handle>/
+      user.md               # durable personal defaults; target user:<vmUserId> lane
   bramblewick-nyc/
     _tag-vocabulary.md
     _changelog.md
@@ -153,18 +157,26 @@ workspace onboarded either overwrites the first's context or silently accumulate
 voice into the same corpus. Per-workspace folders make onboarding a second workspace a normal,
 additive operation: it creates a folder and touches nothing that belongs to the first.
 
-Two things stay deliberately org-wide, because they describe the VM rather than an account: the
+A small set of files stays deliberately org-wide because they describe the VM rather than an account: the
 four guard blocks in `/agent/user.md` (workspace-agnostic rules that resolve the folder per
-conversation, so they are merged once and shared) and `/agent/INDEX.md`. Integrations and
+conversation, so they are merged once and shared) and `/agent/INDEX.md`. When person homes
+exist, `/agent/brain/runneth.md` is also global: it maps verified identities and aliases to
+their canonical homes without storing their preferences. The VM-wide `/agent/user.md` is not
+one person's profile; personal defaults live in each person's own `team/<handle>/user.md`.
+Integrations and
 stored secrets are also VM-wide, and an org can hold one account of a platform, several (one
 per workspace), or one genuinely shared - which is why VoC setup pins a human-confirmed
 account per workspace, and the folders separate the data each workspace pulls through it.
 
-Retrieval has a known gap worth stating: the automatic per-workspace Knoweth lane is injected as
-pre-context but explicit Knoweth searches query only the global and user lanes, so content filed
-only in a workspace lane cannot be searched back. Until the harness requests configured lanes on
-search, content stays in the global lane and separation comes from the folder plus a workspace tag
-on every compiled page. The folders already match the lane shape, so that change is additive.
+The V2 retrieval map follows this same tree. Installed package guidance stays in `global`.
+Everything under one `/agent/brain/<workspace>/` folder belongs to
+`project:<workspaceId>`. A future verified person home under
+`/agent/brain/team/<handle>/` belongs to `user:<vmUserId>`. Harneth requests the current
+user, active workspace project, and global lanes on each scoped turn. The folder does not
+create that mapping by itself: the clean V2 setup uses an assignment beneath the existing
+Brain root plus the matching grant. The current create-only ContextConfig endpoint cannot
+write that assignment and must not be used to add an overlapping nested root. See the
+Knoweth package document for the exact setup and verification contract.
 
 ---
 
@@ -451,12 +463,14 @@ The run order below is the human-readable description of the same lifecycle.
    `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. It is not an
    install-time artifact.
 7. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
-   confirmed and data-source content has landed, organize the brain: keep shared content in the
-   global lane and make it findable with tags and a naming decoder. Both the
+   confirmed and data-source content has landed, organize the brain around the V2 map:
+   package guidance is global, the whole workspace folder belongs to its exact
+   `project:<workspaceId>`, and each future verified person home belongs to
+   `user:<vmUserId>`. Both the
    `runneth:knoweth-organize` and `runneth:knoweth-brain` guard blocks (staged at
    `meta-onboarding-rules/brain-organization.md` and `meta-onboarding-rules/brain-file-conventions.md`) are merged into /agent/user.md by the
-   post-install run's single guard merge, so the organize trigger fires and save-routing/maintenance stay on. Do not carve data-source-family or
-   initiative lanes today; only global, the user lane, and the workspace lane are queried. See
+   post-install run's single guard merge, so the organize trigger fires and save-routing/maintenance stay on. Meta, VoC, brand, campaign, and
+   initiative remain folders or searchable terms, not lanes. See
    `knoweth/knoweth-organize-onboarding-package.md` (staged at
    `/agent/brain/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md`).
 8. **Keep everything current.** Creative content stays current through the Cacheth sync

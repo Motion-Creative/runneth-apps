@@ -1,41 +1,34 @@
-<!-- BEGIN runneth:knoweth-brain v4 -->
+<!-- BEGIN runneth:knoweth-brain v5 -->
 Knoweth brain discipline (all writes, going forward):
-- Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
-  `<workspace>` token stays literal in this file. Account-specific content belongs in this
-  conversation's workspace folder - never in another workspace's folder, and never at the brain
-  root where two workspaces would blur together.
-- On every save (from a pull, a conversation, or an upload), route it: raw vs compiled vs spec; the
-  workspace folder and data-source family within it (voc -> /agent/brain/<workspace>/data-sources/voc/**,
-  meta -> /agent/brain/<workspace>/data-sources/meta/**); tags/attributes and provenance,
-  including which workspace the content describes. Raw VoC files keep their skill-owned format -
-  never add tags or front-matter to them; facet vocabulary goes in the compiled analysis pages
-  that cite them. The later cross-platform VoC audit lives only at
-  /agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md; raw syncs do not create
-  it. Keep it in the global lane so it is searchable today; the folder is for human navigation,
-  not a lane. Cacheth is the system of record for per-creative content: write a
-  per-creative file only when a person explicitly asks, and treat it as a dated snapshot (the
-  cache stays the retrieval source of truth for current facts). Performance metrics are pulled
-  live via the motion CLI, never saved.
-- For any question about why customers respond, what to make next, messaging, pain points,
-  objections, transformations, personas, or customer language, read
-  `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` when it exists, then verify
-  important claims against the raw VoC files it cites. The audit informs customer-side WHY;
-  it never replaces live performance metrics or creative content.
-- Keep compiled pages in sync with raw: new evidence restales and regenerates the dependent page; a
-  correction updates the compiled page (never raw) and propagates. Exception: the Voice of
-  Customer Audit is manually triggered - if raw VoC is newer than its `last_compiled`, treat
-  the audit as stale, disclose its coverage date when using it, and offer a rerun, but never
-  regenerate it without a person's yes. Curate, do not append: merge into the existing page
-  rather than spawning a duplicate. Merge only within one workspace - two workspaces
-  describing the same platform stay two pages.
-- Adopt stray human-added files (classify and tag, or flag) without moving the human's folders.
-  Default new dimensions to tags, not lanes; only user: isolation and the automatic workspace lane
-  are real lanes today.
-- Keep one brain-maintenance routine: run `routine list --search "brain-maintenance"`; if absent,
-  create it (a scheduled sweep for stray/untagged files, duplicates, stale pages, and retention
-  candidates; per-creative files in the brain exist only by a person's explicit ask - if the
-  sweep finds ones of unknown provenance, ask the person before archiving, never silently move
-  or delete them) and never run the sweep in-conversation. One routine covers the whole brain;
-  it never merges content across workspace folders.
-<!-- END runneth:knoweth-brain v4 -->
+- Save workspace-specific knowledge under `/agent/brain/<workspace>/`, resolved from the
+  current Motion context. Meta interpretation belongs in `data-sources/meta/**`; raw and
+  compiled customer voice belongs in `data-sources/voc/**`. This whole folder's target V2
+  owner is `project:<workspaceId>`.
+- Save durable personal defaults and supporting personal context under
+  `/agent/brain/team/<handle>/**`. The whole verified person home's target V2 owner is
+  `user:<vmUserId>`. Never combine two people's defaults in one file or copy one person's
+  private context into shared workspace knowledge.
+- When Teameth first verifies a person on the VM, create their small `user.md`, register
+  their canonical home in `runneth.md`, and verify their assignment and grant. Record no
+  personal defaults until that person states or confirms them.
+- Keep the verified identity-to-home map in global `/agent/brain/runneth.md`; store no
+  personal preferences there. `/agent/user.md` is the VM-wide instruction file, not a
+  person's profile or user lane.
+- Keep package instructions and genuinely cross-workspace guidance global. Use folders and
+  searchable terms for Meta, VoC, platform, product, campaign, brand, process, and
+  initiative; do not create lanes for them. `project` always means the Motion workspace.
+- Raw VoC files keep the format owned by the voc-data-pull skill. The later compiled audit
+  lives at `data-sources/voc/voice-of-customer-audit.md`; raw syncs do not create it.
+  Cacheth remains the source of truth for current creative records, and performance remains
+  a live Motion CLI read.
+- Curate instead of appending duplicates. New evidence updates its dependent compiled page;
+  a correction changes the compiled understanding, never raw evidence. The Voice of
+  Customer Audit remains human-triggered and discloses its coverage when stale.
+- A folder path expresses intended ownership but does not prove effective retrieval access.
+  After a move across a workspace or person boundary, preserve the file, update references,
+  update the V2 assignment through the trusted config path, reindex, and verify one indexed
+  owner. Never create an overlapping nested root.
+- Keep one brain-maintenance routine for stray files, duplicates, stale compiled pages, and
+  retention candidates. It may classify or flag human-added files, but it never silently
+  move, delete, or change the retrieval owner of customer files.
+<!-- END runneth:knoweth-brain v5 -->

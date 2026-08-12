@@ -4,6 +4,22 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 6 - 2026-08-12
+
+- Replaced the broad Knoweth organize reference with a focused V2 retrieval contract for
+  the files this package actually installs and generates.
+- Standardized three retrieval owners: global package guidance, one
+  `project:<workspaceId>` for each workspace folder, and one `user:<vmUserId>` for each
+  verified person home.
+- Added exact V2 root-assignment and grant examples, onboarding and new-person flows, and
+  workspace, user, and duplicate-index verification.
+- Documented the current implementation boundary: the create-only ContextConfig endpoint
+  cannot safely assign a nested path beneath the existing Brain root, so the package must
+  never create an overlapping root or claim isolation before a trusted assignment and
+  reindex complete.
+- Updated the Knoweth guard blocks and package overview to use the same taxonomy and removed
+  the obsolete claim that explicit retrieval omits the active workspace project lane.
+
 ## 5 - 2026-08-11
 
 - Added the `dashboard-design` skill for building and refining Runneth dashboards and
