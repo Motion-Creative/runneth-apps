@@ -3,8 +3,8 @@
   "indexRevision": "2026-08-12-02",
   "packages": [
     {
-      "id": "creative-strategy-foundation-references",
-      "name": "Creative Strategy Foundation References",
+      "id": "creative-strategy-guidance",
+      "name": "Creative Strategy Guidance",
       "description": "Always-installed editable references for Runneth creative strategy capabilities.",
       "version": "1",
       "packageManagerVersion": 1,
@@ -15,7 +15,7 @@
         "type": "github",
         "owner": "Motion-Creative",
         "repo": "runneth-apps",
-        "path": "creative-strategy-foundation-references",
+        "path": "creative-strategy-guidance",
         "ref": "main"
       },
       "installPolicy": "auto",
