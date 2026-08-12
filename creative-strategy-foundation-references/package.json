@@ -3,7 +3,7 @@
   "id": "creative-strategy-foundation-references",
   "name": "Creative Strategy Foundation References",
   "version": "1",
-  "description": "Protected shared references for Runneth creative strategy capabilities.",
+  "description": "Always-installed editable references for Runneth creative strategy capabilities.",
   "installPolicy": "auto",
   "updatePolicy": "auto",
   "uninstallPolicy": "protected",
@@ -14,7 +14,7 @@
       "sourcePath": "references",
       "target": {
         "root": "agent_brain",
-        "path": "creative-strategy-foundation-references/references"
+        "path": "creative-strategy-foundation-references"
       },
       "executablePaths": []
     }

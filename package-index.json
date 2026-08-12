@@ -5,7 +5,7 @@
     {
       "id": "creative-strategy-foundation-references",
       "name": "Creative Strategy Foundation References",
-      "description": "Protected shared references for Runneth creative strategy capabilities.",
+      "description": "Always-installed editable references for Runneth creative strategy capabilities.",
       "version": "1",
       "packageManagerVersion": 1,
       "categories": [
