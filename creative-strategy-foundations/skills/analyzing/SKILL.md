@@ -28,15 +28,15 @@ Use this skill to turn data, research, and creative review into decisions, not j
 - For uploaded-creative review:
   - read uploaded images directly
   - use `ls ./uploads/` and then `motion analyze-media` with repeated `--filename` flags or `--folder` for uploaded videos
-- For market or review research, use `WebSearch` and `WebFetch` following `/agent/brain/creative-strategy-foundation-references/researching--review-mining.md`.
+- For market or review research, use `WebSearch` and `WebFetch` following `/agent/brain/creative-strategy-guidance/researching--review-mining.md`.
 - Gather brand context only when it materially sharpens interpretation, review, or strategist explanation.
 
 ### Read only the references the question needs
 
-- `/agent/brain/creative-strategy-foundation-references/creative-analysis.md` for behavioral interpretation, combo extraction, metric translation, and performance context
-- `/agent/brain/creative-strategy-foundation-references/creative-strategy-engine.md` when the ask needs structural mapping across pain, desire, persona, angle, audience, or stage
+- `/agent/brain/creative-strategy-guidance/creative-analysis.md` for behavioral interpretation, combo extraction, metric translation, and performance context
+- `/agent/brain/creative-strategy-guidance/creative-strategy-engine.md` when the ask needs structural mapping across pain, desire, persona, angle, audience, or stage
 - `/runneth/references/creative-benchmarks.md` for benchmark interpretation and next-test logic
-- `/agent/brain/creative-strategy-foundation-references/researching--review-mining.md` for customer-language extraction and review synthesis
+- `/agent/brain/creative-strategy-guidance/researching--review-mining.md` for customer-language extraction and review synthesis
 - `/runneth/references/design-system.md` only when the chosen deliverable is HTML or when you need a Web Awesome visual component or layout pattern
 
 ### Match the depth to the ask
@@ -46,7 +46,7 @@ Use this skill to turn data, research, and creative review into decisions, not j
 - If they want competitor research, treat competitor creative choices as investment signals, not validated performance proof.
 - If they want a creative review, start with a hard launch call and then focus on the highest-leverage fixes.
 - If they want principle or teaching help, answer the question directly first, then support it with data only when the example genuinely improves the explanation.
-- If they ask about combos, use the pattern extraction steps from `/agent/brain/creative-strategy-foundation-references/creative-analysis.md`.
+- If they ask about combos, use the pattern extraction steps from `/agent/brain/creative-strategy-guidance/creative-analysis.md`.
 - If they want a teardown of a specific ad, go deep on that ad instead of broad account coverage.
 - If they ask for supported creative benchmark plus diagnosis, start with `motion benchmark-compare` and only pull own-account examples if they materially improve the answer.
 

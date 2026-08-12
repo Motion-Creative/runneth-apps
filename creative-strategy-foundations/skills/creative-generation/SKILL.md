@@ -24,14 +24,14 @@ Use this skill to build creative output without bouncing through helper skills f
 - Gather brand context only when it materially sharpens the work.
 - If the request is data-grounded, use the standard Motion hot path already included in the current session prompt.
 - If the user is referencing a Meta competitor or wants Meta competitive context to shape new creative, call `motion inspo-context --brand-id <brand-id>` or `motion meta competitor-ad-insights --ad-library-creative-id <id> --include-glossary --with-summary` as needed.
-- Use `customerVoiceAnalysis` from the relevant Motion brand foundations or competitor context first for customer language. It comes from `motion brand-context` or `motion inspo-context`, not a standalone tool. If it is still too thin, use `WebSearch` and `WebFetch` following `/agent/brain/creative-strategy-foundation-references/researching--review-mining.md`.
+- Use `customerVoiceAnalysis` from the relevant Motion brand foundations or competitor context first for customer language. It comes from `motion brand-context` or `motion inspo-context`, not a standalone tool. If it is still too thin, use `WebSearch` and `WebFetch` following `/agent/brain/creative-strategy-guidance/researching--review-mining.md`.
 
 ### Read only the references the ask needs
 
-- `/agent/brain/creative-strategy-foundation-references/creative-strategy-engine.md` when the ask needs the strategic layer across audience, framing, pain, desire, persona, angle, or stage
-- `/agent/brain/creative-strategy-foundation-references/creative-analysis.md` when performance patterns need interpretation before generating
-- `/agent/brain/creative-strategy-foundation-references/hook-generation--standards.md` for hook quality, pressure checks, and hook-stage fit
-- `/agent/brain/creative-strategy-foundation-references/researching--review-mining.md` only when review mining or customer-language extraction is needed
+- `/agent/brain/creative-strategy-guidance/creative-strategy-engine.md` when the ask needs the strategic layer across audience, framing, pain, desire, persona, angle, or stage
+- `/agent/brain/creative-strategy-guidance/creative-analysis.md` when performance patterns need interpretation before generating
+- `/agent/brain/creative-strategy-guidance/hook-generation--standards.md` for hook quality, pressure checks, and hook-stage fit
+- `/agent/brain/creative-strategy-guidance/researching--review-mining.md` only when review mining or customer-language extraction is needed
 
 ### Build the right output shape
 
