@@ -1,9 +1,8 @@
 # Meta and Voice of Customer Onboarding Package: Overview
 
-> **Managed package.** This schema-v1 package installs automatically when VM intent
-> includes `ai-training-club-26` and remains available through an explicit `package
-> install` elsewhere. `updatePolicy: auto` rolls out merged updates. A branch ref
-> instead of `#main` is only for testing an unmerged branch or PR.
+> **Manual install.** This schema-v1 package is available only through an explicit
+> `package install`. `updatePolicy: auto` rolls out merged updates to installed copies.
+> A branch ref instead of `#main` is only for testing an unmerged branch or PR.
 
 This is the onboarding bundle for a customer's brain. Installation stages this folder's
 files to their destinations on the VM (skill files to the skills root, docs to
@@ -27,6 +26,8 @@ The parts, and their operational nature:
   summarizes the synced customer voice per integration and offers the audit.
 - **Meta Validation** - human-gated proof loop.
 - **Meta Ad Performance Analysis** - on-demand diagnostic skill; nothing self-runs.
+- **Dashboard Design** - on-demand design and implementation guidance for polished Runneth
+  dashboards and app-style pages; nothing self-runs.
 - **Knoweth organize** - self-gating: fires on its own conditions once content lands; do not
   force it.
 
@@ -46,7 +47,8 @@ Guide, and the Cacheth Command Reference), `voc-data-pull/` (the VoC Data Pull s
 recipes, and templates), and `voc-audit/` (the manual Voice of Customer Audit skill), plus
 `knoweth/` (the organize-the-brain part that runs after the questions),
 `meta-ad-performance-analysis/` (the ad performance analysis skill),
-`onboarding-walkthrough/` (the walkthrough presentation skill), and `meta-onboarding-rules/` (the four
+`onboarding-walkthrough/` (the walkthrough presentation skill), `dashboard-design/` (the dashboard
+design skill and its progressive references), and `meta-onboarding-rules/` (the four
 ready-made `/agent/user.md` guard blocks that post-install merges). This README
 covers all of them; `package.json` (the package manifest) maps every file to its installed location.
 
@@ -69,7 +71,7 @@ Branch-testing variant (same clause, different ref):
 > Install the meta-and-voc-onboarding package: run
 > `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#<branch>"`.
 
-The explicit-install path outside the `ai-training-club-26` category:
+The canonical install path:
 
 1. Run `package install "github:Motion-Creative/runneth-apps/meta-and-voc-onboarding#main"`.
    The completed install records selected intent, so VM rebuilds reinstall the package
@@ -382,6 +384,24 @@ Folder: `meta-ad-performance-analysis/`
 
 ---
 
+## Dashboard Design (skill, own folder)
+
+Folder: `dashboard-design/`
+
+- **Job:** guide the design and implementation of polished Runneth dashboards and app-style
+  pages using the Web Awesome design system, Astro app shell, theme tokens, data-backed KPI
+  strips, creative galleries, charts, tables, and narrow browser controllers.
+- **Runs on demand - does not fire at install.** Triggered when someone asks to create,
+  redesign, review, or fix a dashboard, performance report, analytics page, or other
+  data-heavy app UI. Installing only stages the skill.
+- **Structure:** `SKILL.md` carries the core workflow and invariants; `references/` carries
+  detailed component/controller patterns and performance-dashboard rules so runtime context
+  stays focused.
+- **Installs to the skills root** (`/agent/.agents/skills/dashboard-design/`), not the brain -
+  see the `dashboard-design-skill` resource in `package.json`.
+
+---
+
 ## After install: offer onboarding and wait for approval
 
 The activation instruction checks the per-workspace completion roster and offers the
@@ -396,8 +416,8 @@ The run order below is the human-readable description of the same lifecycle.
 
 ## Install and run order
 
-1. **Install the package** automatically through `ai-training-club-26` intent or with one
-   explicit `package install` call (see "How to install" above); never copy files by hand.
+1. **Install the package** with one explicit `package install` call (see "How to install"
+   above); never copy files by hand.
    Staging the files does not self-run anything. The activation discloses the setup and
    waits for a human yes; the approved post-install run then opens
    with step 0: it quotes the `Default workspace:` line from the conversation's Motion

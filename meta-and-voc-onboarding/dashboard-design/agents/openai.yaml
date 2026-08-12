@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dashboard Design"
+  short_description: "Build polished Runneth dashboards and app pages"
+  default_prompt: "Use $dashboard-design to build a polished Runneth dashboard from my data."
