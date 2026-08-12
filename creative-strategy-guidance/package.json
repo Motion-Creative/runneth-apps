@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "creative-strategy-guidance",
+  "name": "Creative Strategy Guidance",
+  "version": "1",
+  "description": "Provides the editable strategic guidance used by Runneth’s creative workflows: the Creative Strategy Engine, creative-analysis methodology, hook and headline standards, and customer-review mining guidance. It does not install skills; both default and custom skills can use these files from the agent brain.",
+  "installPolicy": "auto",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "protected",
+  "resources": [
+    {
+      "id": "references",
+      "type": "directory",
+      "sourcePath": "references",
+      "target": {
+        "root": "agent_brain",
+        "path": "creative-strategy-guidance"
+      },
+      "executablePaths": []
+    }
+  ]
+}
