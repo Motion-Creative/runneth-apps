@@ -30,14 +30,14 @@ Use this skill to turn an approved or newly formed concept into a production-rea
 
 ### Read only the references the question needs
 
-- `/agent/brain/creative-strategy-foundation-references/references/hook-generation--standards.md` for hook quality and pressure checks
-- `/agent/brain/creative-strategy-foundations/references/creative-strategy-engine.md` only when the brief needs audience, stage, or context adaptation or clearer strategic mapping
+- `/agent/brain/creative-strategy-foundation-references/hook-generation--standards.md` for hook quality and pressure checks
+- `/agent/brain/creative-strategy-foundation-references/creative-strategy-engine.md` only when the brief needs audience, stage, or context adaptation or clearer strategic mapping
 - `/runneth/references/design-system.md` only when the output is HTML or the user needs a Web Awesome layout or reusable visual component pattern
 
 ### Build missing concept elements inline
 
 - If the user did not provide a concept, build the minimum viable concept inline from the gathered context and performance patterns.
-- If the user did not provide a hook, generate it inline using `/agent/brain/creative-strategy-foundation-references/references/hook-generation--standards.md`.
+- If the user did not provide a hook, generate it inline using `/agent/brain/creative-strategy-foundation-references/hook-generation--standards.md`.
 - If briefing has to build a missing concept inline, apply the same concept quality bar as `creative-generation`: specific tension, clear audience, differentiated bet, concrete format, and a believable reason this should work.
 - Do not dispatch to helper skills just to create subcomponents for the brief.
 
