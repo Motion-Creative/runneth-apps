@@ -36,11 +36,11 @@ This is the human confirmation gate. It is the only skill that can turn pending 
 
 ## What to update
 
-- `identities.json`: stable creator ids, Motion creator ids when known, canonical names, aliases, merge history, correction history, audit timestamps
-- `relationships.json`: workspace relationship state, disqualification state, hard eligibility flags
-- `rights.json`: explicit rights decisions and unresolved rights follow-up
-- `pending-review.json`: remove or update only the named candidates
-- `audit.jsonl`: append the exact human decision and affected ids
+- `identities.json.identities[]`: stable creator ids, Motion creator ids when known, canonical names, aliases, merge history, correction history, audit timestamps
+- `relationships.json.relationships[]`: workspace relationship state, disqualification state, hard eligibility flags
+- `rights.json.rights[]`: explicit rights decisions and unresolved rights follow-up
+- `pending-review.json.items[]`: remove or update only the named candidates
+- `audit.jsonl`: append one canonical event for each decision type with the exact affected ids
 
 ## Explicit boundaries
 

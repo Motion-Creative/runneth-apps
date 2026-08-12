@@ -17,7 +17,7 @@ This skill owns the combined workflow only when the customer explicitly asks for
 
 - Do not claim this skill intercepts every brief.
 - Do not let standalone suggestion mode rewrite the brief.
-- Keep one stable recommendation id per suggested creator block.
+- Keep one stable recommendation id per complete creator recommendation block.
 - Do not claim later ad outcomes were caused by a recommendation unless a launched ad or brief carries that exact recommendation id.
 
 ## Flow
@@ -27,7 +27,8 @@ This skill owns the combined workflow only when the customer explicitly asks for
 3. Resolve the creator job, for example roster reuse, new sourcing, paid whitelisting, organic, or creatorless production.
 4. Call the casting logic with the workspace rules, hard eligibility, and evidence limits.
 5. Return one brief with a clearly labeled creator recommendation block.
-6. Append a recommendation record with a stable id to `recommendations.json` and audit the write.
+6. Append a contract-complete recommendation record with a stable id to `recommendations.json.recommendations[]`, preserving existing records.
+7. Append one canonical `recommendation_created` event to `audit.jsonl`, then include the same recommendation id in the visible brief.
 
 ## Combined output requirements
 

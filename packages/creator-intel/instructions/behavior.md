@@ -13,7 +13,7 @@ This package installs creator-intel reference docs and skills only. Installation
 
 ## Activation rule
 
-Creator Intel is active only after the setup skill creates customer-owned state for one exact Motion workspace under `/agent/brain/creator-intel/workspaces/<workspaceId>/`.
+Creator Intel is active only after the setup skill creates the complete customer-owned state tree for one exact Motion workspace and `/agent/brain/creator-intel/workspaces/<workspaceId>/workspace.json` has `status: active`.
 
 Until that exists, describe the package as installed but inactive.
 

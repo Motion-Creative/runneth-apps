@@ -80,3 +80,11 @@ Do not claim unavailable fields such as creator type, audience demographics, bra
 - Recompute rates from totals.
 - State mapped coverage before making broad claims.
 - If coverage is low, narrow the claim to mapped creator evidence rather than account-wide language.
+
+## Recommendation persistence
+
+- For a casting or creator-recommendation request, create one stable `recommendationId` for the complete recommendation block.
+- Append the contract-complete record to `recommendations.json.recommendations[]` before the final response, preserving existing records.
+- Append one canonical `recommendation_created` event to `audit.jsonl` with the new `recommendationId` in `entityIds`.
+- Include the same `recommendationId` in the visible recommendation so a later brief or launched ad can link to it exactly.
+- For a pure creator-performance lookup that makes no recommendation, do not create a recommendation record or imply outcome attribution.

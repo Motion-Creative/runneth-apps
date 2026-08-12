@@ -13,9 +13,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  package-index:
-    name: Package index
+  package-contracts:
+    name: Package contracts
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,8 +26,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Test package index
-        run: node --test scripts/validate-runneth-package-index.mjs
+      - name: Test Creator Intel package
+        run: node --test packages/creator-intel/tests/*.test.mjs
 
   site:
     name: Site

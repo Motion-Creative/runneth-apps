@@ -26,12 +26,98 @@ The reference docs in this package are read-only defaults. Customer state lives 
   audit.jsonl
 ```
 
+## Canonical file shapes and initial state
+
+Every JSON file uses `schemaVersion: 1`. Collection files use the exact top-level
+collection key shown below; never replace an envelope with a bare array. Timestamps
+are ISO 8601 UTC strings. Setup writes these shapes only when the file is missing and
+preserves existing collection contents on every rerun. Setup writes `workspace.json`
+last: `status: active` is the completion marker and is valid only after every other
+required file and the empty `performance/` directory exist.
+
+`workspace.json` is one direct record:
+
+```json
+{
+  "schemaVersion": 1,
+  "workspaceId": "<workspaceId>",
+  "workspaceName": "<workspaceName>",
+  "status": "active",
+  "defaultConversationLanguage": "<language>",
+  "performancePolicies": {
+    "enabledSources": ["meta"],
+    "comparisonMode": "single-source"
+  },
+  "manualRefreshOnly": true,
+  "createdAt": "<ISO-8601 UTC timestamp>",
+  "updatedAt": "<same setup timestamp>",
+  "setupOwner": "<person>"
+}
+```
+
+`performancePolicies.enabledSources` contains `meta`, `northbeam`, or both. Use
+`comparisonMode: single-source` when one source is enabled and `separate` when both
+are enabled. Never blend the two sources.
+
+Initialize collection files exactly as follows:
+
+```json
+{"schemaVersion":1,"identities":[]}
+{"schemaVersion":1,"relationships":[]}
+{"schemaVersion":1,"rights":[]}
+{"schemaVersion":1,"evidence":[]}
+{"schemaVersion":1,"recommendations":[]}
+{"schemaVersion":1,"items":[]}
+```
+
+Those lines correspond, in order, to `identities.json`, `relationships.json`,
+`rights.json`, `evidence-map.json`, `recommendations.json`, and
+`pending-review.json`.
+
+Initialize `refresh-state.json` with one source record per enabled source:
+
+```json
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "sourceName": "meta",
+      "lastSuccessAt": null,
+      "lastAttemptAt": null,
+      "status": "never-run",
+      "errorSummary": null,
+      "coverage": null
+    }
+  ],
+  "scheduledRefresh": null,
+  "updatedAt": "<ISO-8601 UTC setup timestamp>"
+}
+```
+
+Create `performance/` as an empty directory. Do not create placeholder snapshot
+files.
+
+`audit.jsonl` contains one compact JSON object per line. Setup appends one
+`workspace_setup` event only after the complete state tree exists and
+`workspace.json.status` is `active`. A resumed setup repairs missing state first and
+appends the event if it is missing; it never appends a second completed-setup event.
+Every later durable mutation appends another event with this exact envelope:
+
+```json
+{"schemaVersion":1,"eventId":"<stable event id>","workspaceId":"<workspaceId>","occurredAt":"<ISO-8601 UTC timestamp>","actor":"<person or system owner>","action":"<action>","entityType":"<workspace|identity|relationship|rights|evidence|recommendation|refresh>","entityIds":[],"source":"<owning skill>","summary":"<short English summary>","changes":{}}
+```
+
+Audit events are append-only. `entityIds` contains every record changed by that
+event, and `changes` contains only bounded before/after fields needed to understand
+the mutation; never copy full source documents or tool output into the audit log.
+
 ## 1. Workspace record
 
 `workspace.json` is one record per Motion workspace.
 
 Required fields:
 
+- `schemaVersion`: `1`
 - `workspaceId`
 - `workspaceName`
 - `status`: `inactive | active`
@@ -44,7 +130,7 @@ Required fields:
 
 ## 2. Identity ledger
 
-`identities.json` stores stable creator identity decisions.
+`identities.json.identities[]` stores stable creator identity decisions.
 
 Required fields per creator:
 
@@ -70,7 +156,7 @@ New or removed upstream entries never mutate confirmed local identity decisions 
 
 ## 3. Workspace relationship ledger
 
-`relationships.json` stores workspace-specific relationship state separate from identity.
+`relationships.json.relationships[]` stores workspace-specific relationship state separate from identity.
 
 Required fields per relationship:
 
@@ -87,7 +173,7 @@ A confirmed identity does not imply a confirmed relationship.
 
 ## 4. Rights ledger
 
-`rights.json` stores rights as separate records, never as one vague yes or no field.
+`rights.json.rights[]` stores rights as separate records, never as one vague yes or no field.
 
 Required fields per rights record:
 
@@ -109,7 +195,7 @@ Unknown never means approved.
 
 ## 5. Evidence map
 
-`evidence-map.json` is the explicit bridge from ad delivery evidence to creator evidence.
+`evidence-map.json.evidence[]` is the explicit bridge from ad delivery evidence to creator evidence.
 
 Required entities:
 
@@ -136,6 +222,7 @@ Each file in `performance/` stores one source and one window.
 
 Required fields:
 
+- `schemaVersion`: `1`
 - `workspaceId`
 - `source`: `meta | northbeam`
 - `window`: `30d | 90d | 365d`
@@ -167,7 +254,7 @@ Other rules:
 
 ## 7. Recommendation ledger
 
-`recommendations.json` stores stable recommendation records.
+`recommendations.json.recommendations[]` stores stable recommendation records.
 
 Required fields per recommendation:
 
@@ -188,7 +275,7 @@ Do not claim later ad outcomes were caused by a recommendation unless a launched
 
 ## 8. Pending review queue
 
-`pending-review.json` stores unresolved human decisions.
+`pending-review.json.items[]` stores unresolved human decisions.
 
 Required fields per item:
 
@@ -209,6 +296,7 @@ Silence changes nothing. Partial answers affect only the named candidates.
 
 Required fields:
 
+- `schemaVersion`: `1`
 - `sources[]` with `sourceName`, `lastSuccessAt`, `lastAttemptAt`, `status`, `errorSummary`, `coverage`
 - `scheduledRefresh`: nullable object with `owner`, `cadence`, `delivery`, `approvedAt`
 - `updatedAt`

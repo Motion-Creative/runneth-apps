@@ -21,6 +21,7 @@ This skill activates Creator Intel for **one exact Motion workspace**. It is the
 - Create state only at `/agent/brain/creator-intel/workspaces/<workspaceId>/`.
 - Never write customer state inside `/agent/brain/creator-intel-reference/`.
 - Setup is idempotent. Reruns update the same workspace record and must not create duplicate state or routines.
+- Treat `workspace.json.status: active` as the completion marker. Write or update `workspace.json` last, only after every required ledger, refresh-state file, audit file, and the empty `performance/` directory exist.
 - Setup does not create a refresh routine by default.
 - Setup never pulls creator data and never creates performance snapshots.
 - `refresh-creator-corpus` exclusively owns data pulls and snapshot creation.
@@ -30,19 +31,22 @@ This skill activates Creator Intel for **one exact Motion workspace**. It is the
 
 ## What setup creates
 
-Seed these customer-owned records when missing, preserving existing files when present:
+Seed these customer-owned records when missing, preserving existing files and
+collection contents when present. Use the exact `schemaVersion: 1` envelopes and
+initial JSON values in `creator-data-contract.md`; never choose a different envelope
+or replace a collection with a bare array:
 
-- `workspace.json`: seed the required contract fields exactly as defined in `creator-data-contract.md`: `workspaceId`, `workspaceName`, `status`, `defaultConversationLanguage`, `performancePolicies`, `manualRefreshOnly`, `createdAt`, `updatedAt`, and `setupOwner`
+- `workspace.json`: seed the required contract fields exactly as defined in `creator-data-contract.md`: `schemaVersion`, `workspaceId`, `workspaceName`, `status`, `defaultConversationLanguage`, `performancePolicies`, `manualRefreshOnly`, `createdAt`, `updatedAt`, and `setupOwner`
 - `workspace.json` initial values must use exact contract field names, including `status: active`, `manualRefreshOnly: true`, `defaultConversationLanguage` from the explicit setup choice or current conversation language, `performancePolicies` from the explicit source policy chosen during setup, and `setupOwner` from the person who owns future refresh decisions for that workspace
-- `identities.json`: stable creator identities and merge history
-- `relationships.json`: workspace relationship state, disqualifications, and hard eligibility rules
-- `rights.json`: rights records by workspace, advertiser, platform, usage type, asset, territory, start, and expiry
-- `evidence-map.json`: ad, ad-name, creative asset, and creator mapping ledger
+- `identities.json.identities[]`: stable creator identities and merge history
+- `relationships.json.relationships[]`: workspace relationship state, disqualifications, and hard eligibility rules
+- `rights.json.rights[]`: rights records by workspace, advertiser, platform, usage type, asset, territory, start, and expiry
+- `evidence-map.json.evidence[]`: ad, ad-name, creative asset, and creator mapping ledger
 - `performance/`: an empty directory only, with no `meta-30d.json`, `meta-90d.json`, `meta-365d.json`, `northbeam-30d.json`, `northbeam-90d.json`, or `northbeam-365d.json` files created during setup
-- `recommendations.json`: stable recommendation records
-- `pending-review.json`: human review queue
+- `recommendations.json.recommendations[]`: stable recommendation records
+- `pending-review.json.items[]`: human review queue
 - `refresh-state.json`: per-source freshness and partial-failure state
-- `audit.jsonl`: append-only setup, review, refresh, and merge history
+- `audit.jsonl`: after every required state file exists and `workspace.json.status` is `active`, append one canonical `workspace_setup` event if it is missing; a resumed setup repairs missing state first and never appends a duplicate completed-setup event
 
 ## Question order
 

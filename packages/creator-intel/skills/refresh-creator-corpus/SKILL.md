@@ -26,11 +26,11 @@ Update Creator Intel refreshes evidence only. Trusted roster, relationship, righ
 
 ## What refresh may update
 
-- new evidence rows in `evidence-map.json`
-- new pending proposals in `pending-review.json`
-- source freshness and failure details in `refresh-state.json`
+- new evidence rows in `evidence-map.json.evidence[]`
+- new pending proposals in `pending-review.json.items[]`
+- source freshness and failure details in `refresh-state.json.sources[]`
 - new performance snapshots under `performance/`
-- append-only audit entries in `audit.jsonl`
+- one canonical append-only audit event per source attempt in `audit.jsonl`, including partial failures
 
 ## What refresh may not update
 

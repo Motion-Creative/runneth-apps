@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "id": "hook-script-mining",
+  "name": "Hook & Script Mining",
+  "version": "1",
+  "installPolicy": "auto",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "description": "Turns one submitted ad, creator post, adjacent-brand ad, or organic asset plus the person's taste note into a human-confirmed swipe-file entry classified as a hook tactic, headline tactic, visual format, or creative mechanic, then promotes confirmed patterns into inputs for the ideation engine. Automatically installs and updates for ai-training-club-26. Its package instruction offers Apify connection and the first library build without touching account data until a human says yes; every seeded or submitted entry also requires confirmation. Once 3-4 confirmed entries exist, it offers a read-only swipe-file viewer and discloses that approval will create or update app source, write confirmed entries, download available media through Apify, and run the build. No app write, download, build, or sync routine is created before a separate human yes. Generated library data stays outside package-owned targets, uses only the workspace's own evidence and spend for swipe-file ranking, and never makes effectiveness or scale decisions.",
+  "resources": [
+    {
+      "id": "readme",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "README.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/README.md"
+      }
+    },
+    {
+      "id": "source-and-classification",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "01-source-and-classification.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/01-source-and-classification.md"
+      }
+    },
+    {
+      "id": "pattern-library-and-concept-use",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "02-pattern-library-and-concept-use.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/02-pattern-library-and-concept-use.md"
+      }
+    },
+    {
+      "id": "worked-example",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "03-worked-example.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/03-worked-example.md"
+      }
+    },
+    {
+      "id": "bank-building-process",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "04-bank-building-process.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/04-bank-building-process.md"
+      }
+    },
+    {
+      "id": "library-confirmation",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "05-library-confirmation.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/05-library-confirmation.md"
+      }
+    },
+    {
+      "id": "swipe-file-app",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "06-swipe-file-app.md",
+      "target": {
+        "root": "agent_brain",
+        "path": "hook-script-mining/06-swipe-file-app.md"
+      }
+    },
+    {
+      "id": "hook-script-mining-skill",
+      "type": "file",
+      "executable": false,
+      "sourcePath": "hook-script-mining/SKILL.md",
+      "target": {
+        "root": "agent_skills",
+        "path": "hook-script-mining/SKILL.md"
+      }
+    },
+    {
+      "id": "activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
+    }
+  ]
+}

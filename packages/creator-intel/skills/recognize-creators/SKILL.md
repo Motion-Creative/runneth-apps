@@ -20,7 +20,8 @@ This skill helps build the roster from **explicit source material**. It does not
 - Require existing workspace activation at `/agent/brain/creator-intel/workspaces/<workspaceId>/`.
 - Require an explicit source, such as a tracker, handle list, creator roster, ad-name evidence, or named workspace artifact.
 - New or removed upstream entries never silently mutate confirmed local decisions.
-- Every new proposal enters `pending-review.json` with a stable `candidateId` and evidence trail.
+- Every new proposal enters `pending-review.json.items[]` with a stable `candidateId` and evidence trail.
+- Every proposal batch appends one canonical `identity_proposals_created` event to `audit.jsonl` with all new `candidateId` values in `entityIds`.
 - A valid creator without a Motion profile stays usable as unresolved. Do not drop them for missing Motion enrichment.
 - Show 10 people or fewer per visible batch.
 
@@ -31,6 +32,7 @@ This skill helps build the roster from **explicit source material**. It does not
 3. When resolving a creator profile, use `motion inspo creators` for exact name or handle resolution.
 4. If a broad creator search hits the known schema issue, say the search failed and fall back to supported category, follower, or exact name or handle pulls. Do not treat a tool error as an empty result.
 5. Keep identity, relationship, rights, evidence, and recommendation state separate.
+6. Persist the new proposals to `pending-review.json.items[]`, preserving existing items, then append the canonical audit event before showing the review bundle.
 
 ## Proposal record requirements
 

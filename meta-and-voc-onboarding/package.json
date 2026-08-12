@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "id": "meta-and-voc-onboarding",
+  "name": "Meta and Voice of Customer Onboarding",
+  "version": "3",
+  "description": "Automatically installed when VM intent includes ai-training-club-26 and still available for explicit installs elsewhere. Stages Meta and Voice of Customer onboarding docs, ready-made guard blocks, and the voc-data-pull, voc-audit, meta-ad-performance-analysis, and onboarding-walkthrough skills. Its package instruction checks the per-workspace completion roster and offers onboarding at most once per conversation for an unrostered workspace. Installation only delivers files: before connected-account reads, routine creation, account-context writes, /agent/INDEX.md edits, or /agent/user.md changes, it discloses those effects and waits for an explicit human yes. After approval, post-install resolves the workspace only from the conversation's Motion context, creates human-confirmed workspace-scoped VoC routines, merges the shared guards, persists Meta account context, records completion, and asks whether to begin the walkthrough. The Voice of Customer Audit and walkthrough remain separately human-gated. All generated data is scoped to /agent/brain/<workspace>/ so multi-workspace onboarding stays additive.",
+  "installPolicy": "auto",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "readme",
+      "type": "file",
+      "sourcePath": "README.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-and-voc-onboarding/README.md"
+      }
+    },
+    {
+      "id": "creative-attributes-playbook",
+      "type": "file",
+      "sourcePath": "meta/meta-creative-attributes-playbook.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-and-voc-onboarding/meta-creative-attributes-playbook.md"
+      }
+    },
+    {
+      "id": "account-context-brain-package",
+      "type": "file",
+      "sourcePath": "meta/meta-account-context-brain-onboarding-package.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md"
+      }
+    },
+    {
+      "id": "meta-validation-package",
+      "type": "file",
+      "sourcePath": "meta/meta-validation-onboarding-package.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-and-voc-onboarding/meta-validation-onboarding-package.md"
+      }
+    },
+    {
+      "id": "motion-cli-data-query-guide",
+      "type": "file",
+      "sourcePath": "meta/motion-cli-data-query-guide.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-and-voc-onboarding/motion-cli-data-query-guide.md"
+      }
+    },
+    {
+      "id": "cacheth-command-reference",
+      "type": "file",
+      "sourcePath": "meta/cacheth-command-reference.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-and-voc-onboarding/cacheth-command-reference.md"
+      }
+    },
+    {
+      "id": "knoweth-organize-package",
+      "type": "file",
+      "sourcePath": "knoweth/knoweth-organize-onboarding-package.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-and-voc-onboarding/knoweth-organize-onboarding-package.md"
+      }
+    },
+    {
+      "id": "post-install",
+      "type": "file",
+      "sourcePath": "post-install.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-and-voc-onboarding/post-install.md"
+      }
+    },
+    {
+      "id": "meta-onboarding-rules",
+      "type": "directory",
+      "sourcePath": "meta-onboarding-rules",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-and-voc-onboarding/meta-onboarding-rules"
+      }
+    },
+    {
+      "id": "voc-data-pull-skill",
+      "type": "directory",
+      "sourcePath": "voc-data-pull",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_skills",
+        "path": "voc-data-pull"
+      }
+    },
+    {
+      "id": "voc-audit-skill",
+      "type": "directory",
+      "sourcePath": "voc-audit",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_skills",
+        "path": "voc-audit"
+      }
+    },
+    {
+      "id": "meta-ad-performance-analysis-skill",
+      "type": "file",
+      "sourcePath": "meta-ad-performance-analysis/SKILL.md",
+      "executable": false,
+      "target": {
+        "root": "agent_skills",
+        "path": "meta-ad-performance-analysis/SKILL.md"
+      }
+    },
+    {
+      "id": "onboarding-walkthrough-skill",
+      "type": "file",
+      "sourcePath": "onboarding-walkthrough/SKILL.md",
+      "executable": false,
+      "target": {
+        "root": "agent_skills",
+        "path": "onboarding-walkthrough/SKILL.md"
+      }
+    },
+    {
+      "id": "activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
+    }
+  ]
+}
