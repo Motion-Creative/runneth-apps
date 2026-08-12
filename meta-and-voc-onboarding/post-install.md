@@ -253,10 +253,13 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    > - Guards: merged
    > - Creative Attributes: done
    > - Account Context Brain: done - remaining gaps wait for the walkthrough
+   > - Knoweth V2 map: <waiting on content gates | pending runtime support>
    >
    > Are you ready to begin your onboarding?
 
-   Fill only the angle-bracket slots; append nothing else to any bullet. The workspace
+   Fill only the angle-bracket slots; append nothing else to any bullet. For the Knoweth
+   line, use `waiting on content gates` only when the deployed ContextConfig and Harneth
+   surfaces support the exact ordered map; otherwise use `pending runtime support`. The workspace
    name in the header is identity, not a finding - it is the one detail that belongs there,
    because a VM can hold several onboarded workspaces. "Creative
    Attributes: done" is the entire line - naming what was detected, the convention's name
@@ -296,8 +299,10 @@ connected later, setup runs on ask.
   yes or an explicit audit request, saves one compiled audit page, and never
   auto-regenerates.
 - **Knoweth organize** - from the merged guard's gates, once content lands and the
-  interpretation is confirmed. It runs per workspace, gated on that workspace's
-  `_tag-vocabulary.md`.
+  interpretation is confirmed. It applies or verifies the ordered V2 project, Meta, VoC,
+  and review assignments for that workspace, then writes `_tag-vocabulary.md`. If the
+  deployed ContextConfig and Harneth surfaces cannot support that exact map, it preserves
+  global indexing and reports the runtime dependency instead of creating overlapping roots.
 - **Meta Validation** - from its merged gate (step 3), opening on its own once the Account
   Context Brain is confirmed and the creative content layer resolves. Each workspace
   validates independently.

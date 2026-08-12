@@ -4,6 +4,20 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 6 - 2026-08-12
+
+- Replaced the single-global-lane guidance with an ordered Knoweth V2 taxonomy for the
+  package's real paths: general workspace, Meta interpretation, non-review VoC, raw reviews,
+  and verified-person homes.
+- Added exact root-relative assignment patterns, shared and user access rules, query examples,
+  workspace and new-user setup, and the Agent Builder runtime dependency.
+- Kept review files in their existing platform folders and made them independently retrievable
+  through the existing `review-*.md` filename and `source_type: review` contract.
+- Documented the relationship between Meta Brain interpretation, Cacheth's existing project
+  corpus, and live Motion metrics without copying or rewriting data.
+- Aligned the package overview, Brain guards, and post-install lifecycle with the same map and
+  prohibited overlapping nested roots that would duplicate indexed files.
+
 ## 5 - 2026-08-11
 
 - Added the `dashboard-design` skill for building and refining Runneth dashboards and

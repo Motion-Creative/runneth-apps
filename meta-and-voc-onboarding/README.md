@@ -34,8 +34,8 @@ The parts, and their operational nature:
 The one-line model:
 
 > **The data parts give Runneth the org's raw material - customer voice and creative facts.
-> The interpretation parts teach it how this account judges that material. Knoweth holds the
-> structure so both stay findable as the brain grows.**
+> The interpretation parts teach it how this account judges that material. Knoweth separates
+> that knowledge by workspace, data source, and person so Runneth searches the right corpus.**
 
 ---
 
@@ -129,20 +129,29 @@ workspace's context, naming decoder, validation state, and VoC corpus live toget
 
 ```
 /agent/brain/
-  bramblewick-nyc/
-    _tag-vocabulary.md
-    _changelog.md
+  runneth.md                           # global: verified identity-to-home resolver
+  meta-and-voc-onboarding/             # global: shared package guidance
+  bramblewick-nyc/                     # project:<workspaceId>: general workspace files
+    _tag-vocabulary.md                 # project:<workspaceId>
+    _changelog.md                      # project:<workspaceId>
     data-sources/
-      meta/
+      meta/                            # meta:<workspaceId>
         account-context.md
         naming-decoder.json
         validation.md
         _changelog.md
-      voc/
-        voice-of-customer-audit.md  # created by the later audit skill, not initial sync
-        <platform>/                 # one folder per pulled platform, one file per item
-        meta-ad-comments/           # standard pull of every onboarding, one file per creative
-  st-fig-co/                the same structure, entirely independent
+      voc/                             # voc:<workspaceId>
+        voice-of-customer-audit.md     # compiled later, not during initial sync
+        meta-ad-comments/              # voc:<workspaceId>
+        <platform>/
+          review-<externalId>.md       # reviews:<workspaceId>
+          ticket-<externalId>.md       # voc:<workspaceId>
+          post-<externalId>.md         # voc:<workspaceId>
+          comment-<externalId>.md      # voc:<workspaceId>
+  st-fig-co/                           # the same pattern with its own workspaceId
+  team/
+    <handle>/                          # user:<vmUserId>, created only for a verified person
+      user.md
 ```
 
 Why it matters: a sandbox is per organization, not per workspace, so every workspace in an org
@@ -153,18 +162,21 @@ workspace onboarded either overwrites the first's context or silently accumulate
 voice into the same corpus. Per-workspace folders make onboarding a second workspace a normal,
 additive operation: it creates a folder and touches nothing that belongs to the first.
 
-Two things stay deliberately org-wide, because they describe the VM rather than an account: the
+Three things stay deliberately org-wide, because they describe the VM rather than an account: the
 four guard blocks in `/agent/user.md` (workspace-agnostic rules that resolve the folder per
-conversation, so they are merged once and shared) and `/agent/INDEX.md`. Integrations and
+conversation, so they are merged once and shared), `/agent/INDEX.md`, and the verified
+identity-to-home resolver at `/agent/brain/runneth.md`. Integrations and
 stored secrets are also VM-wide, and an org can hold one account of a platform, several (one
 per workspace), or one genuinely shared - which is why VoC setup pins a human-confirmed
 account per workspace, and the folders separate the data each workspace pulls through it.
 
-Retrieval has a known gap worth stating: the automatic per-workspace Knoweth lane is injected as
-pre-context but explicit Knoweth searches query only the global and user lanes, so content filed
-only in a workspace lane cannot be searched back. Until the harness requests configured lanes on
-search, content stays in the global lane and separation comes from the folder plus a workspace tag
-on every compiled page. The folders already match the lane shape, so that change is additive.
+The target V2 overlay uses one existing Brain root and ordered assignments. The broad workspace
+rule applies first; Meta, VoC, and review rules override it from broadest to most specific, so
+each file is indexed once. Shared lanes are readable across the org VM; a `user:<vmUserId>` lane
+requires a matching Teameth identity and grant. The Agent Builder follow-up must let ContextConfig
+submit those custom assignments and make Harneth request the relevant configured lanes. Until
+that support is deployed, keep the existing global index and report the map as pending instead of
+creating overlapping roots or moving files into lanes that cannot be searched.
 
 ---
 
@@ -451,12 +463,14 @@ The run order below is the human-readable description of the same lifecycle.
    `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. It is not an
    install-time artifact.
 7. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
-   confirmed and data-source content has landed, organize the brain: keep shared content in the
-   global lane and make it findable with tags and a naming decoder. Both the
+   confirmed and data-source content has landed, apply the V2 workspace, Meta, VoC, review, and
+   verified-user map from the package guide. Reuse the existing Brain root and use ordered
+   assignments so each file has one lane. Both the
    `runneth:knoweth-organize` and `runneth:knoweth-brain` guard blocks (staged at
    `meta-onboarding-rules/brain-organization.md` and `meta-onboarding-rules/brain-file-conventions.md`) are merged into /agent/user.md by the
-   post-install run's single guard merge, so the organize trigger fires and save-routing/maintenance stay on. Do not carve data-source-family or
-   initiative lanes today; only global, the user lane, and the workspace lane are queried. See
+   post-install run's single guard merge, so the organize trigger fires and save-routing/maintenance stay on. If the deployed ContextConfig and
+   Harneth surfaces do not yet support the exact map, preserve global indexing and report the
+   runtime dependency rather than creating overlapping roots. See
    `knoweth/knoweth-organize-onboarding-package.md` (staged at
    `/agent/brain/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md`).
 8. **Keep everything current.** Creative content stays current through the Cacheth sync
