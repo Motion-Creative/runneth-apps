@@ -3,7 +3,7 @@
   "id": "creative-strategy-foundations",
   "name": "Creative Strategy Foundations",
   "version": "3",
-  "description": "Removable baseline Runneth creative strategy skills and routing instruction.",
+  "description": "Provides Runneth’s default workflows for analyzing creative performance, generating creative direction, and producing briefs. It installs the analyzing, creative-generation, and briefing skills plus their routing instruction, uses the shared Creative Strategy Guidance package, and can be uninstalled when a user wants to rely only on custom skills.",
   "installPolicy": "auto",
   "updatePolicy": "auto",
   "uninstallPolicy": "allowed",
