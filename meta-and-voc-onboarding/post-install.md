@@ -299,10 +299,14 @@ connected later, setup runs on ask.
   yes or an explicit audit request, saves one compiled audit page, and never
   auto-regenerates.
 - **Knoweth organize** - from the merged guard's gates, once content lands and the
-  interpretation is confirmed. It applies or verifies the ordered V2 project, Meta, VoC,
-  and review assignments for that workspace, then writes `_tag-vocabulary.md`. If the
-  deployed ContextConfig and Harneth surfaces cannot support that exact map, it preserves
-  global indexing and reports the runtime dependency instead of creating overlapping roots.
+  interpretation is confirmed. It applies the ordered V2 collection map: general workspace
+  context to `project:<workspaceId>`, Meta interpretation to `meta:<workspaceId>`, customer voice
+  to `voc:<workspaceId>`, and review records to `reviews:<workspaceId>`. It authorizes the set
+  with the workspace grant, reindexes once, verifies one final lane per file, and then writes
+  `_tag-vocabulary.md`. If the deployed ContextConfig surface cannot durably apply the exact
+  assignments and grants, it preserves current indexing and reports the runtime dependency
+  instead of creating overlapping roots. Verified-person homes remain pending until exact
+  `user:<vmUserId>` assignment and grants are supported.
 - **Meta Validation** - from its merged gate (step 3), opening on its own once the Account
   Context Brain is confirmed and the creative content layer resolves. Each workspace
   validates independently.

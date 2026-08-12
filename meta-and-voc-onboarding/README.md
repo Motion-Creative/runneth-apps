@@ -35,7 +35,14 @@ The one-line model:
 
 > **The data parts give Runneth the org's raw material - customer voice and creative facts.
 > The interpretation parts teach it how this account judges that material. Knoweth separates
-> that knowledge by workspace, data source, and person so Runneth searches the right corpus.**
+> that knowledge into searchable collections so Runneth finds the right material for the current
+> workspace and person.**
+
+People describe a collection by its workspace, audience, origin, and familiar type such as ideas,
+briefs, reviews, or customer voice. Runneth infers those answers from verified context and confirms
+one plain-language summary; it asks only what remains ambiguous. A person can own a shared
+collection without making it private. The underlying V2 lane assignments and identity grants remain
+Runneth-managed configuration.
 
 ---
 
@@ -170,13 +177,13 @@ stored secrets are also VM-wide, and an org can hold one account of a platform, 
 per workspace), or one genuinely shared - which is why VoC setup pins a human-confirmed
 account per workspace, and the folders separate the data each workspace pulls through it.
 
-The target V2 overlay uses one existing Brain root and ordered assignments. The broad workspace
-rule applies first; Meta, VoC, and review rules override it from broadest to most specific, so
-each file is indexed once. Shared lanes are readable across the org VM; a `user:<vmUserId>` lane
-requires a matching Teameth identity and grant. The Agent Builder follow-up must let ContextConfig
-submit those custom assignments and make Harneth request the relevant configured lanes. Until
-that support is deployed, keep the existing global index and report the map as pending instead of
-creating overlapping roots or moving files into lanes that cannot be searched.
+The target V2 overlay uses one existing Brain root and ordered assignments. General workspace,
+Meta, customer-voice, review, and user folders become separate searchable collections; the last
+matching rule wins, so each file is indexed once. The lane name is separate from access:
+`reviews:<workspaceId>` names the collection, while a grant with that `project_id` authorizes it.
+The Agent Builder sister PR must expose the exact assignments and grants and make Harneth request
+the relevant collection set. Until that support is deployed, preserve current indexing and report
+the map as pending instead of creating overlapping roots.
 
 ---
 
@@ -463,14 +470,15 @@ The run order below is the human-readable description of the same lifecycle.
    `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. It is not an
    install-time artifact.
 7. **Organize with Knoweth (after the questions are answered).** Once the Account Context Brain is
-   confirmed and data-source content has landed, apply the V2 workspace, Meta, VoC, review, and
-   verified-user map from the package guide. Reuse the existing Brain root and use ordered
-   assignments so each file has one lane. Both the
+   confirmed and connected content has landed, apply the ordered V2 project, Meta, customer-voice,
+   and review assignments plus the workspace grant. Reuse the existing Brain root so each file has
+   one indexed owner. Both the
    `runneth:knoweth-organize` and `runneth:knoweth-brain` guard blocks (staged at
    `meta-onboarding-rules/brain-organization.md` and `meta-onboarding-rules/brain-file-conventions.md`) are merged into /agent/user.md by the
-   post-install run's single guard merge, so the organize trigger fires and save-routing/maintenance stay on. If the deployed ContextConfig and
-   Harneth surfaces do not yet support the exact map, preserve global indexing and report the
-   runtime dependency rather than creating overlapping roots. See
+   post-install run's single guard merge, so the organize trigger fires and save-routing/maintenance stay on. Add a verified person's
+   `user:<vmUserId>` assignment and grant only after exact identity is confirmed. If the deployed
+   ContextConfig and Harneth surfaces cannot apply and retrieve the complete map, preserve current
+   indexing and report the runtime dependency rather than creating overlapping roots. See
    `knoweth/knoweth-organize-onboarding-package.md` (staged at
    `/agent/brain/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md`).
 8. **Keep everything current.** Creative content stays current through the Cacheth sync

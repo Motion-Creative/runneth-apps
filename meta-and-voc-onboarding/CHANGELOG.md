@@ -6,11 +6,13 @@ change to the package, not per commit. Entries are newest-first.
 
 ## 6 - 2026-08-12
 
-- Replaced the single-global-lane guidance with an ordered Knoweth V2 taxonomy for the
-  package's real paths: general workspace, Meta interpretation, non-review VoC, raw reviews,
-  and verified-person homes.
-- Added exact root-relative assignment patterns, shared and user access rules, query examples,
-  workspace and new-user setup, and the Agent Builder runtime dependency.
+- Replaced the single-global-lane guidance with ordered V2 searchable collections for general
+  workspace context, Meta interpretation, customer voice, raw reviews, and verified-person homes.
+- Added the exact root-relative assignments, project and user grants, query examples, workspace
+  and new-user setup, and the Agent Builder authoring and lane-selection dependency.
+- Added four user-facing setup questions for workspace, audience, origin, and collection type,
+  plus the rule for deciding when a durable new folder deserves its own collection.
+- Added the V3 source migration map and documented source overlap and frontmatter limitations.
 - Kept review files in their existing platform folders and made them independently retrievable
   through the existing `review-*.md` filename and `source_type: review` contract.
 - Documented the relationship between Meta Brain interpretation, Cacheth's existing project
