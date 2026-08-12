@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-12-01",
+  "indexRevision": "2026-08-12-02",
   "packages": [
     {
       "id": "creative-strategy-foundation-references",
@@ -25,8 +25,8 @@
     {
       "id": "creative-strategy-foundations",
       "name": "Creative Strategy Foundations",
-      "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
-      "version": "2",
+      "description": "Removable baseline Runneth creative strategy skills and their shared engine.",
+      "version": "3",
       "packageManagerVersion": 1,
       "categories": [
         "baseline"
@@ -40,7 +40,7 @@
       },
       "installPolicy": "auto",
       "updatePolicy": "auto",
-      "uninstallPolicy": "protected"
+      "uninstallPolicy": "allowed"
     },
     {
       "id": "meta-and-voc-onboarding",

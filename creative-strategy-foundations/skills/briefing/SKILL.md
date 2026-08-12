@@ -30,14 +30,14 @@ Use this skill to turn an approved or newly formed concept into a production-rea
 
 ### Read only the references the question needs
 
-- `/runneth/references/hook-generation--standards.md` for hook quality and pressure checks
-- `/runneth/references/creative-strategy-engine.md` only when the brief needs audience, stage, or context adaptation or clearer strategic mapping
-- `/runneth/references/html-generation--design-system.md` only when the output is HTML or the user needs a visual example layout or reusable visual component pattern
+- `/agent/brain/creative-strategy-foundation-references/references/hook-generation--standards.md` for hook quality and pressure checks
+- `/agent/brain/creative-strategy-foundations/references/creative-strategy-engine.md` only when the brief needs audience, stage, or context adaptation or clearer strategic mapping
+- `/runneth/references/design-system.md` only when the output is HTML or the user needs a Web Awesome layout or reusable visual component pattern
 
 ### Build missing concept elements inline
 
 - If the user did not provide a concept, build the minimum viable concept inline from the gathered context and performance patterns.
-- If the user did not provide a hook, generate it inline using `/runneth/references/hook-generation--standards.md`.
+- If the user did not provide a hook, generate it inline using `/agent/brain/creative-strategy-foundation-references/references/hook-generation--standards.md`.
 - If briefing has to build a missing concept inline, apply the same concept quality bar as `creative-generation`: specific tension, clear audience, differentiated bet, concrete format, and a believable reason this should work.
 - Do not dispatch to helper skills just to create subcomponents for the brief.
 
@@ -107,7 +107,7 @@ For execution-ready file outputs:
 - use HTML only when the user explicitly asks for HTML, or when the deliverable should be a page the user opens in the browser or be visually rich enough that Markdown is the wrong fit
 - use PDF only when the user explicitly asks for it, or when fixed-layout output is clearly the point
 
-When HTML is the chosen format, briefing owns the workflow and then hands off to `html-generation` as the rendering layer. Do not skip straight to bare `html-generation`.
+Briefing owns the workflow; when the deliverable should be a browser-openable page, hand off rendering and serving to `app-builder`; when the user explicitly asked for standalone HTML source or a downloadable HTML file, hand off to `html-generation`. Do not skip the briefing workflow and jump straight to bare rendering.
 
 Do not duplicate artifact content inline. Write a brief preamble, then reference the artifact.
 
