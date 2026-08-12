@@ -4,6 +4,37 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 5 - 2026-08-11
+
+- Added the `dashboard-design` skill for building and refining Runneth dashboards and
+  app-style pages with the Web Awesome design system.
+- Split detailed implementation patterns and performance-dashboard rules into progressive
+  references so the core skill remains concise.
+- Made the design-system and bundled-reference reads a hard pre-authoring gate in every turn,
+  with an explicit stop when any reference is unavailable, and clarified `image-key` behavior
+  for creative-row and category charts.
+- Added UI metadata for skill discovery and packaged the complete skill directory into
+  `/agent/.agents/skills/dashboard-design/`.
+
+## 4 - 2026-08-11
+
+- Removed the `ai-training-club-26` intent category from this package.
+- Restored `installPolicy: manual`, so Meta and VoC onboarding is available only
+  through an explicit package install. Automatic updates for installed copies and
+  allowed uninstalls are unchanged.
+
+## 3 - 2026-08-11
+
+- Added the `ai-training-club-26` intent category.
+- Changed `installPolicy` from `manual` to `auto` so managed sync installs the
+  package on matching VMs. `updatePolicy: auto` and `uninstallPolicy: allowed`
+  are unchanged.
+- Updated the manifest and index descriptions to state the automatic-install
+  contract and fresh-conversation activation behavior explicitly.
+- Added an explicit activation consent gate: automatic installation only delivers the
+  package. Connected-account checks and persistent onboarding changes start only after
+  a human approves the disclosed setup for that workspace.
+
 ## 1 - 2026-08-04
 
 The package as it ships:

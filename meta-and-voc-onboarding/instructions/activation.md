@@ -24,25 +24,40 @@ meta-and-voc-onboarding has completed for these workspaces: bramblewick-nyc, st-
 <!-- END runneth:meta-voc-onboarded -->
 ```
 
-If that block lists **this conversation's workspace**, post-install already ran here -
-skip the rest of this section and answer normally. Do not try to read `/agent/user.md`
-through Bash; the runtime blocks that path, and the check is against the copy in this
-prompt.
+If that block lists **this conversation's workspace** and this is not an explicit
+reinstall or upgrade, post-install already ran here - skip the rest of this section and
+answer normally. On an explicit reinstall or upgrade, continue to the disclosed consent
+offer below before re-running anything. Do not try to read `/agent/user.md` through Bash;
+the runtime blocks that path, and the check is against the copy in this prompt.
 
-If the block is missing, or it exists but does not list this workspace, the
-meta-and-voc-onboarding post-install sequence has not run for this workspace yet, and
-running it is your first action this turn - before answering the user's message,
-without asking permission, and without waiting to be asked:
+If the block is missing, it does not list this workspace, or this is an explicit
+reinstall or upgrade, setup is pending for this turn. Package installation delivered
+the files; it did not authorize account access or persistent setup. Before any
+connected-account check, routine creation, account-context write, `/agent/INDEX.md`
+edit, or `/agent/user.md` change, make this offer:
+
+> Meta and Voice of Customer onboarding is installed for <workspace>. Starting it will
+> inspect this workspace's connected accounts, create the applicable daily VoC sync
+> routines, save Meta account context under this workspace's brain folder, and update
+> the shared onboarding guards and completion roster in `/agent/user.md`. Would you
+> like me to start that setup now?
+
+Fill only `<workspace>` from the resolved `Default workspace:` line. Do not inspect the
+connection inventory or filesystem to make the offer. Offer at most once per
+conversation. If the person declines, defers, or asks about something else, handle their
+message normally and do not repeat the offer in that conversation. A later conversation
+may offer again because the workspace remains absent from the completion roster.
+
+Only an explicit human yes to this disclosed setup authorizes the sequence. On that yes:
 
 1. Read `/agent/brain/meta-and-voc-onboarding/post-install.md`.
-2. Execute its install-time sequence for this workspace, starting with its step 0:
-   quote the `Default workspace:` line from this prompt's `Motion context:` section
-   verbatim and state the name, workspaceId, and slug taken from it, before anything
-   else in the sequence (reachability check, VoC sync setup, guard merges into
-   `/agent/user.md`, the Meta account-context steps) runs. The guard
-   blocks are workspace-agnostic and shared, so post-install leaves them alone when
-   each merged block already matches its staged guard file, and refreshes any that
-   do not; everything else runs for this workspace.
+2. Execute its sequence for this workspace, starting with its step 0: quote the
+   `Default workspace:` line from this prompt's `Motion context:` section verbatim and
+   state the name, workspaceId, and slug taken from it before the reachability check,
+   VoC sync setup, guard merges, or Meta account-context steps run. The guard blocks are
+   workspace-agnostic and shared, so post-install leaves them alone when each merged
+   block already matches its staged guard file and refreshes any that do not; everything
+   else runs for this workspace.
 3. Then handle the user's message.
 
 The presence of the four guard sentinels (`runneth:account-context-guard` and the rest)
@@ -50,5 +65,6 @@ means only that some workspace on this VM has been onboarded. It is never eviden
 this one has. Onboarding a second workspace is normal and additive: it writes a new
 `/agent/brain/<workspace>/` folder and changes nothing that belongs to the first.
 
-On an explicit reinstall or upgrade of this package, run post-install again even
-if this workspace is already listed.
+On an explicit reinstall or upgrade of this package, disclose the same effects and ask
+again before re-running post-install, even if this workspace is already listed. Reinstall
+or upgrade is not itself consent to persistent setup.
