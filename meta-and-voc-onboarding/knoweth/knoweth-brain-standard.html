@@ -1,0 +1,1240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Knoweth Brain Standard</title>
+    <style>
+      :root {
+        --paper: #fbfbf8;
+        --surface: #ffffff;
+        --soft: #f2f4f1;
+        --ink: #18201d;
+        --muted: #65706b;
+        --line: #d8ddd9;
+        --blue: #2168ad;
+        --blue-soft: #edf5fc;
+        --green: #257b58;
+        --green-soft: #edf7f1;
+        --orange: #a85d12;
+        --orange-soft: #fff4e6;
+        --purple: #765398;
+        --purple-soft: #f5effa;
+        --red: #b74539;
+        --red-soft: #fff0ed;
+        --max: 1240px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        font-size: 16px;
+        line-height: 1.55;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      code,
+      pre,
+      .tag {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      code {
+        font-size: 0.92em;
+      }
+
+      .page {
+        width: min(calc(100% - 48px), var(--max));
+        margin: 0 auto;
+      }
+
+      header {
+        padding: 72px 0 52px;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .eyebrow {
+        display: inline-block;
+        margin-bottom: 14px;
+        color: var(--blue);
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-weight: 700;
+        line-height: 1.08;
+      }
+
+      h1 {
+        max-width: 980px;
+        font-size: 54px;
+      }
+
+      h2 {
+        font-size: 38px;
+      }
+
+      h3,
+      h4,
+      p {
+        margin-top: 0;
+      }
+
+      h3 {
+        margin-bottom: 8px;
+        font-size: 21px;
+        line-height: 1.25;
+      }
+
+      h4 {
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+
+      .lede {
+        max-width: 820px;
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: 21px;
+      }
+
+      .answer {
+        max-width: 920px;
+        margin-top: 28px;
+        padding: 18px 20px;
+        border-left: 5px solid var(--green);
+        background: var(--green-soft);
+        font-size: 17px;
+      }
+
+      .jump-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 18px;
+        margin-top: 28px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .jump-links a {
+        color: var(--blue);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 4px;
+      }
+
+      section {
+        padding: 58px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+        gap: 56px;
+        align-items: end;
+        margin-bottom: 30px;
+      }
+
+      .section-head p {
+        margin-bottom: 4px;
+        color: var(--muted);
+        font-size: 17px;
+      }
+
+      .lane-grid,
+      .boundary-grid,
+      .control-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 4px solid var(--ink);
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .lane,
+      .boundary,
+      .control-column {
+        min-width: 0;
+        padding: 24px;
+      }
+
+      .lane + .lane,
+      .boundary + .boundary,
+      .control-column + .control-column {
+        border-left: 1px solid var(--line);
+      }
+
+      .lane p,
+      .boundary p,
+      .control-column li {
+        color: var(--muted);
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 3px 8px;
+        border: 1px solid currentColor;
+        border-radius: 3px;
+        font-size: 13px;
+        line-height: 1.35;
+        white-space: nowrap;
+      }
+
+      .shared {
+        color: var(--blue);
+      }
+
+      .brand {
+        color: var(--green);
+      }
+
+      .personal {
+        color: var(--purple);
+      }
+
+      .topic {
+        color: var(--orange);
+      }
+
+      .lane .tag {
+        margin-bottom: 18px;
+      }
+
+      .plain-note {
+        margin: 18px 0 0;
+        padding: 16px 18px;
+        border-left: 4px solid var(--blue);
+        background: var(--blue-soft);
+        color: #31465d;
+      }
+
+      .schema-wrap {
+        margin-top: 34px;
+        border-top: 4px solid var(--ink);
+        background: var(--surface);
+      }
+
+      .schema-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .schema-title strong {
+        font-size: 18px;
+      }
+
+      .schema-title span {
+        color: var(--muted);
+      }
+
+      .schema-lines {
+        padding: 22px 24px 26px;
+        overflow-x: auto;
+      }
+
+      .schema-line {
+        display: grid;
+        grid-template-columns: minmax(610px, 1fr) 210px;
+        align-items: center;
+        min-height: 27px;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 15px;
+        line-height: 1.45;
+      }
+
+      .schema-line .tree {
+        white-space: pre;
+      }
+
+      .schema-line .tag {
+        justify-self: start;
+      }
+
+      .schema-line.muted .tree {
+        color: #7d8782;
+      }
+
+      .schema-gap {
+        height: 13px;
+      }
+
+      .grow-note {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .grow-note > div {
+        padding: 18px 20px;
+      }
+
+      .grow-note > div + div {
+        border-left: 1px solid var(--line);
+      }
+
+      .grow-note p {
+        margin-bottom: 0;
+        color: var(--muted);
+      }
+
+      .boundary-grid {
+        margin-top: 28px;
+      }
+
+      .boundary-grid .boundary:nth-child(1) {
+        border-top: 4px solid var(--blue);
+      }
+
+      .boundary-grid .boundary:nth-child(2) {
+        border-top: 4px solid var(--green);
+      }
+
+      .boundary-grid .boundary:nth-child(3) {
+        border-top: 4px solid var(--orange);
+      }
+
+      .boundary-grid {
+        border-top: 0;
+      }
+
+      .boundary code {
+        overflow-wrap: anywhere;
+      }
+
+      .journey {
+        border-top: 4px solid var(--ink);
+        background: var(--surface);
+      }
+
+      blockquote {
+        margin: 0;
+        padding: 28px;
+        border-bottom: 1px solid var(--line);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 27px;
+        line-height: 1.35;
+      }
+
+      .journey-steps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .journey-step {
+        padding: 22px;
+      }
+
+      .journey-step + .journey-step {
+        border-left: 1px solid var(--line);
+      }
+
+      .number {
+        display: flex;
+        width: 28px;
+        height: 28px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+        border-radius: 50%;
+        background: var(--ink);
+        color: #fff;
+        font-weight: 800;
+      }
+
+      .journey-step p {
+        margin-bottom: 0;
+        color: var(--muted);
+      }
+
+      .journey-result {
+        padding: 18px 22px;
+        border-top: 1px solid var(--line);
+        background: var(--green-soft);
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border-top: 4px solid var(--ink);
+      }
+
+      table {
+        width: 100%;
+        min-width: 820px;
+        border-collapse: collapse;
+        background: var(--surface);
+      }
+
+      th,
+      td {
+        padding: 18px 20px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th:last-child,
+      td:last-child {
+        border-right: 0;
+      }
+
+      th {
+        background: var(--soft);
+        font-size: 13px;
+        text-transform: uppercase;
+      }
+
+      td p:last-child,
+      td ul:last-child {
+        margin-bottom: 0;
+      }
+
+      td code {
+        overflow-wrap: anywhere;
+      }
+
+      .route {
+        display: grid;
+        gap: 7px;
+      }
+
+      .route-line {
+        padding-left: 13px;
+        border-left: 3px solid var(--blue);
+      }
+
+      .route-line.cache {
+        border-color: var(--green);
+      }
+
+      .route-line.live {
+        border-color: var(--orange);
+      }
+
+      .package-setup {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        border-top: 4px solid var(--ink);
+        background: var(--surface);
+      }
+
+      .package-setup > div {
+        padding: 26px;
+      }
+
+      .package-setup > div + div {
+        border-left: 1px solid var(--line);
+      }
+
+      .spoken {
+        margin: 14px 0;
+        font-size: 20px;
+        font-weight: 750;
+      }
+
+      .setup-list {
+        display: grid;
+        gap: 12px;
+        margin: 18px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .setup-list li {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        gap: 9px;
+      }
+
+      .setup-list b {
+        color: var(--green);
+      }
+
+      .stages {
+        border-top: 4px solid var(--ink);
+      }
+
+      .stage {
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .stage-head {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 22px;
+        background: var(--soft);
+      }
+
+      .stage-head h3 {
+        margin: 0;
+      }
+
+      .stage-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .stage-grid > div {
+        padding: 22px;
+      }
+
+      .stage-grid > div + div {
+        border-left: 1px solid var(--line);
+      }
+
+      .column-label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .stage-grid p:last-child {
+        margin-bottom: 0;
+      }
+
+      .appendix-block + .appendix-block {
+        margin-top: 42px;
+      }
+
+      .appendix-heading {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      .appendix-heading p {
+        margin-bottom: 0;
+        color: var(--muted);
+      }
+
+      .control-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .control-column ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      .control-column li + li {
+        margin-top: 6px;
+      }
+
+      details {
+        margin-top: 22px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      summary {
+        padding: 15px 18px;
+        cursor: pointer;
+        font-weight: 750;
+      }
+
+      details .table-wrap {
+        border-top: 1px solid var(--line);
+      }
+
+      footer {
+        padding: 28px 0 44px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 900px) {
+        h1 {
+          font-size: 42px;
+        }
+
+        .section-head,
+        .appendix-heading,
+        .package-setup,
+        .grow-note,
+        .stage-grid {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .lane-grid,
+        .boundary-grid,
+        .journey-steps,
+        .control-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .lane + .lane,
+        .boundary + .boundary,
+        .journey-step + .journey-step,
+        .control-column + .control-column,
+        .package-setup > div + div,
+        .grow-note > div + div,
+        .stage-grid > div + div {
+          border-top: 1px solid var(--line);
+          border-left: 0;
+        }
+
+        .schema-line {
+          grid-template-columns: minmax(560px, 1fr) 180px;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .page {
+          width: min(calc(100% - 28px), var(--max));
+        }
+
+        header {
+          padding: 48px 0 36px;
+        }
+
+        h1 {
+          font-size: 36px;
+        }
+
+        h2 {
+          font-size: 31px;
+        }
+
+        section {
+          padding: 44px 0;
+        }
+
+        blockquote {
+          padding: 22px;
+          font-size: 23px;
+        }
+
+        .schema-title {
+          display: block;
+        }
+
+        .schema-title span {
+          display: block;
+          margin-top: 6px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="page">
+        <span class="eyebrow">Knoweth Brain Standard</span>
+        <h1>How does Runneth find the right knowledge for the right person and job?</h1>
+        <p class="lede">
+          People use folders they recognize. Runneth works out what is shared,
+          what belongs to a brand, and what is personal. People do not manage
+          lanes, grants, indexes, or search settings.
+        </p>
+        <div class="answer">
+          <strong>The short answer:</strong> keep the Brain small and familiar.
+          A folder's location tells Runneth who and what it belongs to. Knoweth
+          handles access and search underneath.
+        </div>
+        <nav class="jump-links" aria-label="Document sections">
+          <a href="#properties">Folder model</a>
+          <a href="#schema">Ideal Brain</a>
+          <a href="#request-flow">One ask</a>
+          <a href="#asks">Examples</a>
+          <a href="#onboarding-package">Onboarding</a>
+          <a href="#lifecycle">User journey</a>
+          <a href="#appendix">Appendix</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section id="properties">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">How folders become findable</span>
+            <h2>Three places Runneth can look</h2>
+          </div>
+          <p>
+            Shared, brand, and personal are the only starting boundaries.
+            Names such as Meta or customer feedback stay visible in the folder
+            path, so Runneth can use them as search clues inside the brand.
+          </p>
+        </div>
+
+        <div class="lane-grid">
+          <article class="lane">
+            <span class="tag shared">shared</span>
+            <h3>Useful to everyone</h3>
+            <p>
+              The resolver, package instructions, and existing team-wide
+              knowledge.
+            </p>
+            <code>Knoweth: global</code>
+          </article>
+          <article class="lane">
+            <span class="tag brand">brand:harrys</span>
+            <h3>About one brand</h3>
+            <p>
+              The brand file, Meta interpretation, and customer feedback. The
+              brand maps to its Motion workspace.
+            </p>
+            <code>Knoweth: project:&lt;workspaceId&gt;</code>
+          </article>
+          <article class="lane">
+            <span class="tag personal">person:alysha</span>
+            <h3>Personal to one teammate</h3>
+            <p>
+              Preferences and person-owned work. This home exists only when
+              the person has something personal to save.
+            </p>
+            <code>Knoweth: user:&lt;vmUserId&gt;</code>
+          </article>
+        </div>
+
+        <p class="plain-note">
+          <strong>Meta, reviews, ideas, briefs, and other topics are folder names.</strong>
+          They help Runneth choose where to search inside an allowed brand or
+          personal home. They are not extra lanes in the first version.
+        </p>
+
+        <div id="schema" class="schema-wrap">
+          <div class="schema-title">
+            <strong>Ideal Brain</strong>
+            <span>Start small. Add a folder only when real work needs it.</span>
+          </div>
+          <div class="schema-lines" aria-label="Ideal Brain folder structure and Knoweth boundaries">
+            <div class="schema-line"><span class="tree">/agent/brain/</span></div>
+            <div class="schema-line"><span class="tree">├── runneth.md</span><span class="tag shared">shared</span></div>
+            <div class="schema-gap"></div>
+            <div class="schema-line"><span class="tree">├── brands/</span></div>
+            <div class="schema-line"><span class="tree">│   └── &lt;brand&gt;/</span><span class="tag brand">brand:&lt;brand&gt;</span></div>
+            <div class="schema-line"><span class="tree">│       ├── brand.md</span><span class="tag brand">brand:&lt;brand&gt;</span></div>
+            <div class="schema-line"><span class="tree">│       ├── integrations/</span><span class="tag brand">brand:&lt;brand&gt;</span></div>
+            <div class="schema-line"><span class="tree">│       │   └── meta/</span><span class="tag topic">path clue: meta</span></div>
+            <div class="schema-line"><span class="tree">│       │       ├── account-context.md</span></div>
+            <div class="schema-line"><span class="tree">│       │       ├── naming-decoder.json</span></div>
+            <div class="schema-line"><span class="tree">│       │       └── validation.md</span></div>
+            <div class="schema-line"><span class="tree">│       └── customer-feedback/</span><span class="tag topic">path clue: feedback</span></div>
+            <div class="schema-line"><span class="tree">│           ├── voice-of-customer-audit.md</span></div>
+            <div class="schema-line"><span class="tree">│           ├── meta-ad-comments/</span></div>
+            <div class="schema-line"><span class="tree">│           └── &lt;review-or-support-platform&gt;/</span></div>
+            <div class="schema-gap"></div>
+            <div class="schema-line"><span class="tree">├── installed-packages/</span><span class="tag shared">shared</span></div>
+            <div class="schema-line"><span class="tree">│   └── meta-and-voc-onboarding/</span></div>
+            <div class="schema-line"><span class="tree">│       ├── README.md</span></div>
+            <div class="schema-line"><span class="tree">│       └── package references</span></div>
+            <div class="schema-gap"></div>
+            <div class="schema-line muted"><span class="tree">├── team/                              appears when personal knowledge exists</span></div>
+            <div class="schema-line muted"><span class="tree">│   └── &lt;handle&gt;/</span><span class="tag personal">person:&lt;handle&gt;</span></div>
+            <div class="schema-line muted"><span class="tree">│       ├── user.md</span></div>
+            <div class="schema-line muted"><span class="tree">│       └── &lt;person-owned folders&gt;/</span></div>
+            <div class="schema-gap"></div>
+            <div class="schema-line muted"><span class="tree">└── &lt;existing team folders&gt;/          keep the names people already use</span><span class="tag shared">shared</span></div>
+          </div>
+        </div>
+
+        <div class="grow-note">
+          <div>
+            <h3>What the package creates</h3>
+            <p>
+              One brand home, its Meta setup, its customer feedback, and the
+              installed package reference. Nothing empty or speculative.
+            </p>
+          </div>
+          <div>
+            <h3>How it can grow</h3>
+            <p>
+              A team can later add ideas, briefs, products, processes, or any
+              other folder it actually uses. The folder inherits the boundary
+              of the brand, person, or shared area containing it.
+            </p>
+          </div>
+        </div>
+
+        <div class="boundary-grid" aria-label="Brain, Cacheth, and Motion roles">
+          <article class="boundary">
+            <h3>Brain</h3>
+            <p>Knowledge people can read and correct.</p>
+            <code>/agent/brain/...</code>
+          </article>
+          <article class="boundary">
+            <h3>Cacheth</h3>
+            <p>Searchable creative records, kept by Motion workspace.</p>
+            <code>/agent/workspaces/&lt;workspaceId&gt;/config/motion-cache/</code>
+          </article>
+          <article class="boundary">
+            <h3>Motion</h3>
+            <p>Current performance, filters, and exact platform data.</p>
+            <code>Motion CLI</code>
+          </article>
+        </div>
+
+        <details>
+          <summary>Why this fits the VMs already studied</summary>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>VM</th>
+                  <th>What already exists</th>
+                  <th>How the standard applies</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Motion's Runneth</strong></td>
+                  <td>Team homes, customer and project material, integrations, ideas, skills, and package folders.</td>
+                  <td>Keep those useful names. Map shared roots, brand homes, and verified personal homes without rebuilding the tree.</td>
+                </tr>
+                <tr>
+                  <td><strong>Harry's</strong></td>
+                  <td>Strong brand roots for Harry's, Flamingo, and Harry's UK, plus team profiles and deep brand-specific work.</td>
+                  <td>Its brand roots already fit the brand boundary. Its customization remains intact.</td>
+                </tr>
+                <tr>
+                  <td><strong>BLDG staging</strong></td>
+                  <td>The current Meta and customer-feedback package output.</td>
+                  <td>The package moves its output under the matching brand and keeps creative records in Cacheth.</td>
+                </tr>
+                <tr>
+                  <td><strong>Bootcamp</strong></td>
+                  <td>Shared and person-specific multiplayer context.</td>
+                  <td>Supports the shared versus personal boundary. No unverified folder shape is imposed.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <section id="request-flow">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">One ask, end to end</span>
+            <h2>The right person, brand, and knowledge</h2>
+          </div>
+          <p>
+            The person asks normally. The identity check, access check, and
+            search happen without asking them to choose folders or settings.
+          </p>
+        </div>
+
+        <div class="journey">
+          <blockquote>
+            “Write the Harry's launch brief using my preferences, our winning
+            Meta ads, and the main complaints in reviews.”
+          </blockquote>
+          <div class="journey-steps">
+            <div class="journey-step">
+              <span class="number">1</span>
+              <h3>Know the person</h3>
+              <p>Teameth verifies who is speaking.</p>
+            </div>
+            <div class="journey-step">
+              <span class="number">2</span>
+              <h3>Know the brand</h3>
+              <p>The active Motion workspace identifies Harry's.</p>
+            </div>
+            <div class="journey-step">
+              <span class="number">3</span>
+              <h3>Check access</h3>
+              <p>Knoweth includes only shared, Harry's, and personal material this person can use.</p>
+            </div>
+            <div class="journey-step">
+              <span class="number">4</span>
+              <h3>Find the evidence</h3>
+              <p>Runneth searches the Brain, Cacheth creatives, and current Motion data needed for the brief.</p>
+            </div>
+          </div>
+          <div class="journey-result">
+            <strong>What Runneth says:</strong> “I used your briefing preferences,
+            Harry's brand context, current Meta creatives, and customer feedback.”
+          </div>
+        </div>
+      </section>
+
+      <section id="asks">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">What people ask</span>
+            <h2>Where Runneth looks</h2>
+          </div>
+          <p>
+            The request supplies the clues: person, brand, connected system,
+            and topic. Runneth opens only the places that matter.
+          </p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>What someone asks</th>
+                <th>Where Runneth looks</th>
+                <th>What comes back</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>“Find ad HARRY-UGC-017.”</strong></td>
+                <td><div class="route"><div class="route-line cache">Harry's Cacheth records</div></div></td>
+                <td>The exact ad and directly related records.</td>
+              </tr>
+              <tr>
+                <td><strong>“Find all my Meta ads with cats.”</strong></td>
+                <td><div class="route"><div class="route-line cache">Meta records across every brand this person can access</div></div></td>
+                <td>Conceptually matching ads, even when “cat” is not in the filename.</td>
+              </tr>
+              <tr>
+                <td><strong>“What are Harry's customers saying about irritation?”</strong></td>
+                <td><div class="route"><div class="route-line"><code>brands/harrys/customer-feedback/**</code></div></div></td>
+                <td>Recurring complaints with supporting reviews and comments.</td>
+              </tr>
+              <tr>
+                <td><strong>“How should I read Harry's Meta performance?”</strong></td>
+                <td>
+                  <div class="route">
+                    <div class="route-line"><code>brands/harrys/integrations/meta/**</code></div>
+                    <div class="route-line live">Motion for current performance</div>
+                  </div>
+                </td>
+                <td>The brand's interpretation rules applied to current numbers.</td>
+              </tr>
+              <tr>
+                <td><strong>“Use my usual briefing preferences.”</strong></td>
+                <td><div class="route"><div class="route-line"><code>team/&lt;speaker&gt;/**</code>, only if that personal home exists</div></div></td>
+                <td>The current speaker's preferences, never another person's.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="onboarding-package">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Meta + customer feedback onboarding</span>
+            <h2>What setup feels like</h2>
+          </div>
+          <p>
+            The package creates only what the customer asked to set up. It
+            organizes the output by brand and explains the result in the same
+            language.
+          </p>
+        </div>
+
+        <div class="package-setup">
+          <div>
+            <span class="column-label shared">What the person says</span>
+            <p class="spoken">“Set up Meta and customer feedback for Harry's.”</p>
+            <p>
+              Runneth uses the active workspace. It asks only if the brand or
+              connected account cannot be matched confidently.
+            </p>
+          </div>
+          <div>
+            <span class="column-label brand">What Runneth says</span>
+            <p class="spoken">
+              “Harry's is ready. Meta guidance is with the brand, reviews and
+              comments are together under customer feedback, and creative
+              records remain in the Meta creative store.”
+            </p>
+          </div>
+        </div>
+
+        <ul class="setup-list" aria-label="Files created by onboarding">
+          <li><b>1</b><span><code>runneth.md</code> records the brand, workspace ID, aliases, and where its knowledge lives.</span></li>
+          <li><b>2</b><span><code>brands/harrys/brand.md</code> holds the brand identity and account mapping.</span></li>
+          <li><b>3</b><span><code>brands/harrys/integrations/meta/</code> holds Meta account context, naming, and validation.</span></li>
+          <li><b>4</b><span><code>brands/harrys/customer-feedback/</code> holds the audit, ad comments, reviews, and support feedback.</span></li>
+          <li><b>5</b><span><code>installed-packages/meta-and-voc-onboarding/</code> keeps package instructions away from customer knowledge.</span></li>
+        </ul>
+
+        <p class="plain-note">
+          <strong>Existing installations:</strong> Runneth explains the move
+          first and asks for approval before moving customer files. Contents are
+          preserved. Package-owned instructions move with the package update.
+        </p>
+
+        <div class="table-wrap" style="margin-top: 24px">
+          <table>
+            <thead>
+              <tr>
+                <th>Current package path</th>
+                <th>Clearer home</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>/brain/&lt;workspace&gt;/</code></td><td><code>/brain/brands/&lt;brand&gt;/</code></td></tr>
+              <tr><td><code>data-sources/meta/</code></td><td><code>integrations/meta/</code></td></tr>
+              <tr><td><code>data-sources/voc/</code></td><td><code>customer-feedback/</code></td></tr>
+              <tr><td><code>/brain/meta-and-voc-onboarding/</code></td><td><code>/brain/installed-packages/meta-and-voc-onboarding/</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="lifecycle">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">The user journey</span>
+            <h2>From setup to saving to retrieval</h2>
+          </div>
+          <p>
+            People talk about brands, folders, and their own preferences.
+            Runneth handles the Knoweth setup without exposing it.
+          </p>
+        </div>
+
+        <div class="stages">
+          <article class="stage">
+            <div class="stage-head"><span class="number">1</span><h3>Initial setup</h3></div>
+            <div class="stage-grid">
+              <div>
+                <span class="column-label shared">What the person sees</span>
+                <p>“Which brand is this for?”</p>
+                <p>“Do these Meta and review accounts belong to that brand?”</p>
+              </div>
+              <div>
+                <span class="column-label brand">What Runneth does</span>
+                <p>Matches the brand to its workspace, creates the few folders shown above, and makes the brand searchable.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="stage">
+            <div class="stage-head"><span class="number">2</span><h3>When something is saved</h3></div>
+            <div class="stage-grid">
+              <div>
+                <span class="column-label shared">What the person sees</span>
+                <p class="spoken">“Save these hooks in Harry's ideas bank.”</p>
+                <p>Runneth asks one question only if personal versus shared is unclear.</p>
+              </div>
+              <div>
+                <span class="column-label brand">What Runneth does</span>
+                <p>Saves to the named folder. A folder inside Harry's stays with Harry's; a folder inside Alysha's home stays personal. Knoweth updates its index.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="stage">
+            <div class="stage-head"><span class="number">3</span><h3>When someone asks a question</h3></div>
+            <div class="stage-grid">
+              <div>
+                <span class="column-label shared">What the person sees</span>
+                <p class="spoken">“Use my Harry's ideas to write a Meta brief.”</p>
+                <p>No folder or search setting to choose.</p>
+              </div>
+              <div>
+                <span class="column-label brand">What Runneth does</span>
+                <p>Verifies the speaker, identifies Harry's, checks access, and combines the most relevant personal, brand, creative, and current performance evidence.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="appendix">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Appendix</span>
+            <h2>Knoweth through creative-strategy work</h2>
+          </div>
+          <p>
+            Creative-strategy questions show why Runneth sometimes searches
+            one place and sometimes combines several.
+          </p>
+        </div>
+
+        <div class="appendix-block">
+          <div class="appendix-heading">
+            <h3>Five common asks</h3>
+            <p>People never choose a search mode. Runneth uses exact words, meaning, or both.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type and ask</th>
+                  <th>Paths searched</th>
+                  <th>Search approach</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="tag shared">Exact asset</span><p><strong>“Find ad HARRY-UGC-017.”</strong></p></td>
+                  <td>Harry's Cacheth records</td>
+                  <td>Exact identifier</td>
+                  <td>The named ad and related records.</td>
+                </tr>
+                <tr>
+                  <td><span class="tag brand">Theme</span><p><strong>“Find all my Meta ads with cats.”</strong></p></td>
+                  <td>Cacheth records for every permitted brand</td>
+                  <td>Match the meaning</td>
+                  <td>Relevant ads across accessible brands.</td>
+                </tr>
+                <tr>
+                  <td><span class="tag topic">Customer question</span><p><strong>“What are customers saying about irritation?”</strong></p></td>
+                  <td><code>brands/harrys/customer-feedback/**</code></td>
+                  <td>Words plus meaning</td>
+                  <td>Repeated themes with supporting examples.</td>
+                </tr>
+                <tr>
+                  <td><span class="tag brand">Strategy direction</span><p><strong>“What angles should we test for Harry's?”</strong></p></td>
+                  <td><code>brands/harrys/brand.md</code> + customer feedback + winning Cacheth creatives</td>
+                  <td>Combine related evidence</td>
+                  <td>Testable angles grounded in brand, customer, and creative evidence.</td>
+                </tr>
+                <tr>
+                  <td><span class="tag personal">Build a brief</span><p><strong>“Write the Harry's brief in my usual style.”</strong></p></td>
+                  <td><code>team/&lt;speaker&gt;/**</code> + <code>brands/harrys/**</code> + Harry's Cacheth records</td>
+                  <td>Start personal, then combine</td>
+                  <td>A brand-correct brief using the speaker's real preferences when available.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="appendix-block" id="alysha-routing-validation">
+          <div class="appendix-heading">
+            <h3>Alysha's personal index</h3>
+            <p>
+              Alysha's index is an optional routing guide inside her personal
+              home. It points normal requests to exact SOPs. Basic Knoweth
+              search must still work without one.
+            </p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Test ask</th>
+                  <th>What her index points to</th>
+                  <th>What to validate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>“Report on our Meta ads.”</strong></td>
+                  <td>Her Meta interpretation file</td>
+                  <td>Her rules are applied before interpreting performance.</td>
+                </tr>
+                <tr>
+                  <td><strong>“Build an ad with a Slack conversation.”</strong></td>
+                  <td>Ad creation SOP + Slack formatting SOP</td>
+                  <td>One ask can load every matching file, not only the first.</td>
+                </tr>
+                <tr>
+                  <td><strong>“Launch this ad.”</strong></td>
+                  <td>Her launch safety instructions</td>
+                  <td>The exact instruction is found for both direct and paraphrased asks.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="appendix-block">
+          <div class="appendix-heading">
+            <h3>What people control</h3>
+            <p>People organize and correct knowledge. Runneth manages how it is searched.</p>
+          </div>
+          <div class="control-grid">
+            <div class="control-column">
+              <h4 class="brand">People control</h4>
+              <ul>
+                <li>Which brands and connected accounts they use.</li>
+                <li>The folders and names that make sense to their team.</li>
+                <li>What is personal versus shared.</li>
+                <li>Corrections when knowledge is wrong or outdated.</li>
+              </ul>
+            </div>
+            <div class="control-column">
+              <h4 class="personal">Runneth manages</h4>
+              <ul>
+                <li>Verified person and workspace IDs.</li>
+                <li>Shared, brand, and personal search boundaries.</li>
+                <li>Indexing new and changed files.</li>
+                <li>Access checks and the best search method for each ask.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="appendix-block">
+          <div class="appendix-heading">
+            <h3>When the Brain grows</h3>
+            <p>The same three-place model still works as the team adds real material.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>What changes</th>
+                  <th>What the person says</th>
+                  <th>What Runneth updates</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>A brand is added</strong></td>
+                  <td>“We are starting work on Flamingo.”</td>
+                  <td>Adds <code>brands/flamingo/</code> and links its workspace.</td>
+                </tr>
+                <tr>
+                  <td><strong>A person saves private context</strong></td>
+                  <td>“Remember how I like briefs formatted.”</td>
+                  <td>Creates or updates that verified person's home.</td>
+                </tr>
+                <tr>
+                  <td><strong>An integration is connected</strong></td>
+                  <td>“Connect TikTok for Harry's.”</td>
+                  <td>Adds <code>brands/harrys/integrations/tiktok/</code>.</td>
+                </tr>
+                <tr>
+                  <td><strong>A useful folder appears</strong></td>
+                  <td>“Keep these in our Harry's ideas bank.”</td>
+                  <td>Uses the team's chosen name inside Harry's. It stays in the Harry's boundary automatically.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="page">Knoweth Brain Standard · 13 August 2026</div>
+    </footer>
+  </body>
+</html>
