@@ -1,32 +1,21 @@
 <!-- BEGIN runneth:knoweth-organize v6 -->
-Knoweth organize (after the questions are answered):
-- Resolve this conversation's workspace name, exact workspaceId, and folder slug from its
-  Motion context. Organize only `/agent/brain/<workspace>/`; never infer the workspace from
-  another folder or reorganize another workspace.
-- Organize when the account interpretation is [CONFIRMED], the VoC backfill covers its
-  intended window, the creative content layer resolves, and this workspace does not yet have
-  `_tag-vocabulary.md`. If content is incomplete, state what is missing and stop.
-- Use the ordered V2 map in
-  `/agent/brain/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md`: the workspace
-  tree defaults to `project:<workspaceId>`, then more specific assignments place Meta context in
-  `meta:<workspaceId>`, customer voice in `voc:<workspaceId>`, and review records in
-  `reviews:<workspaceId>`. Package instructions remain `global`.
-- Reuse the existing Brain root. Apply the broad workspace assignment first and the Meta, VoC,
-  and review assignments after it so the most specific matching rule wins. Reindex once and
-  verify that each file has one final lane. Never create overlapping nested roots.
-- If ContextConfig cannot durably apply the ordered assignments, grants, and reindex, preserve
-  current indexing and report `Knoweth collection map: pending runtime support`. Do not claim
-  setup is complete.
-- A verified person's whole home at `/agent/brain/team/<handle>/**` is intended for
-  `user:<vmUserId>`, with a matching user grant. Apply that assignment only when the runtime
-  supports exact user assignments; until then report it as pending and do not create a nested
-  user root that duplicates global indexing.
-- Only after the workspace assignment, project-scoped reads, and one-owner checks pass, finish
-  by writing `/agent/brain/<workspace>/_tag-vocabulary.md` and recording the change in
-  `/agent/brain/<workspace>/_changelog.md`. Vocabulary helps find Meta, VoC, reviews, and other
-  categories inside the authorized project lane; it does not replace lane access.
-- When a durable new folder appears, ask which workspace it is for, who should use it, where its
-  material comes from, and what kind of collection it is. Create a separate collection only when
-  the folder will grow and be searched or updated independently with one consistent audience.
-  Infer answers from verified context and confirm one summary; ask only what remains ambiguous.
+Retrieval setup:
+- Keep the existing `/agent/brain` root. Shared knowledge stays global. Assign an entire
+  `brands/<brand>/**` home to the matching `project:<workspaceId>`. Assign an entire verified
+  `team/<handle>/**` personal home to `user:<vmUserId>`.
+- Meta, customer feedback, reviews, ideas, briefs, SOPs, and other familiar child folders remain
+  inside the brand or personal boundary. Their paths and contents help Runneth find them; they do
+  not need separate lanes.
+- Use the exact workspace ID from this conversation's Motion context and the exact person ID from
+  Teameth. Never infer either identity from a folder name alone.
+- Reuse exact lane assignments and identity grants. Never add an overlapping nested root. Reindex
+  once and verify that the file appears in one final lane.
+- If the runtime cannot apply an exact assignment and grant, leave the files in their correct
+  folders and keep retrieval setup pending. Do not claim brand-only or personal search is active.
+- Do not create `_tag-vocabulary.md` or any folder merely to complete a schema. A new file or child
+  folder normally inherits the existing brand or person boundary.
+- People manage their folders, connected accounts, preferences, and corrections. Runneth manages
+  the retrieval configuration and keeps its technical details out of normal conversation.
+- The complete V2 map, upgrade procedure, and verification steps are in
+  `/agent/brain/installed-packages/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md`.
 <!-- END runneth:knoweth-organize v6 -->

@@ -4,21 +4,22 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
-## 6 - 2026-08-12
+## 6 - 2026-08-13
 
-- Replaced the single-global-lane guidance with ordered V2 searchable collections for general
-  workspace context, Meta interpretation, customer voice, raw reviews, and verified-person homes.
-- Added the exact root-relative assignments, project and user grants, query examples, workspace
-  and new-user setup, and the Agent Builder authoring and lane-selection dependency.
-- Added four user-facing setup questions for workspace, audience, origin, and collection type,
-  plus the rule for deciding when a durable new folder deserves its own collection.
-- Added the V3 source migration map and documented source overlap and frontmatter limitations.
-- Kept review files in their existing platform folders and made them independently retrievable
-  through the existing `review-*.md` filename and `source_type: review` contract.
-- Documented the relationship between Meta Brain interpretation, Cacheth's existing project
-  corpus, and live Motion metrics without copying or rewriting data.
-- Aligned the package overview, Brain guards, and post-install lifecycle with the same map and
-  prohibited overlapping nested roots that would duplicate indexed files.
+- Moved package-managed docs under `installed-packages/meta-and-voc-onboarding/` and package output
+  under `brands/<brand>/`, with Meta guidance in `integrations/meta/` and customer evidence in
+  `customer-feedback/`.
+- Defined the smallest useful V2 map: shared Brain knowledge stays global, each brand home uses its
+  existing `project:<workspaceId>`, and each verified personal home uses `user:<vmUserId>`.
+- Kept Meta, reviews, comments, SOPs, ideas, and other familiar child folders inside their brand or
+  personal boundary instead of inventing separate lanes for every content type.
+- Added brand and person resolver guidance for `runneth.md`, `brand.md`, and optional personal
+  request-to-file routing tables.
+- Added a consented upgrade procedure that previews and moves existing package output without
+  rewriting customer files, then updates path references, routines, indexing, and a per-brand
+  current-layout marker.
+- Rewrote setup and saving guidance in customer language. People manage familiar folders,
+  connected accounts, preferences, and corrections; Runneth manages lanes and grants.
 
 ## 5 - 2026-08-11
 

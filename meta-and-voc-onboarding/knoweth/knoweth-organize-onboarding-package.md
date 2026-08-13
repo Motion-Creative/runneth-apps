@@ -1,68 +1,82 @@
-# Knoweth V2 setup for Meta and VoC onboarding
+# Knoweth V2 setup for Meta and Voice of Customer onboarding
 
-## Shipping boundary
+## The outcome
 
-This package targets Knoweth V2 on existing VMs. V2 uses roots, ordered lane assignments, and
-identity grants. V3 named sources from Agent Builder #2669 are the follow-up, not a dependency.
+People organize their work in folders they understand. Runneth makes those folders findable for
+the right brand and person without asking anyone to manage Knoweth.
 
-The package defines the desired map and the setup conversation. Apply it only when the deployed
-ContextConfig and Harneth surfaces can create the exact assignments, grants, reindex, and request
-the resulting lanes. Otherwise preserve current indexing and report the runtime dependency.
-
-## User-facing model
-
-Call a durable folder a **searchable collection**, not a lane, chunk, root, or source. A Notion
-database is a useful analogy: related material that grows and is found or updated as a set.
-
-When onboarding a collection, ask:
-
-1. Which brand or workspace is this about?
-2. Who should be able to use it: everyone, a team, or one person?
-3. Where does it come from: Meta, TikTok, reviews, Slack, meetings, or people adding it?
-4. What kind of collection is it: ideas, briefs, reviews, customer voice, SOPs, or another team term?
-
-Infer answers from the active workspace, verified speaker, connected integration, and folder path.
-Confirm one plain-language summary and ask only about fields that remain ambiguous. Do not turn this
-into a required four-question form.
-
-Ask who owns the collection only when stewardship matters. Ownership is descriptive metadata; it
-does not make the collection private. Audience determines access.
-
-Index one collection once. Workspace, owner, origin, and category are combined when Runneth searches;
-do not create a duplicate lane for every possible combination. When no integration produced the
-material, say `manually added`, `Slack`, or `meetings` rather than `N/A`.
-
-Use a distinct collection only when the folder will grow, people will retrieve it independently,
-its files have one clear meaning, and its audience is consistent. Ordinary organizational
-subfolders remain inside their parent collection.
-
-## V2 model
-
-In V2, the lane ID names the collection. The request's `project_id` and `user_id` authorize lanes
-through separate grants. The value after a colon is a naming convention, not the access rule.
-
-For example, `reviews:abc123` is the review collection for workspace `abc123`; the matching grant's
-`project_id = "abc123"` is what lets that workspace read it.
-
-One file receives one final lane. Rules are evaluated in config order and the last match wins.
-
-## Package assignment map
-
-Reuse the existing Brain root and apply broad rules before specific rules:
+This package creates only the homes its work needs:
 
 ```text
 /agent/brain/
-|-- runneth.md                                      global
-|-- meta-and-voc-onboarding/**                      global
-|-- <workspace>/**                                  project:<workspaceId>
-|   |-- data-sources/meta/**                        meta:<workspaceId>
-|   `-- data-sources/voc/**                         voc:<workspaceId>
-|       `-- <platform>/review-*.md                  reviews:<workspaceId>
-`-- <verified-person-home>/**                       user:<vmUserId>
+|-- runneth.md
+|-- brands/
+|   `-- <brand>/
+|       |-- brand.md
+|       |-- integrations/
+|       |   `-- meta/
+|       `-- customer-feedback/
+`-- installed-packages/
+    `-- meta-and-voc-onboarding/
 ```
 
-The specific Meta, VoC, and review assignments override the broad workspace assignment. A review
-file belongs to `reviews:<workspaceId>` only. It is not duplicated in the project or VoC lanes.
+Do not create empty organization, team, standards, skills, templates, ideas, briefs, products,
+or process folders. Keep any useful structure the VM already has. Create another folder only
+when real work needs it, using the name and location the person expects.
+
+## What people experience
+
+People talk about brands, teammates, Meta, reviews, comments, briefs, ideas, SOPs, and the
+folders they already use. They do not choose lanes, roots, grants, search modes, or ranking
+profiles.
+
+During setup, ask only for a business fact that cannot be resolved safely:
+
+- Which Motion workspace represents this brand?
+- Which connected Meta or customer-feedback account belongs to it?
+- Is a preference personal to the speaker or shared with the team?
+
+After setup, say what is ready in the same language:
+
+> Harry's is ready. I linked it to its Motion workspace, kept the Meta guidance with the brand,
+> and grouped its reviews, comments, and support conversations under customer feedback.
+> Creative records remain in the Meta creative store.
+
+When saving, use the folder the person names. Infer the active brand from Motion context and the
+speaker from Teameth. Ask one short question only when the destination or personal-versus-shared
+meaning is genuinely unclear.
+
+## The V2 retrieval map
+
+V2 gives each indexed file one lane. Use the smallest useful map:
+
+```text
+shared Brain knowledge          -> global
+brands/<brand>/**               -> project:<workspaceId>
+team/<handle>/**                -> user:<vmUserId>
+```
+
+Everything inside a brand home shares its project boundary. Folder paths still tell retrieval
+what kind of material it is:
+
+```text
+brands/harrys/integrations/meta/**       Meta interpretation for Harry's
+brands/harrys/customer-feedback/**       customer evidence for Harry's
+brands/harrys/ideas/**                   Harry's ideas, when that folder actually exists
+brands/harrys/creative-flywheel/**       Harry's process, when that is how the team works
+```
+
+Do not create `meta:`, `voc:`, `reviews:`, `ideas:`, or `skills:` lanes. Those nouns describe
+content inside the authorized brand project; they are not separate access boundaries.
+
+Cacheth creative records already use `project:<workspaceId>`. Matching the brand Brain home to
+the same project lets one authorized request combine brand guidance, customer evidence, and
+creative records. Exact paths, filenames, file text, and semantic similarity narrow the results
+inside that project.
+
+## V2 configuration
+
+Reuse the existing `/agent/brain` root. Do not add overlapping nested roots.
 
 ```toml
 [[roots]]
@@ -73,47 +87,22 @@ kind = "brain"
 
 [[lane_assignments]]
 root_id = "<existing-brain-root-id>"
-pattern = "<workspace>/**"
+pattern = "brands/<brand>/**"
 lane_id = "project:<workspaceId>"
 
-[[lane_assignments]]
-root_id = "<existing-brain-root-id>"
-pattern = "<workspace>/data-sources/meta/**"
-lane_id = "meta:<workspaceId>"
-
-[[lane_assignments]]
-root_id = "<existing-brain-root-id>"
-pattern = "<workspace>/data-sources/voc/**"
-lane_id = "voc:<workspaceId>"
-
-[[lane_assignments]]
-root_id = "<existing-brain-root-id>"
-pattern = "<workspace>/data-sources/voc/**/review-*.md"
-lane_id = "reviews:<workspaceId>"
-```
-
-Add one project grant that authorizes every collection owned by the workspace:
-
-```toml
 [[policy.lane_grants]]
-id = "workspace-<workspaceId>"
+id = "project-<workspaceId>"
 project_id = "<workspaceId>"
-read = [
-  "project:<workspaceId>",
-  "meta:<workspaceId>",
-  "voc:<workspaceId>",
-  "reviews:<workspaceId>",
-  "global",
-]
+read = ["project:<workspaceId>", "global"]
+write = "project:<workspaceId>"
 ```
 
-For each Teameth-verified person, assign their approved personal home and grant it to their stable
-VM user ID:
+For a Teameth-verified person who has personal files:
 
 ```toml
 [[lane_assignments]]
 root_id = "<existing-brain-root-id>"
-pattern = "<verified-person-home>/**"
+pattern = "team/<handle>/**"
 lane_id = "user:<vmUserId>"
 
 [[policy.lane_grants]]
@@ -123,141 +112,98 @@ read = ["user:<vmUserId>", "global"]
 write = "user:<vmUserId>"
 ```
 
-User and project grants are additive when the request contains both identities. Do not create one
-grant for every user/workspace pair.
+The exact Teameth identity is required. Do not infer a `vmUserId` from a display name or Slack
+handle. A whole personal home belongs to that person's lane. Shared team material belongs outside
+the personal home.
 
-## What each package collection contains
+If the deployed authoring surface cannot apply an exact assignment and grant, keep the files in
+their correct homes and do not create a second root. Internally record retrieval setup as pending.
+When the distinction matters to the person, say only:
 
-| Collection | Files | Human description |
-| --- | --- | --- |
-| `project:<workspaceId>` | `_tag-vocabulary.md`, `_changelog.md`, and other general workspace files | Shared workspace context |
-| `meta:<workspaceId>` | account context, naming decoder, validation, Meta changelog | How to interpret the workspace's Meta account |
-| `voc:<workspaceId>` | VoC audit, ad comments, support tickets, community posts and comments | Customer language and customer-side evidence |
-| `reviews:<workspaceId>` | `review-<externalId>.md` across review platforms | Reviews that can be searched independently |
-| `user:<vmUserId>` | `user.md` and other files owned by one verified person | Personal working and display preferences |
-| `global` | package guidance and identity-to-home resolver | Shared operating guidance |
+> Your folders are ready, but brand-only or personal search is not active yet.
 
-Current creative summaries remain in Cacheth's existing `project:<workspaceId>` corpus. Current
-performance remains a Motion CLI read. Do not copy either into these Brain collections.
+## Resolver files
 
-## Retrieval map
+`/agent/brain/runneth.md` is a short directory, not a second copy of the Brain. Keep:
 
-Harneth supplies `user_id`, active `project_id`, and the lane set relevant to the ask. Knoweth
-authorizes first and searches only allowed lanes.
+- brand display name, slug, aliases, Motion workspace ID, and canonical brand home
+- verified person display name, handle, stable `vmUserId`, aliases, and canonical personal home
 
-| Ask | V2 lanes to request |
+Each `brands/<brand>/brand.md` keeps the same brand identity plus its connected account mappings
+and canonical Meta and customer-feedback paths. Do not copy account context or customer evidence
+into either resolver.
+
+When one person has repeated, deterministic routing needs, their existing `user.md` may include a
+small table:
+
+```markdown
+## Where Runneth should look
+
+| When I ask for | Read first |
 | --- | --- |
-| "Find one-star reviews" | `reviews:<workspaceId>` |
-| "What are customers saying?" | `voc:<workspaceId>` and `reviews:<workspaceId>` |
-| "How should we judge Meta performance?" | `meta:<workspaceId>`, Cacheth project corpus, and `global` |
-| "Find Meta ads with cats across all my workspaces" | Fan out across each authorized Cacheth `project:<workspaceId>` corpus, then merge |
-| "Find cats in Brand A ads and reviews" | Brand A's Cacheth project corpus plus `reviews:<workspaceId>` |
-| "What do we know about this workspace?" | all four project-granted Brain lanes plus Cacheth and `global` |
-| "What are my defaults?" | `user:<vmUserId>` |
+| a Slack mockup | creative-flywheel/production/slack-message-formatting-sop.md |
+| Meta performance | creative-flywheel/analysis/meta-ads-data-interpretation.md |
+```
 
-Current Cacheth sources are project-scoped, so an all-workspace ask is a bounded fan-out over the
-workspaces the person may access. Reviews can be retrieved by the same concept semantically. A
-reliable claim that a review refers to the exact same product or creative requires a shared stable
-ID in both records; semantic similarity alone does not prove that relationship.
+This is optional. It captures the person's normal language and the files they already chose. One
+ask may match several rows, in which case Runneth reads every mapped file. Ordinary retrieval does
+not depend on this table.
 
-Knoweth does not search global first. It searches the authorized requested lanes together and ranks
-paths, filenames, headings, and content.
+## Saving and moving files
 
-## New collection setup
+- A new file inside `brands/<brand>/` inherits the brand project boundary.
+- A new file inside a verified `team/<handle>/` home inherits that person's boundary.
+- A new child folder inherits its parent's boundary; it does not need a new lane.
+- Preserve names such as `creative strategy flywheel`, `ideas bank`, and `SOP` when those are the
+  terms the team uses.
+- Keep an SOP beside the work it governs. Do not move it into a generic skills folder merely
+  because it contains instructions.
+- When moving a file across a brand or person boundary, preview the move, update durable path
+  references, reindex, and verify the old path no longer returns.
+- Never silently reorganize, rename, delete, or rewrite customer files.
 
-When a person creates a durable folder such as an ideas bank:
+## Existing package installations
 
-1. Confirm it should be retrieved as a set, not merely used for visual organization.
-2. Ask the four user-facing setup questions.
-3. Choose the primary V2 lane name from the collection and owner.
-4. Add one assignment against the existing Brain root.
-5. Add the matching project or user grant, or shared read policy.
-6. Reindex once and test an exact and paraphrased query.
-7. Record the map in the Brain resolver without exposing low-level configuration to the user.
-
-Examples:
+After a person approves an upgrade, move package-generated knowledge without changing file
+contents:
 
 ```text
-ideas_for_runneth/**                  -> ideas:runneth       (shared, audience to confirm)
-<workspace>/ideas/**                 -> ideas:<workspaceId> (project grant)
-team/<handle>/ideas/**               -> ideas:<vmUserId>    (user grant)
+/agent/brain/<workspace>/
+  -> /agent/brain/brands/<brand>/
+
+brands/<brand>/data-sources/meta/
+  -> brands/<brand>/integrations/meta/
+
+brands/<brand>/data-sources/voc/
+  -> brands/<brand>/customer-feedback/
 ```
 
-A more specific ideas assignment overrides the broader workspace or user assignment. The file still
-has one final lane.
+Before moving anything:
 
-## Workspace onboarding
+1. Resolve the exact workspace ID and brand slug from the current Motion context.
+2. Inspect both old and new paths. Stop if both contain different files.
+3. Show the person the paths that will move and ask for approval.
+4. Move bytes unchanged.
+5. Update package-owned guards, routine prompts, `/agent/INDEX.md`, and resolver paths.
+6. Apply the project assignment and grant, reindex, and test old and new paths.
 
-For each newly onboarded workspace:
+The package manager owns the installed package files under
+`/agent/brain/installed-packages/meta-and-voc-onboarding/`. On update, it removes the package's old
+declared targets and installs the new ones. The approved procedure above is only for generated
+customer knowledge, resolver references, and routines. Never copy package files by hand.
 
-1. Resolve the exact workspace name and workspace ID from Motion context.
-2. Create or reuse `/agent/brain/<workspace>/`.
-3. Add the four ordered workspace assignments and one project grant.
-4. Apply one bounded reindex and wait for the new generation.
-5. Verify every package file appears once in its final lane and no longer appears in global.
-6. Test exact and paraphrased general, Meta, VoC, and review asks.
-7. Verify a request for another project cannot read these lanes.
+## Verification
 
-Never create overlapping nested roots as a substitute for assignments.
+For each onboarded brand:
 
-## New team member setup
+1. The brand slug maps to exactly one Motion workspace ID in `runneth.md` and `brand.md`.
+2. Meta guidance is under `brands/<brand>/integrations/meta/`.
+3. Reviews, comments, support conversations, and the compiled audit are under
+   `brands/<brand>/customer-feedback/`.
+4. The brand tree appears once in `project:<workspaceId>` and not in `global`.
+5. An authorized request can retrieve brand guidance and the matching Cacheth records.
+6. Another project cannot retrieve the brand tree.
+7. A verified person's personal files are available to that person and not another user.
 
-1. Use Teameth's stable `vmUserId`; never derive identity from display name or folder name.
-2. Confirm one existing or approved personal home.
-3. Create `user.md` only when there is verified durable personal context to save.
-4. Record the identity-to-home mapping in global `/agent/brain/runneth.md`.
-5. Assign the whole home to `user:<vmUserId>` unless a durable subcollection has been intentionally
-   given a narrower user-authorized lane.
-6. Add the user grant, reindex, and verify cross-user denial.
-
-## V3 source map
-
-V3 replaces lane authoring with one source row per collection. A global source stays in `global`; a
-restricted source becomes an internal `source:<name>` lane and gets generated grants.
-
-| V2 collection | V3 source | Audience |
-| --- | --- | --- |
-| `project:<workspaceId>` | `workspace-<workspaceId>` | `project:<workspaceId>` |
-| `meta:<workspaceId>` | `meta-context-<workspaceId>` | `project:<workspaceId>` |
-| `voc:<workspaceId>` | `customer-voice-<workspaceId>` | `project:<workspaceId>` |
-| `reviews:<workspaceId>` | `reviews-<workspaceId>` | `project:<workspaceId>` |
-| `user:<vmUserId>` | `user-<vmUserId>` | `user:<vmUserId>` |
-
-Example:
-
-```toml
-[[sources]]
-name = "reviews-<workspaceId>"
-path = "/agent/brain/<workspace>/data-sources/voc"
-kind = "customer-review"
-profile = "semantic"
-include = ["**/review-*.md"]
-collections = ["workspace:<workspaceId>", "customer-voice", "reviews"]
-scope = "project:<workspaceId>"
-context = "document"
-```
-
-The broad `brain` source must exclude every path promoted into a package source. The current VoC
-templates put unified YAML metadata in fenced body blocks, not YAML frontmatter, so do not configure
-`external_ids` or typed attribute filters until a separate file-format migration is approved.
-
-## Runtime dependency
-
-The V2 engine supports these collection lanes, assignments, and grants. The current agent-facing
-surfaces do not consistently expose the full map. The Agent Builder sister PR must let Harneth apply
-the assignments and grants and request all relevant project collections. Agent Builder #2669 then
-makes ContextConfig inspection-only for V3, so V3 source creation needs an engineering-owned
-provisioning or admin path.
-
-If any required operation is unavailable, report `Knoweth collection map: pending runtime support`
-and leave the existing index intact.
-
-## Validation
-
-- Every package file has exactly one indexed owner.
-- A project can read its general, Meta, VoC, and review collections and cannot read another project.
-- A review query prefers `review-*.md` over tickets, posts, and comments.
-- A broad customer-voice query can combine VoC and review lanes.
-- Meta interpretation joins the existing Cacheth project corpus and live Motion data without copies.
-- A verified person can retrieve their personal home and another person cannot.
-- An ideas-bank canary is found by exact and paraphrased asks after restart.
+V3 later expresses the same paths as sources and audiences. It changes the configuration model,
+not the folders people use.

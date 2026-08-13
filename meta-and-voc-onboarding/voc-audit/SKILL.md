@@ -46,26 +46,26 @@ for each source's bias.
 
 ## Step 0 — Locate the synced data before asking anything
 
-The audit is scoped to one Motion workspace. Resolve the workspace folder first:
-`/agent/brain/<workspace>/`, where `<workspace>` is this conversation's workspace name
+The audit is scoped to one Motion workspace. Resolve its brand folder first:
+`/agent/brain/brands/<brand>/`, where `<brand>` is this conversation's workspace name
 slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen,
 trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`).
 
 The package's canonical source is:
 
-`/agent/brain/<workspace>/data-sources/voc/<platform>/`
+`/agent/brain/brands/<brand>/customer-feedback/<platform>/`
 
-Start at `/agent/brain/<workspace>/data-sources/voc/` and inspect all platform folders. Do
+Start at `/agent/brain/brands/<brand>/customer-feedback/` and inspect all platform folders. Do
 not ask the person to paste data or choose an integration before checking what is already
 synced.
 
 - Use all available VoC sources unless the person requests a particular platform, product,
   or source type.
 - Ignore compiled files such as
-  `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`; the audit's
+  `/agent/brain/brands/<brand>/customer-feedback/voice-of-customer-audit.md`; the audit's
   evidence set is the id-keyed raw items inside platform folders.
 - Never read another workspace's folder to fill a gap in this one. If this workspace's
-  `data-sources/voc/` root is absent, its sync has not landed yet - say what paths were
+  `customer-feedback/` root is absent, its sync has not landed yet - say what paths were
   checked instead of borrowing another workspace's data. If the person explicitly wants a
   different workspace audited, that audit runs from a conversation in that workspace.
 - Only ask for an upload when no matching VoC data exists for this workspace. Say what
@@ -210,7 +210,7 @@ makes the insights available to validation and future questions.
 
 Write or replace this single canonical file:
 
-`/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`
+`/agent/brain/brands/<brand>/customer-feedback/voice-of-customer-audit.md`
 
 This file is compiled understanding, not raw evidence. Never edit the source item files.
 The saved page uses the same structure as the chat output — numbered standalone findings
@@ -223,7 +223,7 @@ just the conversation view. Use the Knoweth compiled-page contract:
 page_type: compiled
 substance: interpretation
 sources:
-  - /agent/brain/<workspace>/data-sources/voc/<platform>/<raw-item-file>
+  - /agent/brain/brands/<brand>/customer-feedback/<platform>/<raw-item-file>
 last_compiled: <ISO-8601 timestamp>
 confidence: <high | medium | low, with a short reason>
 tags:
@@ -249,7 +249,7 @@ workspace (the index is org-wide) and aliases: `Voice of Customer Audit`, `VoC a
 `review audit`, `customer insights`, `pain points`, `objections`, `trigger moments`,
 `transformations`, `personas`, and `customer language`, each prefixed or suffixed with the
 workspace name. Append a dated `voc-audit-completed` entry to
-`/agent/brain/<workspace>/_changelog.md` with the evidence coverage and canonical audit path.
+`/agent/brain/brands/<brand>/_changelog.md` with the evidence coverage and canonical audit path.
 
 ## Step 8 — Deliver the full audit in the chat
 

@@ -21,6 +21,8 @@ const FLEET_APPROVAL_LABEL = 'runneth-fleet-change-approved'
 const PACKAGE_SOURCE_OWNER = 'Motion-Creative'
 const PACKAGE_SOURCE_REPO = 'runneth-apps'
 const PACKAGE_SOURCE_REF = 'main'
+const META_AND_VOC_PACKAGE_ID = 'meta-and-voc-onboarding'
+const META_AND_VOC_BRAIN_PREFIX = 'installed-packages/meta-and-voc-onboarding/'
 const PACKAGE_ID = /^[a-z0-9][a-z0-9-]*$/
 const GITHUB_OWNER = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?$/
 const GITHUB_REPO = /^[A-Za-z0-9._-]+$/
@@ -496,6 +498,26 @@ test('indexed packages match their package.json manifests', () => {
     const manifest = readJSON(manifestPath)
     assertPackageManifest(manifest, manifestPath)
     assertManifestMatchesIndexEntry(entry, manifest, manifestPath)
+  }
+})
+
+test('Meta and VoC package keeps package-owned Brain files in one home', () => {
+  const manifest = readJSON('meta-and-voc-onboarding/package.json')
+  assert.equal(manifest.id, META_AND_VOC_PACKAGE_ID)
+
+  const brainResources = manifest.resources.filter(
+    (resource) => resource.target?.root === 'agent_brain',
+  )
+  assert.ok(brainResources.length > 0, 'Meta and VoC package must install Brain resources')
+
+  const targetPaths = new Set()
+  for (const resource of brainResources) {
+    assert.ok(
+      resource.target.path.startsWith(META_AND_VOC_BRAIN_PREFIX),
+      `${resource.id}: Brain target must stay under ${META_AND_VOC_BRAIN_PREFIX}`,
+    )
+    assert.ok(!targetPaths.has(resource.target.path), `${resource.id}: duplicate Brain target path`)
+    targetPaths.add(resource.target.path)
   }
 })
 
