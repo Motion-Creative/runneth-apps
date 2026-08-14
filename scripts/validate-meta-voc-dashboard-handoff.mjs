@@ -13,6 +13,7 @@ const guard = read(
   'meta-and-voc-onboarding/meta-onboarding-rules/meta-analysis-validation.md',
 ).trim()
 const skill = read('meta-and-voc-onboarding/dashboard-design/SKILL.md')
+const activation = read('meta-and-voc-onboarding/instructions/activation.md')
 
 test('package installs the complete dashboard-design skill directory', () => {
   const resource = manifest.resources.find(({ id }) => id === 'dashboard-design-skill')
@@ -75,4 +76,22 @@ test('automatic handoff covers initial builds, rebuilds, and scheduled refreshes
 test('staged validation guard exactly matches the embedded runtime guard', () => {
   assert.match(guard, /runneth:meta-validation-gate v8/)
   assert.ok(validation.includes(guard))
+})
+
+test('automatic updates reconcile stale guards before the roster early return', () => {
+  const refresh = activation.indexOf('## Guard refresh on automatic package updates')
+  const rosterReturn = activation.indexOf(
+    "If that block lists **this conversation's workspace**",
+  )
+
+  assert.notEqual(refresh, -1)
+  assert.notEqual(rosterReturn, -1)
+  assert.ok(refresh < rosterReturn)
+  assert.match(activation, /Read all four staged guard files/)
+  assert.match(activation, /Compare each complete sentinel-wrapped block byte-for-byte/)
+  assert.match(activation, /do not run `post-install\.md`/)
+  assert.match(
+    activation,
+    /do not inspect accounts, create routines, edit `\/agent\/INDEX\.md`, or change any workspace brain/,
+  )
 })

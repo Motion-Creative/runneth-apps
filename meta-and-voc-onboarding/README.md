@@ -4,6 +4,11 @@
 > `package install`. `updatePolicy: auto` rolls out merged updates to installed copies.
 > A branch ref instead of `#main` is only for testing an unmerged branch or PR.
 
+On an already-onboarded VM, an automatic update also reconciles the four previously approved
+shared guard blocks before the activation instruction exits through the completion roster. This
+guard-only migration never reruns onboarding or touches accounts, routines, indexes, or
+workspace brain data.
+
 This is the onboarding bundle for a customer's brain. Installation stages this folder's
 files to their destinations on the VM (skill files to the skills root, docs to
 `/agent/brain/meta-and-voc-onboarding/`) but does not authorize account access or
@@ -419,6 +424,10 @@ context, and update shared files. Only an explicit human yes runs
 consent. The per-workspace `runneth:meta-voc-onboarded` roster in
 `/agent/user.md` is the ran-already marker; guard presence alone only proves that some
 workspace on the VM was onboarded.
+Before that roster can short-circuit activation, a VM with an existing completion roster
+compares all four shared guards against the newly staged package copies and refreshes only stale
+guard blocks. This is the automatic-update migration path for already-onboarded workspaces; it
+preserves the roster and everything outside the four sentinels and does not rerun post-install.
 The run order below is the human-readable description of the same lifecycle.
 
 ## Install and run order
