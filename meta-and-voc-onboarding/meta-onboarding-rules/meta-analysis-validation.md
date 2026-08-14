@@ -22,9 +22,10 @@ Meta validation gate:
   A person who explicitly asks for a report in any form (deck, dashboard, or document) still
   gets one (Field 10 confirmed first), but the question loop still runs to complete validation.
 - Whenever the weekly report's chosen form is a dashboard, invoke the installed
-  `dashboard-design` skill as an internal handoff for the initial build, every regeneration,
-  and every scheduled refresh. The customer never has to name or request the skill. Do not
-  hand-roll a dashboard when that skill or one of its required references is unavailable.
+  `dashboard-design` skill immediately when the customer selects dashboard, then use it for the
+  initial build, every regeneration, and every scheduled refresh. The customer never has to
+  name or request the skill. Do not hand-roll a dashboard when that skill or one of its required
+  references is unavailable.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
 - A report change request is a context correction too: route it to the field behind it

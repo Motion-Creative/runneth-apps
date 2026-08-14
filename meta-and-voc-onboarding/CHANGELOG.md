@@ -9,6 +9,8 @@ change to the package, not per commit. Entries are newest-first.
 - Made `dashboard-design` an automatic internal handoff whenever Meta Validation builds,
   rebuilds, or refreshes a dashboard-form weekly report during onboarding; customers no
   longer have to know or name the skill.
+- Made the handoff occur immediately when the customer selects `dashboard`, before gathering
+  dashboard implementation details or writing artifact code.
 - Wired the handoff into the validation guard, report-build contract, correction rebuilds,
   and scheduled refresh routines, with an explicit stop instead of a hand-rolled fallback
   when the skill or a required reference is unavailable.

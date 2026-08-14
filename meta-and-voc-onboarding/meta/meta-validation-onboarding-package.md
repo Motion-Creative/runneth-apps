@@ -101,9 +101,10 @@ Meta validation gate:
   A person who explicitly asks for a report in any form (deck, dashboard, or document) still
   gets one (Field 10 confirmed first), but the question loop still runs to complete validation.
 - Whenever the weekly report's chosen form is a dashboard, invoke the installed
-  `dashboard-design` skill as an internal handoff for the initial build, every regeneration,
-  and every scheduled refresh. The customer never has to name or request the skill. Do not
-  hand-roll a dashboard when that skill or one of its required references is unavailable.
+  `dashboard-design` skill immediately when the customer selects dashboard, then use it for the
+  initial build, every regeneration, and every scheduled refresh. The customer never has to
+  name or request the skill. Do not hand-roll a dashboard when that skill or one of its required
+  references is unavailable.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
 - A report change request is a context correction too: route it to the field behind it
@@ -391,9 +392,16 @@ then build. No report is built without a confirmed Field 10.
 On a yes, move to the report:
 
 > "I have your report structure ready — [the confirmed sections from Field 10]. Two things I
-> still need: what form do you want it in — a deck, a dashboard, or a document? And do you
-> have an existing report you'd like me to match for look and feel? If not, I'll use the
-> Motion default."
+> still need: do you want it as a deck, a dashboard, or a document?"
+
+Branch on that answer immediately:
+
+- **Dashboard:** invoke the installed `dashboard-design` skill now, before gathering any
+  dashboard implementation details or writing any artifact code. Continue the same onboarding
+  flow under that skill; the customer does not issue a second request and does not see or choose
+  the internal handoff.
+- **Deck or document:** continue through that form's artifact path without invoking
+  `dashboard-design`.
 
 Gather only what Field 10 does not already answer:
 
@@ -403,8 +411,8 @@ Gather only what Field 10 does not already answer:
   for structure. Structure comes from Field 10.
 - **Look and feel.** MotionUI by default, playable videos, equal-size creative cards.
 
-**Automatic dashboard-design handoff.** When the chosen form is `dashboard`, invoke the
-installed `dashboard-design` skill immediately and follow it for the initial build. This is
+**Automatic dashboard-design handoff.** When the chosen form is `dashboard`, the branch above
+has already invoked the installed `dashboard-design` skill; follow it for the initial build. This is
 internal orchestration: never ask the customer to say "use dashboard-design," never make them
 choose a skill, and never expose the handoff as an extra onboarding step. Read the skill and all
 of its required references before implementation. The same handoff is mandatory for every
