@@ -1,6 +1,6 @@
 # Template: Meta ad-comments file (one per creative)
 
-Path: `/agent/brain/<workspace>/data-sources/voc/meta-ad-comments/creative-<creative_asset_id>.md`
+Path: `/agent/brain/brands/<brand>/customer-feedback/meta-ad-comments/creative-<creative_asset_id>.md`
 
 Layout: H1 headline, bold-label human header (two trailing spaces end every label line),
 every comment on the creative between `---` rules - one `###` section per comment, newest

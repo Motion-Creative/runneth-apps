@@ -4,6 +4,23 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 6 - 2026-08-13
+
+- Moved package-managed docs under `installed-packages/meta-and-voc-onboarding/` and package output
+  under `brands/<brand>/`, with Meta guidance in `integrations/meta/` and customer evidence in
+  `customer-feedback/`.
+- Defined the smallest useful V2 map: shared Brain knowledge stays global, each brand home uses its
+  existing `project:<workspaceId>`, and each verified personal home uses `user:<vmUserId>`.
+- Kept Meta, reviews, comments, SOPs, ideas, and other familiar child folders inside their brand or
+  personal boundary instead of inventing separate lanes for every content type.
+- Added brand and person resolver guidance for `runneth.md`, `brand.md`, and optional personal
+  request-to-file routing tables.
+- Added a consented upgrade procedure that previews and moves existing package output without
+  rewriting customer files, then updates path references, routines, indexing, and a per-brand
+  current-layout marker.
+- Rewrote setup and saving guidance in customer language. People manage familiar folders,
+  connected accounts, preferences, and corrections; Runneth manages lanes and grants.
+
 ## 5 - 2026-08-11
 
 - Added the `dashboard-design` skill for building and refining Runneth dashboards and

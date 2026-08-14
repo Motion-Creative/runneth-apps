@@ -33,7 +33,7 @@ creative content itself.
 
 - A working **creative content layer**: Runneth knows what Cacheth holds and how to query it.
 - A provisional **naming decode**, handed to the Account Context Brain as Field 4 proposals.
-  Once confirmed, the decode lives in `/agent/brain/<workspace>/data-sources/meta/account-context.md` — this step
+  Once confirmed, the decode lives in `/agent/brain/brands/<brand>/integrations/meta/account-context.md` — this step
   persists nothing itself.
 - **No creative files** — nothing here writes per-creative content to the brain (Cacheth is the
   system of record; person-requested snapshot files are a separate, explicit ask).
@@ -95,7 +95,7 @@ Runneth reaches this content two ways, cheapest first:
    content.
 
    Flag-level detail, the full-record field layout, and `jq` extraction recipes live in the
-   Cacheth Command Reference (`/agent/brain/meta-and-voc-onboarding/cacheth-command-reference.md`),
+   Cacheth Command Reference (`/agent/brain/installed-packages/meta-and-voc-onboarding/cacheth-command-reference.md`),
    installed beside the Data-Query Guide.
 
 Freshness is the sync's job, not Runneth's: the cache bootstraps per workspace and keeps
@@ -175,7 +175,7 @@ The provisional decode is a handoff — this playbook writes nothing to the brai
 `/agent/INDEX.md` entry is needed here (per-creative content is in Cacheth, and Knoweth
 surfaces its summary artifacts without an index step). On confirmation, the Account Context Brain (Field 4, the
 single owner of account interpretation) saves the result in `account-context.md` and writes
-the operational decoder to `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json` — typed positions, query
+the operational decoder to `/agent/brain/brands/<brand>/integrations/meta/naming-decoder.json` — typed positions, query
 fields, and filter patterns per the Field 4 spec. Anything decoding an ad name at analysis
 time reads the decoder through Field 4.
 
@@ -195,13 +195,13 @@ automatically. What remains is event-triggered:
 
 ## Multi-workspace
 
-Every workspace gets its own folder, always - single-workspace orgs simply have one of them.
-`<workspace>` is the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`),
+Every workspace maps to one brand folder - single-workspace orgs simply have one.
+`<brand>` is the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`),
 resolved from the conversation you are in:
 
-- `/agent/brain/<workspace>/data-sources/meta/account-context.md`
-- `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`
-- `/agent/brain/<workspace>/data-sources/voc/<platform>/`
+- `/agent/brain/brands/<brand>/integrations/meta/account-context.md`
+- `/agent/brain/brands/<brand>/integrations/meta/naming-decoder.json`
+- `/agent/brain/brands/<brand>/customer-feedback/<platform>/`
 
 Onboarding a second workspace on the same VM is normal. It adds a folder and touches nothing in
 the first one: never copy, rename, or overwrite another workspace's files to serve this one, and
@@ -218,11 +218,11 @@ workspace-scoped, and every cache query runs against the resolved workspace.
 
 | What | Where |
 |---|---|
-| Account Context Brain (incl. confirmed naming decode, Field 4) | `/agent/brain/<workspace>/data-sources/meta/account-context.md` |
-| Naming decoder (Field 4's operational output) | `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json` |
+| Account Context Brain (incl. confirmed naming decode, Field 4) | `/agent/brain/brands/<brand>/integrations/meta/account-context.md` |
+| Naming decoder (Field 4's operational output) | `/agent/brain/brands/<brand>/integrations/meta/naming-decoder.json` |
 | Per-creative content | Cacheth (summary artifacts surfaced via Knoweth; brain files only as person-requested snapshots) |
 | Brain index | `/agent/INDEX.md` |
-| Change log | `/agent/brain/<workspace>/data-sources/meta/_changelog.md` |
+| Change log | `/agent/brain/brands/<brand>/integrations/meta/_changelog.md` |
 
 | What | Command / approach |
 |---|---|

@@ -1,70 +1,63 @@
 # Meta and Voice of Customer Onboarding: activation
 
-MANDATORY PRE-RESPONSE GATE. Evaluate this before composing any reply, on every
-turn, for every message type - including greetings, small talk, and "what can you
-do" questions. No other system-prompt guidance (web handoff, conversational
-guidance, anything else) exempts you from this gate.
+MANDATORY PRE-RESPONSE GATE. Evaluate this before composing any reply, on every turn and for every
+message type. Package installation delivers files; it does not authorize connected-account reads,
+routines, file moves, or other persistent setup.
 
-The check is per workspace, because this package onboards one Motion workspace at a
-time and an org VM can hold several. This conversation has exactly one workspace: the
-one the runtime binds it to, stated on the `Default workspace:` line in the
-`Motion context:` section of this system prompt (name and workspaceId) - the same
-workspace every bare `motion` command in this conversation resolves to. Read the name
-from that line and slug it - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). If that line is null, ask which workspace to onboard before
-doing anything else - never guess. Nothing else identifies the workspace: not the
-roster below, not `/agent/brain/` folders, not routine names, not remembered context
-from other conversations - those record *earlier*
-onboardings, which on a multi-workspace VM always exist. Then look in this system
-prompt, which already includes the saved contents of `/agent/user.md`, for a block
-like:
+## Resolve this brand
 
-```
+This conversation has one active Motion workspace. Read its name and workspaceId from the
+`Default workspace:` line in this system prompt's `Motion context:` section. Derive the brand folder
+slug by lowercasing the name, replacing each run of non-alphanumeric characters with one hyphen,
+and trimming hyphens. If the line is null or absent, ask which workspace to use and stop. Never infer
+it from folders, routines, memory, or another conversation.
+
+Read these saved-state blocks from the `/agent/user.md` content already included in this system
+prompt. Do not try to read that file through Bash.
+
+```text
 <!-- BEGIN runneth:meta-voc-onboarded -->
 meta-and-voc-onboarding has completed for these workspaces: bramblewick-nyc, st-fig-co
 <!-- END runneth:meta-voc-onboarded -->
+
+<!-- BEGIN runneth:meta-voc-brain-v6 -->
+current brand-folder layout is complete for: bramblewick-nyc, st-fig-co
+<!-- END runneth:meta-voc-brain-v6 -->
 ```
 
-If that block lists **this conversation's workspace** and this is not an explicit
-reinstall or upgrade, post-install already ran here - skip the rest of this section and
-answer normally. On an explicit reinstall or upgrade, continue to the disclosed consent
-offer below before re-running anything. Do not try to read `/agent/user.md` through Bash;
-the runtime blocks that path, and the check is against the copy in this prompt.
+## Choose the one applicable experience
 
-If the block is missing, it does not list this workspace, or this is an explicit
-reinstall or upgrade, setup is pending for this turn. Package installation delivered
-the files; it did not authorize account access or persistent setup. Before any
-connected-account check, routine creation, account-context write, `/agent/INDEX.md`
-edit, or `/agent/user.md` change, make this offer:
+**Already current:** both blocks list this brand, and the person did not explicitly request a
+reinstall or upgrade. Skip this instruction and answer normally.
 
-> Meta and Voice of Customer onboarding is installed for <workspace>. Starting it will
-> inspect this workspace's connected accounts, create the applicable daily VoC sync
-> routines, save Meta account context under this workspace's brain folder, and update
-> the shared onboarding guards and completion roster in `/agent/user.md`. Would you
-> like me to start that setup now?
+**New setup:** the onboarding block does not list this brand. Offer once in this conversation:
 
-Fill only `<workspace>` from the resolved `Default workspace:` line. Do not inspect the
-connection inventory or filesystem to make the offer. Offer at most once per
-conversation. If the person declines, defers, or asks about something else, handle their
-message normally and do not repeat the offer in that conversation. A later conversation
-may offer again because the workspace remains absent from the completion roster.
+> Meta and customer feedback setup is ready for <brand>. I can check its connected accounts, keep
+> reviews, comments, and support conversations updated daily, and save how this brand interprets
+> Meta performance. Would you like me to set that up now?
 
-Only an explicit human yes to this disclosed setup authorizes the sequence. On that yes:
+**Folder update:** the onboarding block lists this brand but the brand-folder-layout block does not,
+or the person explicitly asked to upgrade. Offer once in this conversation:
 
-1. Read `/agent/brain/meta-and-voc-onboarding/post-install.md`.
-2. Execute its sequence for this workspace, starting with its step 0: quote the
-   `Default workspace:` line from this prompt's `Motion context:` section verbatim and
-   state the name, workspaceId, and slug taken from it before the reachability check,
-   VoC sync setup, guard merges, or Meta account-context steps run. The guard blocks are
-   workspace-agnostic and shared, so post-install leaves them alone when each merged
-   block already matches its staged guard file and refreshes any that do not; everything
-   else runs for this workspace.
-3. Then handle the user's message.
+> A folder update is ready for <brand>. I can check its existing setup, move its saved Meta and
+> customer-feedback files into the current brand folder without changing their contents, update
+> daily sync paths, and refresh search. I'll show you the exact move and ask again before moving
+> anything. Would you like me to start?
 
-The presence of the four guard sentinels (`runneth:account-context-guard` and the rest)
-means only that some workspace on this VM has been onboarded. It is never evidence that
-this one has. Onboarding a second workspace is normal and additive: it writes a new
-`/agent/brain/<workspace>/` folder and changes nothing that belongs to the first.
+**Explicit reinstall when the layout is already current:** make the new-setup offer again before
+re-running anything.
 
-On an explicit reinstall or upgrade of this package, disclose the same effects and ask
-again before re-running post-install, even if this workspace is already listed. Reinstall
-or upgrade is not itself consent to persistent setup.
+Fill `<brand>` with the workspace display name, not the folder slug. Do not inspect accounts or the
+filesystem before making the applicable offer. If the person declines, defers, or asks about
+something else, handle their message normally and do not repeat the offer in this conversation.
+
+Only an explicit human yes authorizes the sequence. On that yes:
+
+1. Read `/agent/brain/installed-packages/meta-and-voc-onboarding/post-install.md`.
+2. Execute its sequence for this brand. It resolves the same workspace from Motion context. When
+   old customer files need to move, it previews the exact source and destination and waits for a
+   separate yes.
+3. Then handle the person's message.
+
+Onboarding another brand is normal and additive. It creates a separate
+`/agent/brain/brands/<brand>/` home and never copies or changes another brand's files.

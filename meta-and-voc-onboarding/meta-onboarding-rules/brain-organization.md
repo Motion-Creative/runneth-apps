@@ -1,35 +1,21 @@
-<!-- BEGIN runneth:knoweth-organize v4 -->
-Knoweth organize (after the questions are answered):
-- Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
-  `<workspace>` token stays literal in this file. Organize one workspace at a time - the
-  workspace whose conversation you are in - and never reorganize or retag another
-  workspace's folder.
-- Organize the brain when all three gates hold; do not wait to be asked:
-  (1) the account interpretation is [CONFIRMED] - check the fields-confirmed count in the
-  "File metadata" block at the end of /agent/brain/<workspace>/data-sources/meta/account-context.md;
-  (2) content has landed: the voc-sync-<workspace>-<platform> backfill reports full date-window
-  coverage (not just files existing - read the latest run summary via routine history
-  --id <routine-id>), and the creative content layer resolves (creatives in Cacheth - or,
-  where the sandbox cache feature is disabled, live content pulls per the Cacheth Command
-  Reference's ladder);
-  (3) /agent/brain/<workspace>/_tag-vocabulary.md does not exist - writing it is the organize
-  step's last act, so its existence means done for this workspace; update the file instead of
-  re-running. Another workspace's vocabulary file says nothing about this one.
-- TODAY only three lanes are searched: global, user:<userId>, and project:<workspaceId> (the
-  workspace). Keep all shared content in the global lane (the brain root default) and make it findable
-  with tags/attributes and a naming decoder. Do NOT carve data-source-family or initiative lanes
-  (voc, meta, campaign, ...): those lanes are not queried yet, so the content would go dark. Use a
-  user: lane only for genuine per-person isolation. The workspace lane is automatic.
-- The workspace lane is not a substitute for the folder. It is populated automatically and
-  injected as pre-context, but explicit Knoweth search queries only the global and user: lanes
-  today, so anything filed only in the workspace lane cannot be searched back. Workspace
-  separation comes from the folder plus attribution: every page tags the workspace it belongs to
-  and cites files by their /agent/brain/<workspace>/ path, so a global-lane hit is never
-  ambiguous about which workspace it describes.
-- Do not organize an empty brain. If content has not landed, say what is missing and route back.
-- Finish by writing the tag vocabulary + naming decoder to
-  /agent/brain/<workspace>/_tag-vocabulary.md (gate 3's done-marker) and noting it in
-  /agent/brain/<workspace>/_changelog.md. When the harness starts layering configured lanes
-  (see the forward path), promote high-value tags to family lanes then, not before.
-<!-- END runneth:knoweth-organize v4 -->
+<!-- BEGIN runneth:knoweth-organize v6 -->
+Retrieval setup:
+- Keep the existing `/agent/brain` root. Shared knowledge stays global. Assign an entire
+  `brands/<brand>/**` home to the matching `project:<workspaceId>`. Assign an entire verified
+  `team/<handle>/**` personal home to `user:<vmUserId>`.
+- Meta, customer feedback, reviews, ideas, briefs, SOPs, and other familiar child folders remain
+  inside the brand or personal boundary. Their paths and contents help Runneth find them; they do
+  not need separate lanes.
+- Use the exact workspace ID from this conversation's Motion context and the exact person ID from
+  Teameth. Never infer either identity from a folder name alone.
+- Reuse exact lane assignments and identity grants. Never add an overlapping nested root. Reindex
+  once and verify that the file appears in one final lane.
+- If the runtime cannot apply an exact assignment and grant, leave the files in their correct
+  folders and keep retrieval setup pending. Do not claim brand-only or personal search is active.
+- Create only the files and folders the onboarding run actually needs. A new file or child folder
+  normally inherits the existing brand or person boundary.
+- People manage their folders, connected accounts, preferences, and corrections. Runneth manages
+  the retrieval configuration and keeps its technical details out of normal conversation.
+- The complete V2 map, upgrade procedure, and verification steps are in
+  `/agent/brain/installed-packages/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md`.
+<!-- END runneth:knoweth-organize v6 -->

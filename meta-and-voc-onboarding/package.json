@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "meta-and-voc-onboarding",
   "name": "Meta and Voice of Customer Onboarding",
-  "version": "5",
-  "description": "Available only through an explicit package install. Stages Meta and Voice of Customer onboarding docs, ready-made guard blocks, and the voc-data-pull, voc-audit, meta-ad-performance-analysis, onboarding-walkthrough, and dashboard-design skills. Its package instruction checks the per-workspace completion roster and offers onboarding at most once per conversation for an unrostered workspace. Installation only delivers files: before connected-account reads, routine creation, account-context writes, /agent/INDEX.md edits, or /agent/user.md changes, it discloses those effects and waits for an explicit human yes. After approval, post-install resolves the workspace only from the conversation's Motion context, creates human-confirmed workspace-scoped VoC routines, merges the shared guards, persists Meta account context, records completion, and asks whether to begin the walkthrough. The Voice of Customer Audit and walkthrough remain separately human-gated. All generated data is scoped to /agent/brain/<workspace>/ so multi-workspace onboarding stays additive.",
+  "version": "6",
+  "description": "Available only through an explicit package install. Stages Meta and Voice of Customer onboarding docs, ready-made guard blocks, and the voc-data-pull, voc-audit, meta-ad-performance-analysis, onboarding-walkthrough, and dashboard-design skills. Activation asks before connected-account reads or persistent setup. After approval, Runneth maps the active Motion workspace to a brand home, keeps Meta interpretation under brands/<brand>/integrations/meta/, keeps reviews, comments, support, and community evidence under brands/<brand>/customer-feedback/, creates the applicable daily VoC sync routines, and records completion. Knoweth V2 keeps shared Brain knowledge global, assigns each brand home to its existing project:<workspaceId>, and assigns verified personal homes to user:<vmUserId> without exposing lanes or grants to customers.",
   "installPolicy": "manual",
   "updatePolicy": "auto",
   "uninstallPolicy": "allowed",
@@ -15,7 +15,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "meta-and-voc-onboarding/README.md"
+        "path": "installed-packages/meta-and-voc-onboarding/README.md"
       }
     },
     {
@@ -25,7 +25,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "meta-and-voc-onboarding/meta-creative-attributes-playbook.md"
+        "path": "installed-packages/meta-and-voc-onboarding/meta-creative-attributes-playbook.md"
       }
     },
     {
@@ -35,7 +35,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md"
+        "path": "installed-packages/meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md"
       }
     },
     {
@@ -45,7 +45,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "meta-and-voc-onboarding/meta-validation-onboarding-package.md"
+        "path": "installed-packages/meta-and-voc-onboarding/meta-validation-onboarding-package.md"
       }
     },
     {
@@ -55,7 +55,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "meta-and-voc-onboarding/motion-cli-data-query-guide.md"
+        "path": "installed-packages/meta-and-voc-onboarding/motion-cli-data-query-guide.md"
       }
     },
     {
@@ -65,7 +65,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "meta-and-voc-onboarding/cacheth-command-reference.md"
+        "path": "installed-packages/meta-and-voc-onboarding/cacheth-command-reference.md"
       }
     },
     {
@@ -75,7 +75,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "meta-and-voc-onboarding/knoweth-organize-onboarding-package.md"
+        "path": "installed-packages/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md"
       }
     },
     {
@@ -85,7 +85,7 @@
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "meta-and-voc-onboarding/post-install.md"
+        "path": "installed-packages/meta-and-voc-onboarding/post-install.md"
       }
     },
     {
@@ -95,7 +95,7 @@
       "executablePaths": [],
       "target": {
         "root": "agent_brain",
-        "path": "meta-and-voc-onboarding/meta-onboarding-rules"
+        "path": "installed-packages/meta-and-voc-onboarding/meta-onboarding-rules"
       }
     },
     {
