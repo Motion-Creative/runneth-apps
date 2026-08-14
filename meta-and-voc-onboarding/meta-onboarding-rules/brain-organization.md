@@ -12,8 +12,8 @@ Retrieval setup:
   once and verify that the file appears in one final lane.
 - If the runtime cannot apply an exact assignment and grant, leave the files in their correct
   folders and keep retrieval setup pending. Do not claim brand-only or personal search is active.
-- Do not create `_tag-vocabulary.md` or any folder merely to complete a schema. A new file or child
-  folder normally inherits the existing brand or person boundary.
+- Create only the files and folders the onboarding run actually needs. A new file or child folder
+  normally inherits the existing brand or person boundary.
 - People manage their folders, connected accounts, preferences, and corrections. Runneth manages
   the retrieval configuration and keeps its technical details out of normal conversation.
 - The complete V2 map, upgrade procedure, and verification steps are in
