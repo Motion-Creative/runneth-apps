@@ -322,6 +322,33 @@ class WorkspaceCorpusTests(unittest.TestCase):
         connection.close()
         self.assertIsNone(table)
 
+    def test_vector_filters_are_part_of_the_knn_query(self) -> None:
+        class FakeRows:
+            def fetchall(self):
+                return []
+
+        class FakeConnection:
+            def __init__(self) -> None:
+                self.sql = ""
+                self.params = ()
+
+            def execute(self, sql, params):
+                self.sql = sql
+                self.params = params
+                return FakeRows()
+
+        connection = FakeConnection()
+        search_module._vector(
+            connection,
+            [0.0] * 256,
+            7,
+            "s.enabled=1 AND s.kind=?",
+            ("note",),
+        )
+        self.assertIn("rowid IN (SELECT c.chunk_id", connection.sql)
+        self.assertIn("s.enabled=1 AND s.kind=?", connection.sql)
+        self.assertEqual(connection.params[1:], (7, "note"))
+
 
 @unittest.skipUnless(__import__("importlib").util.find_spec("sqlite_vec"), "sqlite-vec is not installed")
 class VectorIntegrationTests(unittest.TestCase):
@@ -340,20 +367,61 @@ class VectorIntegrationTests(unittest.TestCase):
             row = connection.execute(
                 "SELECT model, dimensions FROM embedding_config WHERE id=1"
             ).fetchone()
+            disabled_source = connection.execute(
+                "INSERT INTO source(name, root_path, kind, pattern, enabled) "
+                "VALUES ('disabled', '/disabled', 'note', '**/*.md', 0)"
+            ).lastrowid
+            enabled_source = connection.execute(
+                "INSERT INTO source(name, root_path, kind, pattern, enabled) "
+                "VALUES ('enabled', '/enabled', 'note', '**/*.md', 1)"
+            ).lastrowid
+            disabled_asset = connection.execute(
+                "INSERT INTO asset(source_id, relative_path, raw_path, content_hash) "
+                "VALUES (?, 'disabled.md', '/disabled/disabled.md', 'disabled')",
+                (disabled_source,),
+            ).lastrowid
+            enabled_asset = connection.execute(
+                "INSERT INTO asset(source_id, relative_path, raw_path, content_hash) "
+                "VALUES (?, 'enabled.md', '/enabled/enabled.md', 'enabled')",
+                (enabled_source,),
+            ).lastrowid
+            disabled_chunk = connection.execute(
+                "INSERT INTO chunk(asset_id, chunk_index, text, text_hash, embedded_at) "
+                "VALUES (?, 0, 'disabled nearest', 'disabled', CURRENT_TIMESTAMP)",
+                (disabled_asset,),
+            ).lastrowid
+            enabled_chunk = connection.execute(
+                "INSERT INTO chunk(asset_id, chunk_index, text, text_hash, embedded_at) "
+                "VALUES (?, 0, 'enabled farther', 'enabled', CURRENT_TIMESTAMP)",
+                (enabled_asset,),
+            ).lastrowid
             connection.execute(
-                "INSERT INTO chunk_vec(rowid, embedding) VALUES (?, ?)",
-                (1, vector_blob([0.0] * 256)),
+                "INSERT INTO chunk_vec(rowid, embedding) VALUES (?, ?), (?, ?)",
+                (
+                    disabled_chunk,
+                    vector_blob([0.0] * 256),
+                    enabled_chunk,
+                    vector_blob([1.0] * 256),
+                ),
             )
             nearest = connection.execute(
                 "SELECT rowid, distance FROM chunk_vec "
                 "WHERE embedding MATCH ? AND k=1 ORDER BY distance",
                 (vector_blob([0.0] * 256),),
             ).fetchone()
+            filtered = search_module._vector(
+                connection,
+                [0.0] * 256,
+                1,
+                "s.enabled=1",
+                (),
+            )
             connection.close()
         self.assertTrue(version)
         self.assertEqual(row["dimensions"], 256)
-        self.assertEqual(nearest["rowid"], 1)
+        self.assertEqual(nearest["rowid"], disabled_chunk)
         self.assertAlmostEqual(nearest["distance"], 0.0)
+        self.assertEqual([result["chunk_id"] for result in filtered], [enabled_chunk])
 
 
 if __name__ == "__main__":

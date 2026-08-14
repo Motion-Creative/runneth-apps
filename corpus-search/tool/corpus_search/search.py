@@ -81,26 +81,17 @@ def _bm25(connection, query: str, limit: int, filters_sql: str, filters_params: 
 
 
 def _vector(connection, query_vector: Sequence[float], limit: int, filters_sql: str, filters_params: Sequence[Any]):
-    fetch_limit = max(200, limit * 5)
-    rows = connection.execute(
+    # sqlite-vec applies an IN constraint on the vec0 rowid before scoring.
+    # Keeping the relational filters in this subquery prevents disabled or
+    # out-of-scope vectors from consuming the KNN limit ahead of valid hits.
+    return connection.execute(
         "SELECT rowid AS chunk_id, distance FROM chunk_vec "
-        "WHERE embedding MATCH ? AND k=? ORDER BY distance",
-        (vector_blob(query_vector), fetch_limit),
+        "WHERE embedding MATCH ? AND k=? AND rowid IN ("
+        "SELECT c.chunk_id FROM chunk c JOIN asset a ON a.asset_id=c.asset_id "
+        "JOIN source s ON s.source_id=a.source_id "
+        f"WHERE {filters_sql}) ORDER BY distance",
+        (vector_blob(query_vector), limit, *filters_params),
     ).fetchall()
-    if not rows:
-        return []
-    ids = [int(row["chunk_id"]) for row in rows]
-    placeholders = ",".join("?" for _ in ids)
-    accepted = {
-        int(row["chunk_id"])
-        for row in connection.execute(
-            "SELECT c.chunk_id FROM chunk c JOIN asset a ON a.asset_id=c.asset_id "
-            "JOIN source s ON s.source_id=a.source_id "
-            f"WHERE c.chunk_id IN ({placeholders}) AND {filters_sql}",
-            (*ids, *filters_params),
-        )
-    }
-    return [row for row in rows if int(row["chunk_id"]) in accepted][:limit]
 
 
 def _fuse(bm25_rows, vector_rows) -> list[dict[str, Any]]:
