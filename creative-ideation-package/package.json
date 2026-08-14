@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "id": "creative-ideation-package",
+  "name": "Creative Strategy: Ideation",
+  "version": "1",
+  "description": "Installs a brand-agnostic creative ideation workflow that interviews a team about how it develops ad ideas, configures a workspace-specific ideation engine, builds workspace-scoped and human-confirmed creative-mechanics, hooks-and-headlines, and visual-format banks from real ad evidence, and produces traceable concepts with separate execution options. Its package instruction offers setup once per conversation until completion, discloses connected-workspace reads and persistent writes before starting, never saves bank entries without confirmation, and requires separate approval before creating the weekly nominations routine.",
+  "installPolicy": "manual",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "readme",
+      "type": "file",
+      "sourcePath": "README.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "creative-ideation-package/README.md"
+      }
+    },
+    {
+      "id": "flywheel-scaffold",
+      "type": "file",
+      "sourcePath": "01-flywheel-scaffold.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "creative-ideation-package/01-flywheel-scaffold.md"
+      }
+    },
+    {
+      "id": "ideation-engine",
+      "type": "file",
+      "sourcePath": "02-ideation-engine.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "creative-ideation-package/02-ideation-engine.md"
+      }
+    },
+    {
+      "id": "extraction-interview",
+      "type": "file",
+      "sourcePath": "03-extraction-interview.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "creative-ideation-package/03-extraction-interview.md"
+      }
+    },
+    {
+      "id": "sophistication-gate",
+      "type": "file",
+      "sourcePath": "04-sophistication-gate.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "creative-ideation-package/04-sophistication-gate.md"
+      }
+    },
+    {
+      "id": "bank-building-process",
+      "type": "file",
+      "sourcePath": "05-bank-building-process.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "creative-ideation-package/05-bank-building-process.md"
+      }
+    },
+    {
+      "id": "library-confirmation",
+      "type": "file",
+      "sourcePath": "06-library-confirmation.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "creative-ideation-package/06-library-confirmation.md"
+      }
+    },
+    {
+      "id": "concept-output-spec",
+      "type": "file",
+      "sourcePath": "07-concept-output-spec.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "creative-ideation-package/07-concept-output-spec.md"
+      }
+    },
+    {
+      "id": "changelog",
+      "type": "file",
+      "sourcePath": "CHANGELOG.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "creative-ideation-package/CHANGELOG.md"
+      }
+    },
+    {
+      "id": "activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
+    }
+  ]
+}
