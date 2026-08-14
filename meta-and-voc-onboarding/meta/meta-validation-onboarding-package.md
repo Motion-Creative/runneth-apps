@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.17 — dashboard-form reports automatically invoke the dashboard-design skill; the customer never has to name it (August 2026)
+### Version 1.17 — the deck, dashboard, or document choice is preserved; dashboard selections automatically invoke dashboard-design (August 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly report. This is the "catch" in Connect → Train → Validate.**
@@ -391,8 +391,8 @@ then build. No report is built without a confirmed Field 10.
 
 On a yes, move to the report:
 
-> "I have your report structure ready — [the confirmed sections from Field 10]. Two things I
-> still need: do you want it as a deck, a dashboard, or a document?"
+> "I have your report structure ready — [the confirmed sections from Field 10]. Which form do
+> you want it in: a deck, a dashboard, or a document?"
 
 Branch on that answer immediately:
 

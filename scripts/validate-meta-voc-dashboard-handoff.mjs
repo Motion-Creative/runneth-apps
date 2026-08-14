@@ -40,7 +40,7 @@ test('package and registry release the automatic handoff together', () => {
 
 test('dashboard selection immediately invokes the skill without a second customer request', () => {
   const formPrompt = validation.indexOf(
-    'do you want it as a deck, a dashboard, or a document?',
+    'you want it in: a deck, a dashboard, or a document?',
   )
   const dashboardBranch = validation.indexOf(
     '**Dashboard:** invoke the installed `dashboard-design` skill now',
