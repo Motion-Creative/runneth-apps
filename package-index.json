@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-12-02",
+  "indexRevision": "2026-08-14-01",
   "packages": [
     {
       "id": "creative-strategy-guidance",
@@ -45,8 +45,8 @@
     {
       "id": "meta-and-voc-onboarding",
       "name": "Meta and Voice of Customer Onboarding",
-      "version": "5",
-      "description": "Available only through an explicit package install. Stages Meta and Voice of Customer onboarding docs, ready-made guard blocks, and the voc-data-pull, voc-audit, meta-ad-performance-analysis, onboarding-walkthrough, and dashboard-design skills. Its package instruction checks the per-workspace completion roster and offers onboarding at most once per conversation for an unrostered workspace. Installation only delivers files: before connected-account reads, routine creation, account-context writes, /agent/INDEX.md edits, or /agent/user.md changes, it discloses those effects and waits for an explicit human yes. After approval, post-install resolves the workspace only from the conversation's Motion context, creates human-confirmed workspace-scoped VoC routines, merges the shared guards, persists Meta account context, records completion, and asks whether to begin the walkthrough. The Voice of Customer Audit and walkthrough remain separately human-gated. All generated data is scoped to /agent/brain/<workspace>/ so multi-workspace onboarding stays additive.",
+      "version": "6",
+      "description": "Available only through an explicit package install. Stages Meta and Voice of Customer onboarding docs, ready-made guard blocks, and the voc-data-pull, voc-audit, meta-ad-performance-analysis, onboarding-walkthrough, and dashboard-design skills. Meta Validation automatically invokes dashboard-design whenever onboarding builds, rebuilds, or refreshes a dashboard-form weekly report; the customer never has to name the skill. Its package instruction checks the per-workspace completion roster and offers onboarding at most once per conversation for an unrostered workspace. Installation only delivers files: before connected-account reads, routine creation, account-context writes, /agent/INDEX.md edits, or /agent/user.md changes, it discloses those effects and waits for an explicit human yes. After approval, post-install resolves the workspace only from the conversation's Motion context, creates human-confirmed workspace-scoped VoC routines, merges the shared guards, persists Meta account context, records completion, and asks whether to begin the walkthrough. The Voice of Customer Audit and walkthrough remain separately human-gated. All generated data is scoped to /agent/brain/<workspace>/ so multi-workspace onboarding stays additive.",
       "categories": [],
       "packageManagerVersion": 1,
       "installPolicy": "manual",

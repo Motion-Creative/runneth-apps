@@ -4,6 +4,17 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 6 - 2026-08-14
+
+- Made `dashboard-design` an automatic internal handoff whenever Meta Validation builds,
+  rebuilds, or refreshes a dashboard-form weekly report during onboarding; customers no
+  longer have to know or name the skill.
+- Wired the handoff into the validation guard, report-build contract, correction rebuilds,
+  and scheduled refresh routines, with an explicit stop instead of a hand-rolled fallback
+  when the skill or a required reference is unavailable.
+- Kept deck and document reports on their existing artifact paths and kept package
+  installation itself non-executing.
+
 ## 5 - 2026-08-11
 
 - Added the `dashboard-design` skill for building and refining Runneth dashboards and

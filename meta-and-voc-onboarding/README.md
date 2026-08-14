@@ -26,8 +26,10 @@ The parts, and their operational nature:
   summarizes the synced customer voice per integration and offers the audit.
 - **Meta Validation** - human-gated proof loop.
 - **Meta Ad Performance Analysis** - on-demand diagnostic skill; nothing self-runs.
-- **Dashboard Design** - on-demand design and implementation guidance for polished Runneth
-  dashboards and app-style pages; nothing self-runs.
+- **Dashboard Design** - automatically invoked inside onboarding whenever Meta Validation
+  builds, rebuilds, or refreshes a dashboard-form weekly report; also available on demand for
+  other polished Runneth dashboards and app-style pages. It never fires merely because the
+  package was installed.
 - **Knoweth organize** - self-gating: fires on its own conditions once content lands; do not
   force it.
 
@@ -255,7 +257,10 @@ File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta
 - **Persists to:** `/agent/brain/<workspace>/data-sources/meta/validation.md` (confirmed answers, corrections, report
   form and route, lock-in state, MVCE block).
 - **Activation:** merges the `runneth:meta-validation-gate` guard block into `/agent/user.md`;
-  once merged, the trigger fires on its own when the prerequisites are met.
+  once merged, the trigger fires on its own when the prerequisites are met. If the customer
+  chooses a dashboard as the weekly-report form, validation invokes `dashboard-design`
+  internally for the initial build, every regeneration, and scheduled refresh; the customer
+  never has to know or name the skill.
 - **Re-validation:** re-run the affected questions when the account changes in a way that could
   break an answer (new primary conversion event, naming-system change, new product line).
 
@@ -391,9 +396,11 @@ Folder: `dashboard-design/`
 - **Job:** guide the design and implementation of polished Runneth dashboards and app-style
   pages using the Web Awesome design system, Astro app shell, theme tokens, data-backed KPI
   strips, creative galleries, charts, tables, and narrow browser controllers.
-- **Runs on demand - does not fire at install.** Triggered when someone asks to create,
-  redesign, review, or fix a dashboard, performance report, analytics page, or other
-  data-heavy app UI. Installing only stages the skill.
+- **Runs through two routes - never at install.** Meta Validation invokes it automatically when
+  onboarding builds, rebuilds, or refreshes a dashboard-form weekly report. Outside that flow,
+  it is triggered when someone asks to create, redesign, review, or fix a dashboard,
+  performance report, analytics page, or other data-heavy app UI. Installing only stages the
+  skill; the customer never has to name `$dashboard-design` during onboarding.
 - **Structure:** `SKILL.md` carries the core workflow and invariants; `references/` carries
   detailed component/controller patterns and performance-dashboard rules so runtime context
   stays focused.
