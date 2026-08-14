@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-12-02",
+  "indexRevision": "2026-08-14-01",
   "packages": [
     {
       "id": "creative-strategy-guidance",
@@ -77,6 +77,24 @@
         "ref": "main"
       },
       "installPolicy": "auto",
+      "updatePolicy": "auto",
+      "uninstallPolicy": "allowed"
+    },
+    {
+      "id": "corpus-search",
+      "name": "Corpus Search",
+      "description": "Installs a workspace-isolated Markdown corpus search CLI and skill. Teams opt in manually; code auto-updates; uninstall preserves generated stores. Each workspace gets local BM25 retrieval and optional OpenAI-backed hybrid search and reranking through secure-fetch. Direct indexing requests flow into local setup without a disclaimer; source paths and external, destructive, or scheduled actions are confirmed at the point of use.",
+      "version": "1",
+      "packageManagerVersion": 1,
+      "categories": [],
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "corpus-search",
+        "ref": "main"
+      },
+      "installPolicy": "manual",
       "updatePolicy": "auto",
       "uninstallPolicy": "allowed"
     }

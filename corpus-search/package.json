@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "corpus-search",
+  "name": "Corpus Search",
+  "version": "1",
+  "description": "Installs a workspace-isolated Markdown corpus search CLI and skill. Teams opt in manually; code auto-updates; uninstall preserves generated stores. Each workspace gets local BM25 retrieval and optional OpenAI-backed hybrid search and reranking through secure-fetch. Direct indexing requests flow into local setup without a disclaimer; source paths and external, destructive, or scheduled actions are confirmed at the point of use.",
+  "installPolicy": "manual",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "runtime",
+      "type": "directory",
+      "sourcePath": "tool",
+      "executablePaths": [
+        "corpus-search.sh",
+        "bin/corpus_search_cli.py"
+      ],
+      "target": {
+        "root": "agent_tools",
+        "path": "corpus-search/v2"
+      }
+    },
+    {
+      "id": "skill",
+      "type": "file",
+      "sourcePath": "skill/SKILL.md",
+      "executable": false,
+      "target": {
+        "root": "agent_skills",
+        "path": "corpus-search/SKILL.md"
+      }
+    },
+    {
+      "id": "activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
+    }
+  ]
+}
