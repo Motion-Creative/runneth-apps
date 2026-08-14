@@ -386,7 +386,7 @@ folder state:
 
    ```
    routine add --name "voc-sync-<workspace>-<platform>" \
-     --delivery "Daily incremental success: no notification - the deliverable is the files under /agent/brain/<workspace>/data-sources/voc/<platform>/. On the first fully covered backfill across any voc-sync-<workspace>-* routine, if /agent/brain/<workspace>/_changelog.md does not already contain a voc-audit-offer entry, send one brief note to web conversation <conversation-id>: name the source that finished, say the customer voice is ready, and offer a Voice of Customer Audit by previewing the plan in your own words - it will separate every entry by product, score each 1-5 for usefulness, and break the strong ones into five buckets (pain points, trigger moments, objections, transformations, standout language) plus personas per qualifying product - then ask whether they'd like anything added or have existing docs (like personas) to use as reference. Then append a dated voc-audit-offer entry to /agent/brain/<workspace>/_changelog.md. Never run the audit without a person's yes. If the run fails, the pinned account is disconnected, or coverage is incomplete, send a brief note to the same conversation with conversation send --to <conversation-id>." \
+     --delivery "Daily incremental success: no notification - the deliverable is the files under /agent/brain/<workspace>/data-sources/voc/<platform>/. On the first fully covered backfill across any voc-sync-<workspace>-* routine, if /agent/brain/<workspace>/_changelog.md does not already contain a voc-audit-offer entry, first check whether this workspace's Meta onboarding is still open: read /agent/brain/<workspace>/data-sources/meta/account-context.md, and if it exists with interpretation fields not yet confirmed, stay silent - the onboarding walkthrough delivers the customer-voice summary and audit offer itself, and interrupting the onboarding is worse than a delayed offer. Only when that file shows the context confirmed, or the workspace has no account-context scaffold at all, send one brief note to web conversation <conversation-id>: name the source that finished, say the customer voice is ready, and offer a Voice of Customer Audit by previewing the plan in your own words - it will separate every entry by product, score each 1-5 for usefulness, and break the strong ones into five buckets (pain points, trigger moments, objections, transformations, standout language) plus personas per qualifying product - then ask whether they'd like anything added or have existing docs (like personas) to use as reference. Then append a dated voc-audit-offer entry to /agent/brain/<workspace>/_changelog.md. Never run the audit without a person's yes. If the run fails, the pinned account is disconnected, or coverage is incomplete, send a brief note to the same conversation with conversation send --to <conversation-id>." \
      --prompt "Run the voc-data-pull skill for <platform> as a recurring sync run for Motion workspace <workspace> (workspace id <workspaceId>). Pull only from the pinned account <accountName> (account id <accountId>): pass --account <accountId> on every integrations proxy call and never use another account of this platform, even if others are connected. Write every file under /agent/brain/<workspace>/data-sources/voc/<platform>/ and nowhere else; pass --workspace-id <workspaceId> on Motion commands that take it. Follow the skill's Recurring sync rules exactly - they define the pull window, disconnect handling, and coverage reporting." \
      --cron "0 6 * * *"
    ```
@@ -452,8 +452,15 @@ skill flow:
   delivery conversation — not a bare yes/no question but a short preview of what the audit
   will do (split by product, score 1–5, the five buckets, personas), closing with an
   invitation to add anything or supply reference docs such as existing personas. Before
-  sending, check `/agent/brain/<workspace>/_changelog.md` for a `voc-audit-offer` entry; if
-  found, stay silent. After sending, append a dated `voc-audit-offer` entry naming the
+  sending, two checks, either of which means stay silent: (1)
+  `/agent/brain/<workspace>/_changelog.md` already has a `voc-audit-offer` entry; (2) the
+  workspace's Meta onboarding is still open —
+  `/agent/brain/<workspace>/data-sources/meta/account-context.md` exists with
+  interpretation fields not yet confirmed. In that second case the onboarding walkthrough
+  owns the customer-voice summary and the audit offer; a backfill completing mid-onboarding
+  never interjects. (A workspace with no account-context scaffold at all — a VoC-only
+  setup — has no onboarding to wait for; send the offer.) After sending, append a dated
+  `voc-audit-offer` entry naming the
   source whose backfill completed. This is an offer only: never run the audit until a
   person says yes. Failures, disconnects, and incomplete coverage get a brief note to the
   delivery conversation named in the routine.

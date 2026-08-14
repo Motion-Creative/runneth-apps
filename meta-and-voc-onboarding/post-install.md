@@ -49,15 +49,15 @@ landed. Post-install and the raw sync routines do not create it; its initial abs
 Idempotency has two parts, because the guards are VM-wide while everything else is
 per-workspace:
 
-- **Guards (step 3):** the four blocks are generic and identical for every workspace. The
+- **Guards (step 2):** the four blocks are generic and identical for every workspace. The
   guard merge is done for this VM only when each of the four merged blocks in
   `/agent/user.md` is identical to its staged guard file, sentinel lines included - then
   leave the blocks untouched, no matter which workspace merged them, and continue with the
   rest. A sentinel being present proves nothing by itself: an older install leaves stale
   blocks behind, and version labels can lie (a block's paths can change without a version
   bump), so byte-comparison against the staged file is the check that counts. If any block
-  is missing or differs from its staged file in any way, step 3 runs and replaces it.
-- **This workspace's setup (steps 1, 2, 4, 5):** done when this workspace is listed in the
+  is missing or differs from its staged file in any way, step 2 runs and replaces it.
+- **This workspace's setup (steps 1, 3, 4, 5):** done when this workspace is listed in the
   `runneth:meta-voc-onboarded` roster in `/agent/user.md` (step 6). If it is, this sequence
   already ran for this workspace - do not repeat it. The one exception is the explicit
   reinstall or upgrade the activation instruction names: then re-run the sequence for this
@@ -105,47 +105,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    no recipe still counts. Integrations and stored secrets are VM-wide, so a platform
    reachable for one workspace is reachable here too; what changes per workspace is where
    its data lands.
-2. **VoC first (it runs in the background).** For each reachable VoC platform, run the
-   voc-data-pull skill's "Set up the recurring sync" procedure: pin the platform account
-   to this workspace, create the `voc-sync-<workspace>-<platform>` routine, and kick its
-   first run. The pin is the skill's step 1 and it can need a human answer - accounts are
-   org-level with no workspace tag, so which account belongs to this workspace is never
-   inferred. Handle that inside this install turn: platforms the skill lets you auto-pin
-   (the org has exactly one Motion workspace) get their routine created and kicked now;
-   for the rest, ask the skill's confirmation question for every pending platform in one
-   compact block just before the readiness report, mark those platforms
-   "waiting on a person - account confirmation" in the report's VoC line, and create and
-   kick their routines the moment the answer arrives - in that follow-up turn, never
-   before. A routine is never created on an unconfirmed account just to keep the backfill
-   moving. The workspace belongs in
-   the routine name because routines are VM-wide - `voc-sync-gorgias` would collide with
-   another workspace's routine, and a collision is what mixes two brands' customer data into
-   one corpus. For the same reason the routine's script carries this workspace's folder path,
-   workspace id, and pinned account id **literally**, never "resolve the current workspace"
-   or "the connected account": routine
-   conversations run with no workspace attached, so a routine that tries to resolve one at run
-   time has nothing to resolve. Its output path is
-   `/agent/brain/<workspace>/data-sources/voc/<platform>/`, written out in full.
-   **A connected Meta workspace is
-   itself a reachable VoC platform** - ad comments are customer voice, pulled with
-   `motion meta creative-comments` (platform slug `meta-ad-comments`; one file per creative
-   under `voc/meta-ad-comments/`, at the same level as the other platform folders) - so it
-   always gets a `voc-sync-<workspace>-meta-ad-comments` routine alongside the others: the
-   standard pull of every onboarding, not a discovery outcome. For Meta, connected is the
-   only reachability test: if a Meta workspace shows as connected, create and kick that
-   routine even when a Meta API probe errors in this conversation - the
-   routine's own scheduled runs absorb transient API failures. An API error is never
-   grounds to skip the routine; only the absence of a connected workspace is. If the
-   connection status itself cannot be read because those calls are erroring too, still
-   create and kick the routine - this package is installed for Meta orgs, and the
-   routine self-heals or keeps erroring visibly, either of which beats silently
-   skipping setup. **Every routine created in this
-   step gets its first run kicked before moving on - check them off one by one.** The
-   12-month backfills churn in the background while everything below happens. Never pull
-   VoC data inside this conversation. If old canceled `voc-sync-*` routines exist from a
-   previous install, ignore them - canceled is terminal; never resume or reuse one, always
-   create fresh. Leave other workspaces' `voc-sync-*` routines alone.
-3. **Merge all four guard blocks into `/agent/user.md` with one Write - nothing else can
+2. **Merge all four guard blocks into `/agent/user.md` with one Write - nothing else can
    touch that file.** Skip this step entirely only if each of the four merged blocks in
    `/agent/user.md` is identical to its staged guard file, sentinel lines included (step 6
    is what records this workspace). Compare content, never mere presence: a sentinel
@@ -181,7 +141,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
      this step.
    - The blocks are self-gating: merging now is what makes their gates watched. Do not run
      what they gate - organize and validation fire later, on their own conditions.
-4. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
+3. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
    creative content layer (Cacheth + query paths), detect naming patterns as provisional
    proposals for the next step. Every cache call carries this workspace's id, and the
    provisional decode is written to `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`. The
@@ -191,7 +151,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    creative-attributes skill directory to look for. Skipping the playbook is not an
    option: if that file is missing, say so in the readiness report - never improvise
    this step from live Motion pulls without reading it.
-5. **Account Context Brain** (Meta connected only): its guard is already merged (step 3).
+4. **Account Context Brain** (Meta connected only): its guard is already merged (step 2).
    Autofill every field possible from live data - silently. Do not present the findings,
    do not ask the gap questions, do not run the walkthrough; the onboarding-walkthrough
    skill owns all of that and fires later, on a human's yes. **Persist
@@ -209,20 +169,64 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    known, each blocker recorded next to the field it blocks - a resumable scaffold must
    exist on disk before this step ends, never nothing. What waits for the human's
    answers is the walkthrough itself - never leave autofill results only in the chat.
+5. **VoC last - set up the syncs only after the Meta context work above is done.** The
+   sequence is strictly serial: steps 3 and 4 complete and persist before any VoC
+   routine exists, so the Meta context work and the VoC pulls never run at the same
+   time - by the time a backfill starts churning in the background, everything this
+   install turn does with Meta is already on disk. For each reachable VoC platform, run the
+   voc-data-pull skill's "Set up the recurring sync" procedure: pin the platform account
+   to this workspace, create the `voc-sync-<workspace>-<platform>` routine, and kick its
+   first run. The pin is the skill's step 1 and it can need a human answer - accounts are
+   org-level with no workspace tag, so which account belongs to this workspace is never
+   inferred. Handle that inside this install turn: platforms the skill lets you auto-pin
+   (the org has exactly one Motion workspace) get their routine created and kicked now;
+   for the rest, ask the skill's confirmation question for every pending platform in one
+   compact block just before the readiness report, mark those platforms
+   "waiting on a person - account confirmation" in the report's VoC line, and create and
+   kick their routines the moment the answer arrives - in that follow-up turn, never
+   before. A routine is never created on an unconfirmed account just to keep the backfill
+   moving. The workspace belongs in
+   the routine name because routines are VM-wide - `voc-sync-gorgias` would collide with
+   another workspace's routine, and a collision is what mixes two brands' customer data into
+   one corpus. For the same reason the routine's script carries this workspace's folder path,
+   workspace id, and pinned account id **literally**, never "resolve the current workspace"
+   or "the connected account": routine
+   conversations run with no workspace attached, so a routine that tries to resolve one at run
+   time has nothing to resolve. Its output path is
+   `/agent/brain/<workspace>/data-sources/voc/<platform>/`, written out in full.
+   **A connected Meta workspace is
+   itself a reachable VoC platform** - ad comments are customer voice, pulled with
+   `motion meta creative-comments` (platform slug `meta-ad-comments`; one file per creative
+   under `voc/meta-ad-comments/`, at the same level as the other platform folders) - so it
+   always gets a `voc-sync-<workspace>-meta-ad-comments` routine alongside the others: the
+   standard pull of every onboarding, not a discovery outcome. For Meta, connected is the
+   only reachability test: if a Meta workspace shows as connected, create and kick that
+   routine even when a Meta API probe errors in this conversation - the
+   routine's own scheduled runs absorb transient API failures. An API error is never
+   grounds to skip the routine; only the absence of a connected workspace is. If the
+   connection status itself cannot be read because those calls are erroring too, still
+   create and kick the routine - this package is installed for Meta orgs, and the
+   routine self-heals or keeps erroring visibly, either of which beats silently
+   skipping setup. **Every routine created in this
+   step gets its first run kicked before moving on - check them off one by one.** Never pull
+   VoC data inside this conversation. If old canceled `voc-sync-*` routines exist from a
+   previous install, ignore them - canceled is terminal; never resume or reuse one, always
+   create fresh. Leave other workspaces' `voc-sync-*` routines alone.
 6. **Record this workspace in the onboarded roster** - one Write to `/agent/user.md`, the
-   same mechanics as step 3 (file-write tool only; Bash cannot touch that file). This is what
+   same mechanics as step 2 (file-write tool only; Bash cannot touch that file). This is what
    the package's activation gate checks on every later turn, and it is per workspace, so it is
-   the last thing done before the report and only after steps 4 and 5 actually persisted. If
+   the last thing done before the report and only after steps 3 and 4 actually persisted and
+   step 5 created its routines. If
    the roster block is absent, add it; if it exists, append this workspace to its list and
    leave the existing names alone - never rewrite the list to hold only this workspace.
    Compose the whole file from its current contents plus this change - current as of this
-   moment in the turn, not as of the turn's start. If step 3 wrote the file this turn, build
+   moment in the turn, not as of the turn's start. If step 2 wrote the file this turn, build
    on the exact payload that Write sent: it already carries the four guard blocks, and the
    copy in your system prompt predates it. Only when nothing has written the file this turn
    is the system-prompt copy still current. Touch nothing
    outside the sentinels, and check the payload before writing: the base document appears
    exactly once, and every guard sentinel merged this turn is present - a payload missing
-   blocks that step 3 just wrote was composed from the stale copy; rebuild it, never write
+   blocks that step 2 just wrote was composed from the stale copy; rebuild it, never write
    it. The roster block:
 
    > `<!-- BEGIN runneth:meta-voc-onboarded -->`
@@ -248,11 +252,11 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    visible text). The report's shape is literal:
 
    > meta-and-voc-onboarding - install complete for <workspace>
-   > - VoC sync: <per-platform status, one line total>
-   > - Voice of Customer Audit: waits for backfill completion and a person's yes
    > - Guards: merged
    > - Creative Attributes: done
    > - Account Context Brain: done - remaining gaps wait for the walkthrough
+   > - VoC sync: <per-platform status, one line total>
+   > - Voice of Customer Audit: waits for backfill completion and a person's yes
    >
    > Are you ready to begin your onboarding?
 
@@ -280,7 +284,7 @@ existing file, do not use the edit/patch tool - it fails validation on this VM. 
 file and write it back whole (python for mechanical splices, the file-write tool for
 short files). Prefer scripted file assembly over retyping staged content anywhere -
 except `/agent/user.md`, which Bash cannot touch at all (the file-write tool is the only
-mechanism - the single Writes in steps 3 and 6).
+mechanism - the single Writes in steps 2 and 6).
 
 If nothing is reachable at all: say so and stop. Do not watch or poll; when a platform is
 connected later, setup runs on ask.
@@ -292,13 +296,18 @@ connected later, setup runs on ask.
   conversation). It presents the autofilled findings per its output schema and collects the
   answers only a human can give, for the workspace that conversation is in.
 - **The Voice of Customer Audit offer** - the workspace's first fully covered VoC backfill
-  asks once whether the person wants the `voc-audit` skill to run. The skill runs only on a
-  yes or an explicit audit request, saves one compiled audit page, and never
-  auto-regenerates.
+  asks once whether the person wants the `voc-audit` skill to run - but never mid-onboarding.
+  While the workspace's Meta onboarding is still open (the account context exists but its
+  interpretation fields are not yet confirmed), the sync routine stays silent: the
+  onboarding-walkthrough skill's closing beat owns the customer-voice summary and the audit
+  offer in that window. The routine's own offer fires only when the context is confirmed, or
+  when the workspace has no Meta account-context scaffold at all (a VoC-only setup). The
+  skill runs only on a yes or an explicit audit request, saves one compiled audit page, and
+  never auto-regenerates.
 - **Knoweth organize** - from the merged guard's gates, once content lands and the
   interpretation is confirmed. It runs per workspace, gated on that workspace's
   `_tag-vocabulary.md`.
-- **Meta Validation** - from its merged gate (step 3), opening on its own once the Account
+- **Meta Validation** - from its merged gate (step 2), opening on its own once the Account
   Context Brain is confirmed and the creative content layer resolves. Each workspace
   validates independently.
 - **Daily VoC syncs, Cacheth sync, refresh cadences** - the routines created above.

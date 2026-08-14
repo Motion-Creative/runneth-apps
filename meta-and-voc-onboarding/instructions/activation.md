@@ -37,10 +37,10 @@ connected-account check, routine creation, account-context write, `/agent/INDEX.
 edit, or `/agent/user.md` change, make this offer:
 
 > Meta and Voice of Customer onboarding is installed for <workspace>. Starting it will
-> inspect this workspace's connected accounts, create the applicable daily VoC sync
-> routines, save Meta account context under this workspace's brain folder, and update
-> the shared onboarding guards and completion roster in `/agent/user.md`. Would you
-> like me to start that setup now?
+> inspect this workspace's connected accounts, save Meta account context under this
+> workspace's brain folder, then create the applicable daily VoC sync routines, and
+> update the shared onboarding guards and completion roster in `/agent/user.md`. Would
+> you like me to start that setup now?
 
 Fill only `<workspace>` from the resolved `Default workspace:` line. Do not inspect the
 connection inventory or filesystem to make the offer. Offer at most once per
@@ -54,7 +54,7 @@ Only an explicit human yes to this disclosed setup authorizes the sequence. On t
 2. Execute its sequence for this workspace, starting with its step 0: quote the
    `Default workspace:` line from this prompt's `Motion context:` section verbatim and
    state the name, workspaceId, and slug taken from it before the reachability check,
-   VoC sync setup, guard merges, or Meta account-context steps run. The guard blocks are
+   guard merges, Meta account-context steps, or VoC sync setup run. The guard blocks are
    workspace-agnostic and shared, so post-install leaves them alone when each merged
    block already matches its staged guard file and refreshes any that do not; everything
    else runs for this workspace.

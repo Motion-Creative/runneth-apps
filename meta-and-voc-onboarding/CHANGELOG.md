@@ -4,6 +4,19 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 6 - 2026-08-14
+
+- Made the post-install sequence strictly serial: the Meta context steps (Creative
+  Attributes, Account Context Brain autofill) now run and persist before any VoC sync
+  routine is created, instead of VoC backfills being kicked first and churning alongside
+  the Meta work. The readiness report bullets follow the same order.
+- Gated the sync routine's first-backfill audit offer on onboarding state: while the
+  workspace's account context exists but its interpretation fields are not yet confirmed,
+  the routine stays silent and the onboarding walkthrough's closing beat owns the
+  customer-voice summary and the audit offer. The routine's own offer fires only once the
+  context is confirmed, or for VoC-only workspaces with no account-context scaffold.
+- Updated the README's lifecycle framing and run order to match the serial sequence.
+
 ## 5 - 2026-08-11
 
 - Added the `dashboard-design` skill for building and refining Runneth dashboards and
