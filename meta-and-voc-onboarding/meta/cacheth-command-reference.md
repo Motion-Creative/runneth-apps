@@ -179,7 +179,18 @@ jq -r '.adNames[]?' "$META_JSONL"
 
 # All creative IDs
 jq -r '.creativeId' "$META_JSONL"
+
+# Resolve a Meta ad ID (e.g. a motion meta ads row) to its creative record
+jq -c 'select(.adIds[]? == "<adId>")' "$META_JSONL"
+# ...then pull the full record for transcripts and tags:
+# motion cache get-creative --creative-id <creativeId>
 ```
+
+The ad-ID resolution is the reverse-lookup path for ad-keyed rows (`motion meta ads`):
+export records carry every `adIds[]` entry per creative, so filtering on the ad ID recovers
+the `creativeId` without any live pull. When the ad rows were pulled with
+`--include-associated-objects`, skip the export entirely — the creative asset ID is already
+on the row at `associatedObjectDetails.creativeAssets[].id`.
 
 ---
 
@@ -239,6 +250,7 @@ record — use `motion cache get-creative` if you need all layers for a specific
 | Everything about one specific creative (by ID) — incl. transcript and glossary tags | `motion cache get-creative` |
 | All ad names, all copy, full summary corpus in bulk | `motion cache export-summaries` |
 | Find a creative by name fragment, theme, hook, or copy | `motion cache search-summaries` |
+| Have an ad ID (an ad-grain row) and need its content layers | `export-summaries` filtered on `.adIds[]` — or read `associatedObjectDetails.creativeAssets[].id` off the ad row — then `get-creative` |
 
 ---
 
@@ -273,6 +285,15 @@ a rung only when it cannot serve:
 - **Falling through repairs, not just rescues.** On a transient failure, kick
   `motion cache refresh` in the background so the cache serves next time. The live rung
   answers one question; it never becomes the habit.
+- **An ad-keyed question is still a cache question.** Rows keyed by ad ID or ad name
+  (from `motion meta ads`) do not bypass the ladder: resolve the ad to its creative first —
+  read `associatedObjectDetails.creativeAssets[].id` when the ad pull carried
+  `--include-associated-objects`, otherwise filter the export corpus on `.adIds[]` /
+  `.adNames[]` (see `export-summaries`) — then `get-creative`. Holding an ad ID instead of
+  a creative ID is never a rung-4 trigger; the live rung still fires only on the failure
+  conditions above. And when the resolved creative serves several ad units, say so in the
+  answer: creative-level content describes everywhere that creative ran, not just the ad
+  in the row.
 - **A cache failure is never a reason to skip the creative read.** A WHY question answered
   without content because the cache was down is the wrong answer, not a degraded one — fall
   through and read it live.

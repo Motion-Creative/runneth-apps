@@ -108,6 +108,18 @@ campaign identity lives only inside `associatedObjectDetails` (`.adSets[].name` 
 rows. Extracting `.adName` from an ads-grain row returns null on every row by definition —
 that is a wrong key, not missing data.
 
+**Content for ad rows comes from Cacheth, never a second live pull.** An ad row's
+summaries, tags, hooks, and transcripts live on its creative. Resolve the Motion creative
+asset ID from the row's `associatedObjectDetails.creativeAssets[].id` (the `isPrimary: true`
+entry when there are several; populates only with `--include-associated-objects` — if the
+rows in hand lack it, re-pull just those rows scoped with `--ad-id <id>` and the flag), then
+read the content layers through the Cacheth ladder (`motion cache get-creative`). Holding
+only an ad ID with no re-pull also resolves inside the cache: filter the
+`motion cache export-summaries` corpus on `.adIds[]` (see the Cacheth Command Reference).
+Do not call `motion meta insights` with content flags just to fetch summaries or tags for
+ads already identified — the live content pull is failure-only per the Cacheth ladder, and
+being handed ad-grain rows is not a cache failure.
+
 Do NOT use for generic top ads / galleries / hooks / transcripts / tags — those stay on `meta insights`.
 
 ```

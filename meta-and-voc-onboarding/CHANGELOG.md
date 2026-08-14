@@ -16,6 +16,13 @@ change to the package, not per commit. Entries are newest-first.
   customer-voice summary and the audit offer. The routine's own offer fires only once the
   context is confirmed, or for VoC-only workspaces with no account-context scaffold.
 - Updated the README's lifecycle framing and run order to match the serial sequence.
+- Made ad-keyed rows a first-class Cacheth path: ad-grain rows (`motion meta ads`) resolve
+  to their creative via `associatedObjectDetails.creativeAssets[].id` (or by filtering the
+  export corpus on `.adIds[]`) and read content through the cache ladder — a new ladder
+  rule states that holding an ad ID is never a live-pull trigger, the Data-Query Guide's
+  `motion meta ads` section routes ad-row content to Cacheth, and the export-summaries
+  section carries the ad-ID reverse-lookup recipe. Creative-level content for multi-ad
+  creatives must name its scope.
 
 ## 5 - 2026-08-11
 
