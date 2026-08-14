@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-12-02",
+  "indexRevision": "2026-08-14-01",
   "packages": [
     {
       "id": "creative-strategy-guidance",
@@ -77,6 +77,24 @@
         "ref": "main"
       },
       "installPolicy": "auto",
+      "updatePolicy": "auto",
+      "uninstallPolicy": "allowed"
+    },
+    {
+      "id": "creative-ideation-package",
+      "name": "Creative Strategy: Ideation",
+      "description": "Installs a brand-agnostic creative ideation workflow that interviews a team about how it develops ad ideas, configures a workspace-specific ideation engine, builds human-confirmed creative-mechanics, hooks-and-headlines, and visual-format banks from real ad evidence, and produces traceable concepts with separate execution options. Its package instruction offers setup once per conversation until completion, discloses connected-workspace reads and persistent writes before starting, never saves bank entries without confirmation, and requires separate approval before creating the weekly nominations routine.",
+      "version": "1",
+      "packageManagerVersion": 1,
+      "categories": [],
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "creative-ideation-package",
+        "ref": "main"
+      },
+      "installPolicy": "manual",
       "updatePolicy": "auto",
       "uninstallPolicy": "allowed"
     }
