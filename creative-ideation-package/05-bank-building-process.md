@@ -14,9 +14,9 @@ Bank building reads product tags from ad names (Step 3 below) and depends on kno
 
 ## Where the libraries live
 
-**Shared, brand-agnostic (travels across workspaces):**
+**Workspace-scoped (never crosses workspace boundaries):**
 ```
-/agent/brain/creative-strategy-library/
+/agent/brain/<workspace>/creative-strategy-library/
 ├── visual-formats/
 │   ├── index.md
 │   └── entries/<slug>.md
@@ -29,9 +29,19 @@ Bank building reads product tags from ad names (Step 3 below) and depends on kno
     └── entries/headline-tactics/<slug>.md
 ```
 
-This location is not exclusive to this engine. Other packages, such as hook-script-mining, build and extend the same three banks at this same path. Whichever package reaches a given brand's bank first is the one that seeds it; this engine is not assumed to be first.
+Every index and entry at this location records the stable Motion workspace ID. Before
+reading, writing, or recommending anything from a bank, verify that its workspace ID
+matches the `Default workspace:` bound to the current conversation. A missing or
+mismatched ID is a blocker: never read, copy, merge, rename, or reuse a different
+workspace's entries to fill this one.
 
-**Brand-specific (per workspace):**
+This location can be used by multiple packages only when they are operating on this
+same workspace. For example, confirmed-external patterns from this workspace's
+hook-script-mining library can be proposed as entries here, with their source and
+taste-note evidence preserved, and saved only after the normal confirmation gate.
+Cross-package reuse never means cross-workspace reuse.
+
+**Other workspace-specific inputs:**
 - Engine configuration
 - Persona documentation
 - Product bible
@@ -42,11 +52,15 @@ This location is not exclusive to this engine. Other packages, such as hook-scri
 
 ## Prerequisite: check for an existing bank before building
 
-Before running Steps 1-5 below, check whether `index.md` already exists under each bank folder at the shared location above. A bank can already be seeded, in whole or in part, by an earlier run of this same process, or by another package (such as hook-script-mining) that writes to this same shared location.
+Before running Steps 1-5 below, check whether `index.md` already exists under each
+bank folder in the current workspace's location above. A bank can already be seeded,
+in whole or in part, by an earlier run of this same process or by another package
+operating on this same workspace.
 
-- If a bank already has entries, use them directly. Do not re-pull or re-derive that bank from scratch. Only add to it going forward, through Step 7's nomination routine (owned-evidence entries) or through whatever process the other package uses for its own entry type (see `02-ideation-engine.md`'s note on owned-evidence vs. confirmed-external entries).
-- If a bank is empty, run Steps 1-5 for that bank as normal. Once confirmed, it becomes the seed that any other package checks for and adopts, the same way this engine would adopt one it finds already seeded.
+- If a bank already has entries and its recorded workspace ID matches the current workspace, use them directly. Do not re-pull or re-derive that bank from scratch. Only add to it going forward, through Step 7's nomination routine (owned-evidence entries) or through a same-workspace package's confirmed process (see `02-ideation-engine.md`'s note on owned-evidence vs. confirmed-external entries).
+- If a bank is empty, run Steps 1-5 for that bank as normal. Once confirmed, it becomes the seed that another package may use for this workspace only.
 - Check each of the three banks independently. It's normal for one to already exist while the other two are still empty.
+- Never search another workspace's folder for a substitute bank, even when this workspace's bank is empty.
 
 ---
 
@@ -111,7 +125,7 @@ For each visual-format tag value in the pull:
 3. Note which product each creative belongs to (from the ad name's product tag, confirmed with the team)
 4. Find the top-spend creative for that format and pull its summary (`--summary-sections adDescription`)
 5. For statics, verify the actual image layout by opening the creative URL directly
-6. Write one entry file per format with: what it is, medium (video/static/both), tested product(s), evidence (creative IDs + spend), and cross-references
+6. Write one entry file per format with: workspace ID, what it is, medium (video/static/both), tested product(s), evidence (creative IDs + spend), and cross-references
 7. Add one row to the index
 
 **Standing rule:** when a format's medium is "both," always state the exact asset type (video or static) actually being proposed in any concept. Never leave it as "both" in a recommendation.
@@ -125,7 +139,7 @@ For each hook-tactic and headline-tactic tag value:
 2. Find the top-spend creative and pull its transcript and hook summary (`--include-transcript --summary-sections hookOrHeadline`)
 3. Extract the verbatim spoken hook or written headline
 4. Extract the visual description (what's on screen during the hook/headline)
-5. Write one entry file per tactic with: verbatim line, visual description, evidence, and cross-references to mechanics and formats
+5. Write one entry file per tactic with: workspace ID, verbatim line, visual description, evidence, and cross-references to mechanics and formats
 6. Add rows to the index (separate tables for hook tactics and headline tactics)
 
 **Standing rule:** every hook or headline entry must include both the verbatim line AND a visual description. A verbatim line alone is not a complete entry.
@@ -156,7 +170,7 @@ For each preset, check whether the brand's ad library contains a real example. M
 4. Tag awareness-stage fit
 5. Add an example
 
-Write one entry file per mechanic with: what it is, why it works, awareness-stage fit, evidence, and cross-references.
+Write one entry file per mechanic with: workspace ID, what it is, why it works, awareness-stage fit, evidence, and cross-references.
 
 ### Step 6: Confirm with the team
 
@@ -165,8 +179,8 @@ Present all proposed entries grouped by bank. The team approves all, approves pe
 ### Step 7: Set up the weekly nominations routine
 
 After banks are confirmed, create a weekly routine that:
-1. Pulls the last 7 days of top-performing creatives
-2. Compares their tags against what's already in the three banks
+1. Pulls the last 7 days of top-performing creatives using this workspace's stable ID
+2. Compares their tags against what's already in this workspace's three banks, after verifying the recorded workspace ID
 3. Proposes any new patterns as nominations
 4. Delivers to the team for approval
 

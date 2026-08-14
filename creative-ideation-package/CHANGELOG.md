@@ -1,5 +1,9 @@
 # Changelog
 
+## v17 (2026-08-14)
+- **Workspace evidence is isolated.** The creative mechanics, hooks/headlines, and visual formats banks now live under `/agent/brain/<workspace>/creative-strategy-library/`, record the stable Motion workspace ID, and refuse reads or writes when that ID does not match the workspace bound to the conversation. Cross-package contributions are allowed only within the same workspace; no creative IDs, spend, transcripts, content, product attribution, or recommendations cross workspace boundaries.
+- **Workspace renames preserve setup state.** Activation now records the stable workspace ID in setup state and locates existing state by that ID before treating a name-derived path as new. A renamed workspace keeps using its confirmed state and can move the old workspace folder to the new slug only after a disclosed human approval; ambiguous or conflicting paths stop instead of merging or restarting.
+
 ## v16 (2026-08-12)
 - **Question 14 reworded.** "What little moves do you use to hold attention once you have it?" was vague enough to need explaining live during a walkthrough test. Replaced with "How do you decide what to do next after the hook to actually hold attention?", drawn from the person's own phrasing, no jargon, and the line against the hook is now built into the question itself instead of needing a separate explanation.
 

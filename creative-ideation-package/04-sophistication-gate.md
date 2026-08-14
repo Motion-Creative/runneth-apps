@@ -10,11 +10,11 @@ Experience: full extraction. Runneth captures *your* engine and runs it as confi
 
 ### Partial
 Signal: you have instincts and raw material but no system. You can point at what you look at, but not a repeatable order.
-Experience: hybrid. Runneth proposes the default engine order from `02`, then adjusts it to your answers. It fills gaps with whatever's already confirmed in the three shared banks (per `05`'s check-before-building step, these may already be seeded from real ad evidence, either from an earlier run of this process or from another package writing to the same shared location) and flags where it guessed so you can correct it.
+Experience: hybrid. Runneth proposes the default engine order from `02`, then adjusts it to your answers. It fills gaps with whatever's already confirmed in this workspace's three banks (per `05`'s check-before-building step, these may already be seeded from this workspace's real ad evidence, either from an earlier run of this process or from another package writing for this same workspace) and flags where it guessed so you can correct it.
 
 ### Starting out
 Signal: your honest answer is close to "I look at a competitor and copy what works."
-Experience: opinionated default. Runneth runs the default engine and whatever's already confirmed in the shared banks out of the box so you get a real concept immediately, then upgrades you one step at a time (start with real reviews, then personas, then angles). If the shared banks are also empty, `05`'s bank-building process runs first to seed them from your real ad library before a concept can ship.
+Experience: opinionated default. Runneth runs the default engine and whatever's already confirmed in this workspace's banks out of the box so you get a real concept immediately, then upgrades you one step at a time (start with real reviews, then personas, then angles). If this workspace's banks are also empty, `05`'s bank-building process runs first to seed them from this workspace's real ad library before a concept can ship.
 
 ## Why it works
 

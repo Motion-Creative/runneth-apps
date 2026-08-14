@@ -54,7 +54,9 @@ Chosen from the visual formats bank. The container that delivers the mechanic an
 
 ## The three banks
 
-The engine pulls from three banks for steps 6-8:
+The engine pulls from three workspace-scoped banks for steps 6-8. They live under
+`/agent/brain/<workspace>/creative-strategy-library/`, where `<workspace>` is
+the current Motion workspace's resolved brain folder:
 
 - **Creative Mechanics** - the cognitive or emotional move that makes the concept land
 - **Hooks and Headlines** - the opening line, spoken or written
@@ -62,7 +64,11 @@ The engine pulls from three banks for steps 6-8:
 
 Each bank can hold two kinds of entries:
 - **Owned-evidence entries**, built from this brand's own tested ad library (see `05-bank-building-process.md`), carrying spend and performance evidence.
-- **Confirmed-external entries**, fed in by the hook-script-mining package from competitor ads, creator posts, and adjacent-brand examples, carrying source and taste-note evidence instead of spend. Hook-script-mining is the research side that keeps these three banks growing over time; the ideation engine is the assembly side that draws from them. When a concept surfaces a confirmed-external entry, label it as external, not yet run as this brand's own ad, so it's never mistaken for owned performance evidence.
+- **Confirmed-external entries**, fed in from this same workspace's hook-script-mining library after human confirmation, carrying source and taste-note evidence instead of spend. Hook-script-mining is the research side that keeps these three banks growing over time; the ideation engine is the assembly side that draws from them. When a concept surfaces a confirmed-external entry, label it as external, not yet run as this brand's own ad, so it's never mistaken for owned performance evidence.
+
+Every bank index and entry records the stable Motion workspace ID. Verify that ID
+against the workspace bound to the current conversation before every read or write.
+Never read, reuse, merge, or recommend an entry from another workspace's bank.
 
 Messaging angle is NOT a bank. It is derived from steps 1-3, and stays anchored to this brand's own product facts, customer insight, and persona work, never to external inspiration. Tested messaging angles are kept as a reference list (see `05-bank-building-process.md`), not a bank to pick from. Elements of Value serves as a scoring lens after the concept is assembled, not as a strategy selector before it.
 

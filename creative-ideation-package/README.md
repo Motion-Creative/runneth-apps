@@ -12,7 +12,7 @@ This v3 is scoped to **ideation only**. The other flywheel stages are named so y
 | `02-ideation-engine.md` | **The default engine.** Anchor -> Persona -> Micro-moment -> Messaging angle -> Awareness stage -> Concept -> Mechanic -> Hook -> Format. Three banks (mechanics, hooks/headlines, formats). Messaging angle is derived, not banked. Reconfigures per brand for expert/partial paths. |
 | `03-extraction-interview.md` | **The document you fill in.** 17 questions that pull your ideation process out of your head. Skips or verifies-not-assumes questions a VoC audit can already answer. |
 | `04-sophistication-gate.md` | How the first two questions branch the experience so an expert and a beginner both get value. |
-| `05-bank-building-process.md` | How to build the three banks from a brand's real ad library: naming-conventions prerequisite, categorization rules, creative mechanics teaching layer (8 universal presets), verification rules, shared vs brand-specific split, and the weekly nominations routine. |
+| `05-bank-building-process.md` | How to build the three workspace-scoped banks from a brand's real ad library: naming-conventions prerequisite, categorization rules, creative mechanics teaching layer (8 universal presets), verification rules, workspace isolation, and the weekly nominations routine. |
 | `06-library-confirmation.md` | The confirmation rule: nothing enters a bank without a human yes. References 3 banks. |
 | `07-concept-output-spec.md` | What a finished concept must contain, in the default engine's field set. Presentation rule: concept first, then a separate "ways to bring it to life" section. |
 | `CHANGELOG.md` | Version history. |
@@ -22,7 +22,7 @@ This v3 is scoped to **ideation only**. The other flywheel stages are named so y
 1. Confirm naming conventions first if they were not already confirmed in the workspace's Meta account context (per `05`). Bank building depends on them.
 2. Run the 17-question interview (`03`). This captures the team's process and detects their sophistication path (`04`). Questions a VoC audit can already answer get attempted from the audit first, then confirmed, not asked cold.
 3. Configure the engine order in `02` to match how the team actually thinks. Starting-out brands keep the default as-is.
-4. Build the three banks from the brand's real ad library using the process in `05`. Confirm every entry with the team per `06`.
+4. Build this workspace's three banks from its real ad library using the process in `05`. Confirm every entry with the team per `06`; never reuse another workspace's evidence.
 5. Run a Voice of Customer audit to feed the micro-moment step with real customer language.
 6. Set up the weekly nominations routine so new winners feed back into the banks automatically.
 7. Ask for a concept. The engine runs the full chain and produces a grounded, traceable concept, presented on its own, with execution options offered separately.
