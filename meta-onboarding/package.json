@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "id": "meta-onboarding",
+  "name": "Meta Onboarding",
+  "version": "1",
+  "description": "Available only through an explicit package install. The Meta half of the onboarding lifecycle, fully independent of the voc-onboarding package: stages the Meta onboarding docs, ready-made guard blocks, and the meta-ad-performance-analysis, onboarding-walkthrough, and dashboard-design skills. Meta Validation automatically invokes dashboard-design whenever onboarding builds, rebuilds, or refreshes a dashboard-form weekly report; the customer never has to name the skill. Its package instruction keeps existing v7 installs compatible on automatic updates without rewriting /agent/user.md, then offers onboarding at most once per conversation for an unrostered workspace (the legacy meta-and-voc-onboarding roster counts as onboarded). Installation only delivers files: before connected-account reads, account-context writes, /agent/INDEX.md edits, or first-time /agent/user.md changes, it discloses those effects and waits for an explicit human yes. After approval, post-install resolves the workspace only from the conversation's Motion context, merges the shared guards, persists Meta account context, records completion in the runneth:meta-onboarded roster, and asks whether to begin the walkthrough. The walkthrough is Meta-only and remains separately human-gated; Voice of Customer syncs and the VoC audit live in the separate voc-onboarding package. All generated data is scoped to /agent/brain/<workspace>/ so multi-workspace onboarding stays additive.",
+  "installPolicy": "manual",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "readme",
+      "type": "file",
+      "sourcePath": "README.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-onboarding/README.md"
+      }
+    },
+    {
+      "id": "creative-attributes-playbook",
+      "type": "file",
+      "sourcePath": "meta/meta-creative-attributes-playbook.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-onboarding/meta-creative-attributes-playbook.md"
+      }
+    },
+    {
+      "id": "account-context-brain-package",
+      "type": "file",
+      "sourcePath": "meta/meta-account-context-brain-onboarding-package.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-onboarding/meta-account-context-brain-onboarding-package.md"
+      }
+    },
+    {
+      "id": "meta-validation-package",
+      "type": "file",
+      "sourcePath": "meta/meta-validation-onboarding-package.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-onboarding/meta-validation-onboarding-package.md"
+      }
+    },
+    {
+      "id": "motion-cli-data-query-guide",
+      "type": "file",
+      "sourcePath": "meta/motion-cli-data-query-guide.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-onboarding/motion-cli-data-query-guide.md"
+      }
+    },
+    {
+      "id": "cacheth-command-reference",
+      "type": "file",
+      "sourcePath": "meta/cacheth-command-reference.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-onboarding/cacheth-command-reference.md"
+      }
+    },
+    {
+      "id": "knoweth-organize-package",
+      "type": "file",
+      "sourcePath": "knoweth/knoweth-organize-onboarding-package.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-onboarding/knoweth-organize-onboarding-package.md"
+      }
+    },
+    {
+      "id": "post-install",
+      "type": "file",
+      "sourcePath": "post-install.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-onboarding/post-install.md"
+      }
+    },
+    {
+      "id": "meta-onboarding-rules",
+      "type": "directory",
+      "sourcePath": "meta-onboarding-rules",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_brain",
+        "path": "meta-onboarding/meta-onboarding-rules"
+      }
+    },
+    {
+      "id": "meta-ad-performance-analysis-skill",
+      "type": "file",
+      "sourcePath": "meta-ad-performance-analysis/SKILL.md",
+      "executable": false,
+      "target": {
+        "root": "agent_skills",
+        "path": "meta-ad-performance-analysis/SKILL.md"
+      }
+    },
+    {
+      "id": "onboarding-walkthrough-skill",
+      "type": "file",
+      "sourcePath": "onboarding-walkthrough/SKILL.md",
+      "executable": false,
+      "target": {
+        "root": "agent_skills",
+        "path": "onboarding-walkthrough/SKILL.md"
+      }
+    },
+    {
+      "id": "dashboard-design-skill",
+      "type": "directory",
+      "sourcePath": "dashboard-design",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_skills",
+        "path": "dashboard-design"
+      }
+    },
+    {
+      "id": "activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
+    }
+  ]
+}

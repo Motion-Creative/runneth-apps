@@ -1,0 +1,37 @@
+# meta-onboarding changelog
+
+## v1
+
+Initial release, extracted from `meta-and-voc-onboarding` v6 so the Meta and VoC halves
+of onboarding install and test independently.
+
+- **Scope**: the Meta half only - the Meta docs (Creative Attributes playbook, Account
+  Context Brain package, Meta Validation package, Motion CLI Data-Query Guide, Cacheth
+  Command Reference), the Knoweth organize package, the four `/agent/user.md` guard
+  blocks, and the `meta-ad-performance-analysis`, `onboarding-walkthrough`, and
+  `dashboard-design` skills. VoC syncs and the Voice of Customer Audit live in the
+  separate `voc-onboarding` package, and neither package requires the other.
+- **VoC fully out of the walkthrough**: the combined package's walkthrough closed with a
+  customer-voice summary and audit offer; both are removed. The walkthrough now ends
+  when the account-context questions are handled. The VoC package's sync routine owns
+  the audit offer outright.
+- **Family-aware Knoweth organize gate**: `runneth:knoweth-organize` bumped v4 -> v5.
+  Gate 2 (content has landed) now judges only the data-source families the workspace
+  actually has - the creative layer must resolve, and VoC backfill coverage is required
+  only when `voc-sync-<workspace>-*` routines exist. A Meta-only workspace never waits
+  on VoC. The other three guards are byte-identical to the combined package's v6
+  staging, so already-onboarded VMs pass the guard byte-comparison untouched (the v5
+  organize block refreshes on the next human-approved run).
+- **Own completion roster**: post-install records workspaces in a
+  `runneth:meta-onboarded` block in `/agent/user.md`. The activation also honors the
+  legacy `runneth:meta-voc-onboarded` roster from the combined package, so already
+  onboarded VMs are never re-set-up.
+- **Meta-only install sequence**: connection check, single guard merge, Creative
+  Attributes, Account Context Brain autofill, roster, readiness report - no VoC steps.
+  Staged docs move to `/agent/brain/meta-onboarding/` and every internal path reference
+  follows.
+- Carries the v6 behavior of the combined package's Meta parts otherwise, including the
+  dashboard-design auto-invoke compatibility instruction, the `/agent/user.md`
+  whole-file write chain, the ad-keyed Cacheth resolution paths in the Data-Query Guide
+  and Cacheth Command Reference, and the conditional (never required) reads of VoC
+  artifacts in validation and performance analysis.
