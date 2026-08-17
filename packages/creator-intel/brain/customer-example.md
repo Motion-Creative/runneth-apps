@@ -1,110 +1,38 @@
-# Northstar Skin customer example
+# Worked example
 
-This example shows the intended experience with the redesigned flow: setup at install, one-table roster confirmation, gap-first recommendations, and the dashboard.
+This shows the intended experience end to end, matching how the flow runs on a real account.
 
 ## Stage 0: Install and workspace
 
-**Runneth**
-
-> Creator Intel is set up. It builds a trusted view of your creators and how they perform from your naming conventions and creator database, then recommends new creators worth working with. You have one workspace, Northstar Skin, so I'll set it up there. Want to start now?
-
-If the account had more than one workspace, it would ask which one, once.
+Setup runs at install. Runneth gives a one-line overview and offers to start. With one workspace it uses it; with several it asks once which one.
 
 ## Stage 1: Understand how you work
 
-**Runneth**
+One question at a time:
 
-> First, how should I judge creator performance? You don't have Account Context set up yet, so by default I'll measure creators by spend. Is that okay, or would you rather judge them another way, like ROAS, CPA, or a specific conversion?
-
-**Customer**
-
-> Spend is fine for now.
-
-**Runneth**
-
-> Where does your creator roster live: a Notion database, a spreadsheet, or just your ad naming conventions?
-
-**Customer**
-
-> A Notion database.
-
-**Runneth**
-
-> I can read your Notion talent database directly. Does that same database hold what you pay each creator, or is that somewhere else?
-
-**Customer**
-
-> It's in there.
-
-**Runneth**
-
-> Good, that means I can build the ROI page later. How do you handle usage rights: roughly the same for everyone, say all whitelisted, or does it vary by creator?
-
-**Customer**
-
-> Mostly whitelisted, a few organic-only.
-
-**Runneth**
-
-> Last thing on how you work. When you bring on a new creator, are you casting for a specific brief, a theme, or a product? And how do you decide who to push for?
-
-**Customer**
-
-> Mostly by product, and each product has a different persona.
-
-**Runneth**
-
-> Got it. I can see your products in your ad names, and your personas show up in your brand context, so I can ground recommendations on the real product and persona structure. I don't see a persona for your sensitive-skin line anywhere yet, so I'll ask you for that when we get to recommendations.
+- **Performance:** if a Meta onboarding Account Context (or an equivalent account context doc) exists, confirm that measurement and adopt it (for example a KPI hierarchy and a conversion-bucket split like Events vs Sales); otherwise default to spend and confirm. Never ask about Northbeam.
+- **Sources:** learn where the roster, fees, and rights live, and connect that source so it can be read live (Notion via the API-key path, a sheet via Google, Asana or similar via its connection). The ad account is always the catch-all for creators scattered off the lists.
+- **Ad-account creator convention:** never ask cold. Check for a documented breakdown, otherwise infer the creator tag from the ad names, surface the oddballs (editor or owner tokens, employee or EGC ads, non-creator statics, name variants), and confirm the pattern.
+- **How you hire:** capture the lens (campaign, theme, product, referral, "find more like our best"), then ground each dimension in ad names, account context, brand context, or a review audit, and only ask for what cannot be found.
 
 ## Stage 2: Build and confirm the roster
 
-Northstar points at the Notion database.
-
-**Runneth**
-
-> Here is every creator I found, with what still needs your call. 8 are ready to confirm, 3 need input, 2 could not match, 1 conflicts.
->
-> [one table of all creators: name, handle, matched profile, talent type, source, uncertainty]
->
-> Confirm the clear ones, or correct anyone by name. Anything you do not mention stays pending.
-
-**Customer**
-
-> Confirm all the clear ones. Jess is our editor, not a creator. Leave the two unmatched pending.
-
-**Runneth**
-
-> Done. I confirmed the 8, removed Jess as an editor, and left the two unmatched pending. Two creators still have unknown rights. For Maya, what can you use her for: brand ads, partnership ads from her account, organic content, or not sure?
-
-It keeps going until nothing is left unresolved or you have chosen to leave specific creators pending on purpose.
+Pull the full last-365-day library with no limit, extract creators off the confirmed tag, and reconcile the connected database, the fee source, and the ad account into one table of every creator with one overview of open questions. Confirm merges (name variants), reclassify mislabels, add creators found only in the ads, and drive to zero. Then proactively sweep the untagged rows for creator ads hiding under older naming, announce it rather than ask, fold in confident matches, and leave true statics out.
 
 ## Stage 3: The dashboard
 
-**Runneth**
+An openable app with a global window selector (30/60/90/365) and three tabs:
 
-> Your creator dashboard is ready and private to Northstar Skin. It has three tabs: ROI report (built, since Account Context and your creator fees are both connected... here it's spend and return per creator because Account Context isn't set up), Creator profiles, and a spend Leaderboard.
+- **ROI report:** KPI strip plus total-network ROI, honest when per-creator fees are not populated.
+- **Creators:** a rich card per active creator (avatar, name, talent type and category, a conversions badge, a plain-English line, the verbatim top hook from the ad transcript, a work-samples thumbnail row, campaign tags, and a footer stat row).
+- **Leaderboard:** every active creator with spend, the conversion buckets, and cost per outcome.
+
+Private to the workspace by default.
 
 ## Stage 4: Recommend creators
 
-**Customer**
-
-> Who should we cast next for the sensitive-skin line?
-
-**Runneth**
-
-> First, the gap: your roster covers barrier-repair and brightening well, but no one currently carries the sensitive-skin, lived-experience angle. Here's how I'd fill it. I can (a) pull Motion creators on topics I draw from your brand context, and if you connect Apify I can also (b) look at who your top sensitive-skin creators follow. Want me to run both? For (a), the topics I'd search are sensitive-skin routine, barrier repair, and dermatologist-informed skincare. Approve those?
+Open with the gap (angles and personas the roster covers vs. does not), then propose the three-method ladder and get a yes: Motion-context topic search (approve topics first), top creator similarity seeded from the best creators and named north-stars, and reviews-gap micro-personas when a review audit exists. Roster first, honest about rights and coverage, and the recommendation is persisted with a stable id.
 
 ## Stage 5: Refresh
 
-**Customer**
-
-> Update Creator Intel for Northstar Skin.
-
-**Runneth**
-
-> Done.
->
-> **What changed**: 2 new ad-name candidates, latest Meta evidence refreshed.
-> **Needs your review**: 1 creator needs a handle confirmed.
-> **Could not refresh**: nothing.
-> **What stayed unchanged**: your trusted roster, relationships, and rights.
+Manual Meta refresh that never changes trusted decisions, with a four-part summary. A scheduled refresh runs only on separate consent (owner, cadence, delivery).
