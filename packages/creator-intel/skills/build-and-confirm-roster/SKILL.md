@@ -58,6 +58,14 @@ Silence changes nothing, and partial replies affect only the named creators. App
 
 The skill is not done until it has walked every open item and confirmed there are no pending creators left, or the person has explicitly chosen to leave specific ones pending.
 
+## Sweep untagged ad rows (proactive)
+
+After the main reconciliation, some ad rows carry no creator tag (older naming, statics). Treat sweeping them as a proactive next step, not a question. Tell the person plainly that you are going to sweep the untagged rows for creator ads hiding under older naming, then do it and report what you recovered. Do not ask for permission first; a light acknowledgement is enough.
+
+- Match untagged rows to confirmed creators by the leading name in the ad name.
+- Fold only confident matches into the right creator; drop false name matches.
+- Leave true non-creator statics out, and report their count and spend separately so nothing is silently absorbed.
+
 ## What to write
 
 - `identities.json.identities[]`: stable creator ids, handles, aliases, Motion creator id when known, representation topics and angles, correction and merge history, timestamps
