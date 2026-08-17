@@ -20,6 +20,11 @@ This skill builds the openable dashboard over the workspace's confirmed state. I
 - Build the app through the app builder. Keep durable data in the app `data/` directory as JSON derived from workspace state; the app is the view, not the source of truth.
 - Private to the workspace by default. Confirm visibility when handing it back.
 
+## Before building
+
+- Ask which date window(s) the dashboard should cover, and never assume last year. Offer last 30, 60, and 90 days plus last 365, and support switching between them so the customer can see the difference across windows. Default to all four if they do not narrow it.
+- Build the complete dashboard in one pass. Do not ship a trimmed single view: the creator profile cards and the per-creator Events and Sales performance (and cost per outcome where cost data exists) are core, not optional add-ons. Only leave a piece out when its data genuinely is not available, and say so.
+
 ## The three tabs
 
 ### 1. ROI report (conditional)
