@@ -78,6 +78,23 @@ per-workspace:
   metadata, the workspace was renamed - move that folder to the current name instead of
   onboarding from scratch.
 
+## `/agent/user.md` whole-file write chain
+
+Every `/agent/user.md` write in this approved post-install sequence must build on the latest
+known exact file payload:
+
+- Before the first successful `/agent/user.md` write in this conversation, the saved copy in the
+  system prompt is the source payload.
+- After any successful whole-file Write, the exact payload sent by that Write becomes the only
+  source payload for every later `/agent/user.md` write in this conversation. Keep it available
+  unchanged and apply only the next sentinel-scoped guard or roster edit to that payload.
+- Never fall back to the conversation-start system-prompt copy after a successful Write. If the
+  exact latest successful payload is unavailable, stop and report that the safe current payload
+  cannot be established; do not write `/agent/user.md`.
+
+This rule applies to guard refreshes, first-time roster creation, second-workspace roster appends,
+and explicit reinstalls or upgrades.
+
 ## The install-time sequence, in order
 
 Step 0 - the workspace readout defined above - has already happened before step 1
@@ -179,6 +196,8 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
      base document is a corrupted merge - fix the payload; never write it.
    - Write it with the file-write tool in **one** whole-file write. One Write total for
      this step.
+   - After the Write succeeds, retain the exact payload that was sent. It is now the only valid
+     source for any later `/agent/user.md` write in this conversation.
    - The blocks are self-gating: merging now is what makes their gates watched. Do not run
      what they gate - organize and validation fire later, on their own conditions.
 4. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
@@ -223,7 +242,9 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    outside the sentinels, and check the payload before writing: the base document appears
    exactly once, and every guard sentinel merged this turn is present - a payload missing
    blocks that step 3 just wrote was composed from the stale copy; rebuild it, never write
-   it. The roster block:
+   it. If the exact payload from the most recent successful Write is unavailable, stop instead
+   of falling back to the system-prompt copy. After the roster Write succeeds, retain that exact
+   payload as the current one. The roster block:
 
    > `<!-- BEGIN runneth:meta-voc-onboarded -->`
    > `meta-and-voc-onboarding has completed for these workspaces: <workspace>[, <workspace>...]`
