@@ -17,3 +17,6 @@
   naturally into Runneth's complete recommendation of what to index.
 - Enabled automatic installation and updates for the `ai-training-club-26` intent while
   keeping workspace scanning and index creation behind the first-use confirmation.
+- Aligned activation with the kickoff: an unconfigured AI Training Club workspace gets
+  the explanation and complete source recommendation on its first fresh conversation,
+  while index creation still waits for one yes.

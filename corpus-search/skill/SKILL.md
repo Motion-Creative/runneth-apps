@@ -60,7 +60,7 @@ or speed promises. Do not promise a capability that the proposed sources cannot 
 If the person asks what Corpus Search can do after setup, use the same clear, upbeat
 framing and tailor examples to the indexed sources.
 
-## First relevant use
+## First setup
 
 Read the workspace `state.json`. If it is absent or its phase is `awaiting_sources`,
 make the local-search path feel like normal task execution:

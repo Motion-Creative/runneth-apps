@@ -1,12 +1,15 @@
 # corpus-search activation
 
-This is standing future-session guidance, not an install hook. Act only when the
-person's request is relevant to corpus search: searching or indexing Markdown folders,
-managing corpus sources, filtered local retrieval, corpus diagnostics, or refresh
-scheduling. Do not interrupt unrelated work merely because the package is installed.
+This is the first-use kickoff for AI Training Club workspaces. Automatic package
+installation only delivered the capability; it did not authorize reading sources into an
+index. On each conversation, check this conversation's workspace before composing the
+first response. If Corpus Search is not configured for it, make the kickoff offer below
+once in this conversation without waiting for a corpus-search trigger phrase. If it is
+already configured, say nothing about setup unless the person's request is relevant to
+search, source management, diagnostics, or refresh scheduling.
 
-For a relevant request, resolve the literal current workspace ID only from this
-conversation's Motion context. If it is absent, do not guess. Read
+Resolve the literal current workspace ID only from this conversation's Motion context.
+If it is absent, do not guess or make the kickoff offer. Read
 `/agent/tools/corpus-search-data/workspaces/<workspace-id>/state.json` if it exists,
 then read and follow `/agent/.agents/skills/corpus-search/SKILL.md`.
 
