@@ -1,114 +1,100 @@
 # Northstar Skin customer example
 
-This example shows the intended first-run experience for a team using Creator Intel for the first time.
+This example shows the intended experience with the redesigned flow: setup at install, one-table roster confirmation, gap-first recommendations, and the dashboard.
 
-## 1. Install ends inactive
+## Stage 0: Install and workspace
 
 **Runneth**
 
-> Creator Intel is installed, but it is not active yet. Which Motion workspace should I set up first?
+> Creator Intel is set up. It builds a trusted view of your creators and how they perform from your naming conventions and creator database, then recommends new creators worth working with. You have one workspace, Northstar Skin, so I'll set it up there. Want to start now?
+
+If the account had more than one workspace, it would ask which one, once.
+
+## Stage 1: Understand how you work
+
+**Runneth**
+
+> First, how should I judge creator performance? You don't have Account Context set up yet, so by default I'll measure creators by spend. Is that okay, or would you rather judge them another way, like ROAS, CPA, or a specific conversion?
 
 **Customer**
 
-> Northstar Skin
-
-## 2. Setup asks one question at a time
+> Spend is fine for now.
 
 **Runneth**
 
-> Where does your current creator roster live?
+> Where does your creator roster live: a Notion database, a spreadsheet, or just your ad naming conventions?
 
 **Customer**
 
-> In a Google Sheet. We also have creator names in some ad names.
+> A Notion database.
 
 **Runneth**
 
-> How should I judge creator performance for this workspace: Meta only, Northbeam only, or separate views for both?
+> I can read your Notion talent database directly. Does that same database hold what you pay each creator, or is that somewhere else?
 
 **Customer**
 
-> Meta only for now.
+> It's in there.
 
 **Runneth**
 
-> Creator Intel is ready for Northstar Skin. Nothing has been imported or approved yet, and I have not pulled performance data. Next, send me your current roster or point me to where it lives.
-
-## 3. The first roster review shows people before approval
-
-Northstar sends the tracker.
-
-**Runneth**
-
-> I found 14 people in the tracker. 8 look clear, 3 need your input, 2 could not match, and 1 conflicts with someone you already work with.
->
-> **Ready to confirm**
-> - Maya Chen, @mayaskin. Matched profile: Maya Chen. Source: roster sheet. Uncertainty: none.
-> - Alina Ross, @alinaroutine. Matched profile: Alina Ross. Source: roster sheet. Uncertainty: none.
->
-> **Needs your input**
-> - Jess, @jessglows. Matched profile: Jessica Lowe. Source: roster sheet plus ad names. Uncertainty: this handle could refer to two creators with the same first name.
->
-> **Could not match**
-> - Sam Patel, no handle listed. Matched profile: none. Source: roster sheet. Uncertainty: missing handle and no clear public profile.
->
-> **Conflicts**
-> - Lena Hart, @lenahart. Matched profile: Lena Hart. Source: ad names. Uncertainty: the tracker marks Lena inactive, but recent ads suggest current usage.
->
-> Confirm the clear matches, or correct anyone by name. Anything you do not mention will stay pending.
-
-## 4. Review decisions stay narrow
+> Good, that means I can build the ROI page later. How do you handle usage rights: roughly the same for everyone, say all whitelisted, or does it vary by creator?
 
 **Customer**
 
-> Confirm Maya and Alina. Leave Jess pending. Sam is our editor, not a creator.
+> Mostly whitelisted, a few organic-only.
 
 **Runneth**
 
-> I confirmed Maya Chen and Alina Ross as trusted creators. Jess is still pending because the handle is ambiguous. Sam Patel was removed from creator review and marked as an editor. Lena Hart is still pending because the tracker and ad evidence disagree. Rights were unchanged.
-
-## 5. Rights are a separate follow-up
-
-Northstar confirms Lena as a creator relationship later, but rights are still unclear.
-
-**Runneth**
-
-> What can you use this creator for: brand ads, partnership ads from their account, organic content, or are you not sure?
+> Last thing on how you work. When you bring on a new creator, are you casting for a specific brief, a theme, or a product? And how do you decide who to push for?
 
 **Customer**
 
-> Organic content for sure. Not sure on paid yet.
+> Mostly by product, and each product has a different persona.
 
 **Runneth**
 
-> Got it. I saved Lena for organic content and left paid rights unknown.
+> Got it. I can see your products in your ad names, and your personas show up in your brand context, so I can ground recommendations on the real product and persona structure. I don't see a persona for your sensitive-skin line anywhere yet, so I'll ask you for that when we get to recommendations.
 
-## 6. Casting reads like strategy, not a database
+## Stage 2: Build and confirm the roster
 
-Later, Northstar asks:
+Northstar points at the Notion database.
+
+**Runneth**
+
+> Here is every creator I found, with what still needs your call. 8 are ready to confirm, 3 need input, 2 could not match, 1 conflicts.
+>
+> [one table of all creators: name, handle, matched profile, talent type, source, uncertainty]
+>
+> Confirm the clear ones, or correct anyone by name. Anything you do not mention stays pending.
 
 **Customer**
 
-> Who should we cast for a barrier-repair testimonial from someone with sensitive skin?
+> Confirm all the clear ones. Jess is our editor, not a creator. Leave the two unmatched pending.
 
 **Runneth**
 
-> **My recommendation**
-> Start with Maya Chen. She is the cleanest fit for a firsthand, sensitive-skin testimonial, and her strongest evidence is already in the exact kind of direct-response read you want. Paid usage rights are unknown. Confirm them before shortlisting.
->
-> **Your roster**
-> - Maya Chen, roster reuse. Fit: strong for sensitive-skin proof and calm testimonial delivery. Creative proof: past creator ads leaned into before-and-after texture language without sounding scripted. Performance signal: $8.4k spend over the last 90 days on Meta-mapped ads. Rights status: organic confirmed, paid unknown. Main watchout: keep the script grounded in real skin texture, not polished beauty language.
-> - Lena Hart, roster reuse. Fit: good if you want a slightly more polished creator voice. Creative proof: recent ads show stronger top-of-funnel pull than close-rate proof. Performance signal: $3.1k spend over the last 30 days on Meta-mapped ads. Rights status: organic confirmed, paid unknown. Main watchout: not the best choice if the brief needs deeper lived-experience detail.
->
-> **New creators to source**
-> - Jess Lowe, new sourcing. Fit: promising for sensitive-skin storytelling if you confirm the right profile first. Creative proof: category and tagline fit, but the identity is still unresolved. Performance signal: no trusted workspace performance read yet. Rights status: unknown. Main watchout: identity still needs your confirmation before I would shortlist her.
->
-> **Next move**
-> Confirm whether Maya has paid usage rights. If not, I would either source one more sensitive-skin creator or rewrite this into a creatorless founder-plus-texture concept.
+> Done. I confirmed the 8, removed Jess as an editor, and left the two unmatched pending. Two creators still have unknown rights. For Maya, what can you use her for: brand ads, partnership ads from her account, organic content, or not sure?
 
-## 7. Manual updates always acknowledge completion
+It keeps going until nothing is left unresolved or you have chosen to leave specific creators pending on purpose.
 
-Later, Northstar asks for a refresh.
+## Stage 3: The dashboard
+
+**Runneth**
+
+> Your creator dashboard is ready and private to Northstar Skin. It has three tabs: ROI report (built, since Account Context and your creator fees are both connected... here it's spend and return per creator because Account Context isn't set up), Creator profiles, and a spend Leaderboard.
+
+## Stage 4: Recommend creators
+
+**Customer**
+
+> Who should we cast next for the sensitive-skin line?
+
+**Runneth**
+
+> First, the gap: your roster covers barrier-repair and brightening well, but no one currently carries the sensitive-skin, lived-experience angle. Here's how I'd fill it. I can (a) pull Motion creators on topics I draw from your brand context, and if you connect Apify I can also (b) look at who your top sensitive-skin creators follow. Want me to run both? For (a), the topics I'd search are sensitive-skin routine, barrier repair, and dermatologist-informed skincare. Approve those?
+
+## Stage 5: Refresh
 
 **Customer**
 
@@ -116,16 +102,9 @@ Later, Northstar asks for a refresh.
 
 **Runneth**
 
-> Update Creator Intel is complete for Northstar Skin.
+> Done.
 >
-> **What changed**
-> - I found 2 new ad-name candidates and refreshed the latest Meta evidence.
->
-> **Needs your review**
-> - 1 creator still needs a handle confirmation before they can enter the roster.
->
-> **Could not refresh**
-> - Nothing. Every selected source refreshed successfully.
->
-> **What stayed unchanged**
-> - Your trusted roster, relationship decisions, and rights stayed exactly the same.
+> **What changed**: 2 new ad-name candidates, latest Meta evidence refreshed.
+> **Needs your review**: 1 creator needs a handle confirmed.
+> **Could not refresh**: nothing.
+> **What stayed unchanged**: your trusted roster, relationships, and rights.

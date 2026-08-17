@@ -53,7 +53,7 @@ Do not use follower totals as proof of fit by themselves.
 - `human-confirmed`: a person explicitly confirmed the mapping
 - `naming-rule-inference`: mapping proposed from naming rules only
 
-## Relationship vocabulary
+## Separate jobs
 
 Keep these jobs separate:
 
@@ -61,36 +61,40 @@ Keep these jobs separate:
 - workspace relationship
 - rights state
 - evidence mapping
+- creator representation
 - recommendation state
 
-Relationship values may include:
+## Creator representation
 
-- UGC production
-- paid media usage
-- organic usage
-- partnership
-- whitelisting
+Each confirmed creator carries `representation`: the `topics` they talk about and the `anglesCovered` they can carry. This is what powers gap analysis. It is captured during roster confirmation, not inferred silently at recommendation time.
 
-## Rights status vocabulary
+## Rights vocabulary (simple)
 
-- `approved`
-- `expired`
-- `unknown`
-- `denied`
+Rights are one object per creator on the relationship record:
 
-Unknown never means approved.
+- `usageScope`: `none | some | all`
+- `whitelisting`: `true | false`
+- `expiryNote`: optional free text
 
-## Recommendation modes
+There is no separate rights ledger and no territory or advertiser matrix. Unknown usage scope never means approved for paid.
 
-- `roster-reuse`
-- `new-sourcing`
-- `creatorless-production`
+## Performance measure
+
+- Default is spend.
+- If an Account Context doc from the Meta onboarding package exists, use its goal instead.
+- Never use or ask about Northbeam.
+
+## Recommendation methods
+
+- `a-motion-context`: topics from brand context and the ad account, approved by the person, then Motion creator search. Always available.
+- `b-apify-network`: top-10 creator profiles plus an Apify walk of who they follow. Requires Apify. Run once, offer a routine after.
+- `c-reviews-gap`: missing micro-personas from a review audit, then Inspo search. Requires a review audit.
 
 ## Recommendation order
 
 1. confirmed roster creators who pass hard eligibility
-2. credible ecosystem candidates from supported Motion discovery
-3. honest no-fit result when neither tier supports the ask
+2. credible new creators from the ladder above
+3. honest no-fit or no-creator-needed result when neither supports the ask
 
 Never pad to quotas. Never surface disqualified creators. Respect hard eligibility before soft fit.
 
@@ -101,22 +105,13 @@ Never pad to quotas. Never surface disqualified creators. Respect hard eligibili
 - `motion meta ads --grain ads --include-associated-objects`: ad-row evidence
 - `motion meta insights`: creative summaries, transcripts, and tags only after exact asset ids are known
 
-Always use the stored workspace id. Do not invent CLI fields.
+Apify is used for reading public creator profiles and following graphs in method (b). Always use the stored workspace id on Motion pulls. Do not invent CLI fields.
 
 ## Supported Motion creator fields
 
-You may use only:
+You may use only: category, follower band, displayTopics, displayTagline, followed-by-workspace in a separate pull, Motion link, total follower count, Motion creator id for deduplication.
 
-- category
-- follower band
-- displayTopics
-- displayTagline
-- followed-by-workspace in a separate pull
-- Motion link
-- total follower count
-- Motion creator id for deduplication
-
-Do not claim unavailable fields such as creator type, audience demographics, brands worked with, spend range, geography, engagement, rising status, or platform-specific audience quality.
+Do not claim unavailable fields such as creator type, audience demographics, brands worked with, spend range, geography, engagement, or platform-specific audience quality.
 
 ## Search fallback rule
 
