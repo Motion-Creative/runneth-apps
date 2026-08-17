@@ -4,6 +4,11 @@
 > `package install`. `updatePolicy: auto` rolls out merged updates to installed copies.
 > A branch ref instead of `#main` is only for testing an unmerged branch or PR.
 
+On an already-onboarded VM, automatic updates leave `/agent/user.md` unchanged. The auto-updated
+package instruction keeps existing v7 validation guards compatible and requires
+`dashboard-design` for dashboard-form builds, rebuilds, and scheduled refreshes. Guard upgrades
+remain in the human-approved first-time or explicit reinstall path.
+
 This is the onboarding bundle for a customer's brain. Installation stages this folder's
 files to their destinations on the VM (skill files to the skills root, docs to
 `/agent/brain/meta-and-voc-onboarding/`) but does not authorize account access or
@@ -26,8 +31,10 @@ The parts, and their operational nature:
   summarizes the synced customer voice per integration and offers the audit.
 - **Meta Validation** - human-gated proof loop.
 - **Meta Ad Performance Analysis** - on-demand diagnostic skill; nothing self-runs.
-- **Dashboard Design** - on-demand design and implementation guidance for polished Runneth
-  dashboards and app-style pages; nothing self-runs.
+- **Dashboard Design** - automatically invoked inside onboarding whenever Meta Validation
+  builds, rebuilds, or refreshes a dashboard-form weekly report; also available on demand for
+  other polished Runneth dashboards and app-style pages. It never fires merely because the
+  package was installed.
 - **Knoweth organize** - self-gating: fires on its own conditions once content lands; do not
   force it.
 
@@ -255,7 +262,12 @@ File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta
 - **Persists to:** `/agent/brain/<workspace>/data-sources/meta/validation.md` (confirmed answers, corrections, report
   form and route, lock-in state, MVCE block).
 - **Activation:** merges the `runneth:meta-validation-gate` guard block into `/agent/user.md`;
-  once merged, the trigger fires on its own when the prerequisites are met.
+  once merged, the trigger fires on its own when the prerequisites are met. If the customer
+  chooses a dashboard as the weekly-report form, validation invokes `dashboard-design`
+  internally for the initial build, every regeneration, and scheduled refresh; the customer
+  never has to know or name the skill. Existing v7 guards remain compatible because the
+  auto-updated package instruction enforces the same dashboard handoff without rewriting the
+  shared file.
 - **Re-validation:** re-run the affected questions when the account changes in a way that could
   break an answer (new primary conversion event, naming-system change, new product line).
 
@@ -391,9 +403,11 @@ Folder: `dashboard-design/`
 - **Job:** guide the design and implementation of polished Runneth dashboards and app-style
   pages using the Web Awesome design system, Astro app shell, theme tokens, data-backed KPI
   strips, creative galleries, charts, tables, and narrow browser controllers.
-- **Runs on demand - does not fire at install.** Triggered when someone asks to create,
-  redesign, review, or fix a dashboard, performance report, analytics page, or other
-  data-heavy app UI. Installing only stages the skill.
+- **Runs through two routes - never at install.** Meta Validation invokes it automatically when
+  onboarding builds, rebuilds, or refreshes a dashboard-form weekly report. Outside that flow,
+  it is triggered when someone asks to create, redesign, review, or fix a dashboard,
+  performance report, analytics page, or other data-heavy app UI. Installing only stages the
+  skill; the customer never has to name `$dashboard-design` during onboarding.
 - **Structure:** `SKILL.md` carries the core workflow and invariants; `references/` carries
   detailed component/controller patterns and performance-dashboard rules so runtime context
   stays focused.
@@ -412,6 +426,11 @@ context, and update shared files. Only an explicit human yes runs
 consent. The per-workspace `runneth:meta-voc-onboarded` roster in
 `/agent/user.md` is the ran-already marker; guard presence alone only proves that some
 workspace on the VM was onboarded.
+Automatic updates never rewrite `/agent/user.md`. Before workspace resolution or a roster early
+return, the package instruction enforces the dashboard-design handoff for existing v7 and v8
+installs. It also applies to scheduled dashboard refresh routines, which use their saved literal
+workspace and report inputs because routine conversations have no bound workspace. Shared guard
+updates happen only inside a human-approved post-install run.
 The run order below is the human-readable description of the same lifecycle.
 
 ## Install and run order
