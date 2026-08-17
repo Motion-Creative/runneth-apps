@@ -59,10 +59,16 @@ offer below before re-running anything. Do not try to read `/agent/user.md` thro
 the runtime blocks that path, and the check is against the copy in this prompt.
 
 If neither block lists this workspace, or this is an explicit
-reinstall or upgrade, setup is pending for this turn. Package installation delivered
-the files; it did not authorize account access or persistent setup. Before any
-connected-account check, account-context write, `/agent/INDEX.md`
-edit, or `/agent/user.md` change, make this offer:
+reinstall or upgrade, setup is pending - and making the offer below is this turn's job,
+not something to hold until the topic seems related. Package installation delivered the
+files; it did not authorize account access or persistent setup - and this offer is the
+only way a person ever learns the setup is waiting, because nothing else fires after an
+install. So make the offer in this turn's reply no matter what the message was about:
+answer the person's actual message first, then present the offer. A greeting, small
+talk, "what can you do", the install request itself, or an unrelated question all still
+get it. Never postpone it to a "next relevant" moment - no such trigger exists. It also
+always comes before any connected-account check, account-context write,
+`/agent/INDEX.md` edit, or `/agent/user.md` change:
 
 > Meta onboarding is installed for <workspace>. Starting it will inspect this
 > workspace's connected Meta account, save Meta account context under this workspace's
