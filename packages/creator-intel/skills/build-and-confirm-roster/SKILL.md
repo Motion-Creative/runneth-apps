@@ -70,5 +70,6 @@ The skill is not done until it has walked every open item and confirmed there ar
 
 - Do not infer rights approval from identity confirmation.
 - Do not credit full performance to every creator in a mashup or flexible ad.
+- Do not treat an internal editor or owner token (for example an editor field in the ad name or an owner column) as the on-camera creator. The creator is the talent tag, not whoever edited or owns the ad.
 - Do not backfill unmentioned creators because one was confirmed.
 - Keep upstream provenance even when the local decision differs, and mark the local decision authoritative.
