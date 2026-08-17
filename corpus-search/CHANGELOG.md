@@ -29,3 +29,5 @@
   workspace to `credential_needed`.
 - Coordinated AI Training Club first-use instructions so Corpus Search and Hook & Script
   Mining never stack competing setup questions in one response.
+- Added an approachable post-index explanation of what semantic search unlocks, why it
+  needs an OpenAI API key, and that customers can ask their CSM for setup help.

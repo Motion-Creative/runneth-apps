@@ -104,10 +104,22 @@ Then:
    to the recommendation—run `workspace init` with the exact workspace ID, run
    `source add` for the approved sources, and then
    `refresh --no-embeddings` so useful BM25 search exists immediately.
-4. After local search works, optionally ask one concise question: semantic search
-   installs `sqlite-vec==0.1.9` and sends source chunks plus reranking candidates to
-   OpenAI using the customer's key; should it be enabled? Do not install the dependency,
-   collect a credential, or send content externally without that yes.
+4. After local search works, make the optional semantic-search upgrade feel concrete
+   before asking about setup. Keep it short, friendly, and focused on what becomes
+   possible. Adapt this message to the indexed corpus:
+
+   > Your fast local search is live. Want to give it a little more intuition? Semantic
+   > search helps Runneth find the same idea even when the wording is totally different—
+   > so “too expensive,” “not worth it,” and “couldn't justify the price” can all surface
+   > as the same theme, with the strongest source receipts first. It uses OpenAI and
+   > needs an OpenAI API key; you can connect your own, or if you have a CSM, ask them
+   > to help you get one set up. Your current search works without it. Want to add it?
+
+   Explain naturally that enabling it installs `sqlite-vec==0.1.9` and sends indexed
+   source passages plus top search candidates to OpenAI for meaning-based matching and
+   reranking. Do not lead with those implementation details, but include them before the
+   person approves setup. Do not install the dependency, collect a credential, or send
+   content externally without that yes.
 5. If approved and `OPENAI_API_KEY` is not listed as an available stored secret, use
    the core `secret-collection` flow. Never ask for the value in chat. Use the reserved
    key name `OPENAI_API_KEY`, allowed host `api.openai.com`, and CLI permission for
