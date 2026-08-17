@@ -20,7 +20,7 @@ Creator Intel gives each Motion workspace one trusted place to:
 
 **Stage 3: The dashboard.** An openable app with three tabs: ROI report (only when Account Context and a cost source are connected), Creator profiles, and a spend Leaderboard. Private to the workspace by default.
 
-**Stage 4: Recommend creators.** Gap analysis first, then a three-method ladder: Motion-context (always available, topics approved before searching), top-10 plus Apify network walk, and reviews-gap micro-personas.
+**Stage 4: Recommend creators.** Gap analysis first, then a three-method ladder: Motion-context (always available, topics approved before searching), top creator similarity, and reviews-gap micro-personas.
 
 **Stage 5: Refresh.** Manual Meta evidence refresh that never changes trusted decisions. Scheduled only on separate consent.
 
