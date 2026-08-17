@@ -13,6 +13,6 @@
 - Changed exploratory setup to inspect only the current workspace's brain, recommend
   every useful non-overlapping source it finds with explicit exclusions, and accept one
   yes instead of asking the person to design the index manually.
-- Added a concise, marketer-friendly first-use explanation of the searchable research
-  library and the customer-language, theme-finding, and source-backed strategy work it
-  enables.
+- Added a punchy, speed-first introduction that frames Corpus Search as a ridiculously
+  fast search bar for customer language, themes, proof points, and source-backed strategy
+  work.
