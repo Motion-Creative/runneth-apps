@@ -5,6 +5,12 @@ check the done-marker before acting on it. It governs exactly one thing: the fir
 library build. Everything after that build belongs to the `hook-script-mining` skill,
 not to this file.
 
+If the auto-installed Corpus Search package is making its first-use index proposal in
+this response, do not also ask an Apify or library-build question. Let Corpus Search ask
+its one question first. This deferral does not count as this package's once-per-conversation
+offer: after the person accepts, declines, or moves on from Corpus Search, this onboarding
+may continue on a later turn. Never stack the two setup flows into one response.
+
 Resolve the workspace first: read the `Default workspace:` line from this system
 prompt's Motion context - the workspace the runtime bound this conversation to, never
 one recalled from folders, rosters, or memory - and slug its name (lowercase, every

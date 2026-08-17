@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "corpus-search",
+  "name": "Corpus Search",
+  "version": "1",
+  "description": "Installs a workspace-isolated Markdown corpus search CLI and skill. Automatically installs and updates for ai-training-club-26; uninstall preserves generated stores. Installation alone does not create an index. On the first fresh conversation for an unconfigured workspace, Runneth inspects only that workspace's brain, explains the fast search capability, recommends every useful source, and lets the person approve the exact local index plan with one yes. Each workspace gets local BM25 retrieval and optional OpenAI-backed hybrid search and reranking through secure-fetch.",
+  "installPolicy": "auto",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "runtime",
+      "type": "directory",
+      "sourcePath": "tool",
+      "executablePaths": [
+        "corpus-search.sh",
+        "bin/corpus_search_cli.py"
+      ],
+      "target": {
+        "root": "agent_tools",
+        "path": "corpus-search/v2"
+      }
+    },
+    {
+      "id": "skill",
+      "type": "file",
+      "sourcePath": "skill/SKILL.md",
+      "executable": false,
+      "target": {
+        "root": "agent_skills",
+        "path": "corpus-search/SKILL.md"
+      }
+    },
+    {
+      "id": "activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
+    }
+  ]
+}
