@@ -49,8 +49,9 @@ Then:
      alone;
    - prefer substantive, durable corpus families such as VoC reviews, support
      conversations, research, briefs, transcripts, or summaries;
-   - propose one to three non-overlapping source roots. Do not propose both a parent and
-     its child, which would duplicate results;
+   - propose every useful non-overlapping source root the brain supports. Do not impose
+     an arbitrary source-count limit, and do not propose both a parent and its child,
+     which would duplicate results;
    - exclude empty folders, hidden/runtime state, changelogs, tag vocabularies, package
      instructions, and other administrative files unless the person explicitly asks for
      them;
@@ -58,11 +59,13 @@ Then:
      escapes the current workspace's brain folder;
    - if the brain folder is absent or contains no useful Markdown, say so and ask for a
      different folder instead of manufacturing a recommendation.
-2. Present one concise recommendation containing each source's plain-English label,
+2. Present the complete recommendation containing each source's plain-English label,
    canonical absolute path, `name`, `kind`, recursive Markdown file count, and one-line
-   reason. End with one confirmation such as, "Want me to index that now?" A plain yes
-   confirms those exact sources; do not ask for the paths or confirm them again. If the
-   person changes the proposal, show the revised source list once and wait for their yes.
+   reason. Briefly name any Markdown families deliberately excluded and why, so the
+   person can see that the whole workspace brain was considered. End with one
+   confirmation such as, "Want me to index all of that now?" A plain yes confirms those
+   exact sources; do not ask for the paths or confirm them again. If the person changes
+   the proposal, show the revised source list once and wait for their yes.
 3. Once the sources are approved—either by a direct request naming a folder or by a yes
    to the recommendation—run `workspace init` with the exact workspace ID, run
    `source add` for the approved sources, and then
