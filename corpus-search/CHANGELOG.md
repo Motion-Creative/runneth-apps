@@ -13,5 +13,5 @@
 - Changed exploratory setup to inspect only the current workspace's brain, recommend
   every useful non-overlapping source it finds with explicit exclusions, and accept one
   yes instead of asking the person to design the index manually.
-- Added a clear, upbeat first-use introduction that explains what Corpus Search installed,
-  why its fast workspace search is useful, and what source-backed strategy work it enables.
+- Added a clear, upbeat kickoff that explains what Corpus Search will unlock and leads
+  naturally into Runneth's complete recommendation of what to index.

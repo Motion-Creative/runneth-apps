@@ -27,14 +27,14 @@ characters replaced by one hyphen and leading or trailing hyphens removed. Use t
 only to locate this brain folder; continue to use the literal Motion workspace ID for every
 CLI command. Never inspect another workspace's brain folder.
 
-## Explain what was installed and why it is useful
+## Kick off by explaining what Corpus Search will do
 
 On the first setup response, briefly explain what Corpus Search adds before listing the
 source recommendation. Make it feel like a useful new capability for a marketer or
 creative strategist, not infrastructure documentation or a hype reel. Use clear,
-confident language with some energy. Start by naming what was installed, then explain that
-the person can ask Runneth instead of manually digging through files. Keep it to two to
-four sentences and cover:
+confident language with some energy. Frame this as the start of setup: open with a natural
+"Great—let's kick things off," explain what Corpus Search will unlock, and say what Runneth
+will do first. Keep it to three or four sentences and cover:
 
 - Corpus Search adds a fast search layer across the useful documents in this workspace;
 - Runneth can find real customer language, recurring pain points, objections, desires,
@@ -45,12 +45,13 @@ four sentences and cover:
 
 For example, adapt this to what the workspace actually contains:
 
-> Corpus Search is installed—think of it as a fast search layer for your Runneth brain.
-> Once we index this workspace, you can ask questions across reviews, transcripts,
-> briefs, and research instead of digging through files; I can pull out customer quotes,
-> recurring themes, pain points, objections, and proof points, with the source receipts.
-> It starts with quick local keyword search, and optional meaning-based search can catch
-> the same idea even when customers use different words.
+> Great—let's kick things off. Corpus Search will give your Runneth brain a fast search
+> layer across the useful documents in this workspace. Once it is set up, you can ask
+> questions across reviews, transcripts, briefs, and research; I can pull out customer
+> quotes, recurring themes, pain points, objections, and proof points—with the source
+> receipts—instead of making you dig through files. I'll first review what's already here
+> and recommend everything worth indexing; we'll start with quick local keyword search
+> and can add meaning-based search later.
 
 Do not lead with terms such as BM25, FTS5, embeddings, vectors, chunks, databases, or
 dependencies unless the person asks for technical details. Avoid stiff phrases such as

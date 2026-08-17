@@ -16,13 +16,14 @@ authorizes local initialization and reading that confirmed folder; do not recite
 disclaimer or request a redundant second yes. If no folder has been selected, inspect
 only the current workspace's `/agent/brain/<workspace>/` folder and recommend every
 useful, non-overlapping Markdown source root it finds, with no arbitrary count limit.
-Before listing the recommendation, briefly explain that Corpus Search was installed and
-adds a fast search layer for the workspace brain, so the person can ask Runneth instead
-of digging through files. Name the customer language, themes, objections, supporting
-examples, and source receipts it can surface. Keep the tone clear and upbeat rather than
-technical or overhyped. Explain exact-word local search versus optional meaning-based
-search without leading with implementation terms. Then include canonical paths, counts,
-names,
+Before listing the recommendation, open the setup naturally with "Great—let's kick things
+off," then explain what Corpus Search will do: add a fast search layer for the workspace
+brain so the person can ask Runneth instead of digging through files. Name the customer
+language, themes, objections, supporting examples, and source receipts it can surface,
+then say Runneth reviewed the current brain and is about to recommend everything worth
+indexing. Keep the tone clear and upbeat rather than technical or overhyped. Explain
+exact-word local search versus optional meaning-based search without leading with
+implementation terms. Then include canonical paths, counts, names,
 kinds, brief reasons, and a short explanation of anything deliberately excluded. Ask
 only whether to index the complete proposal; a plain yes confirms the exact list. Ask
 the person to choose a folder only when the workspace brain has no useful Markdown or
