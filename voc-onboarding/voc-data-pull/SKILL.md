@@ -410,7 +410,14 @@ folder state:
 4. Tell the user in one or two sentences: the initial pull is running in the background and
    the data stays updated daily. Explain that once the first full backfill is ready, Runneth
    will offer a manual Voice of Customer Audit. Do not run or present the audit now, and do
-   not mention routine mechanics unless asked.
+   not mention routine mechanics unless asked. If Meta ad comments is the only
+   customer-voice source this pass could set up, also say so and encourage connecting a
+   dedicated VoC platform, naming the options conversationally from Step 1's table
+   (reviews like Judge.me, Trustpilot, Yotpo, Okendo, or Stamped; support like Gorgias,
+   Intercom, or Zendesk; surveys, communities, and calls) - ad comments alone are a thin
+   slice of customer voice. (When this setup pass runs inside the voc-onboarding
+   post-install, the readiness report's closing note carries this instead - do not say it
+   twice.)
 
 **Never run the pull inside the user's conversation.** All pulling happens in the routine's
 runs; a one-off refresh beyond the daily cadence is `routine run --id <routine-id>`.

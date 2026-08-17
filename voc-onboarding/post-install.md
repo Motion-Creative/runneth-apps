@@ -195,7 +195,19 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    because a VM can hold several onboarded workspaces. The
    only permitted extensions of a bullet are its allowed states ("skipped - <why>",
    "waiting on a person - <two-or-three-word topic>", "blocked - <reason>"), never extra
-   detail after "done". Nothing follows the report.
+   detail after "done". Nothing follows the report, with one exception: **when Meta ad
+   comments is the only reachable customer-voice source, close with a short
+   conversational note after the report.** Confirm plainly that ad comments are the only
+   customer voice reachable right now and that they are a thin slice on their own, then
+   encourage connecting a dedicated VoC platform, naming what can be set up as a natural
+   list in prose: review platforms (Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped,
+   Reviews.io), support tools (Gorgias, Intercom, Zendesk), surveys and messaging
+   (Klaviyo, Attentive, Hotjar), communities (Reddit, Discord, YouTube), or sales calls
+   (Gong) - and any other reviews or support platform works too, connected by OAuth or a
+   stored API key. Two or three sentences in plain prose - no table, no commands, no
+   counts - and say that once a platform is connected, asking to set it up is all it
+   takes. This note belongs to the report turn only; never repeat it unprompted on later
+   turns.
 
 Mechanics for every step above: when a step updates any existing file, do not use the
 edit/patch tool - it fails validation on this VM. Read the file and write it back whole
