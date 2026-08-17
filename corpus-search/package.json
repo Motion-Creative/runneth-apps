@@ -3,8 +3,8 @@
   "id": "corpus-search",
   "name": "Corpus Search",
   "version": "1",
-  "description": "Installs a workspace-isolated Markdown corpus search CLI and skill. Teams opt in manually; code auto-updates; uninstall preserves generated stores. Each workspace gets local BM25 retrieval and optional OpenAI-backed hybrid search and reranking through secure-fetch. On first use, Runneth inspects only the current workspace's brain, recommends useful sources, and lets the person approve the exact index plan with one yes.",
-  "installPolicy": "manual",
+  "description": "Installs a workspace-isolated Markdown corpus search CLI and skill. Automatically installs and updates for ai-training-club-26; uninstall preserves generated stores. Installation alone does not scan or index customer files. On first relevant use, Runneth inspects only the current workspace's brain, explains the fast search capability, recommends every useful source, and lets the person approve the exact local index plan with one yes. Each workspace gets local BM25 retrieval and optional OpenAI-backed hybrid search and reranking through secure-fetch.",
+  "installPolicy": "auto",
   "updatePolicy": "auto",
   "uninstallPolicy": "allowed",
   "resources": [

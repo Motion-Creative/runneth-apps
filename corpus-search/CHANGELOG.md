@@ -15,3 +15,5 @@
   yes instead of asking the person to design the index manually.
 - Added a clear, upbeat kickoff that explains what Corpus Search will unlock and leads
   naturally into Runneth's complete recommendation of what to index.
+- Enabled automatic installation and updates for the `ai-training-club-26` intent while
+  keeping workspace scanning and index creation behind the first-use confirmation.

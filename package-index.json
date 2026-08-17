@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-14-01",
+  "indexRevision": "2026-08-17-01",
   "packages": [
     {
       "id": "creative-strategy-guidance",
@@ -83,10 +83,12 @@
     {
       "id": "corpus-search",
       "name": "Corpus Search",
-      "description": "Installs a workspace-isolated Markdown corpus search CLI and skill. Teams opt in manually; code auto-updates; uninstall preserves generated stores. Each workspace gets local BM25 retrieval and optional OpenAI-backed hybrid search and reranking through secure-fetch. On first use, Runneth inspects only the current workspace's brain, recommends useful sources, and lets the person approve the exact index plan with one yes.",
+      "description": "Installs a workspace-isolated Markdown corpus search CLI and skill. Automatically installs and updates for ai-training-club-26; uninstall preserves generated stores. Installation alone does not scan or index customer files. On first relevant use, Runneth inspects only the current workspace's brain, explains the fast search capability, recommends every useful source, and lets the person approve the exact local index plan with one yes. Each workspace gets local BM25 retrieval and optional OpenAI-backed hybrid search and reranking through secure-fetch.",
       "version": "1",
       "packageManagerVersion": 1,
-      "categories": [],
+      "categories": [
+        "ai-training-club-26"
+      ],
       "source": {
         "type": "github",
         "owner": "Motion-Creative",
@@ -94,7 +96,7 @@
         "path": "corpus-search",
         "ref": "main"
       },
-      "installPolicy": "manual",
+      "installPolicy": "auto",
       "updatePolicy": "auto",
       "uninstallPolicy": "allowed"
     }
