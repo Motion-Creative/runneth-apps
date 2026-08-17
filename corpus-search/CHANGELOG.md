@@ -13,6 +13,5 @@
 - Changed exploratory setup to inspect only the current workspace's brain, recommend
   every useful non-overlapping source it finds with explicit exclusions, and accept one
   yes instead of asking the person to design the index manually.
-- Added a punchy, speed-first introduction that frames Corpus Search as a ridiculously
-  fast search bar for customer language, themes, proof points, and source-backed strategy
-  work.
+- Added a clear, upbeat first-use introduction that explains what Corpus Search installed,
+  why its fast workspace search is useful, and what source-backed strategy work it enables.

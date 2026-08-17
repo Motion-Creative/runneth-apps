@@ -27,16 +27,16 @@ characters replaced by one hyphen and leading or trailing hyphens removed. Use t
 only to locate this brain folder; continue to use the literal Motion workspace ID for every
 CLI command. Never inspect another workspace's brain folder.
 
-## Make the new capability feel exciting
+## Explain what was installed and why it is useful
 
 On the first setup response, briefly explain what Corpus Search adds before listing the
 source recommendation. Make it feel like a useful new capability for a marketer or
-creative strategist, not infrastructure documentation. Use energetic, confident language
-and lead with speed: the person can ask Runneth instead of manually digging through piles
-of files. Keep it to two to four sentences and cover:
+creative strategist, not infrastructure documentation or a hype reel. Use clear,
+confident language with some energy. Start by naming what was installed, then explain that
+the person can ask Runneth instead of manually digging through files. Keep it to two to
+four sentences and cover:
 
-- it gives the useful documents already in this workspace a ridiculously fast search
-  layer inside Runneth;
+- Corpus Search adds a fast search layer across the useful documents in this workspace;
 - Runneth can find real customer language, recurring pain points, objections, desires,
   supporting examples, and relevant briefs, research, summaries, or transcripts, then
   point back to the source behind an insight;
@@ -45,19 +45,19 @@ of files. Keep it to two to four sentences and cover:
 
 For example, adapt this to what the workspace actually contains:
 
-> Your Runneth brain just got a ridiculously fast search bar. Instead of digging through
-> reviews, transcripts, briefs, and research docs, ask me and I can pull out the sharpest
-> customer quotes, recurring pain points, objections, desires, and proof points in
-> seconds—with the source receipts. Exact-word search works locally right away, and
-> optional meaning-based search can catch the same idea even when customers phrase it
-> completely differently.
+> Corpus Search is installed—think of it as a fast search layer for your Runneth brain.
+> Once we index this workspace, you can ask questions across reviews, transcripts,
+> briefs, and research instead of digging through files; I can pull out customer quotes,
+> recurring themes, pain points, objections, and proof points, with the source receipts.
+> It starts with quick local keyword search, and optional meaning-based search can catch
+> the same idea even when customers use different words.
 
 Do not lead with terms such as BM25, FTS5, embeddings, vectors, chunks, databases, or
 dependencies unless the person asks for technical details. Avoid stiff phrases such as
-"document retrieval system," "corpus infrastructure," or "searchable research library."
-Do not promise a capability that the proposed sources cannot support. If the person asks
-what Corpus Search can do after setup, use the same punchy framing and tailor examples to
-the indexed sources.
+"document retrieval system" or "corpus infrastructure," and avoid unsupported superlatives
+or speed promises. Do not promise a capability that the proposed sources cannot support.
+If the person asks what Corpus Search can do after setup, use the same clear, upbeat
+framing and tailor examples to the indexed sources.
 
 ## First relevant use
 
@@ -91,7 +91,7 @@ Then:
      escapes the current workspace's brain folder;
    - if the brain folder is absent or contains no useful Markdown, say so and ask for a
      different folder instead of manufacturing a recommendation.
-2. Give the short, punchy explanation above, then present the complete
+2. Give the short explanation above, then present the complete
    recommendation containing each source's plain-English label,
    canonical absolute path, `name`, `kind`, recursive Markdown file count, and one-line
    reason. Briefly name any Markdown families deliberately excluded and why, so the
