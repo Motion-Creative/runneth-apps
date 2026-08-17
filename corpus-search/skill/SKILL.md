@@ -27,6 +27,36 @@ characters replaced by one hyphen and leading or trailing hyphens removed. Use t
 only to locate this brain folder; continue to use the literal Motion workspace ID for every
 CLI command. Never inspect another workspace's brain folder.
 
+## Explain the value in plain language
+
+On the first setup response, briefly explain what Corpus Search adds before listing the
+source recommendation. Make it feel like a useful new capability for a marketer or
+creative strategist, not infrastructure documentation. Keep it to two to four sentences
+and cover:
+
+- it turns the useful documents already in this workspace into a searchable research
+  library for Runneth;
+- Runneth can find real customer language, recurring pain points, objections, desires,
+  supporting examples, and relevant briefs, research, summaries, or transcripts, then
+  point back to the source behind an insight;
+- local search finds exact words and phrases, while optional meaning-based search can
+  later find related ideas expressed in different language.
+
+For example, adapt this to what the workspace actually contains:
+
+> Corpus Search turns the useful documents in this workspace into a searchable research
+> library for Runneth. Once indexed, I can quickly surface real customer language,
+> recurring pain points and objections, supporting examples, and relevant strategy
+> documents—and show you where each insight came from. It starts with fast local keyword
+> search; optional meaning-based search can also catch related ideas when people use
+> different words.
+
+Do not lead with terms such as BM25, FTS5, embeddings, vectors, chunks, databases, or
+dependencies unless the person asks for technical details. Do not promise a capability
+that the proposed sources cannot support. If the person asks what Corpus Search can do
+after setup, use the same plain-language framing and tailor examples to the indexed
+sources.
+
 ## First relevant use
 
 Read the workspace `state.json`. If it is absent or its phase is `awaiting_sources`,
@@ -59,7 +89,8 @@ Then:
      escapes the current workspace's brain folder;
    - if the brain folder is absent or contains no useful Markdown, say so and ask for a
      different folder instead of manufacturing a recommendation.
-2. Present the complete recommendation containing each source's plain-English label,
+2. Give the short plain-language explanation above, then present the complete
+   recommendation containing each source's plain-English label,
    canonical absolute path, `name`, `kind`, recursive Markdown file count, and one-line
    reason. Briefly name any Markdown families deliberately excluded and why, so the
    person can see that the whole workspace brain was considered. End with one
