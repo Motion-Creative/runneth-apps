@@ -9,6 +9,7 @@ const guard = read(
   'meta-and-voc-onboarding/meta-onboarding-rules/meta-analysis-validation.md',
 ).trim()
 const activation = read('meta-and-voc-onboarding/instructions/activation.md')
+const postInstall = read('meta-and-voc-onboarding/post-install.md')
 
 test('package installs the complete dashboard-design skill directory', () => {
   const resource = manifest.resources.find(({ id }) => id === 'dashboard-design-skill')
@@ -34,13 +35,34 @@ test('staged validation guard exactly matches the embedded runtime guard', () =>
   assert.ok(validation.includes(guard))
 })
 
-test('automatic updates reconcile stale guards before the roster early return', () => {
-  const refresh = activation.indexOf('## Guard refresh on automatic package updates')
+test('automatic updates keep v7 installs compatible without rewriting user instructions', () => {
+  const compatibility = activation.indexOf('## Dashboard-form report compatibility')
   const rosterReturn = activation.indexOf(
     "If that block lists **this conversation's workspace**",
   )
 
-  assert.ok(refresh !== -1 && refresh < rosterReturn)
-  assert.match(activation, /Compare each complete sentinel-wrapped block byte-for-byte/)
-  assert.match(activation, /do not run `post-install\.md`/)
+  assert.ok(compatibility !== -1 && compatibility < rosterReturn)
+  assert.match(activation, /existing `runneth:meta-validation-gate v7` installs/i)
+  assert.match(activation, /scheduled routine refreshes a dashboard-form weekly report/)
+  assert.match(
+    activation,
+    /Automatic package updates must leave `\/agent\/user\.md` byte-for-byte unchanged/,
+  )
+  assert.doesNotMatch(activation, /Guard refresh on automatic package updates/)
+})
+
+test('approved post-install writes preserve the latest whole-file payload and full roster', () => {
+  assert.match(
+    postInstall,
+    /exact payload sent by that Write becomes the only\n  source payload/,
+  )
+  assert.match(postInstall, /Never fall back to the conversation-start system-prompt copy/)
+  assert.match(
+    postInstall,
+    /If the exact payload from the most recent successful Write is unavailable, stop/,
+  )
+  assert.match(
+    postInstall,
+    /append this workspace to its list and\n   leave the existing names alone/,
+  )
 })

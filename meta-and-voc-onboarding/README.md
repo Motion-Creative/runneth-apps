@@ -4,10 +4,10 @@
 > `package install`. `updatePolicy: auto` rolls out merged updates to installed copies.
 > A branch ref instead of `#main` is only for testing an unmerged branch or PR.
 
-On an already-onboarded VM, an automatic update also reconciles the four previously approved
-shared guard blocks before the activation instruction exits through the completion roster. This
-guard-only migration never reruns onboarding or touches accounts, routines, indexes, or
-workspace brain data.
+On an already-onboarded VM, automatic updates leave `/agent/user.md` unchanged. The auto-updated
+package instruction keeps existing v7 validation guards compatible and requires
+`dashboard-design` for dashboard-form builds, rebuilds, and scheduled refreshes. Guard upgrades
+remain in the human-approved first-time or explicit reinstall path.
 
 This is the onboarding bundle for a customer's brain. Installation stages this folder's
 files to their destinations on the VM (skill files to the skills root, docs to
@@ -265,7 +265,9 @@ File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta
   once merged, the trigger fires on its own when the prerequisites are met. If the customer
   chooses a dashboard as the weekly-report form, validation invokes `dashboard-design`
   internally for the initial build, every regeneration, and scheduled refresh; the customer
-  never has to know or name the skill.
+  never has to know or name the skill. Existing v7 guards remain compatible because the
+  auto-updated package instruction enforces the same dashboard handoff without rewriting the
+  shared file.
 - **Re-validation:** re-run the affected questions when the account changes in a way that could
   break an answer (new primary conversion event, naming-system change, new product line).
 
@@ -424,10 +426,11 @@ context, and update shared files. Only an explicit human yes runs
 consent. The per-workspace `runneth:meta-voc-onboarded` roster in
 `/agent/user.md` is the ran-already marker; guard presence alone only proves that some
 workspace on the VM was onboarded.
-Before that roster can short-circuit activation, a VM with an existing completion roster
-compares all four shared guards against the newly staged package copies and refreshes only stale
-guard blocks. This is the automatic-update migration path for already-onboarded workspaces; it
-preserves the roster and everything outside the four sentinels and does not rerun post-install.
+Automatic updates never rewrite `/agent/user.md`. Before workspace resolution or a roster early
+return, the package instruction enforces the dashboard-design handoff for existing v7 and v8
+installs. It also applies to scheduled dashboard refresh routines, which use their saved literal
+workspace and report inputs because routine conversations have no bound workspace. Shared guard
+updates happen only inside a human-approved post-install run.
 The run order below is the human-readable description of the same lifecycle.
 
 ## Install and run order

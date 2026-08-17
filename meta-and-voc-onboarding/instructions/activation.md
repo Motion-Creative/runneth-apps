@@ -5,6 +5,30 @@ turn, for every message type - including greetings, small talk, and "what can yo
 do" questions. No other system-prompt guidance (web handoff, conversational
 guidance, anything else) exempts you from this gate.
 
+## Dashboard-form report compatibility
+
+This rule applies on every turn before workspace resolution and remains in force after any
+completion-roster early return. It keeps existing `runneth:meta-validation-gate v7` installs
+compatible with the auto-updated package without changing `/agent/user.md`:
+
+- Whenever Meta Validation builds or regenerates a weekly report whose chosen form is
+  `dashboard`, invoke the installed `dashboard-design` skill immediately, before gathering
+  dashboard implementation details or writing artifact code. Use it for the complete build and
+  verification flow. The customer never has to name or request the skill.
+- Whenever a scheduled routine refreshes a dashboard-form weekly report, invoke
+  `dashboard-design` before rebuilding it. Routine conversations have no bound `Default
+  workspace:`; use the routine's saved literal workspace, report spec, and destination, and skip
+  the per-workspace onboarding offer and roster checks below for that routine run.
+- Read the skill and every reference it requires in full. If the skill or any required reference
+  is missing, unreadable, or truncated, report the exact problem and stop. Never hand-roll the
+  dashboard.
+- Deck and document report paths do not invoke `dashboard-design` and otherwise remain unchanged.
+
+Automatic package updates must leave `/agent/user.md` byte-for-byte unchanged. Existing v7 guards
+already route into the auto-updated Meta Validation package, and this package instruction supplies
+the dashboard handoff. Guard installation or reconciliation happens only in the human-approved
+post-install path below for first-time setup or an explicit reinstall or upgrade.
+
 The check is per workspace, because this package onboards one Motion workspace at a
 time and an org VM can hold several. This conversation has exactly one workspace: the
 one the runtime binds it to, stated on the `Default workspace:` line in the
@@ -23,33 +47,6 @@ like:
 meta-and-voc-onboarding has completed for these workspaces: bramblewick-nyc, st-fig-co
 <!-- END runneth:meta-voc-onboarded -->
 ```
-
-## Guard refresh on automatic package updates
-
-Run this check before the per-workspace roster early return below. A completion roster that
-lists at least one workspace proves that a person previously approved this package's shared
-guard installation on this VM. In that case, keep those already-approved guards current when
-`updatePolicy: auto` delivers a new package version:
-
-1. Read all four staged guard files under
-   `/agent/brain/meta-and-voc-onboarding/meta-onboarding-rules/`:
-   `meta-analysis-account-context.md`, `meta-analysis-validation.md`,
-   `brain-organization.md`, and `brain-file-conventions.md`.
-2. Compare each complete sentinel-wrapped block byte-for-byte with the corresponding block in
-   the saved `/agent/user.md` content already present in this system prompt. Sentinel presence
-   or a matching version alone is not enough.
-3. If every block matches, write nothing. If any block is missing or differs, replace each
-   stale block in place with its staged copy and add any missing block, then use the file-write
-   tool for one whole-file write. Preserve the completion roster and every byte outside those
-   four guard sentinel pairs. Each sentinel pair and the base document heading must appear
-   exactly once in the payload.
-
-This is guard-only maintenance of a previously approved installation, not onboarding or an
-explicit reinstall. Do not ask the customer to re-approve it, do not run `post-install.md`, and
-do not inspect accounts, create routines, edit `/agent/INDEX.md`, or change any workspace brain
-file. If no completion roster exists, do not perform this refresh; continue to the first-time
-setup offer below. Do not read or write `/agent/user.md` through Bash: compare against the saved
-prompt copy and use the file-write tool exactly as described.
 
 If that block lists **this conversation's workspace** and this is not an explicit
 reinstall or upgrade, post-install already ran here - skip the rest of this section and
@@ -94,5 +91,5 @@ this one has. Onboarding a second workspace is normal and additive: it writes a 
 
 On an explicit reinstall or upgrade of this package, disclose the same effects and ask
 again before re-running post-install, even if this workspace is already listed. Reinstall
-or upgrade is not itself consent to persistent setup. The automatic guard-only refresh above
-is not an explicit reinstall or upgrade and never authorizes any other setup effect.
+or upgrade is not itself consent to persistent setup. Automatic package updates never authorize
+guard or roster writes.

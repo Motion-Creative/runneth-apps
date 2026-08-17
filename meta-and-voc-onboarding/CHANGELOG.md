@@ -14,10 +14,11 @@ change to the package, not per commit. Entries are newest-first.
 - Wired the handoff into the validation guard, report-build contract, correction rebuilds,
   and scheduled refresh routines, with an explicit stop instead of a hand-rolled fallback
   when the skill or a required reference is unavailable.
-- Added an automatic-update migration before the activation roster short-circuit: VMs with a
-  prior completion roster reconcile all four previously approved shared guards byte-for-byte,
-  so existing onboarded workspaces replace validation guard v7 with v8 without rerunning
-  onboarding or touching accounts, routines, indexes, or workspace brain data.
+- Kept existing validation guard v7 installs compatible through the auto-updated package
+  instruction, including scheduled dashboard refreshes, without rewriting `/agent/user.md`.
+- Kept guard v8 installation and reconciliation in the human-approved first-time or explicit
+  reinstall path, and made later roster writes build only on the latest successful whole-file
+  payload in the conversation.
 - Kept deck and document reports on their existing artifact paths and kept package
   installation itself non-executing.
 
