@@ -52,8 +52,8 @@ Realistic eval cases for the redesigned flow.
 34. **Method a always available**: with no Apify and no review audit, the Motion-context method still runs after topic approval.
 35. **Topic approval**: method a proposes topics and waits for approval before searching.
 36. **No reach dump**: recommendations never return a raw high-follower category list as the answer.
-37. **Apify network walk**: method b asks for top profiles, walks who they follow, and offers a routine only after a one-time run.
-38. **Apify connect**: if Apify is not connected, the skill asks to connect it before running method b.
+37. **Top creator similarity**: method b asks for top profiles, surfaces adjacent creators from who their networks follow, and offers a routine only after a one-time run.
+38. **Similarity needs a key**: top creator similarity is never named after its tool; if the Apify key is missing, the skill says it needs an Apify key connected and does not run until it is.
 39. **Reviews gap gated**: method c runs only when a review audit exists.
 40. **Roster first, no padding**: with one fitting roster creator, the answer returns one plus new sourcing, not invented names.
 41. **Hard eligibility**: disqualified or ineligible creators never appear.
@@ -78,3 +78,8 @@ Realistic eval cases for the redesigned flow.
 
 52. **Record language split**: durable records stay English while user-facing output follows the conversation language.
 53. **Creator search schema failure**: the known search failure is surfaced and handled with supported fallbacks, never treated as empty.
+
+## Cost integrity
+
+54. **No fabricated allocation**: when creator fees are only program-wide, the ROI view shows total-network ROI only and never allocates fees across creators, products, campaigns, or funnel buckets, even as an estimate.
+55. **Full-year roster**: roster building pulls the full last-365-day library with no limit and lists every creator in one table, never a truncated sample.

@@ -24,7 +24,7 @@ This is the single roster skill. It replaces the older separate propose and revi
 ## How to build
 
 1. Read the connected roster source for names, handles, talent type, and any rights column.
-2. Pull Meta ad-name evidence with the stored workspace id using `motion meta ads --grain ads --include-associated-objects`. Treat ad rows, ad names, associated creative assets, and ads without synced Motion creative assets as evidence.
+2. Pull the full creator library with the stored workspace id using `motion meta ads --grain ads --include-associated-objects --date-range last_365d` with no `--limit`, paging through every result. This is a full-library pull over the last 365 days, not a recent-window sample, so every creator with any ad in the year is included. Treat ad rows, ad names, associated creative assets, and ads without synced Motion creative assets as evidence.
 3. Match Meta to the database where possible. Where a match is not possible, keep the creator as unresolved rather than dropping them. Skip matching cleanly when there is nothing to match.
 4. For creator resolution against Motion, use `motion inspo creators` for exact name or handle. If a broad search hits the known schema issue, say the search failed and fall back to supported category, follower, or exact name and handle pulls. A tool error is not an empty result.
 5. Capture per creator: identity and handles, talent type, the simple rights object, and what the creator represents (their topics and the angles they can carry). Representation matters because Stage 4 gap analysis depends on it.
@@ -41,7 +41,7 @@ If the roster source has a rights column, read it. Otherwise apply the setup def
 
 ## One table, all open questions, drive to zero
 
-The customer-facing review is **one table of every creator**, not batched. Alongside it, show a single overview of every open question grouped as:
+The customer-facing review is **one table of every creator** from the full-year pull, not batched and never truncated. List every creator, even when there are many; do not show only the top few or a sample. Alongside it, show a single overview of every open question grouped as:
 
 - Ready to confirm
 - Needs your input

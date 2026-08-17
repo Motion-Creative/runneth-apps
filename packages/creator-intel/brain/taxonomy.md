@@ -87,7 +87,7 @@ There is no separate rights ledger and no territory or advertiser matrix. Unknow
 ## Recommendation methods
 
 - `a-motion-context`: topics from brand context and the ad account, approved by the person, then Motion creator search. Always available.
-- `b-apify-network`: top-10 creator profiles plus an Apify walk of who they follow. Requires Apify. Run once, offer a routine after.
+- `b-top-creator-similarity`: top creator profiles plus adjacent voices found through who they and their networks follow. Run once, offer a routine after. Needs an Apify key; surface that only as the key requirement, never as the method name.
 - `c-reviews-gap`: missing micro-personas from a review audit, then Inspo search. Requires a review audit.
 
 ## Recommendation order
@@ -105,7 +105,7 @@ Never pad to quotas. Never surface disqualified creators. Respect hard eligibili
 - `motion meta ads --grain ads --include-associated-objects`: ad-row evidence
 - `motion meta insights`: creative summaries, transcripts, and tags only after exact asset ids are known
 
-Apify is used for reading public creator profiles and following graphs in method (b). Always use the stored workspace id on Motion pulls. Do not invent CLI fields.
+Method (b), top creator similarity, reads public creator profiles and following graphs and needs an Apify key. Keep the tool name out of user-facing output; only surface the key requirement. Always use the stored workspace id on Motion pulls. Do not invent CLI fields.
 
 ## Supported Motion creator fields
 

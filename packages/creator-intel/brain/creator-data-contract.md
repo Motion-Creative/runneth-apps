@@ -146,7 +146,7 @@ Reconciliation invariant: `exclusiveMappedSpend + sharedSpend + unassignedSpend 
 
 ## 6. Recommendation ledger
 
-`recommendations.json.recommendations[]` stores stable recommendation records. Required: `recommendationId`, `workspaceId`, `createdAt`, `requestType` (`standalone-casting | roster-review`), `recommendationMode` (`roster-reuse | new-sourcing | creatorless-production`), `method` (`a-motion-context | b-apify-network | c-reviews-gap`), `creatorIds[]`, `hardEligibilityApplied[]`, `evidenceWindow`, `sourceSummary`, `notes`, `launchLinkId` (nullable), `outcomeStatus` (`unknown | linked | measured`).
+`recommendations.json.recommendations[]` stores stable recommendation records. Required: `recommendationId`, `workspaceId`, `createdAt`, `requestType` (`standalone-casting | roster-review`), `recommendationMode` (`roster-reuse | new-sourcing | creatorless-production`), `method` (`a-motion-context | b-top-creator-similarity | c-reviews-gap`), `creatorIds[]`, `hardEligibilityApplied[]`, `evidenceWindow`, `sourceSummary`, `notes`, `launchLinkId` (nullable), `outcomeStatus` (`unknown | linked | measured`).
 
 Do not claim later ad outcomes were caused by a recommendation unless a launched ad or brief carries that exact stored recommendation id.
 

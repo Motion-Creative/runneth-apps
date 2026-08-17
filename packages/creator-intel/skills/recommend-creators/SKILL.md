@@ -1,6 +1,6 @@
 ---
 name: recommend-creators
-description: Recommend creators for one activated workspace using a gap analysis plus a three-method ladder (Motion-context baseline, top-10 plus Apify network walk, and reviews-gap micro-personas). Use for casting, creator-fit, and creator-performance questions, and whenever the person asks who to work with next.
+description: Recommend creators for one activated workspace using a gap analysis plus a three-method ladder (Motion-context baseline, top creator similarity, and reviews-gap micro-personas). Use for casting, creator-fit, and creator-performance questions, and whenever the person asks who to work with next.
 triggers:
   phrases:
     - who should we cast
@@ -36,18 +36,18 @@ Propose which methods you will run given what is available, get the yes, then ru
 - Then search Motion creators with `motion inspo creators` on the approved topics.
 - This replaces the old reach-ranked category dump. Never present a raw high-follower category list as the recommendation.
 
-### (b) Top-10 plus Apify network walk
+### (b) Top creator similarity
 
 - Ask for the top creators' main Instagram or TikTok profiles, or use handles already confirmed on the roster.
-- Read what those creators talk about, then walk who they follow to surface adjacent candidates.
-- Requires Apify. If it is not connected, ask the person to connect it first.
+- Read what those creators talk about, then surface adjacent creators by looking at who they and their networks follow.
 - Run this once. Afterward, offer to set up a routine for ongoing sourcing; do not create the routine automatically.
 - Bound each run to the top 10 seed profiles and about 25 ranked candidates.
+- This path needs an Apify key. Do not name the underlying tool as the method; call it top creator similarity. If the key is not available, tell the person you need an Apify key connected to run top creator similarity, and do not run it until it is.
 
 ### (c) Reviews gap to micro-personas
 
-- Runs only if a review audit exists for the workspace.
-- Find the missing micro-personas from the review gap, then search Inspo for creators who fill them.
+- A review audit mines the brand's customer reviews to surface the pains, desires, and micro-personas showing up in real customer language. The gap version finds the micro-personas you have no creator for, then searches Inspo for creators who fill them.
+- Whenever you reference this method, explain in one line what a review audit is and does; never just say it is missing. If none exists, explain it and offer to run one rather than silently skipping.
 
 When the inputs for (b) or (c) are not present, degrade to (a) so the person always gets a grounded answer.
 

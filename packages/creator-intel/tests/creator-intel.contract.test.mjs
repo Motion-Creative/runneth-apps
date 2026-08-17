@@ -147,7 +147,7 @@ test("the documented eval suite retains broad scenario coverage", async () => {
 
   assert.ok(numberedCases.length >= 50);
   assert.match(evals, /Gap first/);
-  assert.match(evals, /Apify network walk/);
+  assert.match(evals, /Top creator similarity/);
   assert.match(evals, /ROI page conditional/);
   assert.match(evals, /Recommendation outcome guard/);
   assert.match(evals, /Scheduled partial failure/);

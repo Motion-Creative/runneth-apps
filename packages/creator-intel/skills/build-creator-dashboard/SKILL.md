@@ -27,7 +27,10 @@ This skill builds the openable dashboard over the workspace's confirmed state. I
 - Appears only when both are true: an Account Context doc exists (for the product, campaign, and funnel split) and a roster cost source is connected (for creator fees).
 - Without Account Context, you can still show spend and return per creator but not the product or funnel slice.
 - Without a cost source, leave this tab out rather than faking margin.
-- When shown, present program investment (creator fees plus media spend), the event vs content or product split from account context, cost per outcome, and a short method note. Label any fee allocation as directional when there is no per-campaign fee split.
+- Present ROI only at the level the cost data actually supports. Media spend and return come from Meta; creator fees come from the connected cost source.
+- Cost integrity, hard rule: if creator fees are tracked per creator or per campaign, ROI may be shown at that level. If fees are only program-wide (one total, no per-creator or per-campaign split), show only the total ROI of the whole creator network: total creator fees plus total media spend against total return. Never allocate program-wide fees across creators, products, campaigns, or funnel buckets, not even labeled as directional or an estimate. Fabricated allocation is never allowed.
+- Media-only cost per outcome comes straight from Meta and may be shown per bucket, since it needs no fee allocation. The all-in, fee-loaded view stays at the level the fee data supports.
+- Default to total-network ROI. Go more granular only when the customer explicitly asks and the cost data exists to support it.
 
 ### 2. Creators
 
