@@ -9,13 +9,13 @@ This skill owns the **presentation** of the Account Context Brain fill-in: one g
 conversation, in a fixed three-part shape, that turns the silent post-install autofill into
 confirmed account context. It does not define the fields — their meanings, pulls, confirm
 loops, and saved outputs live in
-`/agent/brain/meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md` (the ACB
+`/agent/brain/packages/meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md` (the ACB
 package). Read that document before presenting; this skill is the how-to-say-it, that
 document is the what-it-means.
 
 ## Pre-flight
 
-1. Read `/agent/brain/<workspace>/data-sources/meta/account-context.md`. Post-install writes it as a scaffold: every
+1. Read `/agent/brain/<brand>/integrations/meta/account-context.md`. Post-install writes it as a scaffold: every
    field header, autofilled facts, blockers recorded next to the fields they block.
 2. If the scaffold does not exist or the autofill never ran, run the ACB package's Step 0
    (brand context pull) and Step 1 (the field pulls) first — silently, then present.
@@ -149,7 +149,7 @@ Just answer what you know — I'll write the context file from your responses.
 ## After the presentation
 
 - Handle answers and corrections per the ACB package's field rules, and persist them to
-  `/agent/brain/<workspace>/data-sources/meta/account-context.md` as they confirm.
+  `/agent/brain/<brand>/integrations/meta/account-context.md` as they confirm.
 - **The weekly report build is never offered in the walkthrough.** Field 10 (reporting
   structure and marketing calendar) already presented in Part 2 with everything else — that
   is its only appearance. The report itself does not exist for the customer until
@@ -162,7 +162,7 @@ Just answer what you know — I'll write the context file from your responses.
   presentation, and it never cuts the Meta onboarding short: it runs only after the
   account-context questions are handled.
   Inspect this workspace's platform folders under
-  `/agent/brain/<workspace>/data-sources/voc/` and its `voc-sync-<workspace>-*` routines,
+  `/agent/brain/<brand>/integrations/voice-of-customer/` and its `voc-sync-<brand>-*` routines,
   then tell the person what customer voice the brain actually holds: one line per
   integration — the platform, what kind of voice it carries, how many items are synced, how
   many products they span, and the date coverage. For example: "Judge.me: 1,240 reviews
@@ -182,8 +182,8 @@ Just answer what you know — I'll write the context file from your responses.
   person: would they like anything added, and do they have existing docs to use as
   reference (existing personas especially)? Then the trigger is theirs:
   - **Data ready, no audit yet:** check whether
-    `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` exists; if not,
-    make the offer above. If `/agent/brain/<workspace>/_changelog.md` has no
+    `/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md` exists; if not,
+    make the offer above. If `/agent/brain/<brand>/_changelog.md` has no
     `voc-audit-offer` entry, append a dated one. A yes invokes the `voc-audit` skill,
     carrying any additions and reference docs the person named.
   - **An audit already exists:** say when it last ran and roughly how much new customer

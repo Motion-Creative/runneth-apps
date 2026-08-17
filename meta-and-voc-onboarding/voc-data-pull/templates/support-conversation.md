@@ -1,6 +1,6 @@
 # Template: support conversation file
 
-Path: `/agent/brain/<workspace>/data-sources/voc/<platform>/ticket-<external_id>.md`
+Path: `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/ticket-<external_id>.md`
 (keyed by ticket id so re-pulls overwrite the same file).
 
 Layout: H1 headline, bold-label human header (two trailing spaces end every label line;

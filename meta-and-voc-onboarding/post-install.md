@@ -11,7 +11,7 @@ Motion context before anything else executes.
 ## Resolve the workspace folder first
 
 Everything this package persists lives in one folder per Motion workspace:
-`/agent/brain/<workspace>/`, where `<workspace>` is the name of the workspace this
+`/agent/brain/<brand>/`, where `<brand>` is the brand name - the name of the workspace this
 conversation operates in, slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`).
 **Step 0 - read the workspace off the conversation's own context.** This is the
 sequence's first action, before any other work: no Motion commands, no routine listing,
@@ -26,7 +26,7 @@ downstream may re-resolve them from anything else. If that line is null or absen
 which workspace to onboard and stop until answered - never guess.
 
 Nothing else identifies the workspace: not the `runneth:meta-voc-onboarded` roster, not
-existing `/agent/brain/<workspace>/` folders, not `voc-sync-<workspace>-*` routine names,
+existing `/agent/brain/<brand>/` folders, not `voc-sync-<brand>-*` routine names,
 not a prior install or another conversation, not remembered context or anything memory
 or a brain search returns - those record whichever workspaces onboarded *earlier*, and
 on a multi-workspace VM another workspace's state is always present. If the workspace
@@ -38,12 +38,12 @@ resolved workspace's own roster entry and files. One
 org VM holds several workspace folders side by side and they never merge: a second workspace
 onboarding is normal, not a conflict.
 
-Inside that workspace folder, data-source families are siblings under `data-sources/`:
-Meta interpretation files live in `data-sources/meta/` and VoC files live in
-`data-sources/voc/`. In particular, the Account Context Brain is always
-`/agent/brain/<workspace>/data-sources/meta/account-context.md`.
+Inside that workspace folder, per-source families are siblings under `integrations/`:
+Meta interpretation files live in `integrations/meta/` and VoC files live in
+`integrations/voice-of-customer/`. In particular, the Account Context Brain is always
+`/agent/brain/<brand>/integrations/meta/account-context.md`.
 The later Voice of Customer audit skill writes
-`/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` after raw VoC data has
+`/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md` after raw VoC data has
 landed. Post-install and the raw sync routines do not create it; its initial absence is expected.
 
 Idempotency has two parts, because the guards are VM-wide while everything else is
@@ -70,11 +70,11 @@ per-workspace:
   when other workspace folders are already populated and other workspaces are listed in the
   roster. Never read, copy, rename, or overwrite another workspace's folder to serve this one.
   If the roster does not list this workspace but
-  `/agent/brain/<workspace>/data-sources/meta/account-context.md` already exists, a previous run died before
+  `/agent/brain/<brand>/integrations/meta/account-context.md` already exists, a previous run died before
   step 6: resume rather than restart - keep the existing file, fill what is missing, and
   finish through step 6.
 - **Renames:** if this workspace's folder is missing but another
-  `/agent/brain/*/data-sources/meta/account-context.md` records this workspace's id in its
+  `/agent/brain/*/integrations/meta/account-context.md` records this workspace's id in its
   metadata, the workspace was renamed - move that folder to the current name instead of
   onboarding from scratch.
 
@@ -107,7 +107,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    its data lands.
 2. **VoC first (it runs in the background).** For each reachable VoC platform, run the
    voc-data-pull skill's "Set up the recurring sync" procedure: pin the platform account
-   to this workspace, create the `voc-sync-<workspace>-<platform>` routine, and kick its
+   to this workspace, create the `voc-sync-<brand>-<platform>` routine, and kick its
    first run. The pin is the skill's step 1 and it can need a human answer - accounts are
    org-level with no workspace tag, so which account belongs to this workspace is never
    inferred. Handle that inside this install turn: platforms the skill lets you auto-pin
@@ -125,12 +125,12 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    or "the connected account": routine
    conversations run with no workspace attached, so a routine that tries to resolve one at run
    time has nothing to resolve. Its output path is
-   `/agent/brain/<workspace>/data-sources/voc/<platform>/`, written out in full.
+   `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/`, written out in full.
    **A connected Meta workspace is
    itself a reachable VoC platform** - ad comments are customer voice, pulled with
    `motion meta creative-comments` (platform slug `meta-ad-comments`; one file per creative
-   under `voc/meta-ad-comments/`, at the same level as the other platform folders) - so it
-   always gets a `voc-sync-<workspace>-meta-ad-comments` routine alongside the others: the
+   under `voice-of-customer/meta-ad-comments/`, at the same level as the other platform folders) - so it
+   always gets a `voc-sync-<brand>-meta-ad-comments` routine alongside the others: the
    standard pull of every onboarding, not a discovery outcome. For Meta, connected is the
    only reachability test: if a Meta workspace shows as connected, create and kick that
    routine even when a Meta API probe errors in this conversation - the
@@ -156,15 +156,15 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    the staged block in any way, run this step and replace that block. Never leave a stale
    block in place because its sentinel is present. The
    blocks ship ready-made in
-   `/agent/brain/meta-and-voc-onboarding/meta-onboarding-rules/` (`meta-analysis-account-context.md`,
+   `/agent/brain/packages/meta-and-voc-onboarding/meta-onboarding-rules/` (`meta-analysis-account-context.md`,
    `meta-analysis-validation.md`, `brain-organization.md`, `brain-file-conventions.md`). On this VM,
    `/agent/user.md` is walled off from Bash entirely (reads and writes are both refused -
    do not try a script) and the edit/patch tool fails validation; the file-write tool is
    the only thing that can change it, and the file's current contents are already in your
    system prompt. So:
    - Read the four guard files with the file-read tool. **Substitute nothing.** The blocks
-     are workspace-agnostic by design: they resolve `/agent/brain/<workspace>/` per
-     conversation, so `<workspace>` and every other angle-bracket placeholder
+     are workspace-agnostic by design: they resolve `/agent/brain/<brand>/` per
+     conversation, so `<brand>` and every other angle-bracket placeholder
      (`<workspaceId>`, `<userId>`, `<platform>`, `<routine-id>`) stay exactly as written.
      Stamping an id into a guard is a corruption, not a customization: it would bind
      VM-wide rules to one workspace.
@@ -184,9 +184,9 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
 4. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
    creative content layer (Cacheth + query paths), detect naming patterns as provisional
    proposals for the next step. Every cache call carries this workspace's id, and the
-   provisional decode is written to `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`. The
+   provisional decode is written to `/agent/brain/<brand>/integrations/meta/naming-decoder.json`. The
    procedure is
-   `/agent/brain/meta-and-voc-onboarding/meta-creative-attributes-playbook.md`
+   `/agent/brain/packages/meta-and-voc-onboarding/meta-creative-attributes-playbook.md`
    (its Step 2 is the install-time part). It ships as a brain document - there is no
    creative-attributes skill directory to look for. Skipping the playbook is not an
    option: if that file is missing, say so in the readiness report - never improvise
@@ -195,9 +195,9 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    Autofill every field possible from live data - silently. Do not present the findings,
    do not ask the gap questions, do not run the walkthrough; the onboarding-walkthrough
    skill owns all of that and fires later, on a human's yes. **Persist
-   before you stop:** write `/agent/brain/<workspace>/data-sources/meta/account-context.md` in the saved-file
+   before you stop:** write `/agent/brain/<brand>/integrations/meta/account-context.md` in the saved-file
    format the account-context playbook defines (staged at
-   `/agent/brain/meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md`;
+   `/agent/brain/packages/meta-and-voc-onboarding/meta-account-context-brain-onboarding-package.md`;
    Section 3: a prose reference document,
    not the worksheet) with every autofilled field and the provisional naming decode. Record
    the workspace name and workspace id in the file's metadata block - that is what makes a
@@ -226,11 +226,11 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    it. The roster block:
 
    > `<!-- BEGIN runneth:meta-voc-onboarded -->`
-   > `meta-and-voc-onboarding has completed for these workspaces: <workspace>[, <workspace>...]`
+   > `meta-and-voc-onboarding has completed for these workspaces: <brand>[, <brand>...]`
    > `<!-- END runneth:meta-voc-onboarded -->`
 
    Write the resolved folder name, not the display name or the id - the same string used for
-   `/agent/brain/<workspace>/`, so the gate and the folder always agree.
+   `/agent/brain/<brand>/`, so the gate and the folder always agree.
 7. **Close with the readiness report - status only, never content.** One line per part
    stating its state (running in background / done / waiting on a person / skipped and
    why). The report carries no findings and no numbers of any kind: no account
@@ -247,7 +247,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    either ("average ROAS is 0.88" belongs in the brain file, never in this turn's
    visible text). The report's shape is literal:
 
-   > meta-and-voc-onboarding - install complete for <workspace>
+   > meta-and-voc-onboarding - install complete for <brand>
    > - VoC sync: <per-platform status, one line total>
    > - Voice of Customer Audit: waits for backfill completion and a person's yes
    > - Guards: merged

@@ -30,11 +30,11 @@ Creative strategy packages build on these files, so shape consistency matters mo
   data sync -> run the "Set up the recurring sync" procedure below. Package installation
   alone is never the ask. Setup never happens at any other unprompted moment and never
   just because a platform connects.
-- A `voc-sync-<workspace>-<platform>` routine run is executing (the normal path - see Recurring sync
+- A `voc-sync-<brand>-<platform>` routine run is executing (the normal path - see Recurring sync
   runs below).
 - The user asks to pull, refresh, or extend VoC data, or asks for reviews/support
   conversations "in files" or "in the brain". Route these through the routine, not an
-  in-conversation pull: make sure `voc-sync-<workspace>-<platform>` exists (setup procedure below),
+  in-conversation pull: make sure `voc-sync-<brand>-<platform>` exists (setup procedure below),
   then `routine run --id <routine-id>` for an immediate refresh.
 
 Run one platform per pull unless asked otherwise. Never wait for confirmation to start -
@@ -57,10 +57,10 @@ the window rules below fully determine what to pull.
   contract; recipes only state per-platform mechanics.
 - **Raw data files are separate from integration guides.** Never write pulled data into
   `/agent/brain/integrations/<source>/` - the integration guide spec explicitly forbids raw
-  dumps in guides. VoC data lives only under `/agent/brain/<workspace>/data-sources/voc/`.
+  dumps in guides. VoC data lives only under `/agent/brain/<brand>/integrations/voice-of-customer/`.
 - **The later audit is not a pull output.** The Voice of Customer audit skill runs later in
   onboarding, after raw data has landed. It writes
-  `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. This raw-pull skill
+  `/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md`. This raw-pull skill
   never creates or updates that file, and its absence during install or backfill is expected.
 - **PII: leave `author_contact` null.** The unified template keeps the field, but the policy
   call on storing customer emails is pending. Do not populate it until told the policy allows
@@ -176,8 +176,8 @@ silently. A missing recipe is never a reason to stop.
 
 ### Folder convention
 
-Root: `/agent/brain/<workspace>/data-sources/voc/<platform>/`, where `<workspace>` is the
-Motion workspace this pull belongs to, slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). **Every pull is scoped to one workspace.** The workspace folder is the boundary that
+Root: `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/`, where `<brand>` is the
+brand - the Motion workspace this pull belongs to - slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). **Every pull is scoped to one workspace.** The workspace folder is the boundary that
 keeps two brands' customer voice apart: a pull for one workspace never writes into another's
 folder, and pulls are never merged into a shared root. Items are keyed by `external_id`, so a
 shared root would not overwrite - it would silently accumulate two brands' reviews into one
@@ -186,17 +186,17 @@ corpus, which is worse. Under the workspace folder, all VoC pulls live under the
 slug as the folder name (`judge_me`, `gorgias_oauth`, ...; Meta ad comments use
 `meta-ad-comments` - it sits at the same level as every other platform folder).
 The later Voice of Customer audit is the one non-item artifact at the `voc/` root:
-`/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. It is created by the
+`/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md`. It is created by the
 later audit skill, not by these pull or recurring-sync procedures. Raw platform folders remain
 items-only.
 The filename prefix carries the source type:
 
-- Reviews: `/agent/brain/<workspace>/data-sources/voc/<platform>/review-<external_id>.md`
-- Support tickets/conversations: `/agent/brain/<workspace>/data-sources/voc/<platform>/ticket-<external_id>.md`
-- Meta ad comments: `/agent/brain/<workspace>/data-sources/voc/meta-ad-comments/creative-<creative_asset_id>.md`
+- Reviews: `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/review-<external_id>.md`
+- Support tickets/conversations: `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/ticket-<external_id>.md`
+- Meta ad comments: `/agent/brain/<brand>/integrations/voice-of-customer/meta-ad-comments/creative-<creative_asset_id>.md`
   - **one file per creative**, carrying every comment pulled for that creative
-- Community posts/comments (Reddit): `/agent/brain/<workspace>/data-sources/voc/reddit/post-<external_id>.md`
-  and `/agent/brain/<workspace>/data-sources/voc/reddit/comment-<external_id>.md`
+- Community posts/comments (Reddit): `/agent/brain/<brand>/integrations/voice-of-customer/reddit/post-<external_id>.md`
+  and `/agent/brain/<brand>/integrations/voice-of-customer/reddit/comment-<external_id>.md`
 
 Every raw-item path is keyed by the item's `external_id` and nothing else - for Meta ad
 comments the creative is the item, so the file is keyed by its `creative_asset_id`. This is
@@ -334,14 +334,14 @@ adapter is a field-mapping exercise, not design work.
 
 ## Set up the recurring sync
 
-All pulling happens through one daily routine per connected platform (`voc-sync-<workspace>-<platform>`).
+All pulling happens through one daily routine per connected platform (`voc-sync-<brand>-<platform>`).
 **Setup runs after the package activation receives an explicit human yes for the
 disclosed workspace setup, or when asked directly** - installation alone is never the
 ask, and setup never runs at any other unprompted moment. When triggered, do this for each
 available VoC platform - recipe or no recipe (Step 1's scope rule), and available means
 the org can reach it by any path (OAuth connection, stored API key, or Motion native;
 Step 1 resolves which): run
-`routine list --search "voc-sync-<workspace>-<platform>"` - routine absence is what needs setup, not
+`routine list --search "voc-sync-<brand>-<platform>"` - routine absence is what needs setup, not
 folder state:
 
 - **Routine exists** -> do nothing (already set up).
@@ -352,7 +352,7 @@ folder state:
    by asking, never by inference:
    - OAuth path: `integrations accounts --app <slug>`, then show each account's identity
      (account name and account id) and ask. **Even when exactly one account is listed,
-     ask**: "Is <accountName> the <platform> account for <workspace>? It may be shared
+     ask**: "Is <accountName> the <platform> account for <brand>? It may be shared
      with other workspaces, or this workspace's account may not be connected yet." A lone
      account can belong to a different workspace, so its existence is not an answer. The
      one exception: when the org has exactly one Motion workspace, everything on this VM
@@ -374,7 +374,7 @@ folder state:
    - Motion native (Meta ad comments): no pin needed - `--workspace-id` already scopes it.
 
 2. Create the routine. Fill in the real current conversation id for `<conversation-id>`,
-   the resolved workspace folder name for `<workspace>`, the resolved workspace id for
+   the resolved workspace folder name for `<brand>`, the resolved workspace id for
    `<workspaceId>`, and the pinned account's name and id for `<accountName>` /
    `<accountId>`; keep the cron and the name shape exactly as written. **Every one of those
    values is written out literally, never left as a placeholder for the run to resolve:**
@@ -385,9 +385,9 @@ folder state:
    routine, and that collision is what mixes two brands' data:
 
    ```
-   routine add --name "voc-sync-<workspace>-<platform>" \
-     --delivery "Daily incremental success: no notification - the deliverable is the files under /agent/brain/<workspace>/data-sources/voc/<platform>/. On the first fully covered backfill across any voc-sync-<workspace>-* routine, if /agent/brain/<workspace>/_changelog.md does not already contain a voc-audit-offer entry, send one brief note to web conversation <conversation-id>: name the source that finished, say the customer voice is ready, and offer a Voice of Customer Audit by previewing the plan in your own words - it will separate every entry by product, score each 1-5 for usefulness, and break the strong ones into five buckets (pain points, trigger moments, objections, transformations, standout language) plus personas per qualifying product - then ask whether they'd like anything added or have existing docs (like personas) to use as reference. Then append a dated voc-audit-offer entry to /agent/brain/<workspace>/_changelog.md. Never run the audit without a person's yes. If the run fails, the pinned account is disconnected, or coverage is incomplete, send a brief note to the same conversation with conversation send --to <conversation-id>." \
-     --prompt "Run the voc-data-pull skill for <platform> as a recurring sync run for Motion workspace <workspace> (workspace id <workspaceId>). Pull only from the pinned account <accountName> (account id <accountId>): pass --account <accountId> on every integrations proxy call and never use another account of this platform, even if others are connected. Write every file under /agent/brain/<workspace>/data-sources/voc/<platform>/ and nowhere else; pass --workspace-id <workspaceId> on Motion commands that take it. Follow the skill's Recurring sync rules exactly - they define the pull window, disconnect handling, and coverage reporting." \
+   routine add --name "voc-sync-<brand>-<platform>" \
+     --delivery "Daily incremental success: no notification - the deliverable is the files under /agent/brain/<brand>/integrations/voice-of-customer/<platform>/. On the first fully covered backfill across any voc-sync-<brand>-* routine, if /agent/brain/<brand>/_changelog.md does not already contain a voc-audit-offer entry, send one brief note to web conversation <conversation-id>: name the source that finished, say the customer voice is ready, and offer a Voice of Customer Audit by previewing the plan in your own words - it will separate every entry by product, score each 1-5 for usefulness, and break the strong ones into five buckets (pain points, trigger moments, objections, transformations, standout language) plus personas per qualifying product - then ask whether they'd like anything added or have existing docs (like personas) to use as reference. Then append a dated voc-audit-offer entry to /agent/brain/<brand>/_changelog.md. Never run the audit without a person's yes. If the run fails, the pinned account is disconnected, or coverage is incomplete, send a brief note to the same conversation with conversation send --to <conversation-id>." \
+     --prompt "Run the voc-data-pull skill for <platform> as a recurring sync run for Motion workspace <brand> (workspace id <workspaceId>). Pull only from the pinned account <accountName> (account id <accountId>): pass --account <accountId> on every integrations proxy call and never use another account of this platform, even if others are connected. Write every file under /agent/brain/<brand>/integrations/voice-of-customer/<platform>/ and nowhere else; pass --workspace-id <workspaceId> on Motion commands that take it. Follow the skill's Recurring sync rules exactly - they define the pull window, disconnect handling, and coverage reporting." \
      --cron "0 6 * * *"
    ```
 
@@ -428,7 +428,7 @@ skill flow:
 
 - **Pull window** (this is what makes runs incremental - id-keyed files only dedupe
   writes, they do not shrink API paging):
-  - `/agent/brain/<workspace>/data-sources/voc/<platform>/` empty -> pull the trailing 12 months (this
+  - `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/` empty -> pull the trailing 12 months (this
     run is the backfill).
   - Otherwise -> pull from the **newest existing item's `created_at` minus 2 days**
     (overlap for safety; self-healing across paused or failed runs), never further back
@@ -448,11 +448,11 @@ skill flow:
   in a new setup pass.
 - **Delivery**: daily incremental success is silent - the files are the deliverable and the
   run summary is recorded in run history. The first of this workspace's
-  `voc-sync-<workspace>-*` runs to complete full backfill coverage sends one offer to the
+  `voc-sync-<brand>-*` runs to complete full backfill coverage sends one offer to the
   delivery conversation — not a bare yes/no question but a short preview of what the audit
   will do (split by product, score 1–5, the five buckets, personas), closing with an
   invitation to add anything or supply reference docs such as existing personas. Before
-  sending, check `/agent/brain/<workspace>/_changelog.md` for a `voc-audit-offer` entry; if
+  sending, check `/agent/brain/<brand>/_changelog.md` for a `voc-audit-offer` entry; if
   found, stay silent. After sending, append a dated `voc-audit-offer` entry naming the
   source whose backfill completed. This is an offer only: never run the audit until a
   person says yes. Failures, disconnects, and incomplete coverage get a brief note to the

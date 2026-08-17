@@ -1,6 +1,6 @@
 # Template: review file
 
-Path: `/agent/brain/<workspace>/data-sources/voc/<platform>/review-<external_id>.md`
+Path: `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/review-<external_id>.md`
 
 Layout: H1 headline with stars (omit the quoted title when null), bold-label human header
 (two trailing spaces end every label line), the review text between `---` rules, then the

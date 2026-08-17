@@ -1,12 +1,12 @@
 <!-- BEGIN runneth:account-context-guard v3 -->
 Account context guard:
 
-- Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per
-  conversation; the `<workspace>` token above stays literal in this file.
+- Workspace folder: `/agent/brain/<brand>/`, where `<brand>` is this conversation's
+  brand name (the workspace's name) slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per
+  conversation; the `<brand>` token above stays literal in this file.
 - Before any ad-performance work for this account (rankings, "best ads," CPA/ROAS reads,
   winner or cut calls, creative performance judgments), read
-  /agent/brain/<workspace>/data-sources/meta/account-context.md first. Never read another workspace's folder to
+  /agent/brain/<brand>/integrations/meta/account-context.md first. Never read another workspace's folder to
   answer a question about this one.
 - If that file does not exist, or its required interpretation fields are not all [CONFIRMED],
   treat account interpretation as unknown. Offer to run the onboarding walkthrough (the

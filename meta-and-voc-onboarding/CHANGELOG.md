@@ -44,17 +44,17 @@ The package as it ships:
   of the GitHub source. `installPolicy: manual`, `updatePolicy: auto`,
   `categories: []`.
 - Stages onboarding docs and four ready-made guard blocks into
-  `/agent/brain/meta-and-voc-onboarding/`, plus the `voc-data-pull`, `voc-audit`,
+  `/agent/brain/packages/meta-and-voc-onboarding/`, plus the `voc-data-pull`, `voc-audit`,
   `meta-ad-performance-analysis`, and `onboarding-walkthrough` skills into the
   skills root.
 - **One folder per workspace.** Everything the package produces lands in
-  `/agent/brain/<workspace>/` (workspace name slugged: lowercase; non-alphanumeric
+  `/agent/brain/<brand>/` (brand name (the workspace's name) slugged: lowercase; non-alphanumeric
   runs become one hyphen; trim hyphens): the Meta interpretation layer under
-  `data-sources/meta/` (`account-context.md`, `naming-decoder.json`,
-  `validation.md`, `_changelog.md`), VoC data under `data-sources/voc/<platform>/`
+  `integrations/meta/` (`account-context.md`, `naming-decoder.json`,
+  `validation.md`, `_changelog.md`), VoC data under `integrations/voice-of-customer/<platform>/`
   (Meta ad comments are the standard pull of every onboarding, one file per creative
-  under `data-sources/voc/meta-ad-comments/`),
-  the compiled VoC audit at `data-sources/voc/voice-of-customer-audit.md`, and
+  under `integrations/voice-of-customer/meta-ad-comments/`),
+  the compiled VoC audit at `integrations/voice-of-customer/voice-of-customer-audit.md`, and
   `_tag-vocabulary.md` at the workspace root alongside that workspace's general
   `_changelog.md`. A second workspace in the same org onboards additively without
   touching the first.
@@ -74,7 +74,7 @@ The package as it ships:
   pins a human-confirmed account per workspace per platform; every sync run
   addresses that exact account (`--account <accountId>`) and never falls back to
   another. Auto-pin only when the org has exactly one Motion workspace. Routines
-  are workspace-named (`voc-sync-<workspace>-<platform>`), each carrying its
+  are workspace-named (`voc-sync-<brand>-<platform>`), each carrying its
   workspace folder path, workspace id, and pinned account id literally - routine
   runs have no workspace attached to resolve.
 - **Voice of Customer Audit** (`voc-audit` skill): the manually triggered compiled
@@ -89,10 +89,10 @@ The package as it ships:
   preview the method (split by product, score 1-5, the five buckets, personas)
   and invite additions and reference docs such as existing personas, which the
   run honors. It saves one canonical compiled page at
-  `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`, with
+  `/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md`, with
   Knoweth metadata and raw-item citations, indexed in `/agent/INDEX.md`. The
   workspace's first fully covered VoC backfill offers the audit once and records
-  the offer in `/agent/brain/<workspace>/_changelog.md`; the audit runs only on a
+  the offer in `/agent/brain/<brand>/_changelog.md`; the audit runs only on a
   person's yes or explicit request - never on connection, sync, install, or daily
   refresh - and person-approved reruns regenerate that page rather than creating
   duplicates. `meta-ad-performance-analysis` reads the audit for customer-side WHY
@@ -121,7 +121,7 @@ The package as it ships:
   remembered context never identify the workspace. It then runs silently in the
   installing conversation: reachability check
   (`integrations status --app <slug>` per known VoC platform, stored secrets,
-  Meta workspace connection), one daily `voc-sync-<workspace>-<platform>` routine
+  Meta workspace connection), one daily `voc-sync-<brand>-<platform>` routine
   per reachable platform with the first run kicked, single-Write guard merge into
   `/agent/user.md` with an anti-duplication check, Creative Attributes, and the
   Account Context Brain autofill persisted to disk - asking nothing else except
@@ -237,7 +237,7 @@ The package as it ships:
   corrections in any later conversation get the same routing, no scheduled
   check-ins.
 - Meta reachability is connection-status-driven: a connected Meta workspace gets
-  `voc-sync-<workspace>-meta-ad-comments` even when API probes error, and the
+  `voc-sync-<brand>-meta-ad-comments` even when API probes error, and the
   account-context scaffold is always written, blockers recorded per field.
 - Install-failure posture: report the exact error and stop - never hand-copy
   staged files or edit state under `/agent/.runneth/packages/`.

@@ -36,13 +36,13 @@ the files; it did not authorize account access or persistent setup. Before any
 connected-account check, routine creation, account-context write, `/agent/INDEX.md`
 edit, or `/agent/user.md` change, make this offer:
 
-> Meta and Voice of Customer onboarding is installed for <workspace>. Starting it will
+> Meta and Voice of Customer onboarding is installed for <brand>. Starting it will
 > inspect this workspace's connected accounts, create the applicable daily VoC sync
 > routines, save Meta account context under this workspace's brain folder, and update
 > the shared onboarding guards and completion roster in `/agent/user.md`. Would you
 > like me to start that setup now?
 
-Fill only `<workspace>` from the resolved `Default workspace:` line. Do not inspect the
+Fill only `<brand>` from the resolved `Default workspace:` line. Do not inspect the
 connection inventory or filesystem to make the offer. Offer at most once per
 conversation. If the person declines, defers, or asks about something else, handle their
 message normally and do not repeat the offer in that conversation. A later conversation
@@ -50,7 +50,7 @@ may offer again because the workspace remains absent from the completion roster.
 
 Only an explicit human yes to this disclosed setup authorizes the sequence. On that yes:
 
-1. Read `/agent/brain/meta-and-voc-onboarding/post-install.md`.
+1. Read `/agent/brain/packages/meta-and-voc-onboarding/post-install.md`.
 2. Execute its sequence for this workspace, starting with its step 0: quote the
    `Default workspace:` line from this prompt's `Motion context:` section verbatim and
    state the name, workspaceId, and slug taken from it before the reachability check,
@@ -63,7 +63,7 @@ Only an explicit human yes to this disclosed setup authorizes the sequence. On t
 The presence of the four guard sentinels (`runneth:account-context-guard` and the rest)
 means only that some workspace on this VM has been onboarded. It is never evidence that
 this one has. Onboarding a second workspace is normal and additive: it writes a new
-`/agent/brain/<workspace>/` folder and changes nothing that belongs to the first.
+`/agent/brain/<brand>/` folder and changes nothing that belongs to the first.
 
 On an explicit reinstall or upgrade of this package, disclose the same effects and ask
 again before re-running post-install, even if this workspace is already listed. Reinstall
