@@ -10,3 +10,6 @@
   customer data.
 - Streamlined first use so direct indexing requests proceed into local setup without
   an upfront effects disclaimer or redundant confirmation.
+- Changed exploratory setup to inspect only the current workspace's brain, recommend a
+  concrete non-overlapping source plan, and accept one yes instead of asking the person
+  to design the index manually.

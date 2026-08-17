@@ -19,7 +19,13 @@ person to select a workspace.
 
 Generated state is isolated at
 `/agent/tools/corpus-search-data/workspaces/<workspace-id>/`. Do not read another
-workspace's state and do not register a source folder on the person's behalf.
+workspace's state and do not register a source folder without the person's confirmation.
+
+The current workspace's brain folder is `/agent/brain/<workspace>/`, where `<workspace>`
+is the current Motion workspace name slugged to lowercase, with every run of non-`a-z0-9`
+characters replaced by one hyphen and leading or trailing hyphens removed. Use the name
+only to locate this brain folder; continue to use the literal Motion workspace ID for every
+CLI command. Never inspect another workspace's brain folder.
 
 ## First relevant use
 
@@ -29,17 +35,38 @@ make the local-search path feel like normal task execution:
 - A direct request to set up, index, or search a specified Markdown folder is approval
   to initialize its local workspace index. Do not repeat a setup disclaimer or ask for
   a redundant second yes.
-- If the request is exploratory and no folder has been selected, offer setup at most
-  once by asking which Markdown folders to index. Do not recite an effects checklist.
+- If the request is exploratory and no folder has been selected, inspect the current
+  workspace's brain and propose what to index. Do not make the person choose folders or
+  invent labels from scratch when the brain already provides enough evidence.
 - Always confirm the resolved absolute source paths before registering them. Indexing
   reads Markdown and writes only generated workspace state; it never edits source files.
 
 Then:
 
-1. Run `workspace init` with the exact workspace ID.
-2. Ask which absolute folders to index and a short `name` and `kind` for each. Echo the
-   canonical choices and wait for confirmation before `source add`.
-3. Run `refresh --no-embeddings` so useful BM25 search exists immediately.
+1. When no source was specified, scan only `/agent/brain/<workspace>/` for Markdown:
+   - inventory the folder tree and Markdown counts, then inspect a small representative
+     sample so the recommendation reflects the actual content rather than folder names
+     alone;
+   - prefer substantive, durable corpus families such as VoC reviews, support
+     conversations, research, briefs, transcripts, or summaries;
+   - propose one to three non-overlapping source roots. Do not propose both a parent and
+     its child, which would duplicate results;
+   - exclude empty folders, hidden/runtime state, changelogs, tag vocabularies, package
+     instructions, and other administrative files unless the person explicitly asks for
+     them;
+   - resolve every proposed path canonically and reject any symlink or resolved path that
+     escapes the current workspace's brain folder;
+   - if the brain folder is absent or contains no useful Markdown, say so and ask for a
+     different folder instead of manufacturing a recommendation.
+2. Present one concise recommendation containing each source's plain-English label,
+   canonical absolute path, `name`, `kind`, recursive Markdown file count, and one-line
+   reason. End with one confirmation such as, "Want me to index that now?" A plain yes
+   confirms those exact sources; do not ask for the paths or confirm them again. If the
+   person changes the proposal, show the revised source list once and wait for their yes.
+3. Once the sources are approved—either by a direct request naming a folder or by a yes
+   to the recommendation—run `workspace init` with the exact workspace ID, run
+   `source add` for the approved sources, and then
+   `refresh --no-embeddings` so useful BM25 search exists immediately.
 4. After local search works, optionally ask one concise question: semantic search
    installs `sqlite-vec==0.1.9` and sends source chunks plus reranking candidates to
    OpenAI using the customer's key; should it be enabled? Do not install the dependency,

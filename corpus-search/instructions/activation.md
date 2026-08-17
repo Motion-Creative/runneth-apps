@@ -13,8 +13,12 @@ then read and follow `/agent/.agents/skills/corpus-search/SKILL.md`.
 If state is absent or not configured with a source, follow the skill's streamlined
 local setup. A direct request to set up, index, or search a specified Markdown folder
 authorizes local initialization and reading that confirmed folder; do not recite a
-disclaimer or request a redundant second yes. If no folder has been selected, ask which
-folder to index at most once in this conversation. Keep dependency installation,
+disclaimer or request a redundant second yes. If no folder has been selected, inspect
+only the current workspace's `/agent/brain/<workspace>/` folder and recommend one to
+three useful, non-overlapping Markdown source roots with canonical paths, counts, names,
+kinds, and brief reasons. Ask only whether to index that proposal; a plain yes confirms
+the exact list. Ask the person to choose a folder only when the workspace brain has no
+useful Markdown or they reject the recommendation. Keep dependency installation,
 credential collection, OpenAI transfer, vector rebuild, source removal, and routine
 creation behind their concise point-of-action confirmations. If the person declines or
 moves on, drop the offer for this conversation.
