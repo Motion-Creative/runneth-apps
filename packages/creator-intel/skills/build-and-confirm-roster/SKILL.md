@@ -25,7 +25,7 @@ This is the single roster skill. It replaces the older separate propose and revi
 
 1. Read the connected roster source for names, handles, talent type, and any rights column.
 2. Pull the full creator library with the stored workspace id using `motion meta ads --grain ads --include-associated-objects --date-range last_365d` with no `--limit`, paging through every result. This is a full-library pull over the last 365 days, not a recent-window sample, so every creator with any ad in the year is included. Treat ad rows, ad names, associated creative assets, and ads without synced Motion creative assets as evidence.
-3. Match Meta to the database where possible. Where a match is not possible, keep the creator as unresolved rather than dropping them. Skip matching cleanly when there is nothing to match.
+3. Tie ads to creators using the stored `adCreatorNamingConvention` from setup. If it was not captured or is uncertain, infer the pattern from the ad names, show the person the pattern you found, and confirm it before trusting any match. Match Meta to the database where possible. Where a match is not possible, keep the creator as unresolved rather than dropping them. Skip matching cleanly when there is nothing to match.
 4. For creator resolution against Motion, use `motion inspo creators` for exact name or handle. If a broad search hits the known schema issue, say the search failed and fall back to supported category, follower, or exact name and handle pulls. A tool error is not an empty result.
 5. Capture per creator: identity and handles, talent type, the simple rights object, and what the creator represents (their topics and the angles they can carry). Representation matters because Stage 4 gap analysis depends on it.
 

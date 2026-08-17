@@ -44,7 +44,8 @@ Every JSON file uses `schemaVersion: 1`. Collection files use the exact top-leve
     "connection": "connected | not-connected | export-only",
     "hasCostData": false,
     "hasRightsColumn": false,
-    "rightsDefault": null
+    "rightsDefault": null,
+    "adCreatorNamingConvention": null
   },
   "hiringLens": {
     "dimensions": [],

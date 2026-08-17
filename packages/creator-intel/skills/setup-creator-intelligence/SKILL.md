@@ -44,7 +44,8 @@ Ask these one at a time. Everything already known from context is confirmed, not
   - Only naming conventions: no source to connect. Say plainly the roster will come from Meta ad names alone, so cost and rights fields will be missing and the ROI page will not appear.
 - If a roster source exists, ask: "Does that same source hold what you pay each creator, or is that somewhere else?" This decides whether the ROI page can be built. If no cost data exists anywhere, say the ROI page will be left out.
 - Rights: ask "How do you handle usage rights: roughly the same for everyone, say all whitelisted, or does it vary by creator?" If the roster source already has a rights column, skip the open ask, say you will read rights from there, and just confirm the default.
-- Record source type, connection state, whether cost data exists, and the rights default in `workspace.json.rosterSource`.
+- Ask how creators are identified in the ad account, and never assume: is the creator's name a token in the ad name, is there a tag, or another naming convention? Store it as `rosterSource.adCreatorNamingConvention`. If they do not know, say you will infer the pattern from the ad names and confirm it with them before trusting any match.
+- Record source type, connection state, whether cost data exists, the rights default, and the ad-account creator naming convention in `workspace.json.rosterSource`.
 
 ### 1c. How you hire creators, then ground it
 
