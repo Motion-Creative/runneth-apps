@@ -48,13 +48,36 @@ def _require_label(value: str, label: str) -> str:
     return value
 
 
+def _semantic_ready(snapshot: dict[str, object]) -> bool:
+    return bool(
+        snapshot["enabledChunksTotal"]
+        and snapshot["enabledChunksEmbedded"] == snapshot["enabledChunksTotal"]
+        and snapshot["vectorTable"]
+        and snapshot["sqliteVecInstalledVersion"] == SQLITE_VEC_VERSION
+    )
+
+
 def cmd_workspace_init(args) -> tuple[dict[str, Any], int]:
     paths = _paths(args, create=True)
     connection = connect(paths)
     snapshot = stats(connection, paths)
     connection.close()
-    phase = "awaiting_sources" if snapshot["sourcesTotal"] == 0 else "ready_lexical"
-    state = write_state(paths, phase, initialized=True)
+    if snapshot["sourcesTotal"] == 0:
+        phase = "awaiting_sources"
+    elif snapshot["sourcesEnabled"] == 0:
+        phase = "sources_disabled"
+    elif snapshot["sourcesPendingRefresh"] and snapshot["enabledChunksTotal"] == 0:
+        phase = "awaiting_refresh"
+    elif _semantic_ready(snapshot):
+        phase = "ready_hybrid"
+    else:
+        phase = "ready_lexical"
+    state = write_state(
+        paths,
+        phase,
+        initialized=True,
+        sourcesConfigured=bool(snapshot["sourcesTotal"]),
+    )
     return {"workspaceId": paths.workspace_id, "state": state, "stats": snapshot}, 0
 
 
@@ -79,7 +102,7 @@ def cmd_source_add(args) -> tuple[dict[str, Any], int]:
         ) from exc
     row = connection.execute("SELECT * FROM source WHERE name=?", (name,)).fetchone()
     connection.close()
-    write_state(paths, "ready_lexical", sourcesConfigured=True)
+    write_state(paths, "awaiting_refresh", sourcesConfigured=True)
     return {"source": dict(row)}, 0
 
 
@@ -125,11 +148,13 @@ def cmd_source_update(args) -> tuple[dict[str, Any], int]:
     values.append(name)
     with connection:
         connection.execute(
-            f"UPDATE source SET {', '.join(updates)}, updated_at=CURRENT_TIMESTAMP WHERE name=?",
+            f"UPDATE source SET {', '.join(updates)}, last_refresh_at=NULL, "
+            "last_refresh_status=NULL, updated_at=CURRENT_TIMESTAMP WHERE name=?",
             values,
         )
     row = connection.execute("SELECT * FROM source WHERE name=?", (name,)).fetchone()
     connection.close()
+    write_state(paths, "awaiting_refresh", sourcesConfigured=True)
     return {"source": dict(row), "refreshRequired": True}, 0
 
 
@@ -144,7 +169,17 @@ def cmd_source_toggle(args, enabled: bool) -> tuple[dict[str, Any], int]:
             (1 if enabled else 0, name),
         )
     row = connection.execute("SELECT * FROM source WHERE name=?", (name,)).fetchone()
+    snapshot = stats(connection, paths)
     connection.close()
+    if snapshot["sourcesEnabled"] == 0:
+        phase = "sources_disabled"
+    elif enabled and row["last_refresh_status"] is None:
+        phase = "awaiting_refresh"
+    elif _semantic_ready(snapshot):
+        phase = "ready_hybrid"
+    else:
+        phase = "ready_lexical"
+    write_state(paths, phase, sourcesConfigured=True)
     return {"source": dict(row)}, 0
 
 
@@ -185,7 +220,17 @@ def cmd_source_remove(args) -> tuple[dict[str, Any], int]:
         pass
     with connection:
         connection.execute("DELETE FROM source WHERE source_id=?", (source["source_id"],))
+    snapshot = stats(connection, paths)
     connection.close()
+    if snapshot["sourcesTotal"] == 0:
+        phase = "awaiting_sources"
+    elif snapshot["sourcesEnabled"] == 0:
+        phase = "sources_disabled"
+    elif _semantic_ready(snapshot):
+        phase = "ready_hybrid"
+    else:
+        phase = "ready_lexical"
+    write_state(paths, phase, sourcesConfigured=bool(snapshot["sourcesTotal"]))
     return {
         "removed": name,
         "generatedAssetsDeleted": assets,

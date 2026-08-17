@@ -191,14 +191,28 @@ def search(
     vector_rows = []
     degraded: list[dict[str, str]] = []
     semantic_available = False
+    coverage = connection.execute(
+        "SELECT count(*) AS total, "
+        "sum(CASE WHEN c.embedded_at IS NOT NULL THEN 1 ELSE 0 END) AS embedded "
+        "FROM chunk c JOIN asset a ON a.asset_id=c.asset_id "
+        "JOIN source s ON s.source_id=a.source_id WHERE s.enabled=1"
+    ).fetchone()
+    enabled_chunks = int(coverage["total"] or 0)
+    embedded_chunks = int(coverage["embedded"] or 0)
     if mode != "lexical":
         tick = time.monotonic()
         try:
             if not vec_table_exists(connection):
                 raise CorpusSearchError("vector index has not been created", code="vector_index_missing", exit_code=4)
-            load_sqlite_vec(connection)
-            if connection.execute("SELECT count(*) FROM chunk WHERE embedded_at IS NOT NULL").fetchone()[0] == 0:
+            if enabled_chunks == 0:
                 raise CorpusSearchError("no chunks have embeddings yet", code="embeddings_missing", exit_code=4)
+            if embedded_chunks != enabled_chunks:
+                raise CorpusSearchError(
+                    "embedding backfill is incomplete; lexical search remains available",
+                    code="embedding_backfill_incomplete",
+                    exit_code=4,
+                )
+            load_sqlite_vec(connection)
             query_vector = embed_texts(paths, [query])[0]
             vector_rows = _vector(
                 connection, query_vector, DEFAULT_CANDIDATE_POOL, filters_sql, filter_params
@@ -241,6 +255,11 @@ def search(
         "effectiveMode": effective_mode,
         "degraded": bool(degraded),
         "degradedReasons": degraded,
+        "semanticCoverage": {
+            "enabledChunks": enabled_chunks,
+            "embeddedChunks": embedded_chunks,
+            "complete": enabled_chunks > 0 and embedded_chunks == enabled_chunks,
+        },
         "timings": timing,
         "hits": hits,
     }

@@ -21,6 +21,14 @@ CREATE TABLE IF NOT EXISTS source (
   last_refresh_status TEXT
 );
 
+CREATE TABLE IF NOT EXISTS source_refresh_progress (
+  source_id INTEGER PRIMARY KEY REFERENCES source(source_id) ON DELETE CASCADE,
+  file_list_hash TEXT NOT NULL,
+  last_path TEXT,
+  started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS asset (
   asset_id INTEGER PRIMARY KEY AUTOINCREMENT,
   source_id INTEGER NOT NULL REFERENCES source(source_id) ON DELETE CASCADE,

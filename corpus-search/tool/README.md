@@ -32,6 +32,8 @@ Automatic query fallback still exits `0` and reports `effectiveMode: "bm25"` plu
 - Local FTS5/BM25 is always available after initialization.
 - With the customer-owned `OPENAI_API_KEY`, refresh embeds pending chunks with
   `text-embedding-3-small` at 256 dimensions and query defaults to hybrid retrieval.
+- Hybrid mode is reported only after every enabled chunk has an embedding; partial
+  backfills remain searchable through BM25 and report their coverage explicitly.
 - The top hybrid candidates are reranked with `gpt-4.1-mini` through the Responses
   API using `store: false` and strict structured output.
 - Both OpenAI calls go through `secure-fetch`; this Python process never receives the
@@ -45,11 +47,12 @@ such as `[00:10-00:18]` populate result offsets.
 
 ## Source lifecycle
 
-Refresh hashes files and skips unchanged content. A complete successful scan removes
-generated rows for Markdown files that disappeared. A missing source, a file parse
-error, or a runtime deadline preserves the last good rows. Disabling a source excludes
-it from search without deleting its index. `source remove --yes` deletes generated
-rows only; it never changes source files.
+Refresh hashes files and skips unchanged content. Bounded runs persist a per-source
+cursor and continue through remaining files on the next refresh. A complete successful
+scan removes generated rows for Markdown files that disappeared. A missing source, a
+file parse error, or a runtime deadline preserves the last good rows. Disabling a source
+excludes it from search without deleting its index. `source remove --yes` deletes
+generated rows only; it never changes source files.
 
 ## Semantic dependency
 

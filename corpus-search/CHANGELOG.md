@@ -16,7 +16,16 @@
 - Added a clear, upbeat kickoff that explains what Corpus Search will unlock and leads
   naturally into Runneth's complete recommendation of what to index.
 - Enabled automatic installation and updates for the `ai-training-club-26` intent while
-  keeping workspace scanning and index creation behind the first-use confirmation.
+  keeping index creation behind the first-use confirmation.
 - Aligned activation with the kickoff: an unconfigured AI Training Club workspace gets
   the explanation and complete source recommendation on its first fresh conversation,
   while index creation still waits for one yes.
+- Added persistent per-source refresh cursors so repeated bounded routines advance
+  through large corpora instead of restarting at the first file.
+- Made source lifecycle state authoritative across add, update, enable, disable, and
+  removal, including resumable `awaiting_refresh` and retained `sources_disabled` states.
+- Require complete enabled-source embedding coverage before reporting hybrid readiness;
+  partial coverage degrades explicitly to BM25, and rejected credentials return the
+  workspace to `credential_needed`.
+- Coordinated AI Training Club first-use instructions so Corpus Search and Hook & Script
+  Mining never stack competing setup questions in one response.

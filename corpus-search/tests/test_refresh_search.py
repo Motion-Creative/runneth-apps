@@ -19,9 +19,11 @@ from corpus_search.errors import CorpusSearchError  # noqa: E402
 from corpus_search.paths import WorkspacePaths  # noqa: E402
 from corpus_search.refresh import refresh_all, refresh_source  # noqa: E402
 from corpus_search.search import search  # noqa: E402
+from corpus_search.state import read_state  # noqa: E402
 from corpus_search.store import connect, ensure_vec_table, stats, vector_blob  # noqa: E402
 
 
+refresh_module = importlib.import_module("corpus_search.refresh")
 search_module = importlib.import_module("corpus_search.search")
 
 
@@ -167,6 +169,39 @@ class WorkspaceCorpusTests(unittest.TestCase):
         self.assertTrue(complete["complete"])
         connection.close()
 
+    def test_repeated_bounded_refreshes_resume_from_persisted_cursor(self) -> None:
+        source = self._source_dir("bounded")
+        for name in ("a.md", "b.md", "c.md"):
+            source.joinpath(name).write_text(
+                f"# {name}\n\nPersisted cursor content for {name}.", encoding="utf-8"
+            )
+        self._add_source("workspace", source)
+        paths = WorkspacePaths.resolve("workspace")
+        connection = connect(paths)
+        source_row = connection.execute("SELECT * FROM source").fetchone()
+
+        with mock.patch.object(refresh_module.time, "monotonic", side_effect=[0, 2]):
+            first = refresh_source(connection, source_row, deadline=1)
+        self.assertFalse(first["complete"])
+        self.assertEqual(stats(connection, paths)["assetsTotal"], 1)
+
+        with mock.patch.object(refresh_module.time, "monotonic", side_effect=[0, 2]):
+            second = refresh_source(connection, source_row, deadline=1)
+        self.assertFalse(second["complete"])
+        self.assertEqual(second["resumedAfter"], "a.md")
+        self.assertEqual(stats(connection, paths)["assetsTotal"], 2)
+
+        with mock.patch.object(refresh_module.time, "monotonic", return_value=0):
+            third = refresh_source(connection, source_row, deadline=1)
+        self.assertTrue(third["complete"])
+        self.assertEqual(third["resumedAfter"], "b.md")
+        self.assertEqual(stats(connection, paths)["assetsTotal"], 3)
+        progress_rows = connection.execute(
+            "SELECT count(*) FROM source_refresh_progress"
+        ).fetchone()[0]
+        connection.close()
+        self.assertEqual(progress_rows, 0)
+
     def test_source_remove_needs_confirmation_and_never_deletes_markdown(self) -> None:
         source = self._source_dir("remove")
         markdown = source / "note.md"
@@ -184,6 +219,64 @@ class WorkspaceCorpusTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(result["sourceFilesDeleted"], 0)
         self.assertTrue(markdown.exists())
+        state = read_state(WorkspacePaths.resolve("workspace"))
+        self.assertEqual(state["phase"], "awaiting_sources")
+        self.assertFalse(state["sourcesConfigured"])
+
+    def test_source_lifecycle_keeps_state_in_sync(self) -> None:
+        source = self._source_dir("lifecycle")
+        source.joinpath("note.md").write_text(
+            "# Lifecycle\n\nState should track the enabled searchable source.",
+            encoding="utf-8",
+        )
+        self._add_source("workspace", source)
+        paths = WorkspacePaths.resolve("workspace")
+        self.assertEqual(read_state(paths)["phase"], "awaiting_refresh")
+
+        connection = connect(paths)
+        refresh_all(connection, paths, embed=False)
+        connection.close()
+        self.assertEqual(read_state(paths)["phase"], "ready_lexical")
+
+        cli.cmd_source_disable(argparse.Namespace(workspace_id="workspace", name="notes"))
+        self.assertEqual(read_state(paths)["phase"], "sources_disabled")
+        cli.cmd_source_enable(argparse.Namespace(workspace_id="workspace", name="notes"))
+        self.assertEqual(read_state(paths)["phase"], "ready_lexical")
+
+    def test_source_path_update_refreshes_unchanged_receipts(self) -> None:
+        original = self._source_dir("original")
+        moved = self._source_dir("moved-source")
+        markdown = "# Receipt\n\nThe violet receipt should point to the current source."
+        original.joinpath("note.md").write_text(markdown, encoding="utf-8")
+        moved.joinpath("note.md").write_text(markdown, encoding="utf-8")
+        self._add_source("workspace", original)
+        paths = WorkspacePaths.resolve("workspace")
+        connection = connect(paths)
+        refresh_all(connection, paths, embed=False)
+        connection.close()
+
+        cli.cmd_source_update(
+            argparse.Namespace(
+                workspace_id="workspace",
+                name="notes",
+                path=str(moved),
+                kind=None,
+                pattern=None,
+            )
+        )
+        self.assertEqual(read_state(paths)["phase"], "awaiting_refresh")
+        connection = connect(paths)
+        refresh_all(connection, paths, embed=False)
+        result = search(
+            connection,
+            paths,
+            "violet receipt",
+            top_k=5,
+            mode="lexical",
+            rerank_mode="off",
+        )
+        connection.close()
+        self.assertEqual(result["hits"][0]["rawPath"], str(moved.resolve() / "note.md"))
 
     def test_auto_query_falls_back_to_bm25(self) -> None:
         source = self._source_dir("fallback")
@@ -300,6 +393,70 @@ class WorkspaceCorpusTests(unittest.TestCase):
         self.assertEqual(result["effectiveMode"], "bm25")
         self.assertEqual(result["degradedReasons"][0]["code"], "sqlite_vec_missing")
         self.assertEqual(len(result["hits"]), 1)
+
+    def test_partial_embeddings_degrade_and_rejected_key_wins_state(self) -> None:
+        source = self._source_dir("partial-embeddings")
+        source.joinpath("first.md").write_text(
+            "# First\n\nThe coral customer quote is searchable.", encoding="utf-8"
+        )
+        source.joinpath("second.md").write_text(
+            "# Second\n\nAnother passage remains pending for embeddings.", encoding="utf-8"
+        )
+        self._add_source("workspace", source)
+        paths = WorkspacePaths.resolve("workspace")
+        connection = connect(paths)
+        refresh_all(connection, paths, embed=False)
+        first_chunk = connection.execute(
+            "SELECT chunk_id FROM chunk ORDER BY chunk_id LIMIT 1"
+        ).fetchone()[0]
+        connection.execute(
+            "UPDATE chunk SET embedded_at=CURRENT_TIMESTAMP, embed_model='test', embed_dim=256 "
+            "WHERE chunk_id=?",
+            (first_chunk,),
+        )
+        connection.commit()
+
+        with mock.patch.object(
+            refresh_module,
+            "try_embed_pending",
+            return_value={
+                "used": False,
+                "embedded": 0,
+                "complete": False,
+                "errorCode": "credential_rejected",
+                "error": "OpenAI returned HTTP 401",
+            },
+        ):
+            report, code = refresh_all(connection, paths, embed=True)
+        self.assertEqual(code, 0)
+        self.assertEqual(report["phase"], "credential_needed")
+        self.assertTrue(report["partial"])
+        self.assertEqual(read_state(paths)["phase"], "credential_needed")
+
+        with (
+            mock.patch.object(search_module, "vec_table_exists", return_value=True),
+            mock.patch.object(search_module, "load_sqlite_vec") as load_vec,
+            mock.patch.object(search_module, "embed_texts") as embed_query,
+        ):
+            result = search(
+                connection,
+                paths,
+                "coral quote",
+                top_k=5,
+                mode="auto",
+                rerank_mode="auto",
+            )
+        connection.close()
+        self.assertEqual(result["effectiveMode"], "bm25")
+        self.assertTrue(result["degraded"])
+        self.assertEqual(
+            result["degradedReasons"][0]["code"],
+            "embedding_backfill_incomplete",
+        )
+        self.assertEqual(result["semanticCoverage"]["enabledChunks"], 2)
+        self.assertEqual(result["semanticCoverage"]["embeddedChunks"], 1)
+        load_vec.assert_not_called()
+        embed_query.assert_not_called()
 
     def test_doctor_reports_legacy_database_without_modifying_it(self) -> None:
         self.legacy.parent.mkdir(parents=True)

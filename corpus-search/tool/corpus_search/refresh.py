@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import bisect
+import hashlib
 import sqlite3
 import time
 from pathlib import Path
 from typing import Any
 
-from .constants import DEFAULT_PATTERN
+from .constants import DEFAULT_PATTERN, SQLITE_VEC_VERSION
 from .errors import CorpusSearchError
 from .markdown_ingest import metadata_json, parse_document
 from .paths import WorkspacePaths, state_root
@@ -69,6 +71,51 @@ def _safe_markdown_files(root: Path, pattern: str) -> tuple[list[Path], list[str
     return files, warnings
 
 
+def _relative_paths(root: Path, files: list[Path]) -> list[str]:
+    return [path.relative_to(root).as_posix() for path in files]
+
+
+def _file_list_hash(root: Path, pattern: str, relative_paths: list[str]) -> str:
+    joined = "\0".join((str(root), pattern, *relative_paths))
+    return hashlib.sha256(joined.encode("utf-8")).hexdigest()
+
+
+def _resume_after(connection, source_id: int, file_list_hash: str) -> str | None:
+    row = connection.execute(
+        "SELECT file_list_hash, last_path FROM source_refresh_progress WHERE source_id=?",
+        (source_id,),
+    ).fetchone()
+    if row is not None and row["file_list_hash"] == file_list_hash:
+        return row["last_path"]
+    with connection:
+        connection.execute(
+            "INSERT INTO source_refresh_progress(source_id, file_list_hash, last_path) "
+            "VALUES (?, ?, NULL) ON CONFLICT(source_id) DO UPDATE SET "
+            "file_list_hash=excluded.file_list_hash, last_path=NULL, "
+            "started_at=CURRENT_TIMESTAMP, updated_at=CURRENT_TIMESTAMP",
+            (source_id, file_list_hash),
+        )
+    return None
+
+
+def _save_progress(connection, source_id: int, file_list_hash: str, last_path: str) -> None:
+    with connection:
+        connection.execute(
+            "INSERT INTO source_refresh_progress(source_id, file_list_hash, last_path) "
+            "VALUES (?, ?, ?) ON CONFLICT(source_id) DO UPDATE SET "
+            "file_list_hash=excluded.file_list_hash, last_path=excluded.last_path, "
+            "updated_at=CURRENT_TIMESTAMP",
+            (source_id, file_list_hash, last_path),
+        )
+
+
+def _clear_progress(connection, source_id: int) -> None:
+    with connection:
+        connection.execute(
+            "DELETE FROM source_refresh_progress WHERE source_id=?", (source_id,)
+        )
+
+
 def _delete_asset_chunks(connection, asset_id: int) -> None:
     chunk_ids = [
         int(row[0])
@@ -90,10 +137,17 @@ def _upsert_file(connection, source, root: Path, path: Path) -> str:
     relative_path = path.relative_to(root).as_posix()
     document = parse_document(path)
     existing = connection.execute(
-        "SELECT asset_id, content_hash FROM asset WHERE source_id=? AND relative_path=?",
+        "SELECT asset_id, content_hash, raw_path FROM asset "
+        "WHERE source_id=? AND relative_path=?",
         (source["source_id"], relative_path),
     ).fetchone()
     if existing is not None and existing["content_hash"] == document.content_hash:
+        if str(path) != existing["raw_path"]:
+            with connection:
+                connection.execute(
+                    "UPDATE asset SET raw_path=? WHERE asset_id=?",
+                    (str(path), existing["asset_id"]),
+                )
         return "skipped"
 
     with connection:
@@ -186,29 +240,43 @@ def refresh_source(connection, source, *, deadline: float | None) -> dict[str, A
         report["errors"].append(exc.message)
         return report
     report["warnings"].extend(warnings)
-    seen_paths: set[str] = set()
+    relative_paths = _relative_paths(root, files)
+    seen_paths = set(relative_paths)
+    file_list_hash = _file_list_hash(root, source["pattern"], relative_paths)
+    source_id = int(source["source_id"])
+    last_path = _resume_after(connection, source_id, file_list_hash)
+    start_index = bisect.bisect(relative_paths, last_path) if last_path else 0
+    if start_index:
+        report["resumedAfter"] = last_path
+    report["filesRemainingAtStart"] = len(files) - start_index
     deadline_hit = False
-    for path in files:
+    scan_error = False
+    for path, relative_path in zip(files[start_index:], relative_paths[start_index:], strict=True):
         if deadline is not None and time.monotonic() >= deadline:
             deadline_hit = True
             break
         report["filesSeen"] += 1
-        seen_paths.add(path.relative_to(root).as_posix())
         try:
             outcome = _upsert_file(connection, source, root, path)
         except (OSError, UnicodeError, CorpusSearchError, ValueError, sqlite3.Error) as exc:
             report["errors"].append(f"{path.relative_to(root)}: {exc}")
-            continue
+            report["failedPath"] = relative_path
+            scan_error = True
+            break
         if outcome == "changed":
             report["filesChanged"] += 1
         else:
             report["filesSkipped"] += 1
+        _save_progress(connection, source_id, file_list_hash, relative_path)
 
-    scan_complete = not deadline_hit and report["filesSeen"] == len(files)
+    scan_complete = not deadline_hit and not scan_error and (
+        start_index + report["filesSeen"] == len(files)
+    )
     if scan_complete and not report["errors"]:
         report["assetsDeleted"] = _prune_missing(
-            connection, int(source["source_id"]), seen_paths
+            connection, source_id, seen_paths
         )
+        _clear_progress(connection, source_id)
         report["complete"] = True
     elif deadline_hit:
         report["pendingReason"] = "runtime_deadline"
@@ -259,15 +327,26 @@ def refresh_all(
 
     snapshot = stats(connection, paths)
     has_errors = any(report.get("errors") for report in reports)
-    pending = any(not report.get("complete", False) for report in reports) or (
-        bool(embedding.get("used")) and not bool(embedding.get("complete"))
+    source_pending = any(not report.get("complete", False) for report in reports)
+    semantic_pending = bool(embed) and (
+        int(snapshot["enabledChunksEmbedded"]) < int(snapshot["enabledChunksTotal"])
     )
-    if snapshot["sourcesEnabled"] == 0:
+    pending = source_pending or semantic_pending
+    semantic_error = embedding.get("errorCode")
+    if snapshot["sourcesTotal"] == 0:
         phase = "awaiting_sources"
-    elif snapshot["chunksEmbedded"]:
-        phase = "ready_hybrid"
-    elif embedding.get("errorCode") in {"credential_needed", "credential_rejected"}:
+    elif snapshot["sourcesEnabled"] == 0:
+        phase = "sources_disabled"
+    elif semantic_error in {"credential_needed", "credential_rejected"}:
         phase = "credential_needed"
+    elif source_pending and snapshot["enabledChunksTotal"] == 0:
+        phase = "awaiting_refresh"
+    elif snapshot["enabledChunksTotal"] and (
+        snapshot["enabledChunksEmbedded"] == snapshot["enabledChunksTotal"]
+    ) and snapshot["vectorTable"] and (
+        snapshot["sqliteVecInstalledVersion"] == SQLITE_VEC_VERSION
+    ):
+        phase = "ready_hybrid"
     else:
         phase = "ready_lexical"
     write_state(
@@ -277,8 +356,9 @@ def refresh_all(
             "completedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "partial": pending,
             "sourceErrors": has_errors,
-            "semanticErrorCode": embedding.get("errorCode"),
+            "semanticErrorCode": semantic_error,
         },
+        sourcesConfigured=bool(snapshot["sourcesTotal"]),
     )
     result = {
         "workspaceId": paths.workspace_id,

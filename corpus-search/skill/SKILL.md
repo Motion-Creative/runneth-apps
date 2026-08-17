@@ -119,6 +119,12 @@ Then:
 7. Separately offer an agent-mode refresh routine. Create it only when cadence,
    timezone, exact delivery destination, and an explicit yes are all present.
 
+If the phase is `awaiting_refresh`, source approval and registration already happened.
+Run `source list`, resume `refresh --no-embeddings`, and report the result without
+repeating discovery or approval. If the phase is `sources_disabled`, retain the index
+and offer to re-enable the appropriate confirmed sources only when the request calls for
+search or source management; do not restart first-use onboarding.
+
 If setup is declined, do nothing and do not offer again in this conversation. A later
 relevant conversation may offer again while setup remains incomplete.
 
@@ -143,9 +149,10 @@ offsets when present. Do not claim search was semantic when `effectiveMode` is `
 - `source disable` is reversible and excludes the retained source index from queries.
 - Before `source remove --yes`, explain that generated rows for that source will be
   deleted while original Markdown is untouched, then wait for confirmation.
-- `refresh` is safe to retry. Exit `3` means partial source failure; report the failing
-  source and preserve successes. `partial: true` without source errors means a runtime
-  deadline left resumable work for a later refresh.
+- `refresh` is safe to retry. Its per-source cursor persists completed-file progress, so
+  a later bounded run continues from the remaining files. Exit `3` means partial source
+  failure; report the failing source and preserve successes. `partial: true` without
+  source errors means a runtime deadline or embedding backfill left resumable work.
 
 Before `embeddings rebuild --yes`, explain that it deletes generated vectors and must
 re-send chunks to OpenAI during the next refresh. Wait for confirmation. It never

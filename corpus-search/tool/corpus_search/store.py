@@ -140,10 +140,19 @@ def rebuild_embeddings(connection: sqlite3.Connection) -> dict[str, int | str]:
 
 def stats(connection: sqlite3.Connection, paths: WorkspacePaths) -> dict[str, object]:
     sources = connection.execute(
-        "SELECT count(*) AS total, sum(CASE WHEN enabled=1 THEN 1 ELSE 0 END) AS enabled FROM source"
+        "SELECT count(*) AS total, "
+        "sum(CASE WHEN enabled=1 THEN 1 ELSE 0 END) AS enabled, "
+        "sum(CASE WHEN enabled=1 AND (last_refresh_status IS NULL OR last_refresh_status!='ok') "
+        "THEN 1 ELSE 0 END) AS pending FROM source"
     ).fetchone()
     chunks = connection.execute(
         "SELECT count(*) AS total, sum(CASE WHEN embedded_at IS NOT NULL THEN 1 ELSE 0 END) AS embedded FROM chunk"
+    ).fetchone()
+    enabled_chunks = connection.execute(
+        "SELECT count(*) AS total, "
+        "sum(CASE WHEN c.embedded_at IS NOT NULL THEN 1 ELSE 0 END) AS embedded "
+        "FROM chunk c JOIN asset a ON a.asset_id=c.asset_id "
+        "JOIN source s ON s.source_id=a.source_id WHERE s.enabled=1"
     ).fetchone()
     per_kind = {
         row["kind"]: row["count"]
@@ -158,9 +167,12 @@ def stats(connection: sqlite3.Connection, paths: WorkspacePaths) -> dict[str, ob
         "dbSizeBytes": paths.db.stat().st_size if paths.db.exists() else 0,
         "sourcesTotal": int(sources["total"] or 0),
         "sourcesEnabled": int(sources["enabled"] or 0),
+        "sourcesPendingRefresh": int(sources["pending"] or 0),
         "assetsTotal": int(connection.execute("SELECT count(*) FROM asset").fetchone()[0]),
         "chunksTotal": int(chunks["total"] or 0),
         "chunksEmbedded": int(chunks["embedded"] or 0),
+        "enabledChunksTotal": int(enabled_chunks["total"] or 0),
+        "enabledChunksEmbedded": int(enabled_chunks["embedded"] or 0),
         "vectorTable": vec_table_exists(connection),
         "sqliteVecInstalledVersion": sqlite_vec_installed_version(),
         "perKind": per_kind,
