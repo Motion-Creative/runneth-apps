@@ -27,6 +27,14 @@ This skill builds the openable dashboard over the workspace's confirmed state. I
 
 ## The three tabs
 
+### Tab structure and required contents
+
+The dashboard has three tabs plus a global window selector, and rebuilds this way for every workspace. The window selector offers 30/60/90/365 days and recuts every tab. Everything is real: hooks from ad transcripts, thumbnails from the actual ads, products parsed from ad names, talent type from the roster source, conversions from the workspace's events. Never fabricate a field; leave it out and say so when the data is missing.
+
+- **ROI report tab:** a KPI strip (active creators, spend, and the workspace's conversion buckets) plus the ROI panel per the cost-integrity rule below.
+- **Creators tab:** one rich card per active creator, matching the reference design. Each card carries: avatar, name, talent type and category; a conversions badge for the window; a plain-English line (type, ads in the window, the products/campaigns they ran, and the window's conversions and spend); the verbatim **top hook** from the creator's top ad transcript; a **work-samples** row of that creator's top ad thumbnails; **campaign/product tags**; and a footer stat row (ads, conversions, spend).
+- **Leaderboard tab:** a table of every active creator with spend, the conversion buckets, and cost per outcome where cost exists.
+
 ### 1. ROI report (conditional)
 
 - Appears only when both are true: an Account Context doc exists (for the product, campaign, and funnel split) and a roster cost source is connected (for creator fees).
