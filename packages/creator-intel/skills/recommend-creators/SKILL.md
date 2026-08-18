@@ -60,6 +60,9 @@ When you offer the methods, state plainly what each one actually does, so the cu
   - Seeds: the customer's best creators for the target plus their named north-stars. Run each seed, then keep the accounts followed by two or more seeds as candidates. Exclude the seeds themselves and anyone already on the roster (including the customer's own team handles).
   - The returned fields are handle, full name, private/verified flags, avatar; there is no follower count, so rank by how many seeds' networks a candidate appears in, then resolve promising ones with `motion inspo creators` by name.
   - Do not hand-wave that the mechanic might not exist. Do not name the underlying tool to the customer; call it top creator similarity. If the key is not connected, say you need an Apify key connected, and do not run until it is.
+- Enrich every candidate before presenting: run the profile scraper (see `creator-intel-reference/apify-actors.md`) to get follower count and bio. Present at least 6 to 10 creators, each with: the Instagram link (`https://www.instagram.com/<handle>/`), the follower count, what they talk about, and the reason you picked them (which of the customer's seeds follow them, plus their bio fit). Apply judgment: drop off-fit accounts (lifestyle, unrelated niches, vague mega-accounts) even if they appear in the overlap, and say you filtered them.
+- Snowball expansion: after showing the list, ask which candidates the customer likes, then run the following walk on those picks to surface the next ring, and keep expanding. That compounding loop is the point of the method.
+- The verified actors and exact run recipes live in `creator-intel-reference/apify-actors.md`. Use them; do not re-discover the actors each run unless they stop working.
 - After a one-time run, offer to set up a routine for ongoing sourcing; do not create the routine automatically.
 
 ### (c) Reviews gap to micro-personas
