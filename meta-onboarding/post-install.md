@@ -1,5 +1,10 @@
 # Post-install: the meta-onboarding package fires itself
 
+Every approved run executes the copy of this file on disk, read fresh in the turn that
+runs it - never a sequence remembered from an earlier run or conversation. A reinstall
+or upgrade replaces this file, so a remembered sequence may be the retired procedure;
+if what memory expects and what this file says ever differ, this file wins.
+
 Installing the meta-onboarding package delivers this procedure; it does not
 authorize it. Run the Meta context work below only after the
 package activation has disclosed the connected-account reads and persistent changes and
