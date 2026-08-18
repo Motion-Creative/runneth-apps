@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "id": "voc-onboarding",
+  "name": "Voice of Customer Onboarding",
+  "version": "1",
+  "description": "Available only through an explicit package install. The Voice of Customer half of the onboarding lifecycle, fully independent of the meta-onboarding package: stages the voc-data-pull and voc-audit skills plus the VoC post-install and activation. Installation only delivers files: before connected-account reads, routine creation, or /agent/user.md changes, the activation discloses those effects and waits for an explicit human yes, offering at most once per conversation for an unrostered workspace (the legacy meta-and-voc-onboarding roster counts as onboarded). After approval, post-install resolves the workspace only from the conversation's Motion context, creates human-confirmed workspace-scoped daily VoC sync routines (Meta ad comments included when Meta is connected), kicks the 12-month backfills, and records completion in the runneth:voc-onboarded roster. Once a workspace's backfill is fully covered, the sync routine offers a manual Voice of Customer Audit once, deferring while a Meta onboarding is mid-flight; the audit runs only on a person's yes. All generated data is scoped to /agent/brain/<workspace>/data-sources/voc/ so multi-workspace onboarding stays additive.",
+  "installPolicy": "manual",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "readme",
+      "type": "file",
+      "sourcePath": "README.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "voc-onboarding/README.md"
+      }
+    },
+    {
+      "id": "post-install",
+      "type": "file",
+      "sourcePath": "post-install.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "voc-onboarding/post-install.md"
+      }
+    },
+    {
+      "id": "voc-data-pull-skill",
+      "type": "directory",
+      "sourcePath": "voc-data-pull",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_skills",
+        "path": "voc-data-pull"
+      }
+    },
+    {
+      "id": "voc-audit-skill",
+      "type": "directory",
+      "sourcePath": "voc-audit",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_skills",
+        "path": "voc-audit"
+      }
+    },
+    {
+      "id": "activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
+    }
+  ]
+}
