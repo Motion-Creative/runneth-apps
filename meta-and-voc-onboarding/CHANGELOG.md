@@ -4,7 +4,7 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
-## 6 - 2026-08-17
+## 7 - 2026-08-17
 
 - Renamed the seeded layout to the brand schema: brand-named brain homes
   (`/agent/brain/<brand>/`), per-source families under `integrations/`, the raw
@@ -21,6 +21,24 @@ change to the package, not per commit. Entries are newest-first.
   duplicate sync over an external pipeline without a yes.
 - Rewrote the activation offer and readiness report in customer language; internal
   vocabulary (guards, roster, sentinels, lanes) is banned from customer-visible text.
+
+## 6 - 2026-08-14
+
+- Made `dashboard-design` an automatic internal handoff whenever Meta Validation builds,
+  rebuilds, or refreshes a dashboard-form weekly report during onboarding; customers no
+  longer have to know or name the skill.
+- Made the handoff occur immediately when the customer selects `dashboard`, before gathering
+  dashboard implementation details or writing artifact code.
+- Wired the handoff into the validation guard, report-build contract, correction rebuilds,
+  and scheduled refresh routines, with an explicit stop instead of a hand-rolled fallback
+  when the skill or a required reference is unavailable.
+- Kept existing validation guard v7 installs compatible through the auto-updated package
+  instruction, including scheduled dashboard refreshes, without rewriting `/agent/user.md`.
+- Kept guard v8 installation and reconciliation in the human-approved first-time or explicit
+  reinstall path, and made later roster writes build only on the latest successful whole-file
+  payload in the conversation.
+- Kept deck and document reports on their existing artifact paths and kept package
+  installation itself non-executing.
 
 ## 5 - 2026-08-11
 

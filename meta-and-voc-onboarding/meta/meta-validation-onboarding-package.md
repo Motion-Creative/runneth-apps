@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.16 — the artifact is the weekly report, in whatever form the customer picks (deck, dashboard, or document); "deck spec" label retired (August 2026)
+### Version 1.17 — the deck, dashboard, or document choice is preserved; dashboard selections automatically invoke dashboard-design (August 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly report. This is the "catch" in Connect → Train → Validate.**
@@ -77,7 +77,7 @@ package's post-install run does this in its single scripted guard merge). The bl
 shown for context and must stay identical to the staged file.
 
 ```
-<!-- BEGIN runneth:meta-validation-gate v7 -->
+<!-- BEGIN runneth:meta-validation-gate v8 -->
 Meta validation gate:
 
 - Workspace folder: `/agent/brain/<brand>/`, where `<brand>` is this conversation's
@@ -100,6 +100,11 @@ Meta validation gate:
   before the question set has been run and confirmed - the report is a soft offer at the end.
   A person who explicitly asks for a report in any form (deck, dashboard, or document) still
   gets one (Field 10 confirmed first), but the question loop still runs to complete validation.
+- Whenever the weekly report's chosen form is a dashboard, invoke the installed
+  `dashboard-design` skill immediately when the customer selects dashboard, then use it for the
+  initial build, every regeneration, and every scheduled refresh. The customer never has to
+  name or request the skill. Do not hand-roll a dashboard when that skill or one of its required
+  references is unavailable.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
 - A report change request is a context correction too: route it to the field behind it
@@ -108,7 +113,7 @@ Meta validation gate:
   from context - never hand-edit the report output. Durable corrections in any later
   conversation get the same routing; one-off or current-state remarks shape the answer or the
   current render, never the file.
-<!-- END runneth:meta-validation-gate v7 -->
+<!-- END runneth:meta-validation-gate v8 -->
 ```
 
 ## 2. Prerequisites (hard gate)
@@ -386,10 +391,17 @@ then build. No report is built without a confirmed Field 10.
 
 On a yes, move to the report:
 
-> "I have your report structure ready — [the confirmed sections from Field 10]. Two things I
-> still need: what form do you want it in — a deck, a dashboard, or a document? And do you
-> have an existing report you'd like me to match for look and feel? If not, I'll use the
-> Motion default."
+> "I have your report structure ready — [the confirmed sections from Field 10]. Which form do
+> you want it in: a deck, a dashboard, or a document?"
+
+Branch on that answer immediately:
+
+- **Dashboard:** invoke the installed `dashboard-design` skill now, before gathering any
+  dashboard implementation details or writing any artifact code. Continue the same onboarding
+  flow under that skill; the customer does not issue a second request and does not see or choose
+  the internal handoff.
+- **Deck or document:** continue through that form's artifact path without invoking
+  `dashboard-design`.
 
 Gather only what Field 10 does not already answer:
 
@@ -398,6 +410,16 @@ Gather only what Field 10 does not already answer:
 - **Visual reference (if any).** An existing report to match for look and feel only — not
   for structure. Structure comes from Field 10.
 - **Look and feel.** MotionUI by default, playable videos, equal-size creative cards.
+
+**Automatic dashboard-design handoff.** When the chosen form is `dashboard`, the branch above
+has already invoked the installed `dashboard-design` skill; follow it for the initial build. This is
+internal orchestration: never ask the customer to say "use dashboard-design," never make them
+choose a skill, and never expose the handoff as an extra onboarding step. Read the skill and all
+of its required references before implementation. The same handoff is mandatory for every
+dashboard regeneration caused by review feedback and for every scheduled refresh. If the skill
+or a required reference is missing or unreadable, stop and report the exact package/reference
+problem; do not fall back to a hand-rolled dashboard. Deck and document forms continue through
+their own artifact paths and do not invoke this skill.
 
 Do not re-gather sections, snapshots, or date controls — Field 10 already answered them. The
 report builds from the already-confirmed answers, and the review is about the artifact: look
@@ -411,6 +433,8 @@ pulls for performance (spend, winners, spend state), and the Account Context Bra
 "best," "winner," and "ready to scale" are judged. When the report includes customer insight,
 messaging recommendations, or what-to-make-next guidance and a Voice of Customer Audit exists,
 read it and cite its evidence; never substitute it for live performance or creative content.
+For dashboard-form reports, this validation package owns the confirmed report spec and data
+inputs while `dashboard-design` owns the dashboard implementation and verification contract.
 
 The report is not just output. It is the proof that Runneth connected the pieces and understood
 them well enough to produce something the team will use every week.
@@ -439,7 +463,9 @@ ask Runneth questions. Three things, all required:
 2. **A refresh routine is set up.** With the customer, agree how often the report should update
    (weekly is common; some want daily) and set up a routine that refreshes it on that cadence.
    Confirm who owns it and whose access it runs on, since it depends on the Meta connection and
-   the report's destination.
+   the report's destination. When the saved report form is `dashboard`, the routine's rebuild
+   instructions must invoke `dashboard-design`; a routine may not bypass the skill and directly
+   hand-edit or hand-roll the dashboard.
 3. **Slack is connected.** If the org has not connected Slack yet, get it connected so the team
    can ask Runneth questions where they already work. This is a web-app action; point them to it
    and confirm once it is done.

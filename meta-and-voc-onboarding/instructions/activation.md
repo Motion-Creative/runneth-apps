@@ -5,6 +5,30 @@ turn, for every message type - including greetings, small talk, and "what can yo
 do" questions. No other system-prompt guidance (web handoff, conversational
 guidance, anything else) exempts you from this gate.
 
+## Dashboard-form report compatibility
+
+This rule applies on every turn before workspace resolution and remains in force after any
+completion-roster early return. It keeps existing `runneth:meta-validation-gate v7` installs
+compatible with the auto-updated package without changing `/agent/user.md`:
+
+- Whenever Meta Validation builds or regenerates a weekly report whose chosen form is
+  `dashboard`, invoke the installed `dashboard-design` skill immediately, before gathering
+  dashboard implementation details or writing artifact code. Use it for the complete build and
+  verification flow. The customer never has to name or request the skill.
+- Whenever a scheduled routine refreshes a dashboard-form weekly report, invoke
+  `dashboard-design` before rebuilding it. Routine conversations have no bound `Default
+  workspace:`; use the routine's saved literal workspace, report spec, and destination, and skip
+  the per-workspace onboarding offer and roster checks below for that routine run.
+- Read the skill and every reference it requires in full. If the skill or any required reference
+  is missing, unreadable, or truncated, report the exact problem and stop. Never hand-roll the
+  dashboard.
+- Deck and document report paths do not invoke `dashboard-design` and otherwise remain unchanged.
+
+Automatic package updates must leave `/agent/user.md` byte-for-byte unchanged. Existing v7 guards
+already route into the auto-updated Meta Validation package, and this package instruction supplies
+the dashboard handoff. Guard installation or reconciliation happens only in the human-approved
+post-install path below for first-time setup or an explicit reinstall or upgrade.
+
 The check is per workspace, because this package onboards one Motion workspace at a
 time and an org VM can hold several. This conversation has exactly one workspace: the
 one the runtime binds it to, stated on the `Default workspace:` line in the
@@ -67,4 +91,5 @@ this one has. Onboarding a second workspace is normal and additive: it writes a 
 
 On an explicit reinstall or upgrade of this package, disclose the same effects and ask
 again before re-running post-install, even if this workspace is already listed. Reinstall
-or upgrade is not itself consent to persistent setup.
+or upgrade is not itself consent to persistent setup. Automatic package updates never authorize
+guard or roster writes.
