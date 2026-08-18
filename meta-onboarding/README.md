@@ -15,8 +15,8 @@ Validation) - with Knoweth organizing the result so retrieval stays tight. It is
 two independent installs (the other is the `voc-onboarding` package, which owns the VoC
 data syncs and the Voice of Customer Audit); each installs, activates, and completes on
 its own, and neither requires the other. Together they replace the combined
-`meta-and-voc-onboarding` package - never install this package alongside that one,
-because both stage the same skills and guards.
+`meta-and-voc-onboarding` package (see "Migrating from meta-and-voc-onboarding" below -
+a note for VMs that ran the old package, not an install-time concern).
 
 Installation stages this folder's files to their destinations on the VM (skill files to
 the skills root, docs to `/agent/brain/meta-onboarding/`) but does not authorize account
@@ -102,8 +102,11 @@ manager: never copy staged files by hand and never edit anything under
 `/agent/.runneth/packages/` (`installed.json`, operations, locks). Partial or hand-made
 package state is worse than a failed install.
 
-After install, let the package activation disclose the setup and wait for a human yes.
-Only then run [`post-install.md`](post-install.md), staged at
+After a successful install there is exactly one next step: the package activation
+discloses the setup and waits for a human yes. Do not append migration questions,
+package-conflict checks, or file inventories to the install confirmation - the
+disclosed offer (and the human's yes) is the whole handoff. Only on that yes run
+[`post-install.md`](post-install.md), staged at
 `/agent/brain/meta-onboarding/post-install.md`.
 
 These instruction files are the package itself, not its output. They stay in the shared
@@ -121,7 +124,11 @@ and the guard merge treats blocks the combined package merged exactly like its o
 (byte-identical means done; anything stale gets refreshed on the next human-approved
 run). Do not keep the combined package installed alongside this one - both stage the
 same skills, docs, and guards, and two installed owners of one path is a conflict. The
-VoC half moved to the separate `voc-onboarding` package.
+VoC half moved to the separate `voc-onboarding` package. This is a migration note, not
+an install-time checklist: installing this package never requires checking for, asking
+about, or uninstalling the combined package first. Raise the conflict only if the
+combined package actually shows as installed on this VM, and even then after the
+activation's setup offer, never instead of it.
 
 ---
 
