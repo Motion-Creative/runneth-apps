@@ -19,6 +19,9 @@ test("new package is consistently published as version 1", async () => {
   const indexEntry = index.packages.find(({ id }) => id === "creator-intel");
 
   assert.equal(manifest.version, "1");
+  assert.equal(manifest.installPolicy, "manual");
+  assert.equal(manifest.updatePolicy, "manual");
+  assert.equal(manifest.uninstallPolicy, "allowed");
   assert.deepEqual(legacyManifest, manifest);
   assert.equal(indexEntry?.version, manifest.version);
   assert.equal(indexEntry?.name, manifest.name);
@@ -26,6 +29,14 @@ test("new package is consistently published as version 1", async () => {
   assert.equal(indexEntry?.installPolicy, manifest.installPolicy);
   assert.equal(indexEntry?.updatePolicy, manifest.updatePolicy);
   assert.equal(indexEntry?.uninstallPolicy, manifest.uninstallPolicy);
+  assert.equal(indexEntry?.packageManagerVersion, 1);
+  assert.deepEqual(indexEntry?.source, {
+    type: "github",
+    owner: "Motion-Creative",
+    repo: "runneth-apps",
+    path: "packages/creator-intel",
+    ref: "main",
+  });
 });
 
 test("customer-owned files have deterministic versioned envelopes", async () => {
@@ -41,7 +52,7 @@ test("customer-owned files have deterministic versioned envelopes", async () => 
     '{"schemaVersion":1,"recommendations":[]}',
     '{"schemaVersion":1,"items":[]}',
   ]) {
-    assert.match(contract, new RegExp(expected.replace(/[{}[\]]/g, "\\$&")));
+    assert.ok(contract.includes(expected), `missing literal envelope: ${expected}`);
   }
 
   assert.match(contract, /"status": "never-run"/);
@@ -59,19 +70,67 @@ test("rights are a simple per-creator field, not a separate ledger", async () =>
   assert.doesNotMatch(contract, /rights\.json/);
 });
 
-test("performance model defaults to Meta with no snapshot matrix", async () => {
+test("performance model defaults to Meta and aligns dashboard windows", async () => {
   const contract = await readPackageFile("brain/creator-data-contract.md");
   assert.match(contract, /Do not pre-create snapshot files/);
   assert.match(contract, /Northbeam is not part of the default model/);
+  assert.match(contract, /30d \| 60d \| 90d \| 365d/);
+  assert.match(contract, /`last_60d` is not a supported preset/);
+});
+
+test("connection state stores references, never credential values", async () => {
+  const contract = await readPackageFile("brain/creator-data-contract.md");
+  const setup = await readPackageFile(
+    "skills/setup-creator-intelligence/SKILL.md",
+  );
+  const recommendation = await readPackageFile(
+    "skills/recommend-creators/SKILL.md",
+  );
+
+  assert.match(contract, /"secretKeyRef"/);
+  assert.match(contract, /never contain the secret value/);
+  assert.match(setup, /Never store tokens, API keys, cookies/);
+  assert.match(recommendation, /secure secret input/);
+  assert.match(recommendation, /Persist only that secret-key reference/);
+});
+
+test("dashboard owns leaderboard routing and recommendations own casting", async () => {
+  const dashboard = await readPackageFile(
+    "skills/build-creator-dashboard/SKILL.md",
+  );
+  const recommendation = await readPackageFile(
+    "skills/recommend-creators/SKILL.md",
+  );
+
+  assert.match(dashboard, /- creator leaderboard/);
+  assert.match(dashboard, /- who are our best creators/);
+  assert.doesNotMatch(recommendation, /- creator leaderboard/);
+  assert.doesNotMatch(recommendation, /- who are our best creators/);
+});
+
+test("setup and roster building do not claim the same build trigger", async () => {
+  const setup = await readPackageFile(
+    "skills/setup-creator-intelligence/SKILL.md",
+  );
+  const roster = await readPackageFile(
+    "skills/build-and-confirm-roster/SKILL.md",
+  );
+
+  assert.doesNotMatch(setup, /^    - build our creator roster$/m);
+  assert.match(roster, /^    - build our creator roster$/m);
+  assert.match(roster, /hand off to `setup-creator-intelligence`/);
 });
 
 const behavioralContracts = [
   {
-    name: "setup runs at install with workspace skip and no Northbeam",
+    name: "install stages files and a fresh session offers gated setup",
     file: "instructions/behavior.md",
     required: [
-      /Setup runs at install time/,
-      /If the account has exactly one workspace, use it and say so/,
+      /Package installation delivers files only/,
+      /fresh session/,
+      /at most once per conversation/,
+      /wait for an explicit yes/,
+      /if the account has exactly one workspace, use it and say so/i,
       /Never ask about Northbeam/,
     ],
   },
@@ -80,18 +139,22 @@ const behavioralContracts = [
     file: "skills/setup-creator-intelligence/SKILL.md",
     required: [
       /Setup is idempotent/,
+      /resumable/,
       /never pulls creator performance/,
       /Account Context/,
-      /Write or update `workspace\.json` last/,
+      /Write the final `workspace\.json` update last/,
       /map how they hire onto signals already living in their ads/,
       /workspace_setup/,
+      /Never store tokens, API keys, cookies/,
     ],
   },
   {
-    name: "roster building is one table that drives to zero",
+    name: "roster building keeps one complete table and bounded review pages",
     file: "skills/build-and-confirm-roster/SKILL.md",
     required: [
-      /one table of every creator/,
+      /one canonical table of every creator/,
+      /pages of at most 25 rows/,
+      /omitted count/,
       /human confirmation gate/,
       /Silence changes nothing/,
       /pending-review\.json\.items\[\]/,
@@ -104,20 +167,28 @@ const behavioralContracts = [
     required: [
       /Start with the gap/,
       /three-method ladder/,
-      /Motion-context, always available/,
-      /Apify/,
+      /Motion-context baseline/,
+      /secret-collection/,
+      /secure-fetch run/,
+      /bodyTruncated/,
+      /top five seed profiles/,
+      /12 minutes wall-clock/,
       /recommendations\.json\.recommendations\[\]/,
       /recommendation_created/,
       /pure creator-performance lookup.*do not create a recommendation record/,
     ],
   },
   {
-    name: "dashboard is three tabs with a conditional ROI page",
+    name: "dashboard has two core tabs, aligned windows, and conditional ROI",
     file: "skills/build-creator-dashboard/SKILL.md",
     required: [
+      /two core tabs plus an optional ROI tab/,
       /Appears only when both are true/,
-      /Private to the workspace by default/,
+      /Keep OAuth protection enabled by default/,
       /Leaderboard/,
+      /30\/60\/90\/365/,
+      /never send the unsupported `last_60d` preset/,
+      /refresh-creator-corpus/,
     ],
   },
   {
@@ -128,6 +199,8 @@ const behavioralContracts = [
       /one canonical append-only audit event per source attempt/,
       /If one source fails, record the failure on that source only/,
       /Do not ask about Northbeam/,
+      /explicit inclusive `--start-date` and `--end-date`/,
+      /never send `last_60d`/,
     ],
   },
 ];
@@ -149,6 +222,8 @@ test("the documented eval suite retains broad scenario coverage", async () => {
   assert.match(evals, /Gap first/);
   assert.match(evals, /Top creator similarity/);
   assert.match(evals, /ROI page conditional/);
+  assert.match(evals, /Complete table, bounded pages/);
+  assert.match(evals, /Fresh-session offer/);
   assert.match(evals, /Recommendation outcome guard/);
   assert.match(evals, /Scheduled partial failure/);
 });

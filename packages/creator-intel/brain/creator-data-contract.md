@@ -19,11 +19,11 @@ The reference docs in this package are read-only defaults. Customer state lives 
   audit.jsonl
 ```
 
-`performance/` starts empty. Refresh writes Meta snapshots on demand (for example `meta-30d.json`). Do not pre-create snapshot files, and do not create a fixed six-file Meta and Northbeam matrix. Northbeam is not part of the default model.
+`performance/` starts empty. Refresh writes Meta snapshots on demand (`meta-30d.json`, `meta-60d.json`, `meta-90d.json`, or `meta-365d.json`). Do not pre-create snapshot files, and do not create a fixed Meta and Northbeam matrix. Northbeam is not part of the default model.
 
 ## Canonical file shapes and initial state
 
-Every JSON file uses `schemaVersion: 1`. Collection files use the exact top-level collection key shown below; never replace an envelope with a bare array. Timestamps are ISO 8601 UTC strings. Setup writes these shapes only when the file is missing and preserves existing collection contents on every rerun. Setup writes `workspace.json` last: `status: active` is the completion marker and is valid only after every other required file and the empty `performance/` directory exist.
+Every JSON file uses `schemaVersion: 1`. Collection files use the exact top-level collection key shown below; never replace an envelope with a bare array. Timestamps are ISO 8601 UTC strings. Setup writes these shapes only when the file is missing and preserves existing collection contents on every rerun. For a new setup, create the other required files and empty `performance/` directory before `workspace.json`; then persist `status: setup-in-progress` and the current phase so OAuth, connection, retry, and fresh-session handoffs resume safely. `status: active` with `setupPhase: complete` is the completion marker and is valid only after every required file exists.
 
 `workspace.json` is one direct record:
 
@@ -33,19 +33,27 @@ Every JSON file uses `schemaVersion: 1`. Collection files use the exact top-leve
   "workspaceId": "<workspaceId>",
   "workspaceName": "<workspaceName>",
   "status": "active",
+  "setupPhase": "complete",
+  "pendingAction": null,
   "defaultConversationLanguage": "<language>",
   "performanceMeasure": {
     "mode": "spend",
     "detail": null,
-    "source": "account-context | default"
+    "source": "default"
   },
   "rosterSource": {
-    "type": "notion | spreadsheet | asana | airtable | other | naming-conventions-only",
-    "connection": "connected | not-connected | export-only",
-    "hasCostData": false,
+    "type": "naming-conventions-only",
+    "connectionRef": null,
     "hasRightsColumn": false,
     "rightsDefault": null,
     "adCreatorNamingConvention": null
+  },
+  "costSource": null,
+  "recommendationSources": {
+    "apify": {
+      "connectionState": "not-connected",
+      "secretKeyRef": null
+    }
   },
   "hiringLens": {
     "dimensions": [],
@@ -59,7 +67,25 @@ Every JSON file uses `schemaVersion: 1`. Collection files use the exact top-leve
 }
 ```
 
-`performanceMeasure.mode` is `spend` by default. If an Account Context doc from the Meta onboarding package exists, use its goal and set `source: account-context`; otherwise `source: default`. Never enable Northbeam here.
+`status` is `setup-in-progress | active`. `setupPhase` is `workspace | performance | sources | hiring-lens | complete`. `pendingAction` is null or a bounded object with `type`, `provider`, `resumePhase`, and `requestedAt`; it never contains a credential or provider response. A fresh session resumes from these fields.
+
+`performanceMeasure.mode` is `spend` by default. If an Account Context doc from the Meta onboarding package exists, use its goal and set `source: account-context`; otherwise set `source: default`. Never enable Northbeam here.
+
+A non-null connection reference has this shape:
+
+```json
+{
+  "kind": "native | integration | secret",
+  "provider": "<google | notion | asana | airtable | monday | apify | other>",
+  "accountId": "<stable account id or null>",
+  "accountLabel": "<human-readable label or null>",
+  "resourceId": "<stable sheet/database/project id or null>",
+  "secretKeyRef": "<stored secret key name or null>",
+  "status": "connected | not-connected | export-only"
+}
+```
+
+Native and integration references use account/resource identifiers and leave `secretKeyRef` null. Secret-backed references use a stable, workspace-specific `secretKeyRef` and never contain the secret value. `costSource` uses the same reference shape plus `costGrain` (`creator | campaign | program`). `recommendationSources.apify.secretKeyRef` may hold only the selected stored key name.
 
 `hiringLens.dimensions` records how the team hires (for example `product`, `persona`, `campaign`, `theme`). `groundedFrom` records where each dimension was found (`ad-names`, `account-context`, `brand-context`, `review-audit`). `gaps` records dimensions that could not be grounded and need the person to supply them.
 
@@ -105,7 +131,7 @@ Audit events are append-only. `entityIds` contains every record changed by that 
 
 ## 1. Workspace record
 
-`workspace.json` is one record per Motion workspace. Required: `schemaVersion`, `workspaceId`, `workspaceName`, `status` (`active` once set up), `defaultConversationLanguage`, `performanceMeasure`, `rosterSource`, `hiringLens`, `manualRefreshOnly`, `createdAt`, `updatedAt`, `setupOwner`.
+`workspace.json` is one record per Motion workspace. Required: `schemaVersion`, `workspaceId`, `workspaceName`, `status`, `setupPhase`, `pendingAction`, `defaultConversationLanguage`, `performanceMeasure`, `rosterSource`, `costSource`, `recommendationSources`, `hiringLens`, `manualRefreshOnly`, `createdAt`, `updatedAt`, `setupOwner`.
 
 ## 2. Identity ledger
 
@@ -141,13 +167,15 @@ Rules: treat `ad -> ad name -> creative asset -> creator` as separate levels; do
 
 ## 5. Performance snapshots
 
-Each file in `performance/` stores one source and one window, created on demand by refresh. Default source is Meta. Required: `schemaVersion`, `workspaceId`, `source` (`meta`), `window` (`30d | 90d | 365d`), `startDate`, `endDate`, `currency`, `attribution`, `filters`, `grain`, `metricDefinitions`, `eligibleSpend`, `exclusiveMappedSpend`, `sharedSpend`, `unassignedSpend`, `coverage`, `creatorRows[]`, `createdAt`.
+Each file in `performance/` stores one source and one window, created on demand by refresh. Default source is Meta. Required: `schemaVersion`, `workspaceId`, `source` (`meta`), `window` (`30d | 60d | 90d | 365d`), `startDate`, `endDate`, `currency`, `attribution`, `filters`, `grain`, `metricDefinitions`, `eligibleSpend`, `exclusiveMappedSpend`, `sharedSpend`, `unassignedSpend`, `coverage`, `creatorRows[]`, `createdAt`.
+
+For the 60-day window, `endDate` is yesterday and `startDate` is 59 calendar days earlier, inclusive. The Motion call uses explicit start/end dates; `last_60d` is not a supported preset.
 
 Reconciliation invariant: `exclusiveMappedSpend + sharedSpend + unassignedSpend = eligibleSpend`. Recalculate rates from totals. Never average ROAS, CTR, or CPA. Creator performance claims require exclusive verified mapping and sufficient evidence.
 
 ## 6. Recommendation ledger
 
-`recommendations.json.recommendations[]` stores stable recommendation records. Required: `recommendationId`, `workspaceId`, `createdAt`, `requestType` (`standalone-casting | roster-review`), `recommendationMode` (`roster-reuse | new-sourcing | creatorless-production`), `method` (`a-motion-context | b-top-creator-similarity | c-reviews-gap`), `creatorIds[]`, `hardEligibilityApplied[]`, `evidenceWindow`, `sourceSummary`, `notes`, `launchLinkId` (nullable), `outcomeStatus` (`unknown | linked | measured`).
+`recommendations.json.recommendations[]` stores stable recommendation records. Required: `recommendationId`, `workspaceId`, `createdAt`, `requestType` (`standalone-casting | roster-review`), `recommendationMode` (`roster-reuse | new-sourcing | creatorless-production`), `methods[]` (one or more of `a-motion-context | b-top-creator-similarity | c-reviews-gap`), `creatorIds[]`, `hardEligibilityApplied[]`, `evidenceWindow`, `sourceSummary`, `notes`, `launchLinkId` (nullable), `outcomeStatus` (`unknown | linked | measured`).
 
 Do not claim later ad outcomes were caused by a recommendation unless a launched ad or brief carries that exact stored recommendation id.
 

@@ -22,14 +22,21 @@ Refresh updates evidence only. Trusted roster, relationship, rights, and recomme
 - Use the stored workspace id on every Motion pull.
 - Default to Meta. Do not ask about Northbeam. Only include another source if the workspace performance measure already names one.
 - Maintain per-source freshness and partial-failure state. Do not collapse the run into one fake global timestamp.
-- Use 30, 90, and 365 day language only. Never call 365 days all-time.
+- Support only 30, 60, 90, and 365-day snapshot windows. Never call 365 days all-time and never send `last_60d`, which is not a supported Motion preset.
+
+## Consent and window contract
+
+- For a standalone manual refresh, disclose the Motion reads and the workspace snapshot/evidence writes, name the requested windows, and wait for an explicit yes.
+- When `build-creator-dashboard` already received that exact approval, reuse it rather than asking again.
+- Use the stored workspace id on every command. For 30, 90, and 365 days use `--date-range last_30d`, `last_90d`, or `last_365d`. For 60 days, pass explicit inclusive `--start-date` and `--end-date`: end yesterday and start 59 calendar days earlier.
+- Pull Meta ad rows with `--grain ads --include-associated-objects --include-metrics`, omit `--limit` for complete-window retrieval, inspect returned counts/pagination, and continue only as the command contract requires. Never claim complete coverage when returned counts prove rows are missing.
 
 ## What refresh may update
 
 - new evidence rows in `evidence-map.json.evidence[]`
 - new pending proposals in `pending-review.json.items[]`
 - source freshness and failure details in `refresh-state.json.sources[]`
-- new Meta performance snapshots under `performance/` (created on demand, e.g. `meta-30d.json`; never pre-created)
+- new Meta performance snapshots under `performance/` (created on demand as `meta-30d.json`, `meta-60d.json`, `meta-90d.json`, or `meta-365d.json`; never pre-created)
 - one canonical append-only audit event per source attempt in `audit.jsonl`, including partial failures
 
 ## What refresh may not update

@@ -86,8 +86,8 @@ There is no separate rights ledger and no territory or advertiser matrix. Unknow
 
 ## Recommendation methods
 
-- `a-motion-context`: topics from brand context and the ad account, approved by the person, then Motion creator search. Always available.
-- `b-top-creator-similarity`: top creator profiles plus adjacent voices found through who they and their networks follow. Run once, offer a routine after. Needs an Apify key; surface that only as the key requirement, never as the method name.
+- `a-motion-context`: topics from brand context and the ad account, approved by the person, then bounded Motion creator search. Use only when Motion returns usable results; tool failure or no fit is a valid outcome.
+- `b-top-creator-similarity`: up to five top creator profiles plus adjacent voices found through who their networks follow. Run once, offer a routine after. Needs an Apify key managed through `secret-collection`; surface that only as the secure key requirement, never as the method name.
 - `c-reviews-gap`: missing micro-personas from a review audit, then Inspo search. Requires a review audit.
 
 ## Recommendation order
@@ -105,7 +105,7 @@ Never pad to quotas. Never surface disqualified creators. Respect hard eligibili
 - `motion meta ads --grain ads --include-associated-objects`: ad-row evidence
 - `motion meta insights`: creative summaries, transcripts, and tags only after exact asset ids are known
 
-Method (b), top creator similarity, reads public creator profiles and following graphs and needs an Apify key. Keep the tool name out of user-facing output; only surface the key requirement. Always use the stored workspace id on Motion pulls. Do not invent CLI fields.
+Method (b), top creator similarity, reads public creator profiles and following graphs through `secure-fetch run` against `api.apify.com`. Use a workspace-specific stored secret-key reference, never a raw credential; validate and bound every provider response. Keep the tool name out of user-facing output. Always use the stored workspace id on Motion pulls. Do not invent CLI fields.
 
 ## Supported Motion creator fields
 
