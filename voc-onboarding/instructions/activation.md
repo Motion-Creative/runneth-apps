@@ -102,7 +102,11 @@ may offer again because the workspace remains absent from the completion rosters
 
 Only an explicit human yes to this disclosed setup authorizes the sequence. On that yes:
 
-1. Read `/agent/brain/voc-onboarding/post-install.md`.
+1. Read `/agent/brain/voc-onboarding/post-install.md` fresh from disk, in this turn -
+   even if it was read earlier in this conversation, and even if an earlier run's
+   sequence is still in memory. A reinstall or upgrade replaces that file, so a
+   remembered sequence may be the old procedure; what is on disk now is the only
+   procedure. Never replay a previous run from memory.
 2. Execute its sequence for this workspace, starting with its step 0: quote the
    `Default workspace:` line from this prompt's `Motion context:` section verbatim and
    state the name, workspaceId, and slug taken from it before the reachability check or
