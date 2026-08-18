@@ -73,12 +73,16 @@ the `Default workspace:` line of the conversation's Motion context.
 Canonical message:
 
 > Install the meta-onboarding package: run
-> `package install "github:Motion-Creative/runneth-apps/meta-onboarding#main"`.
+> `package install "github:Motion-Creative/runneth-apps/meta-onboarding#main"`, then read
+> the staged `/agent/brain/meta-onboarding/README.md` ("After install") and end your
+> reply with the setup offer it defines.
 
-Branch-testing variant (same clause, different ref):
+Branch-testing variant (same clauses, different ref):
 
 > Install the meta-onboarding package: run
-> `package install "github:Motion-Creative/runneth-apps/meta-onboarding#<branch>"`.
+> `package install "github:Motion-Creative/runneth-apps/meta-onboarding#<branch>"`, then
+> read the staged `/agent/brain/meta-onboarding/README.md` ("After install") and end your
+> reply with the setup offer it defines.
 
 The canonical install path:
 
@@ -102,11 +106,20 @@ manager: never copy staged files by hand and never edit anything under
 `/agent/.runneth/packages/` (`installed.json`, operations, locks). Partial or hand-made
 package state is worse than a failed install.
 
-After a successful install there is exactly one next step: the package activation
-discloses the setup and waits for a human yes. Do not append migration questions,
-package-conflict checks, or file inventories to the install confirmation - the
-disclosed offer (and the human's yes) is the whole handoff. Only on that yes run
-[`post-install.md`](post-install.md), staged at
+After a successful install there is exactly one next step: the setup offer. **In the
+very conversation that ran the install, make the offer yourself, in the same reply that
+reports the install** - that conversation's system prompt was built before the package
+existed, so the activation gate is not in it yet and nothing else will fire there. The
+offer is the one the activation defines: warm, first-person, covering its four facts -
+you will read the connected Meta account and learn how it is really set up, save that as
+this workspace's account context so every performance answer starts from it, switch on
+the standing rules and keep a note that setup is done so you only ask once, and end by
+checking whether they want to walk through it together - then ask for the go-ahead. No
+internals: no file paths, no guard or roster names, no package ids. Do not append
+migration questions, package-conflict checks, or file inventories to the install
+confirmation - the disclosed offer (and the human's yes) is the whole handoff. From the
+next conversation on, the activation gate owns the offer for any unrostered workspace.
+Only on a yes run [`post-install.md`](post-install.md), staged at
 `/agent/brain/meta-onboarding/post-install.md`.
 
 These instruction files are the package itself, not its output. They stay in the shared
