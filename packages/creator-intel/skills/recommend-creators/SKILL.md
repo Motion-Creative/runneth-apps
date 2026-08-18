@@ -39,12 +39,14 @@ Once they name a target, Start with the gap for that target only: which angles o
 
 For the chosen target, propose which of the three methods you will run given what is available, get the yes, then run them. Present them as three layers the customer can pick from for that campaign.
 
+When you offer the methods, state plainly what each one actually does, so the customer knows the capability, for example: "I can search Motion's creator library for people known in this space," "I can start from your best creators for this campaign and find adjacent voices their networks follow," and "I can analyze your customer reviews, find the micro-personas you are missing, then find creators on Motion who capture those." Do not describe a method vaguely or leave the customer to guess what it can do.
+
 ### (a) Motion-context, always available
 
 - Derive candidate topics from own-brand context and the ad account: pull the messaging of the top ads with `motion meta insights --summary-sections messagingAndPositioning --summary-sections hookOrHeadline` and combine with `motion brand-context` themes and the gap.
 - Show the proposed 3 to 5 topics and ask the person to approve them before searching.
 - On approval, run `motion inspo creators --search-term "<approved topic>"` per topic, dedupe by Motion creator id, and rank by fit to the gap. Page 2 to 3 times when more results exist.
-- This replaces the old reach-ranked category dump. Never present a raw high-follower category list as the recommendation.
+- This replaces the old reach-ranked category dump. Never present a raw high-follower category list as the recommendation. Motion's creator search is weak for niche B2B or specialist spaces: broad topic terms and category pulls tend to return follower-ranked celebrities (for example GaryVee, Dave Ramsey). Check the returned creators against the target before presenting them; if they are off-fit celebrities, say so plainly and lean on method (b) rather than dressing them up as recommendations.
 
 ### (b) Top creator similarity
 
@@ -52,7 +54,7 @@ For the chosen target, propose which of the three methods you will run given wha
 - Ask for the seed creators' main Instagram or TikTok profiles, or use handles already confirmed on the roster.
 - For each seed, read the profile and the accounts it follows, then rank adjacent creators by how many seeds' networks they appear in and how well they fit the gap topics. Dedupe against the roster and against each other.
 - Run once, bounded to the top 10 seed profiles and about 25 ranked candidates. Resolve any candidate that also exists in Motion with `motion inspo creators`; keep off-Motion candidates as raw handles with their profile link.
-- This path needs an Apify key, used through `secure-fetch` against `api.apify.com` with an Instagram or TikTok profile-and-following actor resolved at run time. Do not name the underlying tool as the method to the customer; call it top creator similarity. If the key is not connected, tell the person you need an Apify key connected to run top creator similarity, and do not run it until it is.
+- This path needs an Apify key, used through `secure-fetch` against `api.apify.com`. Pre-resolve the exact actor before running: search the Apify store (`GET /v2/store?search=...`) for an Instagram or TikTok Following Scraper and use a proven, high-run actor. A known working one is `datadoping/instagram-following-scraper` (no-cookie Instagram following list). Do not hand-wave that the mechanic might not exist; the following-scraper actors are common. Do not name the underlying tool as the method to the customer; call it top creator similarity. If the key is not connected, tell the person you need an Apify key connected, and do not run it until it is.
 - After a one-time run, offer to set up a routine for ongoing sourcing; do not create the routine automatically.
 
 ### (c) Reviews gap to micro-personas
