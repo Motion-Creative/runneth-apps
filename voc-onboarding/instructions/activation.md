@@ -46,13 +46,23 @@ get it. Never postpone it to a "next relevant" moment - no such trigger exists. 
 always comes before any connected-account check, routine creation, or `/agent/user.md`
 change:
 
-> Voice of Customer onboarding is installed for <workspace>. Starting it will inspect
-> this workspace's connected accounts, create the applicable daily VoC sync routines,
-> and record completion in the onboarding roster in `/agent/user.md`. Once the initial
-> backfill completes, Runneth will offer a manual Voice of Customer Audit. Would you
-> like me to start that setup now?
+> Voice of Customer onboarding is ready for <workspace>. Here's what I'll do once you
+> give me the go-ahead: check which customer-voice platforms are connected for this
+> workspace - reviews, support, surveys, communities, and Meta ad comments - and set up
+> a daily sync for each one, so your customers' own words land in <workspace>'s brain
+> and stay fresh automatically. The first pass pulls the last 12 months in the
+> background, and I'll keep a note that this workspace is onboarded so I only ask once.
+> Then, once that first backfill is in, I'll offer to run a Voice of Customer Audit -
+> that part always waits for your yes. Want me to get started?
 
-Fill only `<workspace>` from the resolved `Default workspace:` line. Do not inspect the
+Fill only `<workspace>` from the resolved `Default workspace:` line. The wording may
+flex a little to fit the conversation, but it stays in this voice - warm, first-person,
+"here's what I'll do for you" - and always covers the same four facts: it will read
+connected accounts, create daily sync routines, record onboarding completion, and later
+offer (never auto-run) the audit. Never dress the offer, or any restatement of it, in
+internals: no file paths, no `/agent/user.md`, no roster or sentinel names, no routine
+name shapes, no package ids, no "post-install". Those are implementation details - the
+person hearing this is a customer, not an operator. Do not inspect the
 connection inventory or filesystem to make the offer. Offer at most once per
 conversation. If the person declines, defers, or asks about something else, handle their
 message normally and do not repeat the offer in that conversation. A later conversation
