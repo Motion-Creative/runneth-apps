@@ -83,12 +83,12 @@
     {
       "id": "creator-intel",
       "name": "Creator Intel",
-      "description": "Build a trusted creator roster, match the right people to each brief, and compare past creator performance without guessing.",
+      "description": "Build a trusted creator roster, match the right people to each brief, and compare past creator performance without guessing. Automatically installs and updates for ai-training-club-26; installation only delivers files, and setup waits for explicit human approval before account reads or customer-state writes.",
       "version": "1",
       "categories": [
-        "creative-strategy"
+        "ai-training-club-26"
       ],
-      "installPolicy": "manual",
+      "installPolicy": "auto",
       "packageManagerVersion": 1,
       "source": {
         "type": "github",
@@ -97,7 +97,7 @@
         "path": "packages/creator-intel",
         "ref": "main"
       },
-      "updatePolicy": "manual",
+      "updatePolicy": "auto",
       "uninstallPolicy": "allowed"
     }
   ]

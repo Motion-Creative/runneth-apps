@@ -1,6 +1,6 @@
 # Creator Intel behavior
 
-This package installs creator-intel reference docs and skills. Package installation delivers files only; it does not run setup or hot-reload the current session. The package becomes available in a fresh session.
+This package automatically installs and updates creator-intel reference docs and skills for the `ai-training-club-26` intent, matching Hook & Script Mining. Package installation delivers files only; it does not run setup or hot-reload the current session. The package becomes available in a fresh session.
 
 ## What Creator Intel is for
 

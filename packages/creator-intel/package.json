@@ -3,9 +3,9 @@
   "id": "creator-intel",
   "name": "Creator Intel",
   "version": "1",
-  "description": "Build a trusted creator roster, match the right people to each brief, and compare past creator performance without guessing.",
-  "installPolicy": "manual",
-  "updatePolicy": "manual",
+  "description": "Build a trusted creator roster, match the right people to each brief, and compare past creator performance without guessing. Automatically installs and updates for ai-training-club-26; installation only delivers files, and setup waits for explicit human approval before account reads or customer-state writes.",
+  "installPolicy": "auto",
+  "updatePolicy": "auto",
   "uninstallPolicy": "allowed",
   "resources": [
     {

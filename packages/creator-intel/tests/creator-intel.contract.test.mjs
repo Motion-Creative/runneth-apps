@@ -17,10 +17,13 @@ test("new package is consistently published as version 1", async () => {
     await readFile(new URL("package-index.json", repositoryRoot), "utf8"),
   );
   const indexEntry = index.packages.find(({ id }) => id === "creator-intel");
+  const hookMiningEntry = index.packages.find(
+    ({ id }) => id === "hook-script-mining",
+  );
 
   assert.equal(manifest.version, "1");
-  assert.equal(manifest.installPolicy, "manual");
-  assert.equal(manifest.updatePolicy, "manual");
+  assert.equal(manifest.installPolicy, "auto");
+  assert.equal(manifest.updatePolicy, "auto");
   assert.equal(manifest.uninstallPolicy, "allowed");
   assert.deepEqual(legacyManifest, manifest);
   assert.equal(indexEntry?.version, manifest.version);
@@ -30,6 +33,10 @@ test("new package is consistently published as version 1", async () => {
   assert.equal(indexEntry?.updatePolicy, manifest.updatePolicy);
   assert.equal(indexEntry?.uninstallPolicy, manifest.uninstallPolicy);
   assert.equal(indexEntry?.packageManagerVersion, 1);
+  assert.deepEqual(indexEntry?.categories, ["ai-training-club-26"]);
+  assert.deepEqual(indexEntry?.categories, hookMiningEntry?.categories);
+  assert.equal(indexEntry?.installPolicy, hookMiningEntry?.installPolicy);
+  assert.equal(indexEntry?.updatePolicy, hookMiningEntry?.updatePolicy);
   assert.deepEqual(indexEntry?.source, {
     type: "github",
     owner: "Motion-Creative",

@@ -9,7 +9,7 @@ Creator Intel gives each Motion workspace one trusted place to:
 
 ## The journey
 
-**Stage 0: Install and workspace.** Installation stages the package files only. In the first fresh session after install, Runneth gives a one-line overview and offers setup once. It does not read Motion or connected accounts or write customer state until the person agrees. After approval, a single-workspace account is selected automatically; a multi-workspace account is asked once.
+**Stage 0: Install and workspace.** Creator Intel automatically installs and updates for `ai-training-club-26`, matching Hook & Script Mining's package intent. Installation stages the package files only. In the first fresh session after install, Runneth gives a one-line overview and offers setup once. It does not read Motion or connected accounts or write customer state until the person agrees. After approval, a single-workspace account is selected automatically; a multi-workspace account is asked once.
 
 **Stage 1: Understand how you work.** One question at a time:
 - how performance is measured (Account Context from the Meta onboarding package if present, otherwise spend; never Northbeam)
@@ -37,4 +37,4 @@ Creator Intel gives each Motion workspace one trusted place to:
 - Package-owned reference docs install to `/agent/brain/creator-intel-reference/`.
 - Customer-owned mutable state lives at `/agent/brain/creator-intel/workspaces/<workspaceId>/`.
 - Install, update, reinstall, and uninstall never overwrite customer decisions.
-- This unreleased package remains version `1`; install and update are explicit so branch testers rerun the install command after package changes.
+- This unreleased package remains version `1`; its managed intent automatically installs and updates it for `ai-training-club-26`. Branch testers can still rerun the direct install command to pull the latest PR revision.
