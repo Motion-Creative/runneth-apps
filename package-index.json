@@ -1,12 +1,32 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-12-01",
+  "indexRevision": "2026-08-18-01",
   "packages": [
+    {
+      "id": "creative-strategy-guidance",
+      "name": "Creative Strategy Guidance",
+      "description": "Provides the editable strategic guidance used by Runneth’s creative workflows: the Creative Strategy Engine, creative-analysis methodology, hook and headline standards, and customer-review mining guidance. It does not install skills; both default and custom skills can use these files from the agent brain.",
+      "version": "1",
+      "packageManagerVersion": 1,
+      "categories": [
+        "baseline"
+      ],
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "creative-strategy-guidance",
+        "ref": "main"
+      },
+      "installPolicy": "auto",
+      "updatePolicy": "auto",
+      "uninstallPolicy": "protected"
+    },
     {
       "id": "creative-strategy-foundations",
       "name": "Creative Strategy Foundations",
-      "description": "Baseline Runneth creative strategy skills installed outside the protected Runneth volume.",
-      "version": "2",
+      "description": "Provides Runneth’s default workflows for analyzing creative performance, generating creative direction, and producing briefs. It installs the analyzing, creative-generation, and briefing skills plus their routing instruction, uses the shared Creative Strategy Guidance package, and can be uninstalled when a user wants to rely only on custom skills.",
+      "version": "3",
       "packageManagerVersion": 1,
       "categories": [
         "baseline"
@@ -20,13 +40,13 @@
       },
       "installPolicy": "auto",
       "updatePolicy": "auto",
-      "uninstallPolicy": "protected"
+      "uninstallPolicy": "allowed"
     },
     {
       "id": "meta-and-voc-onboarding",
       "name": "Meta and Voice of Customer Onboarding",
-      "version": "5",
-      "description": "Available only through an explicit package install. Stages Meta and Voice of Customer onboarding docs, ready-made guard blocks, and the voc-data-pull, voc-audit, meta-ad-performance-analysis, onboarding-walkthrough, and dashboard-design skills. Its package instruction checks the per-workspace completion roster and offers onboarding at most once per conversation for an unrostered workspace. Installation only delivers files: before connected-account reads, routine creation, account-context writes, /agent/INDEX.md edits, or /agent/user.md changes, it discloses those effects and waits for an explicit human yes. After approval, post-install resolves the workspace only from the conversation's Motion context, creates human-confirmed workspace-scoped VoC routines, merges the shared guards, persists Meta account context, records completion, and asks whether to begin the walkthrough. The Voice of Customer Audit and walkthrough remain separately human-gated. All generated data is scoped to /agent/brain/<workspace>/ so multi-workspace onboarding stays additive.",
+      "version": "6",
+      "description": "Available only through an explicit package install. Stages Meta and Voice of Customer onboarding docs, ready-made guard blocks, and the voc-data-pull, voc-audit, meta-ad-performance-analysis, onboarding-walkthrough, and dashboard-design skills. Meta Validation automatically invokes dashboard-design whenever onboarding builds, rebuilds, or refreshes a dashboard-form weekly report; the customer never has to name the skill. Its package instruction keeps existing v7 installs compatible on automatic updates without rewriting /agent/user.md, then offers onboarding at most once per conversation for an unrostered workspace. Installation only delivers files: before connected-account reads, routine creation, account-context writes, /agent/INDEX.md edits, or first-time /agent/user.md changes, it discloses those effects and waits for an explicit human yes. After approval, post-install resolves the workspace only from the conversation's Motion context, creates human-confirmed workspace-scoped VoC routines, merges the shared guards, persists Meta account context, records completion, and asks whether to begin the walkthrough. The Voice of Customer Audit and walkthrough remain separately human-gated. All generated data is scoped to /agent/brain/<workspace>/ so multi-workspace onboarding stays additive.",
       "categories": [],
       "packageManagerVersion": 1,
       "installPolicy": "manual",

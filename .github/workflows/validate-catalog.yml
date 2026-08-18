@@ -28,7 +28,10 @@ jobs:
         with:
           node-version: '20'
       - name: Validate the Runneth package index
-        run: node --test scripts/validate-runneth-package-index.mjs
+        run: >-
+          node --test
+          scripts/validate-runneth-package-index.mjs
+          scripts/validate-meta-voc-dashboard-handoff.mjs
 
   build-site:
     # Typecheck + build the site so broken site code can't merge either.
