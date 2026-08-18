@@ -11,8 +11,9 @@ daily sync routines, and offers a manual Voice of Customer Audit once the backfi
 covered. It is one of two independent installs (the other is the `meta-onboarding`
 package, which owns Meta account context, guards, validation, and the walkthrough); each
 installs, activates, and completes on its own, and neither requires the other. Together
-they replace the combined `meta-and-voc-onboarding` package - never install this package
-alongside that one, because both stage the same VoC skills.
+they replace the combined `meta-and-voc-onboarding` package (see "Migrating from
+meta-and-voc-onboarding" below - a note for VMs that ran the old package, not an
+install-time concern).
 
 The parts, and their operational nature:
 
@@ -74,8 +75,11 @@ manager: never copy staged files by hand and never edit anything under
 `/agent/.runneth/packages/` (`installed.json`, operations, locks). Partial or hand-made
 package state is worse than a failed install.
 
-After install, let the package activation disclose the setup and wait for a human yes.
-Only then run [`post-install.md`](post-install.md), staged at
+After a successful install there is exactly one next step: the package activation
+discloses the setup and waits for a human yes. Do not append migration questions,
+package-conflict checks, or file inventories to the install confirmation - the
+disclosed offer (and the human's yes) is the whole handoff. Only on that yes run
+[`post-install.md`](post-install.md), staged at
 `/agent/brain/voc-onboarding/post-install.md`.
 
 These instruction files are the package itself, not its output. They stay in the shared
@@ -90,6 +94,10 @@ the legacy `runneth:meta-voc-onboarded` roster, so listed workspaces count as on
 and their existing `voc-sync-<workspace>-*` routines keep running untouched. Do not keep
 the combined package installed alongside this one - both stage `voc-data-pull` and
 `voc-audit` to the skills root, and two installed owners of one path is a conflict.
+This is a migration note, not an install-time checklist: installing this package never
+requires checking for, asking about, or uninstalling the combined package first. Raise
+the conflict only if the combined package actually shows as installed on this VM, and
+even then after the activation's setup offer, never instead of it.
 
 ---
 
