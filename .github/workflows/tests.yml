@@ -13,6 +13,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  package-contracts:
+    name: Package contracts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Test Creator Intel package
+        run: node --test creator-intel/tests/*.test.mjs
+
   site:
     name: Site
     runs-on: ubuntu-latest
