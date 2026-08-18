@@ -33,7 +33,7 @@ Private to the workspace by default.
 
 ## Stage 4: Recommend creators
 
-Open with the target-specific gap, then propose the available methods and get a yes: bounded Motion-context discovery (approve topics first), top creator similarity seeded from up to five best creators and named north-stars, and reviews-gap micro-personas when a review audit exists. Apify credentials are collected through secure secret input and only the stored key reference is retained. Roster first, honest about no-fit/tool failures, rights, and coverage, and persist one stable recommendation id with every method used.
+Open with the target-specific gap, then propose the available methods and get a yes: bounded Motion-context discovery (approve topics first); top creator similarity using 6–10 genuinely relevant best creators and named north-stars when available, evaluating each bounded candidate's own topical fit and using network overlap only as a boost; and, when a review audit and target persona exist, exactly five approved problem/category/root-cause/micro-persona phrases searched against actual TikTok video content. The TikTok pass has its own estimated-cost disclosure, async actor lifecycle, local date filtering, and honest out-of-window/no-fit counts. Apify credentials are collected through secure secret input and only the stored key reference is retained. Roster first, honest about no-fit/tool failures, rights, and coverage, and persist one stable recommendation id with every method used.
 
 ## Stage 5: Refresh
 

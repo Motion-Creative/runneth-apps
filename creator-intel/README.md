@@ -20,7 +20,7 @@ Creator Intel gives each Motion workspace one trusted place to:
 
 **Stage 3: The dashboard.** An openable app with two core tabs, Creator profiles and a spend Leaderboard, plus an ROI tab only when both Account Context and a creator-cost source exist. It supports 30/60/90/365-day windows, refreshes missing or stale snapshots after disclosure and approval, and stays private to the workspace by default.
 
-**Stage 4: Recommend creators.** Gap analysis first, then a three-method ladder: bounded Motion-context discovery when Motion returns usable results, securely credentialed top creator similarity, and reviews-gap micro-personas. Thin, unavailable, malformed, or no-fit results are reported honestly.
+**Stage 4: Recommend creators.** Gap analysis first, then a three-method ladder: bounded Motion-context discovery when Motion returns usable results; securely credentialed top creator similarity using 6–10 strong seeds when available, with individual topical fit rather than a network-overlap gate; and five-keyword, separately approved TikTok content search derived from the review audit and target persona. Thin, unavailable, malformed, timed-out, out-of-window, or no-fit results are reported honestly.
 
 **Stage 5: Refresh.** Manual Meta evidence refresh that never changes trusted decisions. Scheduled only on separate consent.
 

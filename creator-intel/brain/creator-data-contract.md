@@ -67,7 +67,7 @@ Every JSON file uses `schemaVersion: 1`. Collection files use the exact top-leve
 }
 ```
 
-`status` is `setup-in-progress | active`. `setupPhase` is `workspace | performance | sources | hiring-lens | complete`. `pendingAction` is null or a bounded object with `type`, `provider`, `resumePhase`, and `requestedAt`; it never contains a credential or provider response. A fresh session resumes from these fields.
+`status` is `setup-in-progress | active`. `setupPhase` is `workspace | performance | sources | hiring-lens | complete`. `pendingAction` is null or a bounded object with `type`, `provider`, `resumePhase`, and `requestedAt`; it never contains a credential value, raw provider response, or provider-returned URL. Setup handoffs use those base fields. A Method C action may additionally hold `recommendationId`, exactly the approved keywords, approved `startDate`/`endDate`, selected `secretKeyRef`, requested row cap, approval/deadline timestamps, and validated alphanumeric-hyphen-underscore `runId`/`datasetId`. A fresh session resumes the stored phase and must never start a second paid run for the same recommendation id.
 
 `performanceMeasure.mode` is `spend` by default. If an Account Context doc from the Meta onboarding package exists, use its goal and set `source: account-context`; otherwise set `source: default`. Never enable Northbeam here.
 
@@ -175,7 +175,11 @@ Reconciliation invariant: `exclusiveMappedSpend + sharedSpend + unassignedSpend 
 
 ## 6. Recommendation ledger
 
-`recommendations.json.recommendations[]` stores stable recommendation records. Required: `recommendationId`, `workspaceId`, `createdAt`, `requestType` (`standalone-casting | roster-review`), `recommendationMode` (`roster-reuse | new-sourcing | creatorless-production`), `methods[]` (one or more of `a-motion-context | b-top-creator-similarity | c-reviews-gap`), `creatorIds[]`, `hardEligibilityApplied[]`, `evidenceWindow`, `sourceSummary`, `notes`, `launchLinkId` (nullable), `outcomeStatus` (`unknown | linked | measured`).
+`recommendations.json.recommendations[]` stores stable recommendation records. Required: `recommendationId`, `workspaceId`, `createdAt`, `requestType` (`standalone-casting | roster-review`), `recommendationMode` (`roster-reuse | new-sourcing | creatorless-production`), `methods[]` (one or more of `a-motion-context | b-top-creator-similarity | c-tiktok-content-search`), `creatorIds[]`, `hardEligibilityApplied[]`, `evidenceWindow`, `sourceSummary`, `notes`, `launchLinkId` (nullable), `outcomeStatus` (`unknown | linked | measured`).
+
+When Method C runs, `sourceSummary` records the initial five approved keywords, any separately approved expanded keyword list, approved start/end dates, and per-pass fetched, invalid-date, out-of-window, in-window, malformed/noise-filter, and retained-candidate counts. Store bounded validated profile/video evidence and the non-secret actor run reference needed for diagnosis; never store the credential, raw provider body, or unbounded dataset.
+
+Before Method C starts its paid actor run, persist the approved input and stable `recommendationId` in `workspace.json.pendingAction`. Update that checkpoint with only validated `runId`, `datasetId`, and resume phase. On retry or a fresh session, resume that run instead of starting another. Clear the checkpoint only after the recommendation or explicit source-failure record and its `recommendation_created` audit event are durable, or after an explicit cancellation is recorded.
 
 Do not claim later ad outcomes were caused by a recommendation unless a launched ad or brief carries that exact stored recommendation id.
 

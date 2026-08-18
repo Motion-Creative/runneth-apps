@@ -124,6 +124,59 @@ test("setup and roster building do not claim the same build trigger", async () =
   assert.match(roster, /hand off to `setup-creator-intelligence`/);
 });
 
+test("top creator similarity ranks overlap without making it an eligibility gate", async () => {
+  const recommendation = await readPackageFile(
+    "skills/recommend-creators/SKILL.md",
+  );
+  const actors = await readPackageFile("brain/apify-actors.md");
+
+  assert.match(recommendation, /6 to 10 genuinely relevant seeds/);
+  assert.match(recommendation, /ranking boost, never an eligibility gate/);
+  assert.match(recommendation, /cap it at 100 unique accounts/);
+  assert.match(recommendation, /batches of at most 25 candidate handles/);
+  assert.match(recommendation, /verified following-graph actor is Instagram-only/);
+  assert.match(recommendation, /never send a TikTok handle to the Instagram actor/);
+  assert.doesNotMatch(
+    recommendation,
+    /keep the accounts followed by two or more seeds as candidates/i,
+  );
+  assert.match(actors, /at most 10 calls/);
+  assert.match(actors, /Every queued account receives its own target-specific topical-fit evaluation/);
+});
+
+test("method C uses an approved bounded async TikTok content search", async () => {
+  const recommendation = await readPackageFile(
+    "skills/recommend-creators/SKILL.md",
+  );
+  const actors = await readPackageFile("brain/apify-actors.md");
+  const contract = await readPackageFile("brain/creator-data-contract.md");
+
+  for (const expected of [
+    /exactly five default keywords/,
+    /one problem phrase, one category phrase, one why\/root-cause phrase, and two micro-persona phrases/,
+    /estimated at roughly \$0\.50–\$1/,
+    /clockworks\/tiktok-scraper/,
+    /async start → poll → dataset-fetch recipe/,
+    /fields=authorMeta,text,createTimeISO,webVideoUrl,searchQuery,playCount/,
+    /apply the approved start\/end dates locally/,
+    /out-of-window count/,
+    /accounts with fewer than 10 videos/,
+    /at most 10 total keywords/,
+    /at most 10 videos per keyword/,
+    /never start a second paid run/,
+  ]) {
+    assert.match(recommendation, expected);
+  }
+
+  assert.match(actors, /Never use this actor's `run-sync-get-dataset-items` endpoint/);
+  assert.match(actors, /cap the full Method C run at 10 minutes/);
+  assert.match(actors, /\^\[A-Za-z0-9_-\]\+\$/);
+  assert.match(contract, /c-tiktok-content-search/);
+  assert.match(contract, /resume that run instead of starting another/);
+  assert.match(contract, /never store the credential, raw provider body, or unbounded dataset/);
+  assert.doesNotMatch(contract, /c-reviews-gap/);
+});
+
 const behavioralContracts = [
   {
     name: "install stages files and a fresh session offers gated setup",
@@ -174,8 +227,10 @@ const behavioralContracts = [
       /secret-collection/,
       /secure-fetch run/,
       /bodyTruncated/,
-      /top five seed profiles/,
+      /at most 10 seed profiles/,
       /12 minutes wall-clock/,
+      /review-derived TikTok content search/,
+      /run-sync-get-dataset-items/,
       /recommendations\.json\.recommendations\[\]/,
       /recommendation_created/,
       /pure creator-performance lookup.*do not create a recommendation record/,
