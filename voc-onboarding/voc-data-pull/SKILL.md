@@ -80,8 +80,11 @@ Two connection paths exist and the pull mechanics differ:
 
 The path is how this customer set the platform up, not a property of the platform: any
 VoC platform may arrive as an OAuth connection **or** a stored secret, so the
-availability check reads the whole inventory, both paths: the OAuth connections
-(`integrations status --app <slug>`) **and the runtime secret store's key names with
+availability check reads the whole inventory, both paths: the OAuth connections (one
+`integrations list` call when its output carries connection state - that single call is
+the whole OAuth inventory; only when it does not, `integrations status --app <slug>`
+for the slugs in the table above, one pass, never speculative slugs beyond it) **and
+the runtime secret store's key names with
 each key's allowed hosts** - metadata the runtime injects into the conversation's
 context as the runtime-secrets block (values stay sealed; only `secure-fetch` can use
 them). Read that block from context - no command fetches it. Recognize VoC platforms from that inventory by reading it, not by matching a

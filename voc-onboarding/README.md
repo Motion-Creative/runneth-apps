@@ -162,11 +162,14 @@ Folder: `voc-data-pull/`
   is intentionally absent during initial install and backfill.
 - **Runs after onboarding approval.** After a human approves the activation's disclosed
   setup, Runneth checks which VoC
-  platforms the org can reach - `integrations status --app <slug>` for each known VoC
-  platform slug (the skill's Step 1 table lists them) for OAuth connections **and** the
+  platforms the org can reach - one `integrations list` call for the OAuth connections
+  (falling back to per-slug status checks over the skill's canonical slug list only when
+  the listing does not show connection state) **and** the
   stored secrets for every VoC platform (any of them may be key-stored instead of
-  connected; Okendo and Stamped always are), plus the Motion connection for Meta ad
-  comments - and runs the skill's "Set up the recurring sync" procedure for every reachable
+  connected; Okendo and Stamped always are), plus the Motion workspace connection for
+  Meta ad
+  comments (never a data-pull probe) - and runs the skill's "Set up the recurring sync"
+  procedure for every reachable
   one: one daily routine per platform per workspace (`voc-sync-<workspace>-<platform>`, 6am)
   whose first run backfills
   and whose daily runs pull only new items. Platform accounts are org-level with no

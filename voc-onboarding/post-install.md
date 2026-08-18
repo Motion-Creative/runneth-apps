@@ -90,25 +90,41 @@ Step 0 - the workspace readout defined above - has already happened before step 
 starts: the workspace name, workspaceId, and slug every step below uses came from the
 `Default workspace:` line of this conversation's `Motion context:` section, nowhere else.
 
-1. **Check what the org can reach.** Read the full inventory of what this VM can talk
-   to, both halves: the OAuth connections (`integrations status --app <slug>` per
-   platform; `integrations list` for the catalog) **and the runtime secret store's key
-   names with each key's allowed hosts** - the runtime injects that metadata into this
-   conversation's context as the runtime-secrets block (values stay sealed; only
-   `secure-fetch` can use them). Read that block from context - no command fetches it.
-   Also check whether a Meta
-   workspace is connected - a connected Meta workspace is itself a reachable VoC platform,
-   because ad comments are customer voice. Recognize VoC platforms in that inventory by
-   reading it with
+1. **Check what the org can reach - a fixed, cheap probe, not an investigation.** The
+   inventory has exactly three parts, read in this order, with nothing speculative:
+   - **OAuth connections: one `integrations list` call first.** When its output carries
+     each app's connection state (connected accounts), that single call IS the OAuth
+     inventory - read the connected apps off it and run no per-app status checks at
+     all. Only if the listing does not show connection state, fall back to
+     `integrations status --app <slug>` for exactly the canonical VoC slugs, one pass,
+     no others: `judge_me`, `trustpilot`, `yotpo`, `junip`, `okendo`, `stamped`,
+     `reviews_io`, `gorgias_oauth`, `intercom`, `zendesk`, `klaviyo`, `attentive`,
+     `gong`, `hotjar`, `reddit`, `discord`, `youtube_data`, `typeform`. A VoC platform
+     outside that list can only arrive as a stored key or a later connect - never
+     probe slugs speculatively.
+   - **Stored keys: zero commands.** The runtime secret store's key names and each
+     key's allowed hosts are already injected into this conversation's context as the
+     runtime-secrets block (values stay sealed; only `secure-fetch` can use them).
+     Read the block from context - no command fetches it, and running probes to
+     "discover" keys is wasted motion. A bounded `secure-fetch run` (or
+     `secret run --env KEY=<SECRET_KEY> -- true`) confirms a specific key works before
+     building on it - confirmation, not discovery.
+   - **Meta: the workspace listing is the answer.** A Meta workspace showing as
+     connected (`motion workspaces`) is the entire reachability test for ad comments -
+     a connected Meta workspace is itself a reachable VoC platform, because ad
+     comments are customer voice. Never verify Meta with a data pull - no insights
+     query, no creative probe: step 2 creates the routine on connected alone and its
+     scheduled runs absorb API errors, so a probe cannot change the outcome, only
+     spend time.
+
+   Recognize VoC platforms in that inventory by reading it with
    judgment, not by matching key names to a scheme: a stored key named `OKENDO_TEN`, or
    any key whose allowed host is `api.okendo.io`, is an Okendo credential no matter
    what the key is called - the key name and the allowed host each independently
    identify the platform. Judge every connection and key against the voc-data-pull
    skill's Step 1 table and against plain sense: anything that is a reviews, support,
    survey, or community platform is customer voice. Never mark a platform unreachable
-   without having read the full inventory first. A bounded `secure-fetch run` (or
-   `secret run --env KEY=<SECRET_KEY> -- true`) confirms a specific key works before
-   building on it - confirmation, not discovery. VoC scope is customer-voice
+   without having read the full inventory first. VoC scope is customer-voice
    data, not the skill's recipe list - a reachable reviews/support/community platform with
    no recipe still counts. Integrations and stored secrets are VM-wide, so a platform
    reachable for one workspace is reachable here too; what changes per workspace is where
