@@ -1,4 +1,4 @@
-<!-- BEGIN runneth:knoweth-organize v4 -->
+<!-- BEGIN runneth:knoweth-organize v5 -->
 Knoweth organize (after the questions are answered):
 - Workspace folder: `/agent/brain/<brand>/`, where `<brand>` is this conversation's
   brand name (the workspace's name) slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
@@ -16,20 +16,15 @@ Knoweth organize (after the questions are answered):
   (3) /agent/brain/<brand>/_tag-vocabulary.md does not exist - writing it is the organize
   step's last act, so its existence means done for this workspace; update the file instead of
   re-running. Another workspace's vocabulary file says nothing about this one.
-- TODAY only three lanes are searched: global, user:<userId>, and project:<workspaceId> (the
-  workspace). Keep all shared content in the global lane (the brain root default) and make it findable
-  with tags/attributes and a naming decoder. Do NOT carve data-source-family or initiative lanes
-  (voc, meta, campaign, ...): those lanes are not queried yet, so the content would go dark. Use a
-  user: lane only for genuine per-person isolation. The workspace lane is automatic.
-- The workspace lane is not a substitute for the folder. It is populated automatically and
-  injected as pre-context, but explicit Knoweth search queries only the global and user: lanes
-  today, so anything filed only in the workspace lane cannot be searched back. Workspace
-  separation comes from the folder plus attribution: every page tags the workspace it belongs to
-  and cites files by their /agent/brain/<brand>/ path, so a global-lane hit is never
-  ambiguous about which workspace it describes.
+- Retrieval scopes are owned by the runtime - never create, request, or promise lanes or
+  search scopes from here. Keep shared content findable where it lives with tags/attributes
+  and a naming decoder, and record what each folder is (its type and owner) in the brain map.
+- Workspace separation comes from the folder plus attribution: every page tags the
+  workspace it belongs to and cites files by their /agent/brain/<brand>/ path, so a
+  search hit is never ambiguous about which workspace it describes.
 - Do not organize an empty brain. If content has not landed, say what is missing and route back.
 - Finish by writing the tag vocabulary + naming decoder to
   /agent/brain/<brand>/_tag-vocabulary.md (gate 3's done-marker) and noting it in
-  /agent/brain/<brand>/_changelog.md. When the harness starts layering configured lanes
-  (see the forward path), promote high-value tags to family lanes then, not before.
-<!-- END runneth:knoweth-organize v4 -->
+  /agent/brain/<brand>/_changelog.md, then give the workspace folder and its banks their
+  brain-map entries and type labels.
+<!-- END runneth:knoweth-organize v5 -->

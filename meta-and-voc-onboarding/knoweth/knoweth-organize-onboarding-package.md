@@ -27,7 +27,7 @@ This is the last setup step of the combined run and the first line of ongoing ma
 **Guard 1 — organize the brain (runs once, after the questions are answered).**
 
 ```
-<!-- BEGIN runneth:knoweth-organize v4 -->
+<!-- BEGIN runneth:knoweth-organize v5 -->
 Knoweth organize (after the questions are answered):
 - Workspace folder: `/agent/brain/<brand>/`, where `<brand>` is this conversation's
   brand name (the workspace's name) slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
@@ -45,29 +45,24 @@ Knoweth organize (after the questions are answered):
   (3) /agent/brain/<brand>/_tag-vocabulary.md does not exist - writing it is the organize
   step's last act, so its existence means done for this workspace; update the file instead of
   re-running. Another workspace's vocabulary file says nothing about this one.
-- TODAY only three lanes are searched: global, user:<userId>, and project:<workspaceId> (the
-  workspace). Keep all shared content in the global lane (the brain root default) and make it findable
-  with tags/attributes and a naming decoder. Do NOT carve data-source-family or initiative lanes
-  (voc, meta, campaign, ...): those lanes are not queried yet, so the content would go dark. Use a
-  user: lane only for genuine per-person isolation. The workspace lane is automatic.
-- The workspace lane is not a substitute for the folder. It is populated automatically and
-  injected as pre-context, but explicit Knoweth search queries only the global and user: lanes
-  today, so anything filed only in the workspace lane cannot be searched back. Workspace
-  separation comes from the folder plus attribution: every page tags the workspace it belongs to
-  and cites files by their /agent/brain/<brand>/ path, so a global-lane hit is never
-  ambiguous about which workspace it describes.
+- Retrieval scopes are owned by the runtime - never create, request, or promise lanes or
+  search scopes from here. Keep shared content findable where it lives with tags/attributes
+  and a naming decoder, and record what each folder is (its type and owner) in the brain map.
+- Workspace separation comes from the folder plus attribution: every page tags the
+  workspace it belongs to and cites files by their /agent/brain/<brand>/ path, so a
+  search hit is never ambiguous about which workspace it describes.
 - Do not organize an empty brain. If content has not landed, say what is missing and route back.
 - Finish by writing the tag vocabulary + naming decoder to
   /agent/brain/<brand>/_tag-vocabulary.md (gate 3's done-marker) and noting it in
-  /agent/brain/<brand>/_changelog.md. When the harness starts layering configured lanes
-  (see the forward path), promote high-value tags to family lanes then, not before.
-<!-- END runneth:knoweth-organize v4 -->
+  /agent/brain/<brand>/_changelog.md, then give the workspace folder and its banks their
+  brain-map entries and type labels.
+<!-- END runneth:knoweth-organize v5 -->
 ```
 
 **Guard 2 — standing save and maintenance contract (always on).**
 
 ```
-<!-- BEGIN runneth:knoweth-brain v4 -->
+<!-- BEGIN runneth:knoweth-brain v5 -->
 Knoweth brain discipline (all writes, going forward):
 - Workspace folder: `/agent/brain/<brand>/`, where `<brand>` is this conversation's
   brand name (the workspace's name) slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
@@ -81,8 +76,7 @@ Knoweth brain discipline (all writes, going forward):
   never add tags or front-matter to them; facet vocabulary goes in the compiled analysis pages
   that cite them. The later cross-platform VoC audit lives only at
   /agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md; raw syncs do not create
-  it. Keep it in the global lane so it is searchable today; the folder is for human navigation,
-  not a lane. Cacheth is the system of record for per-creative content: write a
+  it. It is searchable where it lives; the folder is for human navigation. Cacheth is the system of record for per-creative content: write a
   per-creative file only when a person explicitly asks, and treat it as a dated snapshot (the
   cache stays the retrieval source of truth for current facts). Performance metrics are pulled
   live via the motion CLI, never saved.
@@ -99,15 +93,16 @@ Knoweth brain discipline (all writes, going forward):
   rather than spawning a duplicate. Merge only within one workspace - two workspaces
   describing the same platform stay two pages.
 - Adopt stray human-added files (classify and tag, or flag) without moving the human's folders.
-  Default new dimensions to tags, not lanes; only user: isolation and the automatic workspace lane
-  are real lanes today.
+  Default new dimensions to tags; retrieval scopes are owned by the runtime, never hand-carved.
 - Keep one brain-maintenance routine: run `routine list --search "brain-maintenance"`; if absent,
-  create it (a scheduled sweep for stray/untagged files, duplicates, stale pages, and retention
-  candidates; per-creative files in the brain exist only by a person's explicit ask - if the
+  create it (a scheduled sweep for stray/untagged files, duplicates, stale pages, retention
+  candidates, and the brain map's freshness - new homes and banks get their map lines, entry
+  dates and bank coverage windows get refreshed, and a map that is missing, truncated, or
+  stale gets rebuilt from a scan without touching carried-over entries; per-creative files in the brain exist only by a person's explicit ask - if the
   sweep finds ones of unknown provenance, ask the person before archiving, never silently move
   or delete them) and never run the sweep in-conversation. One routine covers the whole brain;
   it never merges content across workspace folders.
-<!-- END runneth:knoweth-brain v4 -->
+<!-- END runneth:knoweth-brain v5 -->
 ```
 
 ### Activation checklist (verify it actually fired)
