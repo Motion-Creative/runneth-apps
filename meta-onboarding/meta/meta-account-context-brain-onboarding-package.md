@@ -434,25 +434,32 @@ query.
 
 **Presentation rule for Field 4 (the fill-in section for this field)**
 
-**The naming breakdown is always a table — never bullets, never prose.** Whatever the
-detection found, the customer scans and corrects it as rows, one tag or position per row.
+**The naming breakdown is always a table — never bullets, never prose — and campaign
+names get the same table treatment as ad names.** Whatever the detection found, the
+customer scans and corrects it as rows, one tag or position per row, at both levels.
 
 When a naming decoder exists (from Creative Attributes or a prior fill-in run), embed the
 full filterable-field table inline in the section, in two parts:
 
 - **Part A — Filterable dimensions** (one row per `segment_filter` field): Field | Known
-  values. These are the dimensions the team can ask about by name.
+  values. These are the dimensions the team can ask about by name. Campaign-level
+  dimensions (positions whose `query_field` is `campaignName`) appear as their own rows
+  here, alongside the ad-name dimensions.
 - **Part B — Context-only fields** (one row per `context_only` or metadata field): Field |
   What it captures. These are visible in names but not used for filtering.
 
 When the detection found multiple schemas rather than one convention, each schema gets its
 own table (Tag | Meaning, one row per tag), with a one-line lead-in naming the schema and
-where it appears — never a bullet list of tags per schema. When no reliable pattern was
-detected at all, present what was found as a table of the observed name shapes with one
-example each, and ask the customer to confirm or correct the structure.
+where it appears — never a bullet list of tags per schema. Ad names and campaign names are
+separate schemas by definition when both carry a pattern: the campaign breakdown gets its
+own table with a lead-in naming the level, never a one-line summary under the ad-name
+table. When no reliable pattern was detected at all, present what was found as a table of
+the observed name shapes with one example each — at each level — and ask the customer to
+confirm or correct the structure.
 
-Follow with the campaign and ad set naming format (one line each, with an example). Then ask
-the two confirmation questions as the section's final bold line.
+Follow with the ad set naming format (one line, with an example) — ad set is the only
+level that may stay a one-liner. Then ask the two confirmation questions as the section's
+final bold line.
 
 The customer must be able to scan the table and correct a value, a tag meaning, or a field
 type without asking for more detail. A prose or bullet summary of a decoder is not
@@ -478,7 +485,8 @@ naming convention, content program values, filter guide, creative identity.
   "workspace_id": "<workspaceId>",
   "as_of": "<YYYY-MM-DD>",
   "delimiter": "_",
-  "format_string": "<full position template, e.g. {creative-id}_{content-program}_...>",
+  "format_string": "<full ad-name position template, e.g. {creative-id}_{content-program}_...>",
+  "campaign_format_string": "<full campaign-name position template when campaigns carry a pattern; null otherwise>",
   "positions": [
     {
       "position": <N>,
@@ -496,10 +504,16 @@ naming convention, content program values, filter guide, creative identity.
 }
 ```
 
+The `positions` array holds every decoded level in one list: ad-name positions carry
+`query_field: "adName"` and campaign-name positions carry `query_field: "campaignName"` —
+a campaign convention is decoded into typed positions exactly like an ad-name convention,
+never summarized in a note.
+
 **Type definitions and enumeration rules:**
 
 - `segment_filter` — a discrete value the user would ask for by name. Filter using `_VALUE_` in
-  `adName`. Enumerate all known values as a full array. New values in this position follow the
+  the position's own `query_field` level (`adName` or `campaignName`). Enumerate all known
+  values as a full array. New values in this position follow the
   same `_VALUE_` pattern automatically. Example positions: content program, product line, product,
   funnel stage, format, market.
 - `context_only` — human-readable text embedded in the name, not used as a filter. Set

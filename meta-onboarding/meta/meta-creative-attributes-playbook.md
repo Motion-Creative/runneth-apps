@@ -148,28 +148,36 @@ never reconstruct the record by hand.
 
    The command returns a wrapper, not the corpus. Read the Meta corpus path from
    `exportPaths.meta` on the output (or `.providers.meta.path` in the wrapper file), then
-   extract the names with `jq -r '.adNames[]?'` on that per-provider JSONL file — one record
+   extract the names with `jq -r '.adNames[]?'` and the campaign names with
+   `jq -r '.campaignNames[]?'` on that per-provider JSONL file — one record
    per creative, each carrying its associated ad names (a creative served in several ads
-   carries that many names). If the list looks incomplete the cache may still be bootstrapping —
+   carries that many names) and campaign names. Campaign names are first-class decode
+   input, not a spot-check: the campaign list gets the same structure detection as the
+   ad-name list. If the list looks incomplete the cache may still be bootstrapping —
    `motion cache status --workspace-id <workspaceId>` shows the sync state; re-run the decode
    once the sync settles. The wrapper is `./workdir/` scratch and the per-provider export files
    live in Cacheth's own storage — none of it is brain content.
-3. Look for structure in the `adName` values: delimiters (underscores, hyphens, pipes),
-   position-based encoding, recurring prefixes, tag-like codes.
-4. If a pattern is detected, build a provisional decode table: position or segment → meaning →
-   example values. Mark it **provisional**.
-5. Note where product/concept tokens live. Each full record's `adUnits[]` (via
-   `motion cache get-creative`) carries the campaign and ad set names alongside each ad name —
-   spot-check a handful of records to see whether the product tokens found in ad names also
-   cascade into campaign or ad set names, or live at the ad level only. Record the provisional
-   placement (e.g. "product names appear in ad names and campaign names") with the decode table.
+3. Look for structure in the `adName` values **and, separately, in the `campaignName`
+   values**: delimiters (underscores, hyphens, pipes), position-based encoding, recurring
+   prefixes, tag-like codes. The two levels are analyzed independently — a campaign
+   convention can differ from (or exist without) an ad-name convention.
+4. If a pattern is detected at a level, build that level's provisional decode table:
+   position or segment → meaning → example values. Ad names and campaign names each get
+   their own table — a detected campaign pattern is never compressed into a note on the
+   ad-name table. Mark both **provisional**.
+5. Note where product/concept tokens live, reading it directly off the two extracted lists:
+   whether the product tokens found in ad names also cascade into campaign names, or live
+   at one level only. For ad set placement, spot-check a handful of full records — each
+   record's `adUnits[]` (via `motion cache get-creative`) carries the ad set names
+   alongside each ad name. Record the provisional placement (e.g. "product names appear in
+   ad names and campaign names") with the decode tables.
 6. **Pass findings to the Account Context Brain.** When the Account Context Brain runs (Step 2
-   of the onboarding), pre-populate Field 4 (Naming conventions) with this provisional decode
-   table and the product-token placement. The Account Context Brain confirms, corrects, or
+   of the onboarding), pre-populate Field 4 (Naming conventions) with both provisional decode
+   tables and the product-token placement. The Account Context Brain confirms, corrects, or
    replaces them — it does not start from scratch.
 
-If no pattern is detected, note "no naming convention detected" as the provisional finding for
-the Account Context Brain to confirm.
+If no pattern is detected at a level, note "no naming convention detected" for that level as
+the provisional finding for the Account Context Brain to confirm.
 
 The provisional decode is a handoff — this playbook writes nothing to the brain, and no
 `/agent/INDEX.md` entry is needed here (per-creative content is in Cacheth, and Knoweth

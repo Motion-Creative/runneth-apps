@@ -28,6 +28,13 @@ of onboarding install and test independently.
   onboarded VMs are never re-set-up.
 - **Meta-only install sequence**: connection check, single guard merge, Creative
   Attributes, Account Context Brain autofill, roster, readiness report - no VoC steps.
+- **Campaign names are first-class in the naming decode**: the Creative Attributes
+  provisional decode analyzes campaign names independently of ad names (both lists come
+  from the same Cacheth export - `campaignNames[]` alongside `adNames[]`), Field 4's
+  decoder holds campaign positions as typed entries (`query_field: "campaignName"`,
+  optional `campaign_format_string`), and the walkthrough's naming section surfaces the
+  campaign breakdown as its own table with the same full-breakdown rule as ad names -
+  never a one-line summary.
   Staged docs move to `/agent/brain/meta-onboarding/` and every internal path reference
   follows.
 - Carries the v6 behavior of the combined package's Meta parts otherwise, including the

@@ -53,7 +53,9 @@ the customer needs to scan and confirm — never force bullets onto a table. And
 naming-conventions section is **always a table** per Field 4's presentation rule in the ACB
 package — the full breakdown as rows (one table per schema when there are several), never
 bullets, never prose, and never compressed to a settled one-liner, even when the decoder is
-confirmed.
+confirmed. Campaign names get the same treatment as ad names: when campaigns carry their
+own pattern, the campaign breakdown is its own table in this section with a lead-in naming
+the level — never a one-line summary under the ad-name table.
 
 **Field 10 is a Part 2 section like the rest — the last one, in field order.** Its
 section carries the two beats in the fixed output shape the ACB package's Field 10 rules
@@ -95,11 +97,17 @@ quality, attribution status). Include total spend and creative count.>
   read, no question.>
 
 **<Naming-conventions heading>**
-<One-line lead-in: what the names encode and how reliable the pattern is.>
+<One-line lead-in: what the ad names encode and how reliable the pattern is.>
 
 | <Field / Tag> | <Known values / Meaning> |
 | --- | --- |
 | <one row per tag or position — the full breakdown, one table per schema if several> | <...> |
+
+<One-line lead-in for the campaign-name breakdown, when campaigns carry a pattern.>
+
+| <Field / Tag> | <Known values / Meaning> |
+| --- | --- |
+| <one row per campaign-name tag or position — same full-breakdown rule as ad names> | <...> |
 
 **<Field 4's confirmation questions, bold, as the last line?>**
 
@@ -137,7 +145,8 @@ Just answer what you know — I'll write the context file from your responses.
   numbered report sections).
 - The naming-conventions section carries the full breakdown as a table — one table per
   schema when there are several (Field 4's presentation rule) — never bullets or a prose
-  summary of the decoder.
+  summary of the decoder. When campaigns carry their own pattern, the campaign-name
+  breakdown appears as its own table, not a one-liner.
 - No field numbers, status badges, or worksheet labels anywhere.
 - At most one bold question per section (two only for the sanctioned Field 4 and Field 10
   sections); settled fields have none.
