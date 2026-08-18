@@ -4,6 +4,24 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 6 - 2026-08-17
+
+- Renamed the seeded layout to the brand schema: brand-named brain homes
+  (`/agent/brain/<brand>/`), per-source families under `integrations/`, the raw
+  customer-voice bank at `integrations/voice-of-customer/`, and package docs under
+  `/agent/brain/packages/meta-and-voc-onboarding/`. Slug rule, exact-workspace-ID
+  authority, skill IDs, and `voc-sync-*` routine names unchanged. Existing installs
+  keep their current paths as adopted homes; nothing migrates automatically.
+- Seeded the brain map: `/agent/brain/brain-map.md` created from a staged template at
+  activation, kept current by a fifth guard block (`runneth:brain-map`), with existing
+  `/agent/INDEX.md` entries carried over verbatim and a pointer left at the old path.
+- Added install-time brain reading (step 0.5): classify the brain, inventory existing
+  structure into the map in its own terms, adopt existing brand homes and
+  customer-voice caches, import corpus-search source registrations, and never write a
+  duplicate sync over an external pipeline without a yes.
+- Rewrote the activation offer and readiness report in customer language; internal
+  vocabulary (guards, roster, sentinels, lanes) is banned from customer-visible text.
+
 ## 5 - 2026-08-11
 
 - Added the `dashboard-design` skill for building and refining Runneth dashboards and
