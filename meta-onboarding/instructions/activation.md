@@ -70,12 +70,24 @@ get it. Never postpone it to a "next relevant" moment - no such trigger exists. 
 always comes before any connected-account check, account-context write,
 `/agent/INDEX.md` edit, or `/agent/user.md` change:
 
-> Meta onboarding is installed for <workspace>. Starting it will inspect this
-> workspace's connected Meta account, save Meta account context under this workspace's
-> brain folder, and update the shared onboarding guards and completion roster in
-> `/agent/user.md`. Would you like me to start that setup now?
+> Meta onboarding is ready for <workspace>. Here's what I'll do once you give me the
+> go-ahead: take a look at this workspace's connected Meta account, learn how it's
+> actually set up - the naming system, the campaign structure, what "winning" looks
+> like for you - and save that as <workspace>'s account context, so every performance
+> answer starts from how your team really reads the account. I'll also switch on the
+> standing rules that keep my analysis grounded in that context, and keep a note that
+> this workspace is onboarded so I only ask once. When it's done I'll check whether
+> you're ready to walk through it together. Want me to get started?
 
-Fill only `<workspace>` from the resolved `Default workspace:` line. Do not inspect the
+Fill only `<workspace>` from the resolved `Default workspace:` line. The wording may
+flex a little to fit the conversation, but it stays in this voice - warm, first-person,
+"here's what I'll do for you" - and always covers the same four facts: it will read the
+connected Meta account, save account context to this workspace's brain, update the
+shared standing rules and completion record, and end by asking whether to begin the
+walkthrough. Never dress the offer, or any restatement of it, in internals: no file
+paths, no `/agent/user.md`, no guard or sentinel names, no roster names, no package
+ids, no "post-install". Those are implementation details - the person hearing this is a
+customer, not an operator. Do not inspect the
 connection inventory or filesystem to make the offer. Offer at most once per
 conversation. If the person declines, defers, or asks about something else, handle their
 message normally and do not repeat the offer in that conversation. A later conversation
