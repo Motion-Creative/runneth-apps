@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const packageRoot = new URL("../", import.meta.url);
-const repositoryRoot = new URL("../../../", import.meta.url);
+const repositoryRoot = new URL("../../", import.meta.url);
 
 const readPackageFile = async (relativePath) =>
   await readFile(new URL(relativePath, packageRoot), "utf8");
@@ -41,7 +41,7 @@ test("new package is consistently published as version 1", async () => {
     type: "github",
     owner: "Motion-Creative",
     repo: "runneth-apps",
-    path: "packages/creator-intel",
+    path: "creator-intel",
     ref: "main",
   });
 });

@@ -27,7 +27,7 @@ jobs:
           node-version: '20'
 
       - name: Test Creator Intel package
-        run: node --test packages/creator-intel/tests/*.test.mjs
+        run: node --test creator-intel/tests/*.test.mjs
 
   site:
     name: Site

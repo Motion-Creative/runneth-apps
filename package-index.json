@@ -94,7 +94,7 @@
         "type": "github",
         "owner": "Motion-Creative",
         "repo": "runneth-apps",
-        "path": "packages/creator-intel",
+        "path": "creator-intel",
         "ref": "main"
       },
       "updatePolicy": "auto",
