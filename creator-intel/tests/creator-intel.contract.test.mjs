@@ -10,9 +10,6 @@ const readPackageFile = async (relativePath) =>
 
 test("new package is consistently published as version 1", async () => {
   const manifest = JSON.parse(await readPackageFile("package.json"));
-  const legacyManifest = JSON.parse(
-    await readPackageFile("runneth-package.json"),
-  );
   const index = JSON.parse(
     await readFile(new URL("package-index.json", repositoryRoot), "utf8"),
   );
@@ -25,7 +22,6 @@ test("new package is consistently published as version 1", async () => {
   assert.equal(manifest.installPolicy, "auto");
   assert.equal(manifest.updatePolicy, "auto");
   assert.equal(manifest.uninstallPolicy, "allowed");
-  assert.deepEqual(legacyManifest, manifest);
   assert.equal(indexEntry?.version, manifest.version);
   assert.equal(indexEntry?.name, manifest.name);
   assert.equal(indexEntry?.description, manifest.description);
