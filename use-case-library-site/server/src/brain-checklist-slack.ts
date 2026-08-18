@@ -17,6 +17,10 @@ import type { BrainChecklistFile, BrainChecklistPayload } from './brain-checklis
 
 const TOKEN = process.env.BRAIN_CHECKLIST_SLACK_TOKEN
 const CHANNEL = process.env.BRAIN_CHECKLIST_SLACK_CHANNEL
+// Optional Slack mention(s) prepended to the parent message so the owning CSM
+// actually gets notified (channel posts alone do not ping anyone). Set to e.g.
+// "<@U06NGLVPAQ0>". Unset = no mention line.
+const MENTION = process.env.BRAIN_CHECKLIST_SLACK_MENTION?.trim()
 
 // Per-section brain-structure recommendations. Tells the reviewer where each
 // uploaded file should land in the customer's brain so routing is consistent.
@@ -38,6 +42,7 @@ const fmtBytes = (n: number): string => {
 
 const renderMainText = (p: BrainChecklistPayload): string => {
   const lines: string[] = []
+  if (MENTION) lines.push(MENTION)
   lines.push(`:brain: *New brain checklist submission from ${p.workspaceName}*`)
   lines.push(`*Contact:* ${p.contactEmail}`)
   lines.push(`*Submitted at:* ${p.submittedAt}`)
