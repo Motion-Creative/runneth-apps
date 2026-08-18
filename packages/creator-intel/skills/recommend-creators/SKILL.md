@@ -43,10 +43,10 @@ When you offer the methods, state plainly what each one actually does, so the cu
 
 ### (a) Motion-context, always available
 
-- Derive candidate topics from own-brand context and the ad account: pull the messaging of the top ads with `motion meta insights --summary-sections messagingAndPositioning --summary-sections hookOrHeadline` and combine with `motion brand-context` themes and the gap.
+- Works for any customer and any vertical. Derive candidate topics from that customer's own brand context and the chosen campaign's ad messaging: pull the messaging of the campaign's top ads with `motion meta insights --summary-sections messagingAndPositioning --summary-sections hookOrHeadline` and combine with `motion brand-context` themes and the gap. The topics are the customer's, never a fixed list.
 - Show the proposed 3 to 5 topics and ask the person to approve them before searching.
-- On approval, search with a follower band, this is the key. A bare `--search-term` is follower-weighted and returns celebrities (MrBeast, GaryVee); paging past them takes 12+ pages of general accounts. Instead run `motion inspo creators --search-term "<approved topic>" --followers-min 5000 --followers-max 150000` to bracket the specialist range where the real marketing and creative creators live, and page through that band. There is no ascending sort, so the band is what biases toward the right size.
-- Filter the band to real niche fit by tagline and topics (marketing, ads, paid social, ecommerce, UGC, creative strategy, copywriting, growth), drop lifestyle and general accounts, dedupe by Motion creator id, and present the best 6 to 10 with each creator's Motion link and follower count and a one-line reason. This recipe returns real specialists (verified live: Joel Marlinarson, Mitch Paid Ads, Brian Blum, Mo Anwary), not celebrities.
+- On approval, search with a follower band, this is the key. A bare `--search-term` is follower-weighted and returns celebrities (MrBeast, GaryVee); paging past them takes 12+ pages of general accounts. Instead run `motion inspo creators --search-term "<approved topic>" --followers-min 5000 --followers-max 150000` to bracket the working-creator range where the real specialists for that vertical live (away from mega-celebrities), and page through that band. Adjust the band by vertical if needed; the point is to bias toward the specialist size. There is no ascending sort, so the band is what biases toward the right size.
+- Filter the band to real niche fit by tagline and topics, using the customer's own space, not a fixed keyword list. Build the filter vocabulary from their category and campaign language: a marketing tool keeps marketing/ads/UGC/ecommerce creators, a skincare brand keeps skincare/beauty/routine creators, a finance app keeps personal-finance creators. Drop off-vertical and general lifestyle accounts, dedupe by Motion creator id, and present the best 6 to 10 with each creator's Motion link, follower count, and a one-line reason. This recipe returned real specialists live for Motion (Joel Marlinarson, Mitch Paid Ads, Brian Blum, Mo Anwary); the same band-plus-topic recipe generalizes to any vertical.
 - This is a reverse-engineered path, not Motion's internal "Curated for your brand" endpoint, which is not exposed. It works, but if results are thin, say so and lean on method (b). Never present a raw high-follower category list as the recommendation.
 
 ### (b) Top creator similarity
@@ -66,12 +66,12 @@ When you offer the methods, state plainly what each one actually does, so the cu
 - The verified actors and exact run recipes live in `creator-intel-reference/apify-actors.md`. Use them; do not re-discover the actors each run unless they stop working.
 - After a one-time run, offer to set up a routine for ongoing sourcing; do not create the routine automatically.
 
-### (c) Reviews gap to micro-personas
+### (c) Reviews gap: sharper queries for method A
 
-- A review audit mines the brand's customer reviews to surface the pains, desires, and micro-personas showing up in real customer language. The gap version finds the micro-personas you have no creator for, then searches Inspo for creators who fill them with `motion inspo creators --search-term "<micro-persona phrase>"`.
-- Whenever you reference this method, explain in one line what a review audit is and does; never just say it is missing. If none exists, explain it and offer to run one rather than silently skipping.
+- Method C is not a separate search engine. It runs exactly like method A, but the review audit's job is to find the sharper, more niche things to search for. A review audit mines the customer's reviews to surface the pains, desires, and micro-personas showing up in real customer language, especially the ones the roster is not reaching. Those micro-persona and pain-language phrases become additional, tighter search topics, and you feed them straight into method A's band-plus-topic recipe.
+- So C = better queries for A. Explain in one line what a review audit is and does whenever you reference it. It needs a connected reviews source; if none exists, explain it and offer to connect one rather than silently skipping.
 
-When the inputs for (b) or (c) are not present, degrade to (a) so the person always gets a grounded answer.
+Methods generalize to every customer and vertical: A and B read the customer's own brand context, campaign, roster, and seeds, not Motion-specific values. When a reviews source for (c) is not present, run (a) and (b) on the topics you can derive; C only adds sharper review-derived queries on top of A.
 
 ## Output structure
 
