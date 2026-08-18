@@ -17,13 +17,16 @@ This skill runs at install. It creates the customer-owned state tree for one Mot
 
 ## Stage 0: Install and workspace
 
-- Open with a one-line overview: this builds a trusted dashboard of your creators and their performance from your naming conventions and creator database, and recommends new creators worth working with. Then offer to set it up now.
+- Open with a one-line overview: this builds a trusted dashboard of your creators and their performance from your naming conventions and creator database, and recommends new creators worth working with. Then start setup.
 - If the account has exactly one workspace, use it and say so. Do not ask.
 - If there is more than one workspace, ask once which workspace to set up, and store its real `workspaceId`.
 - Never write customer state inside `/agent/brain/creator-intel-reference/`.
 - Setup is idempotent. Reruns update the same workspace record and never duplicate state.
 
 ## Stage 1: Understand how you work
+
+**Resume and idempotency, hard rule:** A rerun must read `workspace.json` for every Stage 1 field (`performanceMeasure`, `rosterSource`, `hiringLens`) and confirm each one explicitly. Never infer that setup is complete because the roster is built or the workspace is active. If a field is missing or blank, treat that stage as incomplete and ask for it before moving on.
+
 
 Ask these one at a time. Everything already known from context is confirmed, not re-asked.
 
@@ -38,7 +41,7 @@ Ask these one at a time. Everything already known from context is confirmed, not
 
 - Ask: "Where does your creator roster live: a Notion database, a spreadsheet, or just your ad naming conventions?"
 - Then get that source connected so it can be read live, branching on the answer:
-  - Notion: read it through the working API-key path. If not reachable, offer to connect Notion.
+  - Notion: read it through the working API-key path. If not reachable, say so and ask them to connect Notion.
   - Spreadsheet: check whether Google is connected. Offer to connect it if not, then read the sheet. Sharing or exporting is a fallback, not the default.
   - Asana, Airtable, Monday, or another tool: check for an existing connection and reuse it if present, otherwise offer to connect it. Fall back to export only if no connection path exists.
   - Only naming conventions: no source to connect. Say plainly the roster will come from Meta ad names alone, so cost and rights fields will be missing and the ROI page will not appear.

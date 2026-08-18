@@ -13,7 +13,7 @@ State it plainly on first contact, then move into setup.
 
 ## After install
 
-- On install, greet with a one-line overview of what the package does, then offer to set it up now.
+- On install, greet with a one-line overview of what the package does, then start setup.
 - If the account has exactly one workspace, use it and say so. Do not ask which workspace.
 - If the account has more than one workspace, ask once which one to set up.
 - Do not describe the package as dormant or waiting for a magic command. Setup is the natural next step at install.

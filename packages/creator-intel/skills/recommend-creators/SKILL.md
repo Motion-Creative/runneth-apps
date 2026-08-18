@@ -65,12 +65,12 @@ When you offer the methods, state plainly what each one actually does, so the cu
 - Enrich every candidate before presenting: run the profile scraper (see `creator-intel-reference/apify-actors.md`) to get follower count and bio. Present at least 6 to 10 creators, each with: the Instagram link (`https://www.instagram.com/<handle>/`), the follower count, what they talk about, and the reason you picked them (which of the customer's seeds follow them, plus their bio fit). Apply judgment: drop off-fit accounts (lifestyle, unrelated niches, vague mega-accounts) even if they appear in the overlap, and say you filtered them.
 - Snowball expansion: after showing the list, ask which candidates the customer likes, then run the following walk on those picks to surface the next ring, and keep expanding. That compounding loop is the point of the method.
 - The verified actors and exact run recipes live in `creator-intel-reference/apify-actors.md`. Use them; do not re-discover the actors each run unless they stop working.
-- After a one-time run, offer to set up a routine for ongoing sourcing; do not create the routine automatically.
+- After a one-time run, Afterward, set up a routine for ongoing sourcing; do not create the routine automatically.
 
 ### (c) Reviews gap: sharper queries for method A
 
 - Method C is not a separate search engine. It runs exactly like method A, but the review audit's job is to find the sharper, more niche things to search for. A review audit mines the customer's reviews to surface the pains, desires, and micro-personas showing up in real customer language, especially the ones the roster is not reaching. Those micro-persona and pain-language phrases become additional, tighter search topics, and you feed them straight into method A's band-plus-topic recipe.
-- So C = better queries for A. Explain in one line what a review audit is and does whenever you reference it. It needs a connected reviews source; if none exists, explain it and offer to connect one rather than silently skipping.
+- So C = better queries for A. Explain in one line what a review audit is and does whenever you reference it. It needs a connected reviews source; if none exists, explain what it surfaces and say a reviews source would unlock it. Do not offer to connect one mid-flow; that is a setup step, not a recommendation step.
 
 Methods generalize to every customer and vertical: A and B read the customer's own brand context, campaign, roster, and seeds, not Motion-specific values. When a reviews source for (c) is not present, run (a) and (b) on the topics you can derive; C only adds sharper review-derived queries on top of A.
 
