@@ -37,9 +37,9 @@ connected-account check, routine creation, account-context write, `/agent/brain/
 edit, or `/agent/user.md` change, make this offer:
 
 > Meta and Voice of Customer onboarding is installed for <brand>. Starting it will
-> inspect this workspace's connected accounts, create the applicable daily VoC sync
-> routines, save Meta account context under this workspace's brain folder, and update
-> the shared onboarding guards and completion roster in `/agent/user.md`. Would you
+> look at this workspace's connected accounts, set up daily syncs that collect your
+> reviews and ad comments, save how your Meta account should be read under <brand>'s
+> brain folder, and save its own setup notes so this doesn't repeat itself. Would you
 > like me to start that setup now?
 
 Fill only `<brand>` from the resolved `Default workspace:` line. Do not inspect the

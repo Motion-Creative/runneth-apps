@@ -141,7 +141,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    (the org has exactly one Motion workspace) get their routine created and kicked now;
    for the rest, ask the skill's confirmation question for every pending platform in one
    compact block just before the readiness report, mark those platforms
-   "waiting on a person - account confirmation" in the report's VoC line, and create and
+   "waiting on a person - account confirmation" in the report's reviews-and-comments line, and create and
    kick their routines the moment the answer arrives - in that follow-up turn, never
    before. A routine is never created on an unconfirmed account just to keep the backfill
    moving. The workspace belongs in
@@ -174,7 +174,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    create fresh. Leave other workspaces' `voc-sync-*` routines alone. If a platform's
    folder is already filling without a `voc-sync-*` routine - something outside Runneth
    is syncing it - never create a second sync on top of it: mark that platform
-   "synced outside Runneth" in the report's VoC line and offer the managed daily sync,
+   "synced outside Runneth" in the report's reviews-and-comments line and offer the managed daily sync,
    creating it only on a yes.
 3. **Merge all five guard blocks into `/agent/user.md` with one Write - nothing else can
    touch that file.** Skip this step entirely only if each of the five merged blocks in
@@ -290,12 +290,13 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    either ("average ROAS is 0.88" belongs in the brain file, never in this turn's
    visible text). The report's shape is literal:
 
-   > meta-and-voc-onboarding - install complete for <brand>
-   > - VoC sync: <per-platform status, one line total>
-   > - Voice of Customer Audit: waits for backfill completion and a person's yes
-   > - Guards: merged
+   > Meta and Voice of Customer setup - complete for <brand>
+   > - Existing setup: found and kept - nothing was moved   <- only on a brain that had existing structure (step 0.5)
+   > - Reviews and comments sync: <per-platform status, one line total>
+   > - Voice of Customer Audit: waits for the sync to finish and a person's yes
+   > - Setup notes: saved
    > - Creative Attributes: done
-   > - Account Context Brain: done - remaining gaps wait for the walkthrough
+   > - Account Context: done - remaining gaps wait for the walkthrough
    >
    > Are you ready to begin your onboarding?
 
@@ -304,15 +305,18 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    because a VM can hold several onboarded workspaces. "Creative
    Attributes: done" is the entire line - naming what was detected, the convention's name
    or shape, a file path, or guard version numbers turns a status into a finding.
-   Wrong: "Account Context Brain: autofilled 7 of 10 fields; 4 questions need a human."
-   Right: "Account Context Brain: done - remaining gaps wait for the walkthrough." The
+   Wrong: "Account Context: autofilled 7 of 10 fields; 4 questions need a human."
+   Right: "Account Context: done - remaining gaps wait for the walkthrough." The
    only permitted extensions of a bullet are its allowed states ("skipped - <why>",
-   "waiting on a person - <two-or-three-word topic>", "blocked - <reason>"), never extra
+   "waiting on a person - <two-or-three-word topic>", "blocked - <reason>",
+   "synced outside Runneth - sync offer open"), never extra
    detail after "done". "Done" is terminal: a part that completed through a fallback or
    degraded path is still exactly "done" - the how (which data source, which fallback,
    what was disabled) is detail, and it belongs in the brain file, not the report.
-   "Guards: merged" covers the already-present case too - a VM whose guards another
-   workspace merged is still "merged", not "skipped".
+   "Setup notes: saved" covers the already-present case too - a VM whose guard blocks
+   another workspace merged is still "saved", not "skipped". The report never names
+   guards, sentinels, the roster, lanes, or any internal file mechanics - those words
+   do not appear in anything a customer reads.
    The closing line is verbatim and nothing follows it. A yes (from anyone, in any
    conversation, whenever it comes) invokes the onboarding-walkthrough skill; that skill -
    and only that skill - presents the findings and asks the questions. Do not start the
