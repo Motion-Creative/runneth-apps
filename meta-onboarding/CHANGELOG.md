@@ -28,6 +28,13 @@ of onboarding install and test independently.
   onboarded VMs are never re-set-up.
 - **Meta-only install sequence**: connection check, single guard merge, Creative
   Attributes, Account Context Brain autofill, roster, readiness report - no VoC steps.
+- **Walkthrough mines conversation history for prior answers**: before presenting, the
+  walkthrough runs one bounded query pass per open question against the VM's
+  conversation history (SQLite, human-authored messages only, this workspace's context
+  only). A statement that answers a question pre-fills its field as a cited provisional
+  read - the readout leads with "you said X on <date>" plus a short verbatim quote, and
+  the open question becomes a one-word confirm. Citations never confirm a field by
+  themselves; the person's answer in the walkthrough still does.
 - **Campaign names are first-class in the naming decode**: the Creative Attributes
   provisional decode analyzes campaign names independently of ad names (both lists come
   from the same Cacheth export - `campaignNames[]` alongside `adNames[]`), Field 4's

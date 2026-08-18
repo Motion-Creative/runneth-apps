@@ -21,6 +21,11 @@ document is the what-it-means.
    (brand context pull) and Step 1 (the field pulls) first — silently, then present.
 3. If the file shows all fields already confirmed, say so and offer the context health check
    instead of re-running the walkthrough.
+4. Mine conversation history for prior human answers, per the ACB package's
+   "Conversation evidence" rules: one bounded query pass per open question,
+   human-authored messages only, this workspace's context only. A match pre-fills its
+   field as a cited provisional read for the presentation; finding nothing changes
+   nothing — the question is asked cold.
 
 ## Required output schema (the shape of the presentation)
 
@@ -47,6 +52,17 @@ are allowed only when one section genuinely covers two distinct confirmations (F
 decoder confirmations; Field 10's two beats); more than
 two means the section is too broad — split it or cut a question. Lead with what you know: the ratio
 should feel like mostly settled reads with a few specific things still open.
+
+**Conversation evidence converts open questions into cited confirms.** When pre-flight
+step 4 found a person's own prior statement answering a section's open question, the
+section leads with that read and cites it inline — the date plus a short verbatim quote
+("back on May 3 you said 'we read product names at the campaign level'") — and the
+section's bold question becomes a one-word confirm of the cited read ("Still right?")
+instead of an open-ended ask. The cited confirm still lands in the closing TLDR with its
+citation, because the person's answer here is still what confirms the field — the
+citation just makes answering nearly free. Never cite Runneth's own words as the
+person's, and never stretch an ambiguous quote to fit; a question asked cold beats a
+wrong citation.
 
 Two exceptions to the bullets. A table replaces them when the field contains structured data
 the customer needs to scan and confirm — never force bullets onto a table. And the
@@ -152,6 +168,9 @@ Just answer what you know — I'll write the context file from your responses.
   sections); settled fields have none.
 - Every question stands alone on its own line — no question is appended to a finding bullet
   or shares a line with an observation.
+- Every conversation citation carries a date and a short verbatim quote from a
+  human-authored message; no quote is paraphrased or stretched into a claim the person
+  did not make.
 - The TLDR lists every open question from Part 2, in appearance order, and ends with the
   verbatim closing line.
 

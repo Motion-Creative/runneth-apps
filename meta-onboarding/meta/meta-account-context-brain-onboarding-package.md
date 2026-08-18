@@ -285,6 +285,53 @@ fix the query; never read it as an empty or broken account.
 
 ---
 
+# Conversation evidence — prior human answers, mined and cited
+
+The VM's conversation history is queryable SQLite (`messages` and `conversations`
+tables). Before the walkthrough presents, mine it once for human statements that already
+answer a field's open confirmation, so the readout can lead with what the team already
+said instead of re-asking cold.
+
+**Query shape** (one bounded pass per open question; adapt the LIKE terms):
+
+```sql
+SELECT m.message_json, c.conversation_json
+FROM messages m
+JOIN conversations c ON m.conversation_id = c.conversation_id
+WHERE json_extract(m.message_json, '$.content') LIKE '%<term>%'
+ORDER BY c.updated_at_ms DESC LIMIT 20
+```
+
+Search terms come from this account's own findings, never a generic list: the decode's
+product tokens and campaign-type values (Field 4 and the product-name default), the
+attribution tool's name and its metric names (Fields 1–3, 5, 9), the funnel-stage words
+the campaign names carry (Field 7), and naming words ("naming", "convention") for Field 4
+itself.
+
+**What counts as evidence — all four required:**
+
+- **Authored by a person.** Read the message's role/author from `message_json`;
+  Runneth's own restatements are never evidence, no matter how confident they sound.
+- **About this workspace.** History is VM-wide, so on a multi-workspace org prefer
+  conversations that name this workspace or its products; a quote that could be about
+  another brand is dropped.
+- **Actually answers the question.** The statement resolves the specific confirmation on
+  its own terms. Stretching an adjacent remark to fit is worse than asking — when in
+  doubt, drop it and ask cold.
+- **Quotable.** Keep a short verbatim quote and the conversation date for the citation.
+
+**What a match does:** it pre-fills the field as a cited provisional read — the
+walkthrough presents it as "you said X on <date>" with the quote, and the field's open
+question becomes a short confirm of that read. A citation never confirms a field by
+itself: the person's answer in the walkthrough is still the confirmation, and a veto
+costs them one word. On save, keep the citation in the field's notes ("initial read from
+conversation evidence, <date>").
+
+Bounded by design: one query pass per open question, small limits, no crawling. Finding
+nothing is a normal outcome and changes nothing — the question is simply asked cold.
+
+---
+
 # Required context fields
 
 All ten fields are required. Runneth auto-fills every one of them — Fields 1–9 from their
