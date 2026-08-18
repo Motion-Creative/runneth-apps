@@ -162,9 +162,10 @@ Folder: `voc-data-pull/`
   is intentionally absent during initial install and backfill.
 - **Runs after onboarding approval.** After a human approves the activation's disclosed
   setup, Runneth checks which VoC
-  platforms the org can reach - one `integrations list` call for the OAuth connections
-  (falling back to per-slug status checks over the skill's canonical slug list only when
-  the listing does not show connection state) **and** the
+  platforms the org can reach - one batched status sweep for the OAuth connections
+  (a single shell loop of `integrations status` over the skill's canonical slug list;
+  `integrations list` reports catalog metadata only, so it is never part of the
+  check) **and** the
   stored secrets for every VoC platform (any of them may be key-stored instead of
   connected; Okendo and Stamped always are), plus the Motion workspace connection for
   Meta ad

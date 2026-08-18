@@ -101,16 +101,23 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
 
 1. **Check what the org can reach - a fixed, cheap probe, not an investigation.** The
    inventory has exactly three parts, read in this order, with nothing speculative:
-   - **OAuth connections: one `integrations list` call first.** When its output carries
-     each app's connection state (connected accounts), that single call IS the OAuth
-     inventory - read the connected apps off it and run no per-app status checks at
-     all. Only if the listing does not show connection state, fall back to
-     `integrations status --app <slug>` for exactly the canonical VoC slugs, one pass,
-     no others: `judge_me`, `trustpilot`, `yotpo`, `junip`, `okendo`, `stamped`,
-     `reviews_io`, `gorgias_oauth`, `intercom`, `zendesk`, `klaviyo`, `attentive`,
-     `gong`, `hotjar`, `reddit`, `discord`, `youtube_data`, `typeform`. A VoC platform
-     outside that list can only arrive as a stored key or a later connect - never
-     probe slugs speculatively.
+   - **OAuth connections: one batched sweep, one command.** `integrations list`
+     reports catalog metadata only (names, slugs, configuration), not connection
+     state - never call it for reachability. The entire OAuth inventory is a single
+     shell command: one loop over exactly the canonical VoC slugs, each checked with
+     `integrations status --app <slug>`:
+
+     ```
+     for s in judge_me trustpilot yotpo junip okendo stamped reviews_io \
+              gorgias_oauth intercom zendesk klaviyo attentive gong hotjar \
+              reddit discord youtube_data typeform; do
+       echo "== $s"; integrations status --app "$s"
+     done
+     ```
+
+     One command, one output to read the connected apps off. Never run the statuses
+     as eighteen separate commands, and never probe slugs beyond this list - a VoC
+     platform outside it can only arrive as a stored key or a later connect.
    - **Stored keys: zero commands.** The runtime secret store's key names and each
      key's allowed hosts are already injected into this conversation's context as the
      runtime-secrets block (values stay sealed; only `secure-fetch` can use them).
