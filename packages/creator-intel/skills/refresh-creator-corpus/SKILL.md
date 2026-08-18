@@ -1,27 +1,27 @@
 ---
 name: refresh-creator-corpus
-description: Update Creator Intel for one activated workspace by refreshing creator evidence, freshness metadata, and pending review queues. Use only for an explicit manual update or for a separately approved scheduled refresh.
+description: Refresh Creator Intel evidence and freshness for one activated workspace. Use for an explicit manual update or a separately approved scheduled refresh. It updates evidence and pending review only, never trusted decisions.
 triggers:
   phrases:
     - refresh creator evidence
     - refresh creator intel for
     - update creator evidence
     - update creator intel
-  intent: Refresh evidence and freshness state without changing trusted roster or rights.
+  intent: Refresh Meta evidence and freshness without changing trusted roster, rights, or recommendations.
 ---
 
-# Update Creator Intel
+# Refresh Creator Intel
 
-Update Creator Intel refreshes evidence only. Trusted roster, relationship, rights, and recommendation decisions remain human-owned.
+Refresh updates evidence only. Trusted roster, relationship, rights, and recommendation decisions stay human-owned.
 
 ## Hard rules
 
 - Manual refresh is the default.
-- Scheduled refresh requires separate consent, owner, workspace, cadence, and delivery.
+- A scheduled refresh requires separate consent, owner, cadence, and delivery.
 - Refresh must never silently create or change trusted identities, relationships, rights, or disqualifications.
-- Maintain per-source freshness and partial-failure state. Do not collapse the run into one fake global timestamp.
 - Use the stored workspace id on every Motion pull.
-- Keep Meta and Northbeam separate.
+- Default to Meta. Do not ask about Northbeam. Only include another source if the workspace performance measure already names one.
+- Maintain per-source freshness and partial-failure state. Do not collapse the run into one fake global timestamp.
 - Use 30, 90, and 365 day language only. Never call 365 days all-time.
 
 ## What refresh may update
@@ -29,21 +29,21 @@ Update Creator Intel refreshes evidence only. Trusted roster, relationship, righ
 - new evidence rows in `evidence-map.json.evidence[]`
 - new pending proposals in `pending-review.json.items[]`
 - source freshness and failure details in `refresh-state.json.sources[]`
-- new performance snapshots under `performance/`
+- new Meta performance snapshots under `performance/` (created on demand, e.g. `meta-30d.json`; never pre-created)
 - one canonical append-only audit event per source attempt in `audit.jsonl`, including partial failures
 
 ## What refresh may not update
 
 - confirmed roster decisions
 - relationship state
-- rights approval state
+- rights state
 - recommendation outcome claims unless a launched ad or brief carries the exact stored recommendation id
 
-## Evidence refresh rules
+## Evidence rules
 
 - Include spend-bearing ads without synced Motion creative assets in eligible and unassigned accounting.
 - Recalculate rates from totals. Never average ROAS, CTR, or CPA.
-- Store date range, source, currency, attribution settings, filters, grain, matched coverage, and metric definitions alongside each snapshot.
+- Store date range, source, currency, attribution, filters, grain, matched coverage, and metric definitions alongside each snapshot.
 
 ## Failure handling
 
@@ -51,7 +51,7 @@ If one source fails, record the failure on that source only and keep successful 
 
 ## Manual update completion
 
-A manual update must always confirm completion and summarize these sections:
+A manual update always confirms completion and summarizes:
 
 - **What changed**
 - **Needs your review**

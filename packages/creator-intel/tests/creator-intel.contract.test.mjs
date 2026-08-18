@@ -37,7 +37,6 @@ test("customer-owned files have deterministic versioned envelopes", async () => 
   for (const expected of [
     '{"schemaVersion":1,"identities":[]}',
     '{"schemaVersion":1,"relationships":[]}',
-    '{"schemaVersion":1,"rights":[]}',
     '{"schemaVersion":1,"evidence":[]}',
     '{"schemaVersion":1,"recommendations":[]}',
     '{"schemaVersion":1,"items":[]}',
@@ -53,71 +52,82 @@ test("customer-owned files have deterministic versioned envelopes", async () => 
   assert.match(setup, /never appends a duplicate completed-setup event/);
 });
 
+test("rights are a simple per-creator field, not a separate ledger", async () => {
+  const contract = await readPackageFile("brain/creator-data-contract.md");
+  assert.match(contract, /Rights are a simple per-creator field, not a separate ledger/);
+  assert.match(contract, /"usageScope": "none \| some \| all"/);
+  assert.doesNotMatch(contract, /rights\.json/);
+});
+
+test("performance model defaults to Meta with no snapshot matrix", async () => {
+  const contract = await readPackageFile("brain/creator-data-contract.md");
+  assert.match(contract, /Do not pre-create snapshot files/);
+  assert.match(contract, /Northbeam is not part of the default model/);
+});
+
 const behavioralContracts = [
   {
-    name: "install remains inactive",
+    name: "setup runs at install with workspace skip and no Northbeam",
     file: "instructions/behavior.md",
     required: [
-      /Installation leaves Creator Intel inactive/,
-      /Do not create `\/agent\/brain\/creator-intel\/workspaces/,
-      /Do not create a routine during install/,
+      /Setup runs at install time/,
+      /If the account has exactly one workspace, use it and say so/,
+      /Never ask about Northbeam/,
     ],
   },
   {
-    name: "setup remains progressive and idempotent",
+    name: "setup is progressive, idempotent, and grounds the hiring lens",
     file: "skills/setup-creator-intelligence/SKILL.md",
     required: [
-      /Ask one setup question at a time/,
       /Setup is idempotent/,
-      /never pulls creator data/,
+      /never pulls creator performance/,
+      /Account Context/,
       /Write or update `workspace\.json` last/,
+      /map how they hire onto signals already living in their ads/,
       /workspace_setup/,
     ],
   },
   {
-    name: "recognition writes pending proposals and an audit event",
-    file: "skills/recognize-creators/SKILL.md",
+    name: "roster building is one table that drives to zero",
+    file: "skills/build-and-confirm-roster/SKILL.md",
     required: [
-      /pending-review\.json\.items\[\]/,
-      /identity_proposals_created/,
-      /before showing the review bundle/,
-    ],
-  },
-  {
-    name: "human review changes only named candidates",
-    file: "skills/review-creator-identities/SKILL.md",
-    required: [
+      /one table of every creator/,
+      /human confirmation gate/,
       /Silence changes nothing/,
-      /Partial answers affect only the named candidates/,
-      /append one canonical event for each decision type/,
+      /pending-review\.json\.items\[\]/,
+      /not done until it has walked every open item/,
     ],
   },
   {
-    name: "standalone casting persists a linkable recommendation",
-    file: "skills/suggest-creators/SKILL.md",
+    name: "recommendation is gap-first with a three-method ladder",
+    file: "skills/recommend-creators/SKILL.md",
     required: [
+      /Start with the gap/,
+      /three-method ladder/,
+      /Motion-context, always available/,
+      /Apify/,
       /recommendations\.json\.recommendations\[\]/,
       /recommendation_created/,
-      /Include the same `recommendationId` in the visible recommendation/,
       /pure creator-performance lookup.*do not create a recommendation record/,
     ],
   },
   {
-    name: "combined brief and casting persists the same visible id",
-    file: "skills/brief-and-cast/SKILL.md",
+    name: "dashboard is three tabs with a conditional ROI page",
+    file: "skills/build-creator-dashboard/SKILL.md",
     required: [
-      /recommendations\.json\.recommendations\[\]/,
-      /recommendation_created/,
-      /include the same recommendation id in the visible brief/,
+      /Appears only when both are true/,
+      /Private to the workspace by default/,
+      /Leaderboard/,
     ],
   },
   {
-    name: "refresh records partial source failures without mutating trust",
+    name: "refresh records partial failures without mutating trust",
     file: "skills/refresh-creator-corpus/SKILL.md",
     required: [
       /must never silently create or change trusted identities/,
       /one canonical append-only audit event per source attempt/,
       /If one source fails, record the failure on that source only/,
+      /Do not ask about Northbeam/,
     ],
   },
 ];
@@ -135,8 +145,10 @@ test("the documented eval suite retains broad scenario coverage", async () => {
   const evals = await readPackageFile("brain/evals.md");
   const numberedCases = evals.match(/^\d+\. \*\*/gm) ?? [];
 
-  assert.ok(numberedCases.length >= 42);
+  assert.ok(numberedCases.length >= 50);
+  assert.match(evals, /Gap first/);
+  assert.match(evals, /Top creator similarity/);
+  assert.match(evals, /ROI page conditional/);
   assert.match(evals, /Recommendation outcome guard/);
   assert.match(evals, /Scheduled partial failure/);
-  assert.match(evals, /One-question progressive setup/);
 });

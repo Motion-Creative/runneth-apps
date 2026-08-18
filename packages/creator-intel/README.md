@@ -2,72 +2,38 @@
 
 Build a trusted creator roster, match the right people to each brief, and compare past creator performance without guessing.
 
-Creator Intel gives a team one trusted place for each Motion workspace to:
+Creator Intel gives each Motion workspace one trusted place to:
 
-- organize the creators they already trust
-- review uncertain matches before they become part of the roster
-- keep evidence fresh without silently changing approvals
-- compare creator performance honestly, with source and coverage limits intact
-- cast the right person for a concept, or say when no creator is the better move
+- build a dashboard of the creators they already work with and how those creators perform
+- recommend new creators worth working with, grounded in how the team actually hires
 
-## What the first run should feel like
+## The journey
 
-After install, Creator Intel is available but still inactive.
+**Stage 0: Install and workspace.** Setup runs at install. Runneth gives a one-line overview and offers to start. If the account has one workspace, it uses it; if more than one, it asks once.
 
-On the first real use, Runneth should naturally:
+**Stage 1: Understand how you work.** One question at a time:
+- how performance is measured (Account Context from the Meta onboarding package if present, otherwise spend; never Northbeam)
+- where the roster, payment, and rights live, and connecting that source so it can be read live
+- how the team hires creators, then grounding that lens in ad names, Account Context, brand context, or a review audit, and asking only for what cannot be found
 
-1. ask which Motion workspace to set up
-2. ask where the current roster lives
-3. ask how the team wants creator performance judged
+**Stage 2: Build and confirm the roster.** From naming conventions plus the connected creator database, matched to Meta where possible. Every creator in one table with one overview of open questions, driven to zero. Simple per-creator rights. Captures what each creator represents for later gap analysis.
 
-That setup flow asks one question at a time. It creates empty workspace state only. It does not import a roster, approve creators, or pull performance data.
+**Stage 3: The dashboard.** An openable app with three tabs: ROI report (only when Account Context and a cost source are connected), Creator profiles, and a spend Leaderboard. Private to the workspace by default.
 
-## First version scope
+**Stage 4: Recommend creators.** Gap analysis first, then a three-method ladder: Motion-context (always available, topics approved before searching), top creator similarity, and reviews-gap micro-personas.
 
-- Activate one exact Motion workspace at a time.
-- Keep package-owned reference docs separate from customer-owned workspace state.
-- Recognize creators from explicit sources such as trackers, handle lists, and ad-name evidence.
-- Require human confirmation before any creator becomes trusted.
-- Refresh evidence manually unless the customer later asks for a scheduled workflow.
-- Suggest creators in two tiers: confirmed roster first, credible ecosystem candidates second.
-- Support an explicit combined brief-plus-casting workflow.
+**Stage 5: Refresh.** Manual Meta evidence refresh that never changes trusted decisions. Scheduled only on separate consent.
 
-## Maintainer notes
+## Skills
 
-### Install boundaries
+- `setup-creator-intelligence`
+- `build-and-confirm-roster`
+- `recommend-creators`
+- `build-creator-dashboard`
+- `refresh-creator-corpus`
 
-Install stages only these package-owned files:
+## State boundaries
 
-- one behavior instruction
-- creator-intel skills
-- creator-intel reference docs
-
-Install does **not**:
-
-- activate any workspace
-- create `/agent/brain/creator-intel/workspaces/<workspaceId>/`
-- create a routine
-- import a tracker
-- refresh evidence
-- change trusted roster or rights state
-
-### State boundaries
-
-Package-owned reference docs install to:
-
-- `/agent/brain/creator-intel-reference/`
-
-Customer-owned mutable state is created later by setup at:
-
-- `/agent/brain/creator-intel/workspaces/<workspaceId>/`
-
-That separation is a hard requirement. Package install, update, reinstall, and uninstall must not overwrite customer decisions.
-
-## Main jobs
-
-1. **Set up Creator Intel**: activate one workspace and seed empty customer-owned state.
-2. **Recognize creators**: turn explicit source material into pending identity proposals.
-3. **Review creator identities**: apply human confirmation, correction, merge, and disqualification decisions.
-4. **Update Creator Intel**: refresh evidence and pending queues only.
-5. **Suggest creators**: answer standalone casting and creator-performance asks.
-6. **Brief and cast**: run the explicit combined workflow when the customer asks for both.
+- Package-owned reference docs install to `/agent/brain/creator-intel-reference/`.
+- Customer-owned mutable state lives at `/agent/brain/creator-intel/workspaces/<workspaceId>/`.
+- Install, update, reinstall, and uninstall never overwrite customer decisions.
