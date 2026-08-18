@@ -154,15 +154,23 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    platform, run the
    voc-data-pull skill's "Set up the recurring sync" procedure: pin the platform account
    to this workspace, create the `voc-sync-<workspace>-<platform>` routine, and kick its
-   first run. The pin is the skill's step 1 and it can need a human answer - accounts are
-   org-level with no workspace tag, so which account belongs to this workspace is never
-   inferred. Handle that inside this install turn: platforms the skill lets you auto-pin
-   (the org has exactly one Motion workspace) get their routine created and kicked now;
-   for the rest, ask the skill's confirmation question for every pending platform in one
-   compact block just before the readiness report, mark those platforms
-   "waiting on a person - account confirmation" in the report's VoC line, and create and
-   kick their routines the moment the answer arrives - in that follow-up turn, never
-   before. A routine is never created on an unconfirmed account just to keep the backfill
+   first run. Two things can need a human answer before any routine exists. First, **the
+   delivery destination** - the skill requires asking where routine updates should land:
+   this web conversation, or Slack (a named channel or thread, offered only when the
+   Slack integration is connected). One answer covers every routine this install
+   creates; on a resume, reuse the destination the workspace's existing `voc-sync-*`
+   routines already carry instead of re-asking. Second, the pin - the skill's step 1 -
+   because accounts are org-level with no workspace tag, so which account belongs to
+   this workspace is never inferred. Handle both inside this install turn: after the
+   reachability check, ask one compact block - the delivery-destination question plus
+   the account-confirmation question for every platform that needs one - and stop there
+   for the turn. When the answers arrive, create and kick every confirmed platform's
+   routine (auto-pinnable platforms - the org has exactly one Motion workspace - and
+   Meta ad comments only waited on the destination), then continue through steps 3 and
+   4 in that same turn. A platform still waiting on its account answer appears in the
+   closing message as "waiting on a person - account confirmation" and its routine is
+   created the moment that answer arrives. A routine is never created on an unconfirmed
+   account or an unconfirmed delivery destination just to keep the backfill
    moving. The workspace belongs in
    the routine name because routines are VM-wide - `voc-sync-gorgias` would collide with
    another workspace's routine, and a collision is what mixes two brands' customer data into
@@ -313,7 +321,9 @@ connected later, setup runs on ask.
   while a Meta onboarding is mid-flight, per the skill's delivery rules). The skill runs
   only on a yes or an explicit audit request, saves one compiled audit page, and never
   auto-regenerates.
-- **Daily VoC syncs** - the routines created above.
+- **Daily VoC syncs** - the routines created above. Each run notifies the chosen
+  delivery destination (web conversation or Slack) only when something new landed;
+  a run that found nothing new is silent.
 
 The README's "Install and run order" describes this same lifecycle for humans; this file,
 `post-install.md`, is the executable version. If the two ever disagree, fix them together -

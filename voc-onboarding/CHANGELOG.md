@@ -29,6 +29,13 @@ of onboarding install and test independently.
   (`account-context.md` exists with interpretation fields unconfirmed), then sending on
   a later run once the context is confirmed. The `voc-audit-offer` changelog entry still
   guarantees at most one offer.
+- **Sync notifications: new-items-only, to a chosen destination**: setup asks once per
+  workspace where routine updates land - the web conversation or a Slack channel/thread
+  (offered when Slack is connected) - and writes the answer literally into every
+  routine's delivery. Runs notify that destination only when new items landed; a run
+  that found nothing new is silent, and the initial backfill is silent regardless of
+  volume (completion surfaces through the audit offer). Failures and disconnects still
+  send a brief note.
 - Carries the v6 behavior of the combined package's VoC parts otherwise: pinned
   per-workspace accounts, workspace-named routines, 12-month bounded backfills,
   read-only pulls, unified record format, and the manual-only audit with the 200-entry

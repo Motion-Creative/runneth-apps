@@ -244,10 +244,16 @@ onboarding is complete.
    context verbatim and states the name, workspaceId, and slug taken from it before
    anything else executes - existing folders, rosters, routines, and remembered context
    never identify the workspace.
-2. **Set up VoC data syncs.** For each reachable customer-voice source, pin the workspace's
+2. **Set up VoC data syncs.** Before the first routine is created, the person chooses
+   where routine updates land: the web conversation or a Slack channel/thread (offered
+   when Slack is connected) - one answer covers every VoC sync routine, asked once, never
+   guessed. Then for each reachable customer-voice source, pin the workspace's
    account, create the daily `voc-sync-<workspace>-<platform>` routine, and kick the first
    backfill. The 12-month backfills churn in the background; daily runs keep the corpus
-   current afterward. If ad comments end up the only reachable source, the workspace lands
+   current afterward and notify the chosen destination only when something new landed -
+   a run that found nothing new is silent, and the initial backfill is silent regardless
+   of volume (its completion surfaces through the audit offer). If ad comments end up the
+   only reachable source, the workspace lands
    in the partial state described above - setup is not complete, and the person is urged
    to connect a dedicated platform until one is.
 3. **Run the Voice of Customer audit later.** Offered once by the sync routine after the

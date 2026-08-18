@@ -377,9 +377,19 @@ folder state:
      label).
    - Motion native (Meta ad comments): no pin needed - `--workspace-id` already scopes it.
 
-2. Create the routine. Fill in the real current conversation id for `<conversation-id>`,
-   the resolved workspace folder name for `<workspace>`, the resolved workspace id for
-   `<workspaceId>`, and the pinned account's name and id for `<accountName>` /
+2. Confirm the delivery destination, then create the routine. **Before the workspace's
+   first VoC sync routine is created, ask the person where routine updates should land:
+   this web conversation, or Slack (a named channel or thread - offer Slack only when
+   the Slack integration is connected).** One answer covers every
+   `voc-sync-<workspace>-*` routine, so this is asked once per workspace, never per
+   platform - a later setup pass reuses the destination already written into the
+   workspace's existing voc-sync routines instead of re-asking. Never guess a
+   destination or default silently. Fill `<delivery-destination>` in the template below
+   literally from the answer: either `web conversation <conversation-id> (send with
+   conversation send --to <conversation-id>)` or `the Slack
+   channel/thread <channel> the person named, through the connected Slack integration`.
+   Fill in the resolved workspace folder name for `<workspace>`, the resolved workspace
+   id for `<workspaceId>`, and the pinned account's name and id for `<accountName>` /
    `<accountId>`; keep the cron and the name shape exactly as written. **Every one of those
    values is written out literally, never left as a placeholder for the run to resolve:**
    routine runs execute in their own conversation with no workspace attached, so a routine
@@ -390,7 +400,7 @@ folder state:
 
    ```
    routine add --name "voc-sync-<workspace>-<platform>" \
-     --delivery "Daily incremental success: no notification - the deliverable is the files under /agent/brain/<workspace>/data-sources/voc/<platform>/. Once full backfill coverage is reached across any voc-sync-<workspace>-* routine, each run checks whether the audit offer is still owed: if /agent/brain/<workspace>/_changelog.md already contains a voc-audit-offer entry, stay silent. Otherwise check whether this workspace's Meta onboarding is mid-flight: read /agent/brain/<workspace>/data-sources/meta/account-context.md, and if it exists with interpretation fields not yet confirmed, stay silent for this run - interrupting an onboarding is worse than a delayed offer, and a later daily run sends the offer once the context is confirmed. When no such file exists, or it shows the context confirmed, send one brief note to web conversation <conversation-id>: name the source that finished, say the customer voice is ready, and offer a Voice of Customer Audit by previewing the plan in your own words - it will separate every entry by product, score each 1-5 for usefulness, and break the strong ones into five buckets (pain points, trigger moments, objections, transformations, standout language) plus personas per qualifying product - then ask whether they'd like anything added or have existing docs (like personas) to use as reference. Then append a dated voc-audit-offer entry to /agent/brain/<workspace>/_changelog.md. Never run the audit without a person's yes. If the run fails, the pinned account is disconnected, or coverage is incomplete, send a brief note to the same conversation with conversation send --to <conversation-id>." \
+     --delivery "Notify only when something new landed. If this run wrote one or more new items, send one brief note to <delivery-destination> naming the platform and what is new in plain words (for example '7 new Judge.me reviews came in'). If nothing new landed, send nothing at all - a quiet day is silent and the run summary in routine history is its only record. The initial 12-month backfill run is silent too, regardless of volume: its completion is announced through the audit offer below, never as a new-items note. Once full backfill coverage is reached across any voc-sync-<workspace>-* routine, each run checks whether the audit offer is still owed: if /agent/brain/<workspace>/_changelog.md already contains a voc-audit-offer entry, that offer stays silent. Otherwise check whether this workspace's Meta onboarding is mid-flight: read /agent/brain/<workspace>/data-sources/meta/account-context.md, and if it exists with interpretation fields not yet confirmed, hold the offer for this run - interrupting an onboarding is worse than a delayed offer, and a later daily run sends the offer once the context is confirmed. When no such file exists, or it shows the context confirmed, send one brief note to <delivery-destination>: name the source that finished, say the customer voice is ready, and offer a Voice of Customer Audit by previewing the plan in your own words - it will separate every entry by product, score each 1-5 for usefulness, and break the strong ones into five buckets (pain points, trigger moments, objections, transformations, standout language) plus personas per qualifying product - then ask whether they'd like anything added or have existing docs (like personas) to use as reference. Then append a dated voc-audit-offer entry to /agent/brain/<workspace>/_changelog.md. Never run the audit without a person's yes. If the run fails, the pinned account is disconnected, or coverage is incomplete, send a brief note to <delivery-destination>." \
      --prompt "Run the voc-data-pull skill for <platform> as a recurring sync run for Motion workspace <workspace> (workspace id <workspaceId>). Pull only from the pinned account <accountName> (account id <accountId>): pass --account <accountId> on every integrations proxy call and never use another account of this platform, even if others are connected. Write every file under /agent/brain/<workspace>/data-sources/voc/<platform>/ and nowhere else; pass --workspace-id <workspaceId> on Motion commands that take it. Follow the skill's Recurring sync rules exactly - they define the pull window, disconnect handling, and coverage reporting." \
      --cron "0 6 * * *"
    ```
@@ -467,23 +477,29 @@ skill flow:
   or cancel the routine: reconnecting the same account self-heals (the routine already
   exists, the next run resumes). If the account is gone for good, the workspace re-pins
   in a new setup pass.
-- **Delivery**: daily incremental success is silent - the files are the deliverable and the
-  run summary is recorded in run history. Once full backfill coverage is reached across
+- **Delivery - notify only when something new landed**: a run that wrote one or more new
+  items sends one brief note to the routine's delivery destination (the web conversation
+  or Slack channel/thread named literally in the routine's delivery text) naming the
+  platform and what is new in plain words. A run that found nothing new sends nothing at
+  all - a quiet day is silent, and the run summary in routine history is its only
+  record. The initial backfill run is silent regardless of volume: its completion
+  surfaces through the audit offer, never as a new-items note. Once full backfill
+  coverage is reached across
   this workspace's `voc-sync-<workspace>-*` routines, the audit offer is owed: on each run
   where `/agent/brain/<workspace>/_changelog.md` has no `voc-audit-offer` entry yet, send
-  one offer to the delivery conversation — not a bare yes/no question but a short preview
+  one offer to the delivery destination — not a bare yes/no question but a short preview
   of what the audit will do (split by product, score 1–5, the five buckets, personas),
   closing with an invitation to add anything or supply reference docs such as existing
   personas. One deferral check first: when the workspace's Meta onboarding is mid-flight —
   `/agent/brain/<workspace>/data-sources/meta/account-context.md` exists with
-  interpretation fields not yet confirmed — stay silent for this run; a backfill completing
+  interpretation fields not yet confirmed — hold the offer for this run; a backfill completing
   mid-onboarding never interjects, and a later daily run sends the offer once the context
   is confirmed. (A workspace with no account-context scaffold at all — a VoC-only setup —
   has no onboarding to wait for; send the offer.) After sending, append a dated
   `voc-audit-offer` entry naming the
   source whose backfill completed. This is an offer only: never run the audit until a
   person says yes. Failures, disconnects, and incomplete coverage get a brief note to the
-  delivery conversation named in the routine.
+  delivery destination named in the routine.
 - Everything else - boundaries, recipes, file format, coverage reporting - is the normal
   skill contract.
 
