@@ -14,27 +14,30 @@ triggers:
 
 # Recommend creators
 
-This skill owns creator recommendations. It always proposes the plan and gets a yes before it searches or sources. It opens with a gap read, then runs a three-method ladder that degrades gracefully so there is always an answer.
+This skill owns creator recommendations. It anchors on how the customer actually hires, casting for a specific campaign, product, theme, or seasonal push, then proposes the plan and gets a yes before it searches or sources. It runs a three-method ladder that degrades gracefully so there is always an answer.
 
 ## Requirements
 
 - The workspace must be activated with a confirmed roster.
 - Read `workspace.json` for `hiringLens` and `performanceMeasure`, and `identities.json` for each confirmed creator's `representation` (topics and angles) and the products they ran.
 
-## Start with the gap
+## Start from how they hire (the target comes first)
 
-Before naming anyone, produce the gap read: compare the angles and personas the team hires for against what the confirmed roster actually covers. If no brand-audit or hiring-lens grounding exists, say the gap read is limited to roster coverage.
+Recommendations anchor on the customer's hiring unit, not a roster-wide audit. Read `hiringLens`, reflect it back in one line (for example, "you cast per campaign or product, and lean on referrals and finding more like your best creators"), then ask which campaign, product, theme, or seasonal push they want creators for right now, with concrete examples from their real products (for example, "AI Training Club, an evergreen push, a Father's Day campaign, or a specific product").
 
-### Gap analysis, concretely
+Do not open with a whole-roster gap analysis. It resembles the reviews-gap method and confuses the flow. Wait for the target, then scope everything to it.
 
-1. **Demand side (what you want covered).** Use the brand-audit strategy matrix at `/agent/brain/brand-audit/<workspace-slug>/strategy.md` when it exists (its angle-by-persona grid). Otherwise use `hiringLens.dimensions` plus own-brand context from `motion brand-context`.
-2. **Supply side (what the roster covers).** For each confirmed creator, read `representation.anglesCovered` and `representation.topics`, plus the products they ran from the roster/evidence.
-3. **Coverage map.** For each angle or persona on the demand side, list the roster creators who cover it. The gap is any angle or persona with zero, or only weak or single-creator, coverage.
-4. **Open with the gap**, for example: "Your roster is deep on performance-marketer UGC but has no one carrying the culture or POV angle for AI-in-marketing." That framing drives which methods to run and what to search for.
+Once they name a target, Start with the gap for that target only: which angles or personas that specific campaign needs that the roster does not already cover.
+
+### Scoping the gap to the target
+
+1. **Target need.** What angles and personas does this campaign or product call for? Use the brand-audit strategy matrix at `/agent/brain/brand-audit/<workspace-slug>/strategy.md` when it exists, otherwise own-brand context from `motion brand-context` and the messaging of that campaign's own top ads.
+2. **Roster coverage for the target.** Which confirmed creators already fit this campaign, from `representation` and the products they ran.
+3. **The gap.** The angles or personas this campaign needs where the roster is thin or empty. That gap drives which methods to run and what to search for.
 
 ## The three-method ladder
 
-Propose which methods you will run given what is available, get the yes, then run them.
+For the chosen target, propose which of the three methods you will run given what is available, get the yes, then run them. Present them as three layers the customer can pick from for that campaign.
 
 ### (a) Motion-context, always available
 
