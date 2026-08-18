@@ -78,6 +78,33 @@ per-workspace:
   metadata, the workspace was renamed - move that folder to the current name instead of
   onboarding from scratch.
 
+## Read the brain before writing to it (step 0.5)
+
+After consent and step 0, before anything below runs, take one read-only look at the
+top level of `/agent/brain/` and act on what kind of brain this is:
+
+- **Fresh or near-empty:** nothing to adopt. The standard layout below applies as-is;
+  this step costs one listing and ends here.
+- **Earlier package layout** (`<brand>/data-sources/...` from a previous version):
+  those are this VM's adopted homes. Already-onboarded workspaces keep writing to
+  their existing paths exactly as they are; only a brand onboarded for the first time
+  uses the current layout. Do not migrate old paths - a path move is a separate,
+  explicitly approved change, never part of an install or upgrade.
+- **A brain people have organized themselves:** inventory before writing. Give every
+  top-level home one line in the brain map with a type label, in this brain's own
+  terms. Recognize existing equivalents instead of duplicating them: a brand-named
+  tree is that brand's home; an existing reviews or customer-voice cache is that
+  brand's voice-of-customer bank; person and team areas are what they are. Record
+  each adopted location in the map entry for that brand. If a corpus-search install
+  is present, carry its registered source list into the map as entries - those
+  folders were already confirmed as searchable banks by a person.
+
+Then one rule for everything below: **a brand's package output goes to its adopted
+home when one exists, and to the standard layout otherwise.** One convention per
+brand home - never both. Never move, rename, merge, or rewrite anything a person
+built. On a brain that had existing structure, the readiness report's first bullet is
+`- Existing setup: found and kept - nothing was moved`.
+
 ## The install-time sequence, in order
 
 Step 0 - the workspace readout defined above - has already happened before step 1
@@ -144,7 +171,11 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    12-month backfills churn in the background while everything below happens. Never pull
    VoC data inside this conversation. If old canceled `voc-sync-*` routines exist from a
    previous install, ignore them - canceled is terminal; never resume or reuse one, always
-   create fresh. Leave other workspaces' `voc-sync-*` routines alone.
+   create fresh. Leave other workspaces' `voc-sync-*` routines alone. If a platform's
+   folder is already filling without a `voc-sync-*` routine - something outside Runneth
+   is syncing it - never create a second sync on top of it: mark that platform
+   "synced outside Runneth" in the report's VoC line and offer the managed daily sync,
+   creating it only on a yes.
 3. **Merge all five guard blocks into `/agent/user.md` with one Write - nothing else can
    touch that file.** Skip this step entirely only if each of the five merged blocks in
    `/agent/user.md` is identical to its staged guard file, sentinel lines included (step 6
