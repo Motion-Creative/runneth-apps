@@ -1,0 +1,241 @@
+# Meta Creative Attributes Playbook
+### Step 1 of the Meta Onboarding Package
+
+**How Runneth gets per-creative facts for a Meta account — from the creative content layer
+(Cacheth), not from brain files — and detects the account's naming conventions.**
+
+This is Step 1 of the Meta onboarding package. It runs before the Account Context Brain because
+it establishes where creative facts come from and detects naming patterns — without interpreting
+anything. Once done, it gives the Account Context Brain real material to work with.
+
+> **Cacheth is the system of record for per-creative content.**
+> Per-creative content (summaries, hooks, transcripts, AI tags) lives in **Cacheth**, the local
+> creative cache. **Knoweth** indexes the summary artifacts Cacheth generates (identity, ad
+> names, copy, summary text) — transcripts and AI tags are reachable only through the
+> `motion cache` CLI. This playbook writes no creative files,
+> and nothing in the package does so on its own. Runneth saves a creative file to the brain only
+> when a person explicitly asks for one — a dated snapshot that will not stay synced with the
+> cache. When later citing such a file, prefer the cache for current facts.
+
+The one-line model:
+
+> The **Account Context Brain** tells Runneth **how to analyze** the account. The **Creative
+> Attributes** step gives Runneth **the per-creative facts it needs to actually do the job** —
+> via the creative content layer, one enriched record per active creative.
+
+The Creative Attributes step does not interpret anything. Interpretation lives in the Account Context
+Brain. This step only establishes access to what the Account Context Brain cannot tell it: the
+creative content itself.
+
+---
+
+## What this produces
+
+- A working **creative content layer**: Runneth knows what Cacheth holds and how to query it.
+- A provisional **naming decode**, handed to the Account Context Brain as Field 4 proposals.
+  Once confirmed, the decode lives in `/agent/brain/<workspace>/data-sources/meta/account-context.md` — this step
+  persists nothing itself.
+- **No creative files** — nothing here writes per-creative content to the brain (Cacheth is the
+  system of record; person-requested snapshot files are a separate, explicit ask).
+
+---
+
+## The creative content layer: what Cacheth holds and how to query it
+
+Cacheth syncs each workspace's creative records from Motion automatically. A full record
+(`motion cache get-creative`) holds:
+
+- **Identity:** creative ID, workspace ID, origin, format, launch date, media URL.
+- **Ad units:** every ad running the creative — ad / ad set / campaign IDs and names, active
+  status, thumbnails, and the primary ad copy.
+- **Glossary tags with definitions:** asset type, visual format, messaging angle, hook tactic,
+  intended audience, seasonality, offer type.
+- **Transcript** (video only): full text plus timed segments, language, duration.
+- **Summary sections:** ad description and format; spoken / text-overlay / visual hooks with
+  timestamps; a creative breakdown (scene-by-scene storyline, point of view, visuals, people,
+  music, fonts); messaging and positioning (features, benefits, value props, pain points, CTA,
+  offer, funnel stage); and emotional and audience insight (emotions with intensities,
+  persuasion tactics, cultural context, intended audience).
+- **Per-layer freshness timestamps:** when inventory, ad units, summary, transcript, and
+  glossary were each last hydrated. Cite these when freshness matters to an answer.
+
+What it does **not** hold: performance metrics or spend state. Those are always pulled live
+through the motion CLI per the Data-Query Guide.
+
+Runneth reaches this content two ways, cheapest first:
+
+1. **Knoweth pre-context injection (passive, first priority).** Before every turn, Knoweth
+   resolves the incoming query against the local index and injects matching creative chunks into
+   the "Knoweth Pre-LLM Context" block. What it holds is Cacheth's generated summary artifacts —
+   identity, ad names, copy, summary text — not complete records, so transcripts and AI tags
+   never arrive this way. If the injected context answers the question, answer from it — no
+   tool call.
+2. **motion cache CLI (active, when injection is not enough).** Local, no API call:
+   - `motion cache search-summaries --query "<text>" [--limit <n>]` — text search across ad
+     names, ad copy, and summary content. Each match carries `creativeId`, `adNames[]`, an
+     excerpt, and a relevance score — not the full record; follow up with `get-creative` for
+     that.
+   - `motion cache get-creative --creative-id <id>` — the complete record for one creative,
+     including `adUnits[].adName`. Always the full record (no section filtering); extract the
+     layer you need from the result file with `jq`.
+   - `motion cache export-summaries --format jsonl` — the whole synced summary corpus, one
+     record per creative, each carrying its `adNames[]` (no transcripts or AI tags — those need
+     `get-creative`). `--format` is required (`duckdb` is the alternative when SQL-style queries
+     suit a large corpus). The command returns a wrapper, not the corpus: read the Meta corpus
+     path from `exportPaths.meta` on the output (or `.providers.meta.path` in the wrapper file)
+     and query that per-provider file. The bulk path when the question spans the full account
+     rather than a search match.
+   - `motion cache status` — when the cache last synced and how many creatives it holds.
+   - `motion cache refresh` — trigger a fresh sync from Motion to pull in newly launched
+     creatives or updated summaries (the one cache command that reaches out to Motion).
+
+   Every cache command accepts `--workspace-id <id>`; pass it explicitly per the Step 1 scope
+   rule. All of these write their output to a file under `./workdir/` and return a pointer plus
+   compact metadata; read the file with `jq`. Those result files are query scratch, not brain
+   content.
+
+   Flag-level detail, the full-record field layout, and `jq` extraction recipes live in the
+   Cacheth Command Reference (`/agent/brain/meta-onboarding/cacheth-command-reference.md`),
+   installed beside the Data-Query Guide.
+
+Freshness is the sync's job, not Runneth's: the cache bootstraps per workspace and keeps
+hydrating in the background. If a creative seems to be missing, check `motion cache status` and
+run `motion cache refresh`; if it is still absent, fall through to the live content flags on
+`motion meta insights` per the creative content layer's ladder (Cacheth Command Reference) —
+never reconstruct the record by hand.
+
+---
+
+## Step 1 — Confirm the scope
+
+1. Get the target `workspaceId`. Use `motion workspaces` if it is not already known. Never
+   assume a default workspace — resolve it explicitly before any pull or cache query.
+2. When running inside post-install, resolve and record the scope silently — no message to
+   the customer; the walkthrough owns the conversation later. Only on a standalone,
+   human-requested run, open with a direct confirmation:
+
+> I'm starting the Meta Creative Attributes step for **[account name]**. Your creative content —
+> what each ad says, shows, and is tagged as — is already synced and searchable. What I'll do now
+> is read your ad naming conventions so I can decode them, then we'll move to Step 2 (Account
+> Context Brain) to confirm how you want to judge performance.
+
+3. Record the scope: `workspaceId` confirmed, and today's date as the "attributes as of"
+   timestamp.
+
+---
+
+## Step 2 — Provisional naming decode
+
+1. Check access before pulling: run `motion cache status --workspace-id <workspaceId>` once.
+   If it errors, record the blocker and stop this step — do not loop retries against the data
+   commands. If it succeeds but shows an empty or still-building cache, run
+   `motion cache refresh --workspace-id <workspaceId>` and come back once the sync settles.
+   If it fails with the explicit message "Motion cache is disabled for this sandbox," do not
+   stall the decode: pull the name list live instead with `motion meta ads --grain adnames
+   --include-associated-objects --date-range last_365d` — each row carries `adName` at the
+   top level, with ad set and campaign names under `associatedObjectDetails.adSets[].name`
+   and `.campaigns[].name` (ads-grain rows have no `adName`/`adsetName`/`campaignName` keys,
+   so do not use `--grain ads` for the decode). Continue from step 3, and note in the
+   handoff that this VM runs creative attributes on the live path until the sandbox cache
+   feature is enabled (per the creative content layer's ladder in the Cacheth Command
+   Reference).
+2. Export the synced corpus and extract the full ad-name list (local, no API call), keeping the
+   same explicit workspace scope on every command:
+
+   ```
+   motion cache export-summaries --format jsonl --workspace-id <workspaceId>
+   ```
+
+   The command returns a wrapper, not the corpus. Read the Meta corpus path from
+   `exportPaths.meta` on the output (or `.providers.meta.path` in the wrapper file), then
+   extract the names with `jq -r '.adNames[]?'` and the campaign names with
+   `jq -r '.campaignNames[]?'` on that per-provider JSONL file — one record
+   per creative, each carrying its associated ad names (a creative served in several ads
+   carries that many names) and campaign names. Campaign names are first-class decode
+   input, not a spot-check: the campaign list gets the same structure detection as the
+   ad-name list. If the list looks incomplete the cache may still be bootstrapping —
+   `motion cache status --workspace-id <workspaceId>` shows the sync state; re-run the decode
+   once the sync settles. The wrapper is `./workdir/` scratch and the per-provider export files
+   live in Cacheth's own storage — none of it is brain content.
+3. Look for structure in the `adName` values **and, separately, in the `campaignName`
+   values**: delimiters (underscores, hyphens, pipes), position-based encoding, recurring
+   prefixes, tag-like codes. The two levels are analyzed independently — a campaign
+   convention can differ from (or exist without) an ad-name convention.
+4. If a pattern is detected at a level, build that level's provisional decode table:
+   position or segment → meaning → example values. Ad names and campaign names each get
+   their own table — a detected campaign pattern is never compressed into a note on the
+   ad-name table. Mark both **provisional**.
+5. Note where product/concept tokens live, reading it directly off the two extracted lists:
+   whether the product tokens found in ad names also cascade into campaign names, or live
+   at one level only. For ad set placement, spot-check a handful of full records — each
+   record's `adUnits[]` (via `motion cache get-creative`) carries the ad set names
+   alongside each ad name. Record the provisional placement (e.g. "product names appear in
+   ad names and campaign names") with the decode tables.
+6. **Pass findings to the Account Context Brain.** When the Account Context Brain runs (Step 2
+   of the onboarding), pre-populate Field 4 (Naming conventions) with both provisional decode
+   tables and the product-token placement. The Account Context Brain confirms, corrects, or
+   replaces them — it does not start from scratch.
+
+If no pattern is detected at a level, note "no naming convention detected" for that level as
+the provisional finding for the Account Context Brain to confirm.
+
+The provisional decode is a handoff — this playbook writes nothing to the brain, and no
+`/agent/INDEX.md` entry is needed here (per-creative content is in Cacheth, and Knoweth
+surfaces its summary artifacts without an index step). On confirmation, the Account Context Brain (Field 4, the
+single owner of account interpretation) saves the result in `account-context.md` and writes
+the operational decoder to `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json` — typed positions, query
+fields, and filter patterns per the Field 4 spec. Anything decoding an ad name at analysis
+time reads the decoder through Field 4.
+
+---
+
+## Maintenance
+
+There is nothing per-creative to maintain: the cache syncs itself, and new launches appear in it
+automatically. What remains is event-triggered:
+
+| Event | What to do |
+|---|---|
+| The account's naming convention changes | Re-run the naming decode (Step 2) and route the new provisional table through Field 4 |
+| A new workspace is added | Run this playbook for that workspace first, then the Account Context Brain |
+
+---
+
+## Multi-workspace
+
+Every workspace gets its own folder, always - single-workspace orgs simply have one of them.
+`<workspace>` is the workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`),
+resolved from the conversation you are in:
+
+- `/agent/brain/<workspace>/data-sources/meta/account-context.md`
+- `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`
+- `/agent/brain/<workspace>/data-sources/voc/<platform>/`
+
+Onboarding a second workspace on the same VM is normal. It adds a folder and touches nothing in
+the first one: never copy, rename, or overwrite another workspace's files to serve this one, and
+never read another workspace's folder to answer a question about this one. The guard blocks in
+`/agent/user.md` are workspace-agnostic and shared, so they are merged once per VM and resolve
+the folder per conversation.
+
+The creative content layer needs no extra scoping: Cacheth's cache projects are already
+workspace-scoped, and every cache query runs against the resolved workspace.
+
+---
+
+## Quick reference
+
+| What | Where |
+|---|---|
+| Account Context Brain (incl. confirmed naming decode, Field 4) | `/agent/brain/<workspace>/data-sources/meta/account-context.md` |
+| Naming decoder (Field 4's operational output) | `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json` |
+| Per-creative content | Cacheth (summary artifacts surfaced via Knoweth; brain files only as person-requested snapshots) |
+| Brain index | `/agent/INDEX.md` |
+| Change log | `/agent/brain/<workspace>/data-sources/meta/_changelog.md` |
+
+| What | Command / approach |
+|---|---|
+| Creative lookup (passive, summary-level only) | Knoweth pre-context injection — answer from injected chunks when sufficient |
+| Creative search (active) | `motion cache search-summaries --query "<text>"` (local, no API call) |
+| One creative's full record (incl. transcript, AI tags) | `motion cache get-creative --creative-id <id>` (local, no API call) |
+| Full corpus / naming decode | `motion cache export-summaries --format jsonl`, then `jq -r '.adNames[]?'` on the per-provider file the wrapper points to (local, no API call) |
+| Cache freshness / re-sync | `motion cache status` (local) / `motion cache refresh` (syncs from Motion) |
