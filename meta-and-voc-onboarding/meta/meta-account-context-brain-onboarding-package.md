@@ -167,7 +167,7 @@ gates means Fields 1–9, the interpretation fields: validation never waits on F
 which gates only the report build. The one-line answer-register note
 lives in the "At a glance" section, not here — do not duplicate it into the metadata.
 
-- Index it in `/agent/INDEX.md` with aliases (account context, KPI hierarchy, how we judge ads,
+- Index it in `/agent/brain/brain-map.md` with aliases (account context, KPI hierarchy, how we judge ads,
   performance interpretation) and a one-line note.
 
 ---
@@ -467,7 +467,7 @@ Reference it from `account-context.md` with a one-line note and a path link. The
 written and updated only through this field's confirmation; appending newly observed values to
 `known_values` is routine maintenance, structural changes go through re-confirmation.
 
-The decoder must be indexed in `/agent/INDEX.md` with aliases: naming decoder, ad name decoder,
+The decoder must be indexed in `/agent/brain/brain-map.md` with aliases: naming decoder, ad name decoder,
 naming convention, content program values, filter guide, creative identity.
 
 **JSON schema:**
@@ -816,7 +816,7 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
   starts on Fields 1–9)
 - Flagged fields needing the customer: `<list>`
 - Written to: `/agent/brain/<brand>/integrations/meta/account-context.md`
-- Indexed in `/agent/INDEX.md`: `<yes | no>`
+- Indexed in `/agent/brain/brain-map.md`: `<yes | no>`
 - Guard merged into `/agent/user.md`: `<yes | no>`
 
 ---

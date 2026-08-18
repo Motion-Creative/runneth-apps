@@ -155,7 +155,7 @@ additive operation: it creates a folder and touches nothing that belongs to the 
 
 Two things stay deliberately org-wide, because they describe the VM rather than an account: the
 four guard blocks in `/agent/user.md` (workspace-agnostic rules that resolve the folder per
-conversation, so they are merged once and shared) and `/agent/INDEX.md`. Integrations and
+conversation, so they are merged once and shared) and `/agent/brain/brain-map.md`. Integrations and
 stored secrets are also VM-wide, and an org can hold one account of a platform, several (one
 per workspace), or one genuinely shared - which is why VoC setup pins a human-confirmed
 account per workspace, and the folders separate the data each workspace pulls through it.

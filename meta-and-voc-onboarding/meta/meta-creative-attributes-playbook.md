@@ -172,7 +172,7 @@ If no pattern is detected, note "no naming convention detected" as the provision
 the Account Context Brain to confirm.
 
 The provisional decode is a handoff — this playbook writes nothing to the brain, and no
-`/agent/INDEX.md` entry is needed here (per-creative content is in Cacheth, and Knoweth
+`/agent/brain/brain-map.md` entry is needed here (per-creative content is in Cacheth, and Knoweth
 surfaces its summary artifacts without an index step). On confirmation, the Account Context Brain (Field 4, the
 single owner of account interpretation) saves the result in `account-context.md` and writes
 the operational decoder to `/agent/brain/<brand>/integrations/meta/naming-decoder.json` — typed positions, query
@@ -221,7 +221,7 @@ workspace-scoped, and every cache query runs against the resolved workspace.
 | Account Context Brain (incl. confirmed naming decode, Field 4) | `/agent/brain/<brand>/integrations/meta/account-context.md` |
 | Naming decoder (Field 4's operational output) | `/agent/brain/<brand>/integrations/meta/naming-decoder.json` |
 | Per-creative content | Cacheth (summary artifacts surfaced via Knoweth; brain files only as person-requested snapshots) |
-| Brain index | `/agent/INDEX.md` |
+| Brain map | `/agent/brain/brain-map.md` |
 | Change log | `/agent/brain/<brand>/integrations/meta/_changelog.md` |
 
 | What | Command / approach |

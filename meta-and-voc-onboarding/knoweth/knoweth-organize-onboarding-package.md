@@ -134,7 +134,7 @@ staying current, so passing the gate this way comes with an offer to set up the 
 Cross-cutting: every data-source family and every future write, not one platform. The per-source packages own their own folder conventions and how-to docs; Knoweth owns the layer above them (lanes, the retrieval contract, save routing, maintenance) and the **lane -> path map** that names each family's real root. One owner per fact; Knoweth points down to the source packages rather than restating their paths.
 
 ### Persistence
-The durable artifacts are the tag vocabulary + naming decoder at `/agent/brain/<brand>/_tag-vocabulary.md` (also the organize done-marker, one per workspace) plus the two `/agent/user.md` guard blocks above (merged once per VM, shared by every workspace); the Knoweth lane config only carries what is actually queried today (global, user isolation, the automatic workspace lane). Index this doc in `/agent/INDEX.md` (aliases: knoweth, lanes, retrieval, save routing, brain maintenance) with a one-line note.
+The durable artifacts are the tag vocabulary + naming decoder at `/agent/brain/<brand>/_tag-vocabulary.md` (also the organize done-marker, one per workspace) plus the two `/agent/user.md` guard blocks above (merged once per VM, shared by every workspace); the Knoweth lane config only carries what is actually queried today (global, user isolation, the automatic workspace lane). Index this doc in `/agent/brain/brain-map.md` (aliases: knoweth, lanes, retrieval, save routing, brain maintenance) with a one-line note.
 
 ### Where it sits in the combined run
 The run order is owned by the package README ("Install and run order", at `/agent/brain/packages/meta-and-voc-onboarding/README.md` beside this doc); this part is its organize step. The sequence is deliberately not restated here - Guard 1 fires on its gates, not on a step number, and sequencing changes go in the README.
@@ -262,7 +262,7 @@ A lane is the only hard boundary, and today it is a partial one: the automatic `
                                                    # pulled live via the motion CLI
   integrations/<source>/                          # source guide specs; raw dumps forbidden here   [not indexed]
   team/<person>.md  team/user-map.json            # people are org-wide, not per workspace
-/agent/INDEX.md                                    # org-wide index; entries name the workspace
+/agent/brain/brain-map.md                                    # the brain map: routing + typed map + entries
 ```
 ### Declaring the config (real format, from the Knoweth service)
 Knoweth reads a TOML config (`version = 2`). The pieces that matter for lanes/projects:

@@ -79,6 +79,16 @@
       }
     },
     {
+      "id": "brain-map-template",
+      "type": "file",
+      "sourcePath": "knoweth/brain-map-template.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "packages/meta-and-voc-onboarding/brain-map-template.md"
+      }
+    },
+    {
       "id": "post-install",
       "type": "file",
       "sourcePath": "post-install.md",

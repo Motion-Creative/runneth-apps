@@ -33,7 +33,7 @@ the runtime blocks that path, and the check is against the copy in this prompt.
 If the block is missing, it does not list this workspace, or this is an explicit
 reinstall or upgrade, setup is pending for this turn. Package installation delivered
 the files; it did not authorize account access or persistent setup. Before any
-connected-account check, routine creation, account-context write, `/agent/INDEX.md`
+connected-account check, routine creation, account-context write, `/agent/brain/brain-map.md`
 edit, or `/agent/user.md` change, make this offer:
 
 > Meta and Voice of Customer onboarding is installed for <brand>. Starting it will
@@ -60,7 +60,7 @@ Only an explicit human yes to this disclosed setup authorizes the sequence. On t
    else runs for this workspace.
 3. Then handle the user's message.
 
-The presence of the four guard sentinels (`runneth:account-context-guard` and the rest)
+The presence of the five guard sentinels (`runneth:account-context-guard` and the rest)
 means only that some workspace on this VM has been onboarded. It is never evidence that
 this one has. Onboarding a second workspace is normal and additive: it writes a new
 `/agent/brain/<brand>/` folder and changes nothing that belongs to the first.

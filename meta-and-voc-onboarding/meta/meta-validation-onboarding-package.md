@@ -160,7 +160,7 @@ Save the validation record to `/agent/brain/<brand>/integrations/meta/validation
 - The MVCE state block (on/off, date, who signed off).
 
 Write it as a plain-language reference document, the way a sharp analyst would hand off an account
-to a teammate. State conclusions, not statuses. Index it in `/agent/INDEX.md` with aliases
+to a teammate. State conclusions, not statuses. Index it in `/agent/brain/brain-map.md` with aliases
 (validation, MVCE, weekly report, starter questions, onboarding proof) and a one-line note.
 
 **Write it incrementally, not at the end.** Update `validation.md` after every confirmed

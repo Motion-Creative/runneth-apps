@@ -244,7 +244,7 @@ per product. Cite representative raw files for each claim and every quote. A dir
 is not enough provenance.
 
 On rerun, regenerate this canonical page from the current evidence set. Do not append another
-audit or create dated duplicates. Update `/agent/INDEX.md` with one entry that names the
+audit or create dated duplicates. Update `/agent/brain/brain-map.md` with one entry that names the
 workspace (the index is org-wide) and aliases: `Voice of Customer Audit`, `VoC audit`,
 `review audit`, `customer insights`, `pain points`, `objections`, `trigger moments`,
 `transformations`, `personas`, and `customer language`, each prefixed or suffixed with the

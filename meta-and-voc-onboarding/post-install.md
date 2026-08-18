@@ -49,8 +49,8 @@ landed. Post-install and the raw sync routines do not create it; its initial abs
 Idempotency has two parts, because the guards are VM-wide while everything else is
 per-workspace:
 
-- **Guards (step 3):** the four blocks are generic and identical for every workspace. The
-  guard merge is done for this VM only when each of the four merged blocks in
+- **Guards (step 3):** the five blocks are generic and identical for every workspace. The
+  guard merge is done for this VM only when each of the five merged blocks in
   `/agent/user.md` is identical to its staged guard file, sentinel lines included - then
   leave the blocks untouched, no matter which workspace merged them, and continue with the
   rest. A sentinel being present proves nothing by itself: an older install leaves stale
@@ -145,8 +145,8 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    VoC data inside this conversation. If old canceled `voc-sync-*` routines exist from a
    previous install, ignore them - canceled is terminal; never resume or reuse one, always
    create fresh. Leave other workspaces' `voc-sync-*` routines alone.
-3. **Merge all four guard blocks into `/agent/user.md` with one Write - nothing else can
-   touch that file.** Skip this step entirely only if each of the four merged blocks in
+3. **Merge all five guard blocks into `/agent/user.md` with one Write - nothing else can
+   touch that file.** Skip this step entirely only if each of the five merged blocks in
    `/agent/user.md` is identical to its staged guard file, sentinel lines included (step 6
    is what records this workspace). Compare content, never mere presence: a sentinel
    version that differs from the staged one is a fast first signal, but a matching version
@@ -157,12 +157,13 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    block in place because its sentinel is present. The
    blocks ship ready-made in
    `/agent/brain/packages/meta-and-voc-onboarding/meta-onboarding-rules/` (`meta-analysis-account-context.md`,
-   `meta-analysis-validation.md`, `brain-organization.md`, `brain-file-conventions.md`). On this VM,
+   `meta-analysis-validation.md`, `brain-organization.md`, `brain-file-conventions.md`,
+   `brain-map.md`). On this VM,
    `/agent/user.md` is walled off from Bash entirely (reads and writes are both refused -
    do not try a script) and the edit/patch tool fails validation; the file-write tool is
    the only thing that can change it, and the file's current contents are already in your
    system prompt. So:
-   - Read the four guard files with the file-read tool. **Substitute nothing.** The blocks
+   - Read the five guard files with the file-read tool. **Substitute nothing.** The blocks
      are workspace-agnostic by design: they resolve `/agent/brain/<brand>/` per
      conversation, so `<brand>` and every other angle-bracket placeholder
      (`<workspaceId>`, `<userId>`, `<platform>`, `<routine-id>`) stay exactly as written.
@@ -175,12 +176,23 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
      included, with the staged block instead of appending. Touch nothing outside
      the sentinels.
    - Check the payload before writing: the base document's opening heading appears
-     exactly once, and each of the four sentinel pairs appears exactly once. A doubled
+     exactly once, and each of the five sentinel pairs appears exactly once. A doubled
      base document is a corrupted merge - fix the payload; never write it.
    - Write it with the file-write tool in **one** whole-file write. One Write total for
      this step.
    - The blocks are self-gating: merging now is what makes their gates watched. Do not run
      what they gate - organize and validation fire later, on their own conditions.
+
+   **Then make the brain map real (same step, after the Write).** If
+   `/agent/brain/brain-map.md` does not exist, create it from the staged template at
+   `/agent/brain/packages/meta-and-voc-onboarding/brain-map-template.md`. If
+   `/agent/INDEX.md` already holds entries, carry every one of them into the map's
+   Entries section exactly as written - never reword, merge, collapse, or drop an
+   existing entry; the map adapts to this brain, not the other way around - then
+   replace `/agent/INDEX.md`'s contents with one line pointing to
+   `/agent/brain/brain-map.md`. On a fresh VM `/agent/INDEX.md` is empty and this is
+   just the template copy. The map's ongoing upkeep belongs to the `runneth:brain-map`
+   guard merged above; nothing here needs re-running later.
 4. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
    creative content layer (Cacheth + query paths), detect naming patterns as provisional
    proposals for the next step. Every cache call carries this workspace's id, and the
@@ -201,7 +213,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    Section 3: a prose reference document,
    not the worksheet) with every autofilled field and the provisional naming decode. Record
    the workspace name and workspace id in the file's metadata block - that is what makes a
-   later rename recoverable. Index it in `/agent/INDEX.md` with the playbook's aliases,
+   later rename recoverable. Index it in `/agent/brain/brain-map.md` with the playbook's aliases,
    each alias qualified by the workspace ("Bramblewick NYC account context") because the index is
    VM-wide and two workspaces' entries must never read as the same document. This file gets
    written even when the
@@ -217,7 +229,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    leave the existing names alone - never rewrite the list to hold only this workspace.
    Compose the whole file from its current contents plus this change - current as of this
    moment in the turn, not as of the turn's start. If step 3 wrote the file this turn, build
-   on the exact payload that Write sent: it already carries the four guard blocks, and the
+   on the exact payload that Write sent: it already carries the five guard blocks, and the
    copy in your system prompt predates it. Only when nothing has written the file this turn
    is the system-prompt copy still current. Touch nothing
    outside the sentinels, and check the payload before writing: the base document appears
@@ -275,7 +287,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    and only that skill - presents the findings and asks the questions. Do not start the
    walkthrough inside the install turn unless the yes arrives here.
 
-Mechanics for every step above: when a step updates `/agent/INDEX.md` or any other
+Mechanics for every step above: when a step updates `/agent/brain/brain-map.md` or any other
 existing file, do not use the edit/patch tool - it fails validation on this VM. Read the
 file and write it back whole (python for mechanical splices, the file-write tool for
 short files). Prefer scripted file assembly over retyping staged content anywhere -
