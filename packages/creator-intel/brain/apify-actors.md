@@ -10,7 +10,7 @@ All calls go through `secure-fetch` against `api.apify.com` with `--secret-key A
 - Call: `POST /v2/acts/datadoping~instagram-following-scraper/run-sync-get-dataset-items`
 - Body: `{"usernames":["<handle>"],"max_count":150}` (both required).
 - Returns per followed account: `username`, `full_name`, `is_private`, `is_verified`, `profile_pic_url`. No follower count.
-- Run once per seed. Keep accounts followed by two or more seeds as candidates.
+- Run once per seed. Evaluate every followed account against the target's niche/topic fit. Keep all that pass the niche filter as candidates; rank them by how many seeds' networks they appear in.
 
 ## 2. Profile scraper (enrichment: followers + bio)
 
