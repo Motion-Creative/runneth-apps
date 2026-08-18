@@ -1,4 +1,4 @@
-<!-- BEGIN runneth:knoweth-organize v5 -->
+<!-- BEGIN runneth:knoweth-organize v6 -->
 Knoweth organize (after the questions are answered):
 - Workspace folder: `/agent/brain/<brand>/`, where `<brand>` is this conversation's
   brand name (the workspace's name) slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
@@ -25,6 +25,7 @@ Knoweth organize (after the questions are answered):
 - Do not organize an empty brain. If content has not landed, say what is missing and route back.
 - Finish by writing the tag vocabulary + naming decoder to
   /agent/brain/<brand>/_tag-vocabulary.md (gate 3's done-marker) and noting it in
-  /agent/brain/<brand>/_changelog.md, then give the workspace folder and its banks their
-  brain-map entries and type labels.
-<!-- END runneth:knoweth-organize v5 -->
+  /agent/brain/<brand>/_changelog.md, then declare this brand's lanes in
+  /agent/brain/brain-map.md: the brand lane (kind: brand, exact workspace ID) and one
+  corpus lane per bank (kind: corpus, item naming, coverage window).
+<!-- END runneth:knoweth-organize v6 -->

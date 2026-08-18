@@ -476,8 +476,8 @@ The run order below is the human-readable description of the same lifecycle.
    `meta-onboarding-rules/brain-organization.md` and `meta-onboarding-rules/brain-file-conventions.md`) are merged into /agent/user.md by the
    post-install run's single guard merge, so the organize trigger fires and save-routing/maintenance stay on. Do not carve data-source-family or
    initiative lanes today; only global, the user lane, and the workspace lane are queried. See
-   `knoweth/knoweth-organize-onboarding-package.md` (staged at
-   `/agent/brain/packages/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md`).
+   `knoweth/knoweth-setup.md` (staged at
+   `/agent/brain/packages/meta-and-voc-onboarding/knoweth-setup.md`).
 8. **Keep everything current.** Creative content stays current through the Cacheth sync
    automatically. Account Context Brain on monthly cadence and structural-drift triggers. The
    weekly report regenerates on the refresh routine agreed at lock-in. VoC data refreshes itself

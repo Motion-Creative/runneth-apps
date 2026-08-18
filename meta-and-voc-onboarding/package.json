@@ -69,13 +69,13 @@
       }
     },
     {
-      "id": "knoweth-organize-package",
+      "id": "knoweth-setup",
       "type": "file",
-      "sourcePath": "knoweth/knoweth-organize-onboarding-package.md",
+      "sourcePath": "knoweth/knoweth-setup.md",
       "executable": false,
       "target": {
         "root": "agent_brain",
-        "path": "packages/meta-and-voc-onboarding/knoweth-organize-onboarding-package.md"
+        "path": "packages/meta-and-voc-onboarding/knoweth-setup.md"
       }
     },
     {

@@ -517,7 +517,7 @@ a report — but MVCE stays off until the report is built and approved, which re
 Field 10 spec first.
 
 **When MVCE flips on, pass the baton.** Validation's last act is pointing at the Knoweth
-organize part (`knoweth-organize-onboarding-package.md`, staged beside this doc): its gates
+organize part (`knoweth-setup.md`, staged beside this doc): its gates
 open the organize step once the account questions are answered and content has landed. Check
 that its guard blocks (`runneth:knoweth-organize`, `runneth:knoweth-brain`) are merged into
 `/agent/user.md` per that doc's MERGE INSTRUCTIONS; if they are not, offer the merge now.
