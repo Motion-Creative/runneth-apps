@@ -104,8 +104,12 @@ Step 0 - the workspace readout defined above - has already happened before step 
 starts: the workspace name, workspaceId, and slug every step below uses came from the
 `Default workspace:` line of this conversation's `Motion context:` section, nowhere else.
 
-1. **Check the Meta connection.** Confirm a Meta workspace is connected for this
-   conversation's workspace. If the connection status itself cannot be read because those
+1. **Check the Meta connection - the workspace listing is the answer.** Confirm a Meta
+   workspace is connected for this conversation's workspace with the workspace listing
+   (`motion workspaces`) alone. Never verify the connection with a data pull - no
+   insights query, no creative probe: an API error would not change what happens next
+   (blockers get recorded, the scaffold still gets written), so a probe only spends
+   time. If the connection status itself cannot be read because those
    calls are erroring, note the blocker and continue - this package is installed for Meta
    orgs, steps 3 and 4 record blockers next to the fields they block, and a resumable
    scaffold on disk beats silently stopping. Only a definitive "no Meta workspace
