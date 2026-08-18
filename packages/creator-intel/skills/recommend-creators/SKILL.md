@@ -45,8 +45,9 @@ When you offer the methods, state plainly what each one actually does, so the cu
 
 - Derive candidate topics from own-brand context and the ad account: pull the messaging of the top ads with `motion meta insights --summary-sections messagingAndPositioning --summary-sections hookOrHeadline` and combine with `motion brand-context` themes and the gap.
 - Show the proposed 3 to 5 topics and ask the person to approve them before searching.
-- On approval, run `motion inspo creators --search-term "<approved topic>"` per topic, dedupe by Motion creator id, and rank by fit to the gap. Page 2 to 3 times when more results exist.
-- This replaces the old reach-ranked category dump. Never present a raw high-follower category list as the recommendation. Motion's creator search is weak for niche B2B or specialist spaces: broad topic terms and category pulls tend to return follower-ranked celebrities (for example GaryVee, Dave Ramsey). Check the returned creators against the target before presenting them; if they are off-fit celebrities, say so plainly and lean on method (b) rather than dressing them up as recommendations.
+- On approval, search with a follower band, this is the key. A bare `--search-term` is follower-weighted and returns celebrities (MrBeast, GaryVee); paging past them takes 12+ pages of general accounts. Instead run `motion inspo creators --search-term "<approved topic>" --followers-min 5000 --followers-max 150000` to bracket the specialist range where the real marketing and creative creators live, and page through that band. There is no ascending sort, so the band is what biases toward the right size.
+- Filter the band to real niche fit by tagline and topics (marketing, ads, paid social, ecommerce, UGC, creative strategy, copywriting, growth), drop lifestyle and general accounts, dedupe by Motion creator id, and present the best 6 to 10 with each creator's Motion link and follower count and a one-line reason. This recipe returns real specialists (verified live: Joel Marlinarson, Mitch Paid Ads, Brian Blum, Mo Anwary), not celebrities.
+- This is a reverse-engineered path, not Motion's internal "Curated for your brand" endpoint, which is not exposed. It works, but if results are thin, say so and lean on method (b). Never present a raw high-follower category list as the recommendation.
 
 ### (b) Top creator similarity
 
