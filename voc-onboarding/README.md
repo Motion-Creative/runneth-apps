@@ -223,6 +223,16 @@ and record completion. Only an explicit human yes runs
 [`post-install.md`](post-install.md). Installation, reinstall, or upgrade alone is never
 consent. Automatic updates never rewrite `/agent/user.md`.
 
+**Completion requires a dedicated customer-voice platform.** When setup runs and Meta ad
+comments turns out to be the only reachable source, the workspace is recorded in a
+`runneth:voc-partial` block instead of the onboarded roster: the ad-comments sync runs,
+but the closing message leads with connecting an integration (not a completion report),
+and the activation gives a short once-per-conversation reminder in every later
+conversation until a dedicated platform - reviews, support, surveys, communities, or
+calls - is connected. Connecting one and saying yes resumes setup for that platform and
+graduates the workspace to `runneth:voc-onboarded`. That graduation is the moment
+onboarding is complete.
+
 ## Install and run order
 
 1. **Install the package** with one explicit `package install` call (see "How to install"
@@ -236,7 +246,9 @@ consent. Automatic updates never rewrite `/agent/user.md`.
 2. **Set up VoC data syncs.** For each reachable customer-voice source, pin the workspace's
    account, create the daily `voc-sync-<workspace>-<platform>` routine, and kick the first
    backfill. The 12-month backfills churn in the background; daily runs keep the corpus
-   current afterward.
+   current afterward. If ad comments end up the only reachable source, the workspace lands
+   in the partial state described above - setup is not complete, and the person is urged
+   to connect a dedicated platform until one is.
 3. **Run the Voice of Customer audit later.** Offered once by the sync routine after the
    workspace's backfill is fully covered (deferring while a Meta onboarding is mid-flight)
    and run only on a person's yes, the `voc-audit` skill compiles

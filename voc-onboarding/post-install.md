@@ -57,10 +57,19 @@ Idempotency, per workspace:
   re-confirmation), and the roster entry stays exactly as it is - a workspace is never
   listed twice. If neither roster lists it, run the steps now even when other workspace
   folders are already populated and other workspaces are listed in the rosters. Never
-  read, copy, rename, or overwrite another workspace's folder to serve this one. If the
-  rosters do not list this workspace but its `voc-sync-<workspace>-*` routines already
-  exist, a previous run died before step 3: resume rather than restart - keep the
-  existing routines, set up any platform still missing one, and finish through step 3.
+  read, copy, rename, or overwrite another workspace's folder to serve this one.
+- **Partial setup (`runneth:voc-partial`):** a workspace listed in the
+  `runneth:voc-partial` block (written by step 3 when Meta ad comments was the only
+  reachable customer-voice source) already ran this sequence - its ad-comments sync
+  exists and keeps running - but onboarding is incomplete by design: it finishes only
+  when a dedicated customer-voice platform is connected. Re-running the sequence for a
+  partial workspace is always a resume: keep the existing routines, set up any newly
+  connected platform, and let step 3 decide whether the workspace graduates to the
+  onboarded roster.
+- **Interrupted runs:** if no roster and no partial block lists this workspace but its
+  `voc-sync-<workspace>-*` routines already exist, a previous run died before step 3:
+  resume rather than restart - keep the existing routines, set up any platform still
+  missing one, and finish through step 3.
 - **Renames:** if this workspace has no routines under its current slug but active
   `voc-sync-*` routines carry this workspace's id in their prompt under an older name,
   the workspace was renamed - cancel those routines, move
@@ -170,24 +179,39 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    VoC data inside this conversation. If old canceled `voc-sync-*` routines exist from a
    previous install, ignore them - canceled is terminal; never resume or reuse one, always
    create fresh. Leave other workspaces' `voc-sync-*` routines alone.
-3. **Record this workspace in the onboarded roster** - one Write to `/agent/user.md`
-   (file-write tool only; Bash cannot touch that file - reads and writes are both
-   refused, and the edit/patch tool fails validation; the file's current contents are
-   already in your system prompt). This is what
-   the package's activation gate checks on every later turn, and it is per workspace, so it is
-   the last thing done after step 2's routines are created and kicked (platforms still
-   waiting on an account confirmation do not block the roster - their routines are
-   created in the follow-up turn). If
-   the roster block is absent, add it; if it exists, append this workspace to its list and
-   leave the existing names alone - never rewrite the list to hold only this workspace.
-   Leave any legacy `runneth:meta-voc-onboarded` block exactly as it is - this package
-   neither writes nor removes it.
-   Compose the whole file from its current contents plus this change - current as of this
-   moment in the turn, not as of the turn's start - and follow the whole-file write chain
-   above. Touch nothing outside the sentinels, and check the payload before writing: the
-   base document appears exactly once and this roster's sentinel pair appears exactly
-   once. After the roster Write succeeds, retain that exact
-   payload as the current one. The roster block:
+3. **Record the outcome in `/agent/user.md`** - one Write (file-write tool only; Bash
+   cannot touch that file - reads and writes are both refused, and the edit/patch tool
+   fails validation; the file's current contents are already in your system prompt).
+   This is what the package's activation gate checks on every later turn, and it is per
+   workspace, so it is the last thing done after step 2's routines are created and
+   kicked. **Which block gets written depends on what step 2 reached:**
+   - **At least one dedicated customer-voice platform** (any platform other than
+     `meta-ad-comments`) got a routine created, or is waiting only on an account
+     confirmation (its routine arrives in the follow-up turn and does not block this
+     write) -> onboarding is complete: append this workspace to the
+     `runneth:voc-onboarded` roster, and if a `runneth:voc-partial` block lists this
+     workspace, remove it from that list in the same Write (drop the whole partial
+     block when its list empties).
+   - **Meta ad comments was the only reachable customer-voice source** -> onboarding is
+     **not complete** and this workspace is never written to the onboarded roster now.
+     Record it in the partial block instead, so the activation keeps reminding until a
+     dedicated platform is connected:
+
+     > `<!-- BEGIN runneth:voc-partial -->`
+     > `voc-onboarding is waiting on a customer-voice integration for these workspaces: <workspace>[, <workspace>...]`
+     > `<!-- END runneth:voc-partial -->`
+
+   Both blocks share the same mechanics: if the block is absent, add it; if it exists,
+   append this workspace to its list and leave the existing names alone - never rewrite
+   a list to hold only this workspace, and a workspace is never listed twice in one
+   block. Leave any legacy `runneth:meta-voc-onboarded` block exactly as it is - this
+   package neither writes nor removes it. Compose the whole file from its current
+   contents plus this change - current as of this moment in the turn, not as of the
+   turn's start - and follow the whole-file write chain above. Touch nothing outside
+   the sentinels, and check the payload before writing: the base document appears
+   exactly once and each affected block's sentinel pair appears exactly once. After the
+   Write succeeds, retain that exact payload as the current one. The onboarded roster
+   block:
 
    > `<!-- BEGIN runneth:voc-onboarded -->`
    > `voc-onboarding has completed for these workspaces: <workspace>[, <workspace>...]`
@@ -195,12 +219,16 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
 
    Write the resolved folder name, not the display name or the id - the same string used for
    `/agent/brain/<workspace>/`, so the gate and the folder always agree.
-4. **Close with the readiness report - status only, never content.** One line per part
-   stating its state (running in background / done / waiting on a person / skipped and
-   why). The report carries no findings and no numbers of any kind: no account
-   numbers or metrics, no tallies or counts, no version labels. If a part is waiting on
-   a person, name the topic in two or three words ("account confirmation"), not the
-   question. The report's shape is literal:
+4. **Close the turn. Which closing message goes out depends on what step 2 reached** -
+   the same fork as step 3:
+
+   **When at least one dedicated customer-voice platform got a routine (or waits only
+   on account confirmation), send the readiness report - status only, never content.**
+   One line per part stating its state (running in background / done / waiting on a
+   person / skipped and why). The report carries no findings and no numbers of any
+   kind: no account numbers or metrics, no tallies or counts, no version labels. If a
+   part is waiting on a person, name the topic in two or three words ("account
+   confirmation"), not the question. The report's shape is literal:
 
    > voc-onboarding - install complete for <workspace>
    > - VoC sync: <per-platform status, one line total>
@@ -211,19 +239,44 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    because a VM can hold several onboarded workspaces. The
    only permitted extensions of a bullet are its allowed states ("skipped - <why>",
    "waiting on a person - <two-or-three-word topic>", "blocked - <reason>"), never extra
-   detail after "done". Nothing follows the report, with one exception: **when Meta ad
-   comments is the only reachable customer-voice source, close with a short
-   conversational note after the report.** Confirm plainly that ad comments are the only
-   customer voice reachable right now and that they are a thin slice on their own, then
-   encourage connecting a dedicated VoC platform, naming what can be set up as a natural
-   list in prose: review platforms (Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped,
-   Reviews.io), support tools (Gorgias, Intercom, Zendesk), surveys and messaging
-   (Klaviyo, Attentive, Hotjar), communities (Reddit, Discord, YouTube), or sales calls
-   (Gong) - and any other reviews or support platform works too, connected by OAuth or a
-   stored API key. Two or three sentences in plain prose - no table, no commands, no
-   counts - and say that once a platform is connected, asking to set it up is all it
-   takes. This note belongs to the report turn only; never repeat it unprompted on later
-   turns.
+   detail after "done". Nothing follows the report.
+
+   **When Meta ad comments is the only reachable customer-voice source, do not send
+   that report** - "install complete" would be false, and step 3 just recorded the
+   workspace as partial. Send the connect-an-integration message instead. Its one job
+   is to get a customer-voice platform connected: the ask is the headline and the
+   closing line, and ad comments appear exactly once, in a parenthetical at the end,
+   never as the lead. The shape:
+
+   > **Your Voice of Customer setup needs one more thing: a customer-voice
+   > integration.**
+   >
+   > To find out what your customers actually think, I need to hear them somewhere -
+   > reviews, support tickets, surveys, that kind of thing. Pick whichever one your
+   > team already uses:
+   >
+   > - Reviews - Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io
+   > - Support - Gorgias, Intercom, Zendesk
+   > - Surveys & messaging - Klaviyo, Attentive, Hotjar
+   > - Communities - Reddit, Discord, YouTube
+   > - Sales calls - Gong
+   >
+   > Tell me which one you use and I'll walk you through connecting it - and if yours
+   > isn't on this list, name it anyway and I'll check. The moment it's linked, I'll
+   > finish your setup.
+   >
+   > (One thing is already flowing: I found your Meta ad comments and started pulling
+   > those in, so they'll be waiting when the rest connects.)
+
+   The wording may flex a little to fit the conversation, but it keeps this structure:
+   the integration ask opens and closes the message, the platform list stays curated to
+   exactly these names (the catch-all sentence covers everything else - never dump the
+   full registry), the ad-comments line stays a single parenthetical at the bottom, and
+   nothing anywhere calls the setup complete, done, or finished. No commands, no
+   counts, no internals. When the person names a platform, walk them through connecting
+   it at a high level (the OAuth connect or, for key-based platforms, the secret-collection
+   flow) and, once connected, resume this sequence for that platform - step 3 then
+   graduates the workspace to the onboarded roster.
 
 Mechanics for every step above: when a step updates any existing file, do not use the
 edit/patch tool - it fails validation on this VM. Read the file and write it back whole
@@ -236,6 +289,13 @@ connected later, setup runs on ask.
 
 ## What fires later, on its own
 
+- **The finish-setup reminder** - while a workspace sits in the `runneth:voc-partial`
+  block, the activation gives a short once-per-conversation reminder that the setup is
+  waiting on a customer-voice integration (see the activation instruction for its
+  shape). When a person connects a platform and says yes - or names a platform to
+  connect - this sequence re-runs as a resume for that workspace: the new platform gets
+  its sync, and step 3 moves the workspace from the partial block to the onboarded
+  roster. That is the moment onboarding completes.
 - **The Voice of Customer Audit offer** - once the workspace's VoC backfill is fully
   covered, the sync routine's daily runs offer the `voc-audit` skill once (deferring
   while a Meta onboarding is mid-flight, per the skill's delivery rules). The skill runs

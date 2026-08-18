@@ -414,13 +414,23 @@ folder state:
    the data stays updated daily. Explain that once the first full backfill is ready, Runneth
    will offer a manual Voice of Customer Audit. Do not run or present the audit now, and do
    not mention routine mechanics unless asked. If Meta ad comments is the only
-   customer-voice source this pass could set up, also say so and encourage connecting a
-   dedicated VoC platform, naming the options conversationally from Step 1's table
-   (reviews like Judge.me, Trustpilot, Yotpo, Okendo, or Stamped; support like Gorgias,
-   Intercom, or Zendesk; surveys, communities, and calls) - ad comments alone are a thin
-   slice of customer voice. (When this setup pass runs inside the voc-onboarding
-   post-install, the readiness report's closing note carries this instead - do not say it
-   twice.)
+   customer-voice source this pass could set up, do not frame the setup as done -
+   **lead with the ask**: the setup still needs a customer-voice integration, and it is
+   not complete until one is connected. Name the curated options conversationally
+   (reviews like Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, or Reviews.io;
+   support like Gorgias, Intercom, or Zendesk; surveys and messaging like Klaviyo,
+   Attentive, or Hotjar; communities like Reddit, Discord, or YouTube; or sales calls
+   with Gong - and any other reviews, support, or survey tool works too), invite them
+   to name theirs, and offer to walk them through connecting it. Mention ad comments
+   once, at the end, as already flowing - never as the lead. (When this setup pass runs
+   inside the voc-onboarding post-install, the post-install's connect-an-integration
+   close carries this instead - do not say it twice.)
+
+Roster graduation: when this pass creates a dedicated platform's routine (any platform
+other than meta-ad-comments) for a workspace listed in the `runneth:voc-partial` block
+of `/agent/user.md`, onboarding just completed - follow the post-install's step 3 to
+move the workspace from the partial block to the `runneth:voc-onboarded` roster in one
+Write.
 
 **Never run the pull inside the user's conversation.** All pulling happens in the routine's
 runs; a one-off refresh beyond the daily cadence is `routine run --id <routine-id>`.

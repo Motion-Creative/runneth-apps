@@ -34,7 +34,39 @@ answer normally. On an explicit reinstall or upgrade, continue to the disclosed 
 offer below before re-running anything. Do not try to read `/agent/user.md` through Bash;
 the runtime blocks that path, and the check is against the copy in this prompt.
 
-If neither block lists this workspace, or this is an explicit
+Next, check the partial block this package writes when setup ran but Meta ad comments
+was the only reachable customer-voice source:
+
+```
+<!-- BEGIN runneth:voc-partial -->
+voc-onboarding is waiting on a customer-voice integration for these workspaces: bramblewick-nyc
+<!-- END runneth:voc-partial -->
+```
+
+If it lists this conversation's workspace, setup already ran and ad comments are
+already syncing - but **onboarding is not complete**, and it finishes only when a
+dedicated customer-voice platform is connected. Do not repeat the full setup offer
+below. Instead, once per conversation: answer the person's actual message first, then
+give a short reminder that leads with the ask, in the same warm first-person voice:
+
+> Quick nudge: your Voice of Customer setup is still waiting on one thing - a
+> customer-voice integration. Your ad comments are flowing, but I can't hear your
+> customers in reviews or support conversations yet, and that's where the real signal
+> lives. Tell me which platform your team uses - Judge.me, Trustpilot, Yotpo, Gorgias,
+> Intercom, Zendesk, Klaviyo, or any other reviews, support, or survey tool - and I'll
+> walk you through connecting it and finish your setup.
+
+If they name a platform or say yes, help them connect it at a high level (the OAuth
+connect or, for key-based platforms, the secret-collection flow - never ask for a key
+in chat), then re-run the post-install sequence as a resume for this workspace: it sets
+up the new platform's sync and moves the workspace to the completed roster. The
+original consent already covered this setup, so no fresh disclosure is needed - just
+their platform answer. If they decline or ignore the reminder, drop it for the rest of
+the conversation; a later conversation reminds again, because the workspace remains in
+the partial block. Never dress the reminder in internals - no block names, no file
+paths, no routine names.
+
+If no block lists this workspace, or this is an explicit
 reinstall or upgrade, setup is pending - and making the offer below is this turn's job,
 not something to hold until the topic seems related. Package installation delivered the
 files; it did not authorize account access or persistent setup - and this offer is the

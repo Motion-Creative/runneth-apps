@@ -14,6 +14,13 @@ of onboarding install and test independently.
   legacy `runneth:meta-voc-onboarded` roster from the combined package, so already
   onboarded VMs are never re-set-up and their existing `voc-sync-<workspace>-*` routines
   keep running untouched.
+- **Completion requires a dedicated platform**: when Meta ad comments is the only
+  reachable customer-voice source, the workspace is recorded in a `runneth:voc-partial`
+  block instead of the onboarded roster. The install closes with a
+  connect-an-integration message (the ask is the headline; ad comments a parenthetical),
+  and the activation reminds once per conversation until a dedicated reviews, support,
+  survey, community, or calls platform is connected - then setup resumes for that
+  platform and the workspace graduates to `runneth:voc-onboarded`.
 - **Self-contained audit offer**: the combined package's walkthrough delivered the
   customer-voice summary and audit offer when a Meta onboarding was open; VoC is now
   fully out of Meta onboarding, so the sync routine owns the offer outright. Once
