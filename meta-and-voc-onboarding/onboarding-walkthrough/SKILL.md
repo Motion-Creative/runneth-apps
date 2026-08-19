@@ -162,7 +162,8 @@ Just answer what you know — I'll write the context file from your responses.
   presentation, and it never cuts the Meta onboarding short: it runs only after the
   account-context questions are handled.
   Inspect this workspace's platform folders under
-  `/agent/brain/<workspace>/data-sources/voc/` and its `voc-sync-<workspace>-*` routines,
+  `/agent/brain/<workspace>/data-sources/voc/` and the routines whose prompts name this exact
+  workspace id and a VoC platform source,
   then tell the person what customer voice the brain actually holds: one line per
   integration — the platform, what kind of voice it carries, how many items are synced, how
   many products they span, and the date coverage. For example: "Judge.me: 1,240 reviews

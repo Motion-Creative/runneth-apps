@@ -37,7 +37,7 @@ Knoweth organize (after the questions are answered):
 - Organize the brain when all three gates hold; do not wait to be asked:
   (1) the account interpretation is [CONFIRMED] - check the fields-confirmed count in the
   "File metadata" block at the end of /agent/brain/<workspace>/data-sources/meta/account-context.md;
-  (2) content has landed: the voc-sync-<workspace>-<platform> backfill reports full date-window
+  (2) content has landed: the workspace-scoped VoC <platform> sync backfill reports full date-window
   coverage (not just files existing - read the latest run summary via routine history
   --id <routine-id>), and the creative content layer resolves (creatives in Cacheth - or,
   where the sandbox cache feature is disabled, live content pulls per the Cacheth Command
@@ -352,7 +352,7 @@ Setup experience: **act, do not be "too meta."** Do the work and surface results
 
 ## 12. Rollout, triggering, and how it stays consistent
 - **The package installs only when explicitly requested, and installing does not act.** The activation discloses the account reads and persistent setup, and an explicit human yes is required before the combined run starts. Existing orgs can still get a separately approved cleanup pass.
-- **VoC setup is manual too.** Nothing runs just because a platform is connected: when a person (or the onboarding run) asks, the voc-data-pull skill's "Set up the recurring sync" procedure pins the workspace's platform account (human-confirmed - accounts are org-level, so ownership is never inferred), creates one daily `voc-sync-<workspace>-<platform>` routine per available platform, and kicks the backfill. Stored-key platforms (Okendo, Stamped) first need a customer key via the secret-collection flow.
+- **VoC setup is manual too.** Nothing runs just because a platform is connected: when a person (or the onboarding run) asks, the voc-data-pull skill's "Set up the recurring sync" procedure pins the workspace's platform account (human-confirmed - accounts are org-level, so ownership is never inferred), creates one daily workspace-scoped routine with a readable display name per available platform, and kicks the backfill. Stored-key platforms (Okendo, Stamped) first need a customer key via the secret-collection flow.
 - **Refresh** runs as a deterministic script (cheap pull) with agentic analysis on top (set cadence deliberately, section 6).
 - **Non-divergence has two homes.** One is the per-VM setup/config file (the handoff that lays the overlay). The other is Runneth's system prompt, which must teach how Knoweth works, the retrieval model (global + tags today, family lanes as a forward path), where each kind of data lives (Cacheth vs brain files vs live motion CLI pulls), and where to save. That system-prompt work is a separate stream; without it the method is followed by hand and drifts, with it the method holds. This doc is the specification; the prompt change makes it stick.
 

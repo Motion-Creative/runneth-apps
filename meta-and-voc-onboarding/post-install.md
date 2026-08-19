@@ -26,7 +26,7 @@ downstream may re-resolve them from anything else. If that line is null or absen
 which workspace to onboard and stop until answered - never guess.
 
 Nothing else identifies the workspace: not the `runneth:meta-voc-onboarded` roster, not
-existing `/agent/brain/<workspace>/` folders, not `voc-sync-<workspace>-*` routine names,
+existing `/agent/brain/<workspace>/` folders, not routine display names,
 not a prior install or another conversation, not remembered context or anything memory
 or a brain search returns - those record whichever workspaces onboarded *earlier*, and
 on a multi-workspace VM another workspace's state is always present. If the workspace
@@ -63,7 +63,7 @@ per-workspace:
   reinstall or upgrade the activation instruction names: then re-run the sequence for this
   workspace as a resume, never a restart - the guard merge keeps its normal rule (skip only
   when every merged block matches its staged file; refresh any that differ), VoC
-  setup skips any platform whose workspace-named routine already exists (same pinned
+  setup skips any platform whose workspace-scoped routine already exists (same pinned
   account, no re-confirmation), existing brain files are kept and filled rather than
   rewritten, and the roster entry stays exactly as it is - a workspace is never listed
   twice. If it is not, run those steps now even
@@ -124,7 +124,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    its data lands.
 2. **VoC first (it runs in the background).** For each reachable VoC platform, run the
    voc-data-pull skill's "Set up the recurring sync" procedure: pin the platform account
-   to this workspace, create the `voc-sync-<workspace>-<platform>` routine, and kick its
+   to this workspace, create its workspace-scoped VoC sync routine, and kick its
    first run. The pin is the skill's step 1 and it can need a human answer - accounts are
    org-level with no workspace tag, so which account belongs to this workspace is never
    inferred. Handle that inside this install turn: platforms the skill lets you auto-pin
@@ -134,10 +134,9 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    "waiting on a person - account confirmation" in the report's VoC line, and create and
    kick their routines the moment the answer arrives - in that follow-up turn, never
    before. A routine is never created on an unconfirmed account just to keep the backfill
-   moving. The workspace belongs in
-   the routine name because routines are VM-wide - `voc-sync-gorgias` would collide with
-   another workspace's routine, and a collision is what mixes two brands' customer data into
-   one corpus. For the same reason the routine's script carries this workspace's folder path,
+   moving. The human-readable workspace name belongs in the routine display name because
+   routines are VM-wide; it distinguishes the same source synced for two workspaces. For the
+   same reason the routine prompt carries this workspace's folder path,
    workspace id, and pinned account id **literally**, never "resolve the current workspace"
    or "the connected account": routine
    conversations run with no workspace attached, so a routine that tries to resolve one at run
@@ -147,7 +146,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    itself a reachable VoC platform** - ad comments are customer voice, pulled with
    `motion meta creative-comments` (platform slug `meta-ad-comments`; one file per creative
    under `voc/meta-ad-comments/`, at the same level as the other platform folders) - so it
-   always gets a `voc-sync-<workspace>-meta-ad-comments` routine alongside the others: the
+   always gets its own readable Meta ad comments sync routine alongside the others: the
    standard pull of every onboarding, not a discovery outcome. For Meta, connected is the
    only reachability test: if a Meta workspace shows as connected, create and kick that
    routine even when a Meta API probe errors in this conversation - the
@@ -159,9 +158,9 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    skipping setup. **Every routine created in this
    step gets its first run kicked before moving on - check them off one by one.** The
    12-month backfills churn in the background while everything below happens. Never pull
-   VoC data inside this conversation. If old canceled `voc-sync-*` routines exist from a
-   previous install, ignore them - canceled is terminal; never resume or reuse one, always
-   create fresh. Leave other workspaces' `voc-sync-*` routines alone.
+   VoC data inside this conversation. If canceled VoC sync routines for the exact workspace id
+   and platform exist from a previous install, ignore them - canceled is terminal; never resume
+   or reuse one, always create fresh. Leave routines scoped to other workspace ids alone.
 3. **Merge all four guard blocks into `/agent/user.md` with one Write - nothing else can
    touch that file.** Skip this step entirely only if each of the four merged blocks in
    `/agent/user.md` is identical to its staged guard file, sentinel lines included (step 6

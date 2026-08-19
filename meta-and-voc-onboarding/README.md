@@ -326,7 +326,7 @@ Folder: `voc-data-pull/`
   stored secrets for every VoC platform (any of them may be key-stored instead of
   connected; Okendo and Stamped always are), plus the Motion connection for Meta ad
   comments - and runs the skill's "Set up the recurring sync" procedure for every reachable
-  one: one daily routine per platform per workspace (`voc-sync-<workspace>-<platform>`, 6am) whose first run backfills
+  one: one daily routine with a readable display name per platform per workspace (6am) whose first run backfills
   and whose daily runs pull only new items. Platform accounts are org-level with no
   workspace tag, so setup starts by **pinning the account**: a human confirms which
   account belongs to this workspace (a lone connection may belong to a different
@@ -445,7 +445,7 @@ The run order below is the human-readable description of the same lifecycle.
    never identify the workspace. Nothing in this package writes per-creative files to the brain —
    creative content lives in Cacheth; its summary artifacts are surfaced through Knoweth.
 2. **Set up VoC data syncs.** For each reachable customer-voice source, pin the workspace's
-   account, create the daily `voc-sync-<workspace>-<platform>` routine, and kick the first
+   account, create the daily workspace-scoped routine with a readable display name, and kick the first
    backfill. When the workspace's first full backfill completes, offer the Voice of
    Customer Audit once; run it only if a person says yes.
 3. **Creative Attributes (Meta Step 1).** Confirms the workspace scope, establishes the creative
