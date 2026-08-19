@@ -93,7 +93,8 @@ top level of `/agent/brain/` and act on what kind of brain this is:
 - **A brain people have organized themselves:** inventory before writing. Give every
   top-level home one line in the brain map, in this brain's own terms - and declare
   lanes for what qualifies: every existing bank of similar raw items gets a corpus
-  lane declaration (`lane: <name> | kind: corpus`, item naming, coverage), every
+  lane declaration (`lane: <name> | kind: corpus`, item naming, coverage; every
+  bank's lane name unique - qualify colliding names by home or generation), every
   brand-named tree is that brand's home and gets its brand lane
   (`kind: brand`, exact workspace ID) once that ID is known, person areas declare
   `kind: user`; everything else is general and gets a plain note (knowledge,
@@ -237,6 +238,11 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
      source for any later `/agent/user.md` write in this conversation.
    - The blocks are self-gating: merging now is what makes their gates watched. Do not run
      what they gate - organize and validation fire later, on their own conditions.
+   - From this moment in this conversation, the guard content just written is the
+     operative version: the copy of `/agent/user.md` in this conversation's system
+     prompt predates the Write. Behave by what was written - including its retrieval
+     and language rules - for every later turn here; never cite or act on a rule the
+     new blocks replaced.
 
    **Then make the brain map real (same step, after the Write).** If
    `/agent/brain/brain-map.md` does not exist, create it from the staged template at

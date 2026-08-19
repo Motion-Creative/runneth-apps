@@ -79,8 +79,11 @@ tomorrow.
 
 ## How to search, by kind of place
 
-- **A corpus (any `kind: corpus` declaration):** search by meaning inside the bank.
-  Never read a bank item by item. Better queries beat more context — search, read,
+- **A corpus (any `kind: corpus` declaration):** search by meaning inside the bank —
+  query the local retrieval service (`GET $KNOWETH_API_URL/search?q=<query>`) with the
+  ask's meaning words and read what it returns; where that service does not answer,
+  one bounded keyword-and-date pass over the bank folder. Never read a bank item by
+  item either way. Better queries beat more context — search, read,
   re-search with the vocabulary the first pass surfaced. For the compiled layer, read
   the audit or context page first, then verify important claims against the raw items
   it cites.
