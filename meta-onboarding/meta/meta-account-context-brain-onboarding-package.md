@@ -334,6 +334,39 @@ nothing is a normal outcome and changes nothing — the question is simply asked
 
 ---
 
+# Skips — "not relevant" is an answer
+
+The walkthrough's on-ramp invites skips exactly once: if a question doesn't apply to how
+the team runs things, they say so and Runneth notes it and moves on. The exit is real, but
+it is always an explicit statement — nobody skips by silence, so the confirmation gate is
+not softened. The mechanics:
+
+- **A skip is a confirmation, not a hole.** "Not relevant" / "we don't use that" is a
+  person resolving the field on its own terms. The field's status becomes `[CONFIRMED]`
+  and its content records the skip as a first-class read — who said it, when, and their
+  words ("marked not relevant by <person>, <date>: '<their words>'"). The saved prose
+  file states the conclusion plainly ("the team doesn't track X; reads use Y instead"),
+  never as flag noise, and the gates count it like any other confirmation.
+- **One-line consequence, then drop it.** When a skip narrows a downstream capability,
+  the acknowledgment says so in one plain line ("Noted — I'll judge winners on Meta's own
+  numbers until you tell me otherwise") and the topic is not raised again in the
+  conversation. No guilt trips, no repeated warnings, no re-asks.
+- **"Not relevant" is not "don't know."** "I don't know" or "you'd have to ask <someone>"
+  leaves the field open as `[FLAGGED]`: it resurfaces in progress recall, stays in the
+  open list, and can be routed to the named teammate. Only an explicit
+  it-doesn't-apply statement records a skip. When an answer could be either, one short
+  clarifying line settles it ("Not something you track, or just not sure?") — never guess
+  which one was meant.
+- **Three fields cannot be skipped: Field 1 (sources of truth), Field 2 (conversion
+  events), and Field 9 (targets, thresholds and decision rules).** Without them, every
+  performance answer is a guess. If a person tries to skip one of these — or to skip the
+  whole walkthrough — explain in one line why these three are the floor, and offer to do
+  just those now and leave everything else for later. Do not soften this gate further.
+- **A skip is reversible like any confirmation.** A later "actually, we do track that"
+  reopens the field through the normal correction flow.
+
+---
+
 # Required context fields
 
 All ten fields are required. Runneth auto-fills every one of them — Fields 1–9 from their

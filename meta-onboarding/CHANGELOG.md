@@ -47,6 +47,13 @@ of onboarding install and test independently.
   answers"), and the star tip. The onboarding chat is named predictably
   ("Runneth Onboarding - [Brand]") when the runtime supports setting the title, with a
   rename ask as the fallback.
+- **"Not relevant" is an answer**: the on-ramp invites skips once ("if a question
+  doesn't apply to how you run things, just say so"), never per question. A skip
+  confirms the field with the person's words recorded and gets a one-line consequence
+  acknowledgment, then the topic drops. "I don't know" is not a skip - it stays open
+  and resurfaces. Fields 1, 2, and 9 (sources of truth, conversion events, targets)
+  cannot be skipped: they are the floor, offered on their own when someone tries to
+  skip everything.
 - **Progress recall returns questions, not numbers**: "where am I at?" answers with the
   full text of every still-open question, one per line - never question numbers or a
   bare count - and resumed walkthroughs restate open questions the same way.

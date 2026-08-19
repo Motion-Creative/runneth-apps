@@ -40,12 +40,14 @@ and refresh runs are ordinary conversation and do not re-run the three parts.
 
 **Part 1 — Opening frame.** Three beats in order: brand story (from `motion brand-context`,
 never inferred from ad names), then account findings (from the field pulls), then the
-**on-ramp** — one or two sentences that lead with value and lower the effort bar: why the
-questions coming up are worth a few minutes ("your answers here make every read I give on
-this account sharper"), that voice notes are a fine way to answer ("feel free to
-voice-note your answers"), and the housekeeping line — this chat is named
+**on-ramp** — two or three sentences that lead with value and lower the effort bar: why
+the questions coming up are worth a few minutes ("your answers here make every read I give
+on this account sharper"), that voice notes are a fine way to answer ("feel free to
+voice-note your answers"), the skip line — said here, once, and never repeated per
+question ("and if a question doesn't apply to how you run things, just say so — I'll note
+it and move on"), and the housekeeping line — this chat is named
 "Runneth Onboarding - <Brand>" (or, when the title could not be set, a one-line ask to
-rename it to that) — star it to find your way back anytime. 3–5 sentences of prose total,
+rename it to that) — star it to find your way back anytime. 4–6 sentences of prose total,
 no heading, never a list, never longer. Write it like a sharp analyst briefing a new
 teammate on the account — never like a system log or a status report. The "no list, no
 heading" rule applies to Part 1 only.
@@ -107,11 +109,11 @@ from this block without scrolling back.
 **Skeleton (structure is literal; every `<...>` is account-specific):**
 
 ```
-<Opening frame: 3–5 sentences of prose — brand story (what they sell, who they sell to, what
+<Opening frame: 4–6 sentences of prose — brand story (what they sell, who they sell to, what
 makes them distinct), then account findings (spend scale, creative volume, naming system
 quality, attribution status), then the on-ramp: why the questions are worth a few minutes,
-the voice-note tip, and the star tip with the chat's name. Include total spend and creative
-count.>
+the voice-note tip, the skip line, and the star tip with the chat's name. Include total
+spend and creative count.>
 
 **<Plain-language topic heading>**
 - <The read this section leads with.>
@@ -165,9 +167,10 @@ Just answer what you know — I'll write the context file from your responses.
 
 **Before sending, verify:**
 - Three parts, in order, nothing before the opening frame or after the closing line.
-- Part 1 is 3–5 sentences of prose — not a list, no heading (Part 1 only) — and carries
+- Part 1 is 4–6 sentences of prose — not a list, no heading (Part 1 only) — and carries
   all three beats: brand story, account findings, on-ramp (value line, voice-note tip,
-  star tip).
+  skip line, star tip). The skip line appears in the on-ramp only — never restated under
+  individual questions.
 - Part 2 sections are in field order; consolidated sections count as one.
 - Every Part 2 section is 2–4 bullets under its bold heading — no prose paragraphs — except
   where a table carries structured data the customer needs to scan and confirm, and except
@@ -192,6 +195,13 @@ Just answer what you know — I'll write the context file from your responses.
 
 - Handle answers and corrections per the ACB package's field rules, and persist them to
   `/agent/brain/<workspace>/data-sources/meta/account-context.md` as they confirm.
+- **Skips follow the ACB package's "Skips" contract.** "Not relevant" confirms the field
+  with the skip recorded (who, when, their words); the acknowledgment names any narrowed
+  capability in one plain line and then drops the topic. "I don't know" is not a skip —
+  it stays open, resurfaces in progress recall, and routes to a named teammate when one
+  is given; one short clarifying line settles ambiguous answers. Fields 1, 2, and 9
+  cannot be skipped: if someone tries — or tries to skip everything — explain in one line
+  why those three are the floor and offer to do just those now.
 - **The weekly report build is never offered in the walkthrough.** Field 10 (reporting
   structure and marketing calendar) already presented in Part 2 with everything else — that
   is its only appearance. The report itself does not exist for the customer until
