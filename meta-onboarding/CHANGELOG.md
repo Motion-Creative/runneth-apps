@@ -47,6 +47,14 @@ of onboarding install and test independently.
   answers"), and the star tip. The onboarding chat is named predictably
   ("Runneth Onboarding - [Brand]") when the runtime supports setting the title, with a
   rename ask as the fallback.
+- **Questions are triaged into two piles**: everything Runneth can read with high
+  confidence becomes an assumption ("here's what I'll assume unless you correct me"),
+  blessed in one reply; only genuinely un-inferable asks stay real questions, capped at
+  five and aimed at three, each one sentence with one ask. A blanket "all good" is
+  explicit sign-off for every listed assumption; silence confirms nothing, and
+  unblessed assumptions resurface in progress recall. Conversation-mined answers land
+  in the bless list with their citations. A shaky read never becomes an assumption to
+  duck the cap.
 - **"Not relevant" is an answer**: the on-ramp invites skips once ("if a question
   doesn't apply to how you run things, just say so"), never per question. A skip
   confirms the field with the person's words recorded and gets a one-line consequence

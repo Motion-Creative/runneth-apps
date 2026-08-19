@@ -367,6 +367,33 @@ not softened. The mechanics:
 
 ---
 
+# Assumptions — the bless list
+
+The walkthrough triages every open confirmation into an **assumption** (a
+high-confidence read, stated as "I'll assume X" and blessed in one reply) or a **real
+question** (genuinely un-inferable; capped at five, aimed at three). The presentation
+mechanics live in the walkthrough skill; the field mechanics are:
+
+- **Only high-confidence reads qualify as assumptions**: the account's own evidence
+  points one way, conversation evidence answered it (the citation rides along), or the
+  data supports a sensible default. A shaky read stays a real question — a lazily
+  blessed wrong default poisons every downstream answer, which is worse than one more
+  question.
+- **A blanket approval is explicit human sign-off.** "All good" (or any clear whole-list
+  approval) promotes every listed assumption's field to `[CONFIRMED]` in that moment —
+  consistent with the guard's rule, because a person signed off. A correction to one
+  item replaces that item with the corrected read and confirms it; the untouched items
+  confirm only if the reply also approves them.
+- **An unblessed assumption stays `[AUTO]`.** Silence never confirms: the field keeps
+  blocking whatever gates require confirmation, and the assumption resurfaces through
+  progress recall until it is blessed, corrected, or skipped.
+- **The saved file records the provenance.** A blessed assumption saves like any
+  confirmation, with a short note that it was presented as an assumed read and approved
+  ("presented as assumed read, approved <date>"; keep the conversation-evidence
+  citation when one seeded it).
+
+---
+
 # Required context fields
 
 All ten fields are required. Runneth auto-fills every one of them — Fields 1–9 from their
