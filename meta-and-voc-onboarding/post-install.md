@@ -91,13 +91,18 @@ top level of `/agent/brain/` and act on what kind of brain this is:
   uses the current layout. Do not migrate old paths - a path move is a separate,
   explicitly approved change, never part of an install or upgrade.
 - **A brain people have organized themselves:** inventory before writing. Give every
-  top-level home one line in the brain map with a type label, in this brain's own
-  terms. Recognize existing equivalents instead of duplicating them: a brand-named
-  tree is that brand's home; an existing reviews or customer-voice cache is that
-  brand's voice-of-customer bank; person and team areas are what they are. Record
-  each adopted location in the map entry for that brand. If a corpus-search install
-  is present, carry its registered source list into the map as entries - those
-  folders were already confirmed as searchable banks by a person.
+  top-level home one line in the brain map, in this brain's own terms - and declare
+  lanes for what qualifies: every existing bank of similar raw items gets a corpus
+  lane declaration (`lane: <name> | kind: corpus`, item naming, coverage), every
+  brand-named tree is that brand's home and gets its brand lane
+  (`kind: brand`, exact workspace ID) once that ID is known, person areas declare
+  `kind: user`; everything else is general and gets a plain note (knowledge,
+  reference) so routing knows the move. Recognize existing equivalents instead of
+  duplicating them: an existing reviews or customer-voice cache is that brand's
+  voice-of-customer bank. Record each adopted location in the map entry for that
+  brand. If a corpus-search install is present, carry its registered source list into
+  the map as corpus-lane declarations - those folders were already confirmed as
+  searchable banks by a person.
 
 Then one rule for everything below: **a brand's package output goes to its adopted
 home when one exists, and to the standard layout otherwise.** One convention per
@@ -241,7 +246,13 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    existing entry; the map adapts to this brain, not the other way around - then
    replace `/agent/INDEX.md`'s contents with one line pointing to
    `/agent/brain/brain-map.md`. On a fresh VM `/agent/INDEX.md` is empty and this is
-   just the template copy. The map's ongoing upkeep belongs to the `runneth:brain-map`
+   just the template copy. Then declare this workspace in the map's lanes section:
+   its brand lane (`lane: <brand> | kind: brand`, the exact workspace ID from step 0)
+   and a voice-of-customer corpus lane for the banks step 2's syncs are filling
+   (`lane: voice-of-customer | kind: corpus`, item naming per platform, coverage
+   "backfill in progress" until the organize step refreshes it). A second workspace
+   onboarding adds its own declarations beside the first - never edits another
+   brand's lines. The map's ongoing upkeep belongs to the `runneth:brain-map`
    guard merged above; nothing here needs re-running later.
 4. **Creative Attributes** (Meta connected only): confirm workspace scope, establish the
    creative content layer (Cacheth + query paths), detect naming patterns as provisional
