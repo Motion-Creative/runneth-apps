@@ -326,6 +326,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    > - Existing setup: found and kept - nothing was moved   <- only on a brain that had existing structure (step 0.5)
    > - Reviews and comments sync: <per-platform status, one line total>
    > - Voice of Customer Audit: waits for the sync to finish and a person's yes
+   > - Search: saved knowledge is searchable now; reviews join as they sync
    > - Setup notes: saved
    > - Creative Attributes: done
    > - Account Context: done - remaining gaps wait for the walkthrough

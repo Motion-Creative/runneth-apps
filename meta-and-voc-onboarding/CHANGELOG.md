@@ -4,7 +4,7 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
-## 7 - 2026-08-17
+## 7 - 2026-08-19
 
 - Renamed the seeded layout to the brand schema: brand-named brain homes
   (`/agent/brain/<brand>/`), per-source families under `integrations/`, the raw
@@ -13,14 +13,28 @@ change to the package, not per commit. Entries are newest-first.
   authority, skill IDs, and `voc-sync-*` routine names unchanged. Existing installs
   keep their current paths as adopted homes; nothing migrates automatically.
 - Seeded the brain map: `/agent/brain/brain-map.md` created from a staged template at
-  activation, kept current by a fifth guard block (`runneth:brain-map`), with existing
-  `/agent/INDEX.md` entries carried over verbatim and a pointer left at the old path.
+  activation (ask routing, a lanes section with the cacheth corpus lane pre-declared,
+  the map, entries), with existing `/agent/INDEX.md` entries carried over verbatim and
+  a pointer left at the old path. A fifth guard (`runneth:brain-map` v2) keeps it
+  current: banks get corpus-lane declarations, brand homes declare their workspace ID,
+  person homes declare `kind: user`.
+- Declared the onboarded workspace's lanes at install: the brand lane and the
+  voice-of-customer corpus lane land in the map during post-install; the organize step
+  (guard v6) refreshes coverage and declares any further banks. Additional workspaces
+  add declarations beside the first.
 - Added install-time brain reading (step 0.5): classify the brain, inventory existing
-  structure into the map in its own terms, adopt existing brand homes and
-  customer-voice caches, import corpus-search source registrations, and never write a
-  duplicate sync over an external pipeline without a yes.
-- Rewrote the activation offer and readiness report in customer language; internal
-  vocabulary (guards, roster, sentinels, lanes) is banned from customer-visible text.
+  structure into the map as lane declarations in the brain's own terms, adopt existing
+  brand homes and customer-voice caches, import corpus-search source registrations as
+  person-confirmed corpus lanes, and never write a duplicate sync over an external
+  pipeline without a yes.
+- Replaced the knoweth-organize reference with `knoweth-setup.md`: the lane-first
+  retrieval model (corpus, brand, user, general), what the package sets up versus what
+  the runtime owns, what is true today versus arriving, and search-by-kind-of-place.
+  The knoweth-organize (v6) and knoweth-brain (v5) guards drop engine-version claims;
+  the brain-maintenance routine's sweep now owns brain-map freshness including
+  rebuild-from-scan.
+- Rewrote the activation offer and readiness report in customer language; retrieval
+  and packaging vocabulary is banned from customer-visible text.
 
 ## 6 - 2026-08-14
 
