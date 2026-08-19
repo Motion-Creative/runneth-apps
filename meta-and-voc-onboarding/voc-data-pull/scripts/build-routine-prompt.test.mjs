@@ -54,7 +54,6 @@ test('builds an account-pinned prompt with an exact slice', () => {
     parseRoutinePromptConfig({
       credential: {
         accountId: 'account-456',
-        accountName: 'Example support',
         type: 'oauth',
       },
       platform: 'gorgias_oauth',
@@ -68,6 +67,7 @@ test('builds an account-pinned prompt with an exact slice', () => {
   assert.match(prompt, /customer feedback from Gorgias/u)
   assert.match(prompt, /--account account-456/u)
   assert.match(prompt, /Only pull items tagged Example Brand/u)
+  assert.match(prompt, /only as data-selection criteria/u)
   assert.match(prompt, /Never pull items outside that recorded slice/u)
 })
 
@@ -76,7 +76,6 @@ test('uses only a stored credential environment-variable name', () => {
     parseRoutinePromptConfig({
       credential: {
         environmentVariable: 'JUNIP_API_KEY',
-        identity: 'Example store',
         type: 'stored-credential',
       },
       platform: 'junip',
@@ -93,7 +92,6 @@ test('uses only a stored credential environment-variable name', () => {
       parseRoutinePromptConfig({
         credential: {
           environmentVariable: 'not-an-environment-variable',
-          identity: 'Example store',
           type: 'stored-credential',
         },
         platform: 'junip',
@@ -108,7 +106,7 @@ test('rejects incomplete, contradictory, and unsafe scope inputs', () => {
   assert.throws(
     () =>
       parseRoutinePromptConfig({
-        credential: { accountName: 'Example support', type: 'oauth' },
+        credential: { type: 'oauth' },
         platform: 'gorgias',
         workspace: 'example-workspace',
         workspaceId: 'workspace-123',
@@ -119,7 +117,7 @@ test('rejects incomplete, contradictory, and unsafe scope inputs', () => {
   assert.throws(
     () =>
       parseRoutinePromptConfig({
-        credential: { accountId: 'account-456', accountName: 'Other account', type: 'oauth' },
+        credential: { accountId: 'account-456', type: 'oauth' },
         platform: 'meta-ad-comments',
         workspace: 'example-workspace',
         workspaceId: 'workspace-123; touch unsafe',
@@ -136,15 +134,12 @@ test('passes apostrophes and shell metacharacters to routine as literal argv val
   const inputPath = join(root, 'input.json')
   const fakeRoutinePath = join(root, 'routine')
   const workspaceDisplayName = `L'Oréal \"$(touch ${markerPath})\"; still \`literal\``
-  const platformDisplayName = `Gorgias'; touch ${markerPath}; \`still literal\``
-  const accountName = `Support \"$(touch ${markerPath})\" with \`priority\``
 
   try {
     const config = {
       conversationId: '11111111-1111-4111-8111-111111111111',
-      credential: { accountId: 'account-456', accountName, type: 'oauth' },
+      credential: { accountId: 'account-456', type: 'oauth' },
       platform: 'gorgias_oauth',
-      platformDisplayName,
       sliceFilter: `Brand is L'Oréal; $(touch ${markerPath})`,
       workspace: 'example-workspace',
       workspaceDisplayName,
@@ -161,7 +156,9 @@ const routinePath = ${JSON.stringify(routinePath)}
 const calls = fs.existsSync(capturePath) ? JSON.parse(fs.readFileSync(capturePath, 'utf8')) : []
 calls.push(args)
 fs.writeFileSync(capturePath, JSON.stringify(calls))
-if (args[0] === 'add') {
+if (args[0] === 'add' && args[1] === '--help') {
+  process.stdout.write('  --agent  Run with the agent\\n')
+} else if (args[0] === 'add') {
   const value = (flag) => args[args.indexOf(flag) + 1]
   const routine = {
     delivery: value('--delivery'),
@@ -191,13 +188,22 @@ if (args[0] === 'add') {
     assert.equal(existsSync(markerPath), false)
 
     const calls = JSON.parse(readFileSync(capturePath, 'utf8'))
-    const expectedArgs = buildRoutineAddArgs(parseRoutineAddConfig(config))
+    const expectedArgs = buildRoutineAddArgs(parseRoutineAddConfig(config), {
+      explicitAgentMode: true,
+    })
     assert.deepEqual(calls, [
+      ['add', '--help'],
       expectedArgs,
       ['inspect', '--id', '22222222-2222-4222-8222-222222222222'],
     ])
-    assert.equal(calls[0][2], `${platformDisplayName} sync — ${workspaceDisplayName}`)
-    assert.ok(calls[0][6].includes(JSON.stringify(accountName)))
+    assert.equal(calls[1][calls[1].indexOf('--name') + 1], `Gorgias sync — ${workspaceDisplayName}`)
+    assert.ok(calls[1][calls[1].indexOf('--prompt') + 1].includes(JSON.stringify(config.sliceFilter)))
+    assert.equal(
+      buildRoutineAddArgs(parseRoutineAddConfig(config), { explicitAgentMode: false }).includes(
+        '--agent',
+      ),
+      false,
+    )
     assert.deepEqual(JSON.parse(result.stdout), {
       routine: JSON.parse(readFileSync(routinePath, 'utf8')),
     })
@@ -210,6 +216,7 @@ test('fails when readback differs from the generated routine', () => {
   const root = mkdtempSync(join(tmpdir(), 'voc-routine-readback-'))
   const inputPath = join(root, 'input.json')
   const fakeRoutinePath = join(root, 'routine')
+  const capturePath = join(root, 'calls.json')
 
   try {
     writeFileSync(
@@ -218,7 +225,6 @@ test('fails when readback differs from the generated routine', () => {
         conversationId: '11111111-1111-4111-8111-111111111111',
         credential: { type: 'motion-native' },
         platform: 'meta-ad-comments',
-        platformDisplayName: 'Meta ad comments',
         workspace: 'example-workspace',
         workspaceDisplayName: 'Example workspace',
         workspaceId: 'workspace-123',
@@ -229,6 +235,15 @@ test('fails when readback differs from the generated routine', () => {
       fakeRoutinePath,
       `#!/usr/bin/env node
 const args = process.argv.slice(2)
+const fs = require('node:fs')
+const capturePath = ${JSON.stringify(capturePath)}
+const calls = fs.existsSync(capturePath) ? JSON.parse(fs.readFileSync(capturePath, 'utf8')) : []
+calls.push(args)
+fs.writeFileSync(capturePath, JSON.stringify(calls))
+if (args[0] === 'add' && args[1] === '--help') {
+  process.stdout.write('Usage: routine add [options]\\n')
+  process.exit(0)
+}
 const value = (flag) => {
   const index = args.indexOf(flag)
   return index === -1 ? undefined : args[index + 1]
@@ -239,6 +254,9 @@ const routine = {
   prompt: value('--prompt') ?? 'changed prompt',
   routineId: '22222222-2222-4222-8222-222222222222',
   schedule: { end: { type: 'never' }, expression: value('--cron') ?? '0 6 * * *', type: 'cron' },
+}
+if (args[0] === 'cancel') {
+  routine.status = 'canceled'
 }
 process.stdout.write(JSON.stringify({ routine }))
 `,
@@ -252,7 +270,26 @@ process.stdout.write(JSON.stringify({ routine }))
       env: { ...process.env, PATH: `${root}:${process.env.PATH ?? ''}` },
     })
     assert.equal(result.status, 1)
-    assert.match(result.stderr, /routine inspect did not match the generated delivery, prompt/u)
+    assert.match(
+      result.stderr,
+      /routine 22222222-2222-4222-8222-222222222222 failed post-create verification and was canceled; retry is safe/u,
+    )
+    assert.deepEqual(JSON.parse(readFileSync(capturePath, 'utf8')), [
+      ['add', '--help'],
+      buildRoutineAddArgs(
+        parseRoutineAddConfig({
+          conversationId: '11111111-1111-4111-8111-111111111111',
+          credential: { type: 'motion-native' },
+          platform: 'meta-ad-comments',
+          workspace: 'example-workspace',
+          workspaceDisplayName: 'Example workspace',
+          workspaceId: 'workspace-123',
+        }),
+        { explicitAgentMode: false },
+      ),
+      ['inspect', '--id', '22222222-2222-4222-8222-222222222222'],
+      ['cancel', '--id', '22222222-2222-4222-8222-222222222222'],
+    ])
   } finally {
     rmSync(root, { force: true, recursive: true })
   }

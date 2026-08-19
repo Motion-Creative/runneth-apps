@@ -377,15 +377,17 @@ the display name or folder state:
 2. Create the routine. Fill in the real current conversation id for `<conversation-id>`,
    the resolved workspace folder name for `<workspace>`, the resolved workspace id for
    `<workspaceId>`, the human-readable Motion workspace name for `<workspaceDisplayName>`, the
-   human-readable platform name for `<platformDisplayName>`, and the pinned account's name and id
-   for `<accountName>` / `<accountId>`. Use a readable display name in the exact shape shown; never
-   put the workspace id or a technical slug in the name. Write the structured JSON below to
+   pinned account id for `<accountId>`. The package derives the
+   platform's readable label from its source slug; never supply or construct that label yourself.
+   Write the structured JSON below to
    `/tmp/voc-routine-config-<conversation-id>.json` using the harness's structured file-write tool,
    not a shell command, heredoc, redirection, or string interpolation. Then invoke the package-owned
    launcher with only that file path. The launcher validates the inputs, builds the exact
    plain-language and technical prompt, and passes every value to `routine add` as a direct argument
-   without a shell. It then reads the created routine back by id and fails if the stored name,
-   delivery, prompt, or schedule differs from the generated values. Do not hand-write, edit,
+   without a shell. It detects whether the installed CLI requires an explicit agent-mode flag,
+   then reads the created routine back by id. If verification fails, it cancels that newly created
+   routine before reporting that retry is safe. If cancellation also fails, inspect or cancel the
+   reported id before retrying. Do not hand-write, edit,
    paraphrase, or summarize the generated prompt. **Every
    value is written out literally, never left as a placeholder for the run to resolve:**
    routine runs execute in their own conversation with no workspace attached, so a routine
@@ -398,11 +400,9 @@ the display name or folder state:
      "conversationId": "<conversation-id>",
      "credential": {
        "type": "oauth",
-       "accountName": "<accountName>",
        "accountId": "<accountId>"
      },
      "platform": "<platform>",
-     "platformDisplayName": "<platformDisplayName>",
      "workspace": "<workspace>",
      "workspaceDisplayName": "<workspaceDisplayName>",
      "workspaceId": "<workspaceId>"
@@ -410,14 +410,14 @@ the display name or folder state:
    ```
 
    ```sh
-   /agent/skills/voc-data-pull/scripts/add-routine.mjs \
+   /agent/.agents/skills/voc-data-pull/scripts/add-routine.mjs \
      --input /tmp/voc-routine-config-<conversation-id>.json
    ```
 
    When a slice filter was recorded at pin time, add a top-level `"sliceFilter": "<literal
    filter>"` field. On the stored-credential path, use `"credential": { "type":
-   "stored-credential", "environmentVariable": "<ENVIRONMENT_VARIABLE_NAME>", "identity":
-   "<confirmed identity>" }`. Pass only the environment-variable name, never its value. On the
+   "stored-credential", "environmentVariable": "<ENVIRONMENT_VARIABLE_NAME>" }`. Pass only the
+   environment-variable name, never its value. On the
    Motion-native path (`meta-ad-comments`), use `"credential": { "type": "motion-native" }`.
    Do not hand-write any of these prompt variants.
 

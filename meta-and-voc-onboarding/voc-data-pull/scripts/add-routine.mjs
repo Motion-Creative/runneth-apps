@@ -4,7 +4,11 @@ import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 
-import { buildRoutinePrompt, parseRoutinePromptConfig } from './build-routine-prompt.mjs'
+import {
+  buildRoutinePrompt,
+  getPlatformDisplayName,
+  parseRoutinePromptConfig,
+} from './build-routine-prompt.mjs'
 
 const assertLiteral = (value, field) => {
   if (typeof value !== 'string' || value.trim().length === 0) {
@@ -46,7 +50,6 @@ export const parseRoutineAddConfig = (value) => {
       'conversationId',
       'credential',
       'platform',
-      'platformDisplayName',
       'sliceFilter',
       'workspace',
       'workspaceDisplayName',
@@ -57,7 +60,6 @@ export const parseRoutineAddConfig = (value) => {
 
   return {
     conversationId: assertConversationId(config.conversationId),
-    platformDisplayName: assertLiteral(config.platformDisplayName, 'platformDisplayName'),
     promptConfig: parseRoutinePromptConfig({
       credential: config.credential,
       platform: config.platform,
@@ -71,7 +73,6 @@ export const parseRoutineAddConfig = (value) => {
 
 const buildRoutineAddSpec = ({
   conversationId,
-  platformDisplayName,
   promptConfig,
   workspaceDisplayName,
 }) => {
@@ -80,7 +81,7 @@ const buildRoutineAddSpec = ({
 
   return {
     delivery,
-    name: `${platformDisplayName} sync — ${workspaceDisplayName}`,
+    name: `${getPlatformDisplayName(platform)} sync — ${workspaceDisplayName}`,
     prompt: buildRoutinePrompt(promptConfig),
     schedule: {
       end: { type: 'never' },
@@ -90,10 +91,11 @@ const buildRoutineAddSpec = ({
   }
 }
 
-export const buildRoutineAddArgs = (config) => {
+export const buildRoutineAddArgs = (config, options = { explicitAgentMode: false }) => {
   const spec = buildRoutineAddSpec(config)
   return [
     'add',
+    ...(options.explicitAgentMode ? ['--agent'] : []),
     '--name',
     spec.name,
     '--delivery',
@@ -134,6 +136,25 @@ const runRoutineCommand = (args) => {
   })
 }
 
+// Auto-updated packages and VM CLI images roll out independently. Detect the
+// explicit agent-mode capability so the same package works on both sides of
+// that deployment transition.
+const readRoutineAddCapabilities = () => {
+  const result = runRoutineCommand(['add', '--help'])
+  if (result.error !== undefined) {
+    throw result.error
+  }
+  if (result.signal !== null) {
+    throw new Error(`routine add --help stopped by signal ${result.signal}`)
+  }
+  if (result.status !== 0) {
+    throw new Error(`routine add --help failed: ${result.stderr.trim() || result.stdout.trim()}`)
+  }
+  return {
+    explicitAgentMode: /(?:^|\s)--agent(?:\s|$)/mu.test(result.stdout),
+  }
+}
+
 const assertStoredRoutine = (routine, expected) => {
   const routineId = assertLiteral(routine.routineId, 'stored routineId')
   const mismatches = [
@@ -153,7 +174,7 @@ const assertStoredRoutine = (routine, expected) => {
 
   if (mismatches.length > 0) {
     throw new Error(
-      `routine inspect did not match the generated ${mismatches.map(([field]) => field).join(', ')}`,
+      `routine ${routineId} was created but inspect did not match the generated ${mismatches.map(([field]) => field).join(', ')}; do not create another routine until this id is inspected or canceled`,
     )
   }
   return routineId
@@ -161,15 +182,38 @@ const assertStoredRoutine = (routine, expected) => {
 
 export const addAndVerifyRoutine = (config) => {
   const expected = buildRoutineAddSpec(config)
-  const args = buildRoutineAddArgs(config)
+  const args = buildRoutineAddArgs(config, readRoutineAddCapabilities())
   const addedRoutine = parseRoutineCommandResult(runRoutineCommand(args), 'add')
-  const routineId = assertStoredRoutine(addedRoutine, expected)
-  const inspectedRoutine = parseRoutineCommandResult(
-    runRoutineCommand(['inspect', '--id', routineId]),
-    'inspect',
-  )
-  assertStoredRoutine(inspectedRoutine, expected)
-  return inspectedRoutine
+  const routineId = assertLiteral(addedRoutine.routineId, 'stored routineId')
+  try {
+    assertStoredRoutine(addedRoutine, expected)
+    const inspectedRoutine = parseRoutineCommandResult(
+      runRoutineCommand(['inspect', '--id', routineId]),
+      'inspect',
+    )
+    assertStoredRoutine(inspectedRoutine, expected)
+    return inspectedRoutine
+  } catch (verificationError) {
+    const verificationMessage =
+      verificationError instanceof Error ? verificationError.message : String(verificationError)
+    try {
+      const canceledRoutine = parseRoutineCommandResult(
+        runRoutineCommand(['cancel', '--id', routineId]),
+        'cancel',
+      )
+      if (canceledRoutine.routineId !== routineId || canceledRoutine.status !== 'canceled') {
+        throw new Error('routine cancel did not return the expected canceled routine')
+      }
+    } catch (cancelError) {
+      const cancelMessage = cancelError instanceof Error ? cancelError.message : String(cancelError)
+      throw new Error(
+        `routine ${routineId} was created but verification failed (${verificationMessage}) and cancellation also failed (${cancelMessage}); do not create another routine until this id is inspected or canceled`,
+      )
+    }
+    throw new Error(
+      `routine ${routineId} failed post-create verification and was canceled; retry is safe: ${verificationMessage}`,
+    )
+  }
 }
 
 const readInputPath = (argv) => {
