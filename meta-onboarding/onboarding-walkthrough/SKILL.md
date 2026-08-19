@@ -107,7 +107,12 @@ package — the full breakdown as rows (one table per schema when there are seve
 bullets, never prose, and never compressed to a settled one-liner, even when the decoder is
 confirmed. Campaign names get the same treatment as ad names: when campaigns carry their
 own pattern, the campaign breakdown is its own table in this section with a lead-in naming
-the level — never a one-line summary under the ad-name table.
+the level — never a one-line summary under the ad-name table. This section always closes
+with the sheet shortcut, one casual line right after its confirmation ask: "And if your
+naming conventions already live in a sheet or doc somewhere, just drop it in here — I'll
+read it and save you the typing." Warm and offhand, never a formal upload step; a sheet
+that arrives is handled per Field 4's sheet rules in the ACB package (agreements become
+cited assumptions, mismatches become one plain question).
 
 **Field 10 is a Part 2 section like the rest — the last one, in field order.** Its
 section carries the two beats in the fixed output shape the ACB package's Field 10 rules
@@ -177,7 +182,11 @@ bullet? Only when triage kept it a question.>**
 | --- | --- |
 | <one row per campaign-name tag or position — same full-breakdown rule as ad names> | <...> |
 
-**<Field 4's confirmation questions, bold, as the last line?>**
+**<Field 4's confirmation questions, bold, as the section's last bold line?>**
+
+<The sheet shortcut, one casual line: "And if your naming conventions already live in a
+sheet or doc somewhere, just drop it in here — I'll read it and save you the typing.">
+
 
 <...one section per remaining field, in field order...>
 

@@ -540,6 +540,20 @@ query.
   account structure products at the campaign level?" The confirmed answer becomes the default
   filter level for bare product-name requests (the Data-Query Guide's name-level rules use
   `adName` + includes until this is confirmed).
+- **Always offer the sheet shortcut, casually.** Whenever this field's confirmation is asked,
+  include one friendly line inviting them to skip the back-and-forth: "And if your naming
+  conventions already live in a sheet or doc somewhere, just drop it in here — I'll read it
+  and save you the typing." One line, warm, never framed as a requirement or a formal
+  upload step.
+
+**When a sheet arrives:** read it as the team's stated convention and the detected decode
+as the reality check. Sheet-defined meanings and positions seed the decoder; the account's
+live names verify them. Where the sheet and the live names agree, those reads become
+high-confidence assumptions for the bless list, cited to the sheet ("from the naming sheet
+you shared"). Where they disagree — the sheet says position 2 is the angle but half the
+live names don't follow it — surface the mismatch as one plain question; never silently
+trust either side. Sheet contents flow into `naming-decoder.json` through this field's
+normal confirmation, and the decoder notes the sheet as a source.
 
 **Presentation rule for Field 4 (the fill-in section for this field)**
 

@@ -47,6 +47,12 @@ of onboarding install and test independently.
   answers"), and the star tip. The onboarding chat is named predictably
   ("Runneth Onboarding - [Brand]") when the runtime supports setting the title, with a
   rename ask as the fallback.
+- **The naming section invites a sheet, casually**: the naming-conventions ask always
+  closes with one friendly line - "if your naming conventions already live in a sheet
+  or doc somewhere, just drop it in here - I'll read it and save you the typing."
+  A sheet that arrives seeds the decoder: where it matches the live names, those reads
+  become cited assumptions; where it disagrees, the mismatch surfaces as one plain
+  question.
 - **Questions are triaged into two piles**: everything Runneth can read with high
   confidence becomes an assumption ("here's what I'll assume unless you correct me"),
   blessed in one reply; only genuinely un-inferable asks stay real questions, capped at
