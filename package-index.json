@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-17-01",
+  "indexRevision": "2026-08-18-01",
   "packages": [
     {
       "id": "creative-strategy-guidance",
@@ -77,6 +77,26 @@
         "ref": "main"
       },
       "installPolicy": "auto",
+      "updatePolicy": "auto",
+      "uninstallPolicy": "allowed"
+    },
+    {
+      "id": "creator-intel",
+      "name": "Creator Intel",
+      "description": "Build a trusted creator roster, match the right people to each brief, and compare past creator performance without guessing. Automatically installs and updates for ai-training-club-26; installation only delivers files, and setup waits for explicit human approval before account reads or customer-state writes.",
+      "version": "1",
+      "categories": [
+        "ai-training-club-26"
+      ],
+      "installPolicy": "auto",
+      "packageManagerVersion": 1,
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "creator-intel",
+        "ref": "main"
+      },
       "updatePolicy": "auto",
       "uninstallPolicy": "allowed"
     }
