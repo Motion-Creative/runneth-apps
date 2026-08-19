@@ -250,7 +250,9 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    its brand lane (`lane: <brand> | kind: brand`, the exact workspace ID from step 0)
    and a voice-of-customer corpus lane for the banks step 2's syncs are filling
    (`lane: voice-of-customer | kind: corpus`, item naming per platform, coverage
-   "backfill in progress" until the organize step refreshes it). A second workspace
+   "backfill in progress" until the organize step refreshes it). Declarations are
+   add-or-refresh, never append-again: if this workspace's line already exists,
+   refresh its coverage in place - a lane is never declared twice. A second workspace
    onboarding adds its own declarations beside the first - never edits another
    brand's lines. The map's ongoing upkeep belongs to the `runneth:brain-map`
    guard merged above; nothing here needs re-running later.
