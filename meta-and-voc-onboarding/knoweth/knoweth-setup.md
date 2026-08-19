@@ -58,11 +58,14 @@ setup is therefore two real things:
    once the account interpretation is confirmed and content has landed, it writes the
    brand's `_tag-vocabulary.md` and declares that brand's lanes in the map.
 
-The runtime compiles declarations like these into real retrieval scope — the
-`cacheth` lane already works this way where the current engine runs. Until the
-compilation step reaches a VM, the declarations are still not decoration: they are the
-map entries that route every ask correctly today, and the ready input for the engine
-tomorrow.
+A declaration never creates a lane. Lane creation is a separate, explicitly
+triggered runtime step: the runtime reads the declarations and builds the real
+retrieval scope from them — the `cacheth` lane already works this way where the
+current engine runs. The agent's job ends at declare, verify, and report honestly:
+write the declaration, check the engine's configuration (read-only) before describing
+any lane as live, and until then say the bank is listed and search setup comes
+separately. The declarations still earn their place today: they are the map entries
+that route every ask correctly now, and the ready input for the runtime step.
 
 ## What is true today, and what to never claim
 

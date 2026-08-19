@@ -43,6 +43,12 @@ Brain map (always on):
   `lane: <name> | kind: user` with the person's verified identity, never a name
   match. One home and one declaration per person; later personal saves go into the
   existing home and refresh the declaration, never duplicate it.
+- Declaring a lane records intent - it never creates one. Lane creation is a
+  separate runtime step with its own trigger; writing the line does nothing to the
+  retrieval engine. After declaring, if asked about a lane's state, inspect the
+  engine's configuration (read-only) and report what is actually there. Never tell a
+  person a lane was "set up" or "created" when only the declaration exists - say the
+  bank is listed and search setup for it comes separately.
 - When telling a person about any of this, use their words: where something was saved,
   what is searchable, whether it is shared with the team or just theirs. Never surface
   map internals, labels, or file mechanics in an answer.
