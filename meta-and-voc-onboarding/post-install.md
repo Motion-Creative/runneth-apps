@@ -256,7 +256,10 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    its brand lane (`lane: <brand> | kind: brand`, the exact workspace ID from step 0)
    and a voice-of-customer corpus lane for the banks step 2's syncs are filling
    (`lane: voice-of-customer | kind: corpus`, item naming per platform, coverage
-   "backfill in progress" until the organize step refreshes it). Declarations are
+   "backfill in progress" until the organize step refreshes it - one lane for the
+   whole customer-voice family; platform folders live inside it and are never
+   separate lanes; qualify the name with the brand slug only if another brand
+   already declares `voice-of-customer`). Declarations are
    add-or-refresh, never append-again: if this workspace's line already exists,
    refresh its coverage in place - a lane is never declared twice. A second workspace
    onboarding adds its own declarations beside the first - never edits another

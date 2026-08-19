@@ -21,9 +21,14 @@ Brain map (always on):
   it (aliases), scope, one plain current-state line on what it is, created and updated
   dates. A bank of similar raw items gets ONE folder-level entry AND a lane
   declaration in the map's lanes section (`lane: <name> | kind: corpus` plus item
-  naming and coverage window) - never per-item entries. Every bank's lane name is
-  unique: two banks never share a lane - when names would collide, qualify by home
-  or generation (`meta-ad-comments`, `meta-ads-legacy`), one declaration each. A brand home declares
+  naming and coverage window) - never per-item entries. A brand's customer-voice family - every platform folder
+  under its voice-of-customer bank - is ONE lane named `voice-of-customer`; platform
+  folders live inside it and are never separate lanes. Other banks (ideas, inspo, a
+  legacy generation kept distinct) each get their own lane. Lane names are unique
+  across the map: qualify a NEW declaration with the brand slug only when it would
+  collide with an existing one. Never rename an existing lane declaration on your
+  own - the name is the stable handle retrieval and other tools sync on, so a rename
+  is a human-approved change, exactly like moving a folder. A brand home declares
   `kind: brand` with its exact workspace ID; a person home declares `kind: user`.
   Everything else is the general lane and needs no declaration.
 - Lane kinds: `corpus` (a bank of similar raw items: reviews, ideas, inspo,
