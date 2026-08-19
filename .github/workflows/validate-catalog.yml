@@ -32,6 +32,7 @@ jobs:
           node --test
           scripts/validate-runneth-package-index.mjs
           scripts/validate-meta-voc-dashboard-handoff.mjs
+          meta-and-voc-onboarding/voc-data-pull/scripts/build-routine-prompt.test.mjs
 
   build-site:
     # Typecheck + build the site so broken site code can't merge either.

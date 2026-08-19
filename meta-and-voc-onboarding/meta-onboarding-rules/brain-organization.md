@@ -8,7 +8,7 @@ Knoweth organize (after the questions are answered):
 - Organize the brain when all three gates hold; do not wait to be asked:
   (1) the account interpretation is [CONFIRMED] - check the fields-confirmed count in the
   "File metadata" block at the end of /agent/brain/<workspace>/data-sources/meta/account-context.md;
-  (2) content has landed: the voc-sync-<workspace>-<platform> backfill reports full date-window
+  (2) content has landed: the workspace-scoped VoC <platform> sync backfill reports full date-window
   coverage (not just files existing - read the latest run summary via routine history
   --id <routine-id>), and the creative content layer resolves (creatives in Cacheth - or,
   where the sandbox cache feature is disabled, live content pulls per the Cacheth Command
