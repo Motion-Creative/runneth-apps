@@ -26,6 +26,10 @@ document is the what-it-means.
    human-authored messages only, this workspace's context only. A match pre-fills its
    field as a cited provisional read for the presentation; finding nothing changes
    nothing — the question is asked cold.
+5. Name this conversation predictably so the person can always find their way back:
+   if the runtime's conversation tooling supports setting the title, set it to
+   "Runneth Onboarding - <Brand>" now; if it does not, the on-ramp beat below asks the
+   person to rename it instead. Either way the on-ramp's star tip still goes out.
 
 ## Required output schema (the shape of the presentation)
 
@@ -34,9 +38,15 @@ content within each part is entirely contextual and account-specific; only the s
 fixed. This schema governs the one full fill-in presentation. Follow-up turns, corrections,
 and refresh runs are ordinary conversation and do not re-run the three parts.
 
-**Part 1 — Opening frame.** Two beats in order: brand story (from `motion brand-context`,
-never inferred from ad names), then account findings (from the field pulls). 2–3 sentences of
-prose, no heading, never a list, never longer. Write it like a sharp analyst briefing a new
+**Part 1 — Opening frame.** Three beats in order: brand story (from `motion brand-context`,
+never inferred from ad names), then account findings (from the field pulls), then the
+**on-ramp** — one or two sentences that lead with value and lower the effort bar: why the
+questions coming up are worth a few minutes ("your answers here make every read I give on
+this account sharper"), that voice notes are a fine way to answer ("feel free to
+voice-note your answers"), and the housekeeping line — this chat is named
+"Runneth Onboarding - <Brand>" (or, when the title could not be set, a one-line ask to
+rename it to that) — star it to find your way back anytime. 3–5 sentences of prose total,
+no heading, never a list, never longer. Write it like a sharp analyst briefing a new
 teammate on the account — never like a system log or a status report. The "no list, no
 heading" rule applies to Part 1 only.
 
@@ -97,9 +107,11 @@ from this block without scrolling back.
 **Skeleton (structure is literal; every `<...>` is account-specific):**
 
 ```
-<Opening frame: 2–3 sentences of prose — brand story (what they sell, who they sell to, what
+<Opening frame: 3–5 sentences of prose — brand story (what they sell, who they sell to, what
 makes them distinct), then account findings (spend scale, creative volume, naming system
-quality, attribution status). Include total spend and creative count.>
+quality, attribution status), then the on-ramp: why the questions are worth a few minutes,
+the voice-note tip, and the star tip with the chat's name. Include total spend and creative
+count.>
 
 **<Plain-language topic heading>**
 - <The read this section leads with.>
@@ -153,7 +165,9 @@ Just answer what you know — I'll write the context file from your responses.
 
 **Before sending, verify:**
 - Three parts, in order, nothing before the opening frame or after the closing line.
-- Part 1 is 2–3 sentences of prose — not a list, no heading (Part 1 only).
+- Part 1 is 3–5 sentences of prose — not a list, no heading (Part 1 only) — and carries
+  all three beats: brand story, account findings, on-ramp (value line, voice-note tip,
+  star tip).
 - Part 2 sections are in field order; consolidated sections count as one.
 - Every Part 2 section is 2–4 bullets under its bold heading — no prose paragraphs — except
   where a table carries structured data the customer needs to scan and confirm, and except
@@ -185,5 +199,12 @@ Just answer what you know — I'll write the context file from your responses.
   report offer, at report time (its form — deck, dashboard, or document — is the customer's
   choice there). If the person explicitly asks for a report, deck, or dashboard, the
   validation package's rules apply (the question loop still completes validation).
+- **Progress recall returns questions, not numbers.** When the person asks where they're
+  at, what's left, or how far along they are ("where am I at?"), answer with the full text
+  of every still-open question, restated in full one per line — never question numbers,
+  field numbers, or a bare count ("questions 3 and 7 are left" means nothing without
+  scrolling back). Confirmed items get at most a one-line summary; the open questions are
+  the body of the answer.
 - An interrupted walkthrough resumes on the next invocation: pre-flight reads the file and
-  presents only what is still open.
+  presents only what is still open — restating each open question in full, per the
+  progress-recall rule, never by number.

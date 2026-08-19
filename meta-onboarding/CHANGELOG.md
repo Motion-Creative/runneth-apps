@@ -35,6 +35,21 @@ of onboarding install and test independently.
   read - the readout leads with "you said X on <date>" plus a short verbatim quote, and
   the open question becomes a one-word confirm. Citations never confirm a field by
   themselves; the person's answer in the walkthrough still does.
+- **The creative-metric benchmark question is removed**: Field 8 no longer asks for a
+  goal, target, or floor on thumbstop, hold rate, CTR, or any creative metric - most
+  teams don't carry benchmarks and the question consistently failed to land. The
+  account's own averages are the baseline and outliers are read against them. Field 8
+  settles by pull (normal resting status `[AUTO]`), the confirmation gates now wait on
+  Fields 1-7 and 9 only, and a volunteered target is still recorded when the customer
+  offers one unprompted.
+- **The walkthrough opens with an on-ramp**: Part 1 gains a third beat - why the
+  questions are worth a few minutes, the voice-note tip ("feel free to voice-note your
+  answers"), and the star tip. The onboarding chat is named predictably
+  ("Runneth Onboarding - [Brand]") when the runtime supports setting the title, with a
+  rename ask as the fallback.
+- **Progress recall returns questions, not numbers**: "where am I at?" answers with the
+  full text of every still-open question, one per line - never question numbers or a
+  bare count - and resumed walkthroughs restate open questions the same way.
 - **Campaign names are first-class in the naming decode**: the Creative Attributes
   provisional decode analyzes campaign names independently of ad names (both lists come
   from the same Cacheth export - `campaignNames[]` alongside `adNames[]`), Field 4's
