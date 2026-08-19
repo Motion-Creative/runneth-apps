@@ -48,7 +48,10 @@ setup is therefore two real things:
      post-install) and any corpus-search source registrations, which a person already
      confirmed as searchable;
    - the brand's lane (`kind: brand`, the exact workspace ID);
-   - person homes where they exist (`kind: user`);
+   - person homes (`kind: user`) - declared where they exist at install, and created
+     on first personal save: a verified person's preferences or voice get a person
+     home (the VM's own convention, else `team/<name>/<name>.md`) and a lane
+     declaration carrying their verified identity, one per person, never in advance;
    - everything else implicitly general.
 
    The organize step (the `runneth:knoweth-organize` guard) finishes exactly here:

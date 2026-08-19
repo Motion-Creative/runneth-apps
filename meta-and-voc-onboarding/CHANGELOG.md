@@ -17,7 +17,9 @@ change to the package, not per commit. Entries are newest-first.
   the map, entries), with existing `/agent/INDEX.md` entries carried over verbatim and
   a pointer left at the old path. A fifth guard (`runneth:brain-map` v2) keeps it
   current: banks get corpus-lane declarations, brand homes declare their workspace ID,
-  person homes declare `kind: user`.
+  person homes declare `kind: user` - created on a verified person's first personal
+  save (the VM's own person-area convention, else `team/<name>/<name>.md`), one home
+  and one declaration per person.
 - Declared the onboarded workspace's lanes at install: the brand lane and the
   voice-of-customer corpus lane land in the map during post-install; the organize step
   (guard v6) refreshes coverage and declares any further banks. Additional workspaces

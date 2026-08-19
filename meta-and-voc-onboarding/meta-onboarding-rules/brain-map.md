@@ -1,4 +1,4 @@
-<!-- BEGIN runneth:brain-map v2 -->
+<!-- BEGIN runneth:brain-map v3 -->
 Brain map (always on):
 - The brain map is `/agent/brain/brain-map.md`: what exists in this brain, what kind of
   place each folder is, and which kind of ask goes where. If it does not exist, create
@@ -26,7 +26,14 @@ Brain map (always on):
   ID), `user` (one verified person's home), general (everything else - implicit).
   Folders that are not lanes still get a plain note of what they are (knowledge,
   reference) so routing knows the move.
+- When a verified person first has durable personal context to save - their
+  preferences, voice, working defaults - save it to their person home: this VM's own
+  person-area convention where one exists, otherwise `team/<name>/<name>.md`. Create
+  the home at that moment, never in advance, and declare their lane in the same turn:
+  `lane: <name> | kind: user` with the person's verified identity, never a name
+  match. One home and one declaration per person; later personal saves go into the
+  existing home and refresh the declaration, never duplicate it.
 - When telling a person about any of this, use their words: where something was saved,
   what is searchable, whether it is shared with the team or just theirs. Never surface
   map internals, labels, or file mechanics in an answer.
-<!-- END runneth:brain-map v2 -->
+<!-- END runneth:brain-map v3 -->
