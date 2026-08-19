@@ -1,6 +1,6 @@
 ---
 name: voc-audit
-description: Run a manual Voice of Customer Audit on customer-language data already synced into the brain. Use when someone accepts the post-sync audit offer or asks for a VoC audit, review audit, customer audit, analysis of reviews, comments, support messages, pain points, objections, trigger moments, transformations, personas, standout language, or what customers are saying. Never auto-run merely because a source connects. Requires at least 200 total VoC entries and organizes findings by product or service.
+description: Run a Voice of Customer Audit on customer-language data already synced into the brain. Use when someone accepts the post-sync audit offer or asks for a VoC audit, review audit, customer audit, analysis of reviews, comments, support messages, pain points, objections, trigger moments, transformations, gap analysis, personas, standout language, or what customers are saying, and when the voc-audit-refresh routine runs its scheduled update. The initial audit is always person-approved; never auto-run merely because a source connects. Requires at least 200 total VoC entries, organizes findings by product or service, and always includes the gap analysis (pains mapped against transformations, resolved vs open). Delivering the initial audit completes VoC onboarding: it creates the standing refresh routine and graduates the workspace to the onboarded roster.
 ---
 
 # Voice of Customer Audit
@@ -21,7 +21,10 @@ This skill is always manual:
 - Do not run merely because a VoC source connects, a sync routine starts, or new files arrive.
 - If an affirmative answer arrives before the initial backfill is complete, say the audit
   will be ready when coverage completes. Do not poll or run against a partial backfill.
-- A rerun is also manual. New daily VoC files do not silently regenerate the audit.
+- The **initial** audit is always person-approved. After it is delivered, the standing
+  refresh routine this skill creates (Step 9) keeps the canonical page current as new
+  entries land - that standing refresh was disclosed at delivery and is the one exception
+  to the manual rule. A person-requested rerun is still honored at any time.
 - The package's offers preview this skill's method (split by product, score 1–5, the five
   buckets, personas) and invite additions and reference docs. Honor both: a requested
   addition becomes part of this run's output, and supplied reference docs (existing
@@ -185,6 +188,26 @@ Never rewrite a quote.
 
 Flat praise such as "great product" or "highly recommend" does not qualify.
 
+## Step 5b — Gap analysis (standard, every run)
+
+The gap analysis is a permanent section of every audit, not an ad-hoc addition: map the
+pain points (Bucket 1) against the transformations (Bucket 4) to show what the product is
+already resolving and what is still open. Per product:
+
+- **Resolved** - a pain-point theme whose transformations show it clearly answered in
+  customers' own words. These are proof points ads can lean on.
+- **Partially addressed** - the pain appears in transformations but weakly, mixed, or only
+  for some segments. Say what is still missing.
+- **Open** - a pain-point theme with no matching transformation evidence. These are the
+  gaps: unanswered pains are the strongest creative and product opportunities the audit
+  surfaces.
+
+Classify from evidence only - a pain with no transformation match is "open," never
+softened; a one-sided evidence mix (e.g. support-heavy sources that cannot carry
+transformations) is named as a coverage caveat, not read as product failure. The gap
+analysis lands in the chat output, the saved page, and every refresh - consistent across
+workspaces by being part of the template, not agent judgment.
+
 ## Step 6 — Build customer personas
 
 Only build personas for a product or service represented by at least 200 entries. Products
@@ -234,6 +257,7 @@ tags:
   - objections
   - trigger-moments
   - transformations
+  - gap-analysis
   - personas
 ---
 ```
@@ -247,8 +271,8 @@ On rerun, regenerate this canonical page from the current evidence set. Do not a
 audit or create dated duplicates. Update `/agent/INDEX.md` with one entry that names the
 workspace (the index is org-wide) and aliases: `Voice of Customer Audit`, `VoC audit`,
 `review audit`, `customer insights`, `pain points`, `objections`, `trigger moments`,
-`transformations`, `personas`, and `customer language`, each prefixed or suffixed with the
-workspace name. Append a dated `voc-audit-completed` entry to
+`transformations`, `gap analysis`, `personas`, and `customer language`, each prefixed or
+suffixed with the workspace name. Append a dated `voc-audit-completed` entry to
 `/agent/brain/<workspace>/_changelog.md` with the evidence coverage and canonical audit path.
 
 ## Step 8 — Deliver the full audit in the chat
@@ -260,7 +284,39 @@ lead-in lines above it (evidence scope, one or two headline findings). Closing w
 prose summary of highlights is a contract violation: the person must be able to read the
 full results in the chat without asking a follow-up or hunting for a file path. This
 delivery never depends on the person asking for it, and on a rerun the regenerated page is
-delivered the same way.
+delivered the same way. On the initial audit, close the delivery by saying plainly that
+the audit and gap analysis will now stay current on their own: new customer voice updates
+the page automatically and anything notable lands at their chosen destination.
+
+## Step 9 — Close out onboarding (initial audit only)
+
+The initial audit is the strategic half of Voice of Customer onboarding: connecting
+sources was the technical half, and onboarding is complete only when both have landed.
+When this run is the workspace's first delivered audit (the workspace is listed in the
+`runneth:voc-connected` block of `/agent/user.md`), finish with two actions. A rerun or
+refresh skips this step entirely.
+
+**1. Create the standing refresh routine** so the audit keeps surfacing new signal
+instead of going stale. Use the same delivery destination the workspace's `voc-sync-*`
+routines carry (never re-ask). Fill every value literally, as with the sync routines:
+
+```
+routine add --name "voc-audit-refresh-<workspace>" \
+  --delivery "Notify only when the audit moved. If this run updated the audit, send one brief plain-language note to <delivery-destination> naming what is new - a theme that grew, a new open gap, a gap that closed, standout new language. If nothing new landed, send nothing. On the first run of each month, additionally ask in one sentence whether there are insights or sources the current audit and gap analysis are not capturing - their answer shapes the next update." \
+  --prompt "Run the voc-audit skill's refresh for Motion workspace <workspace> (workspace id <workspaceId>). Read /agent/brain/<workspace>/data-sources/voc/ and compare against the canonical audit page's last_compiled timestamp and evidence counts. If new entries have landed since, regenerate /agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md from the current evidence set per the skill - all buckets, gap analysis, and personas - keeping the same canonical single-page contract. If nothing new landed, stop." \
+  --cron "0 8 * * *"
+```
+
+The 8am slot runs after the 6am syncs, so a refresh always sees the day's new items.
+
+**2. Complete the onboarding roster.** Move this workspace from the
+`runneth:voc-connected` block to the `runneth:voc-onboarded` roster in `/agent/user.md` -
+one Write (file-write tool only; Bash cannot touch that file), following the post-install's
+whole-file write chain and sentinel rules: append to the onboarded list, remove the
+workspace from the connected block (drop the block when its list empties), touch nothing
+outside the sentinels. This is the moment Voice of Customer onboarding is complete:
+sources syncing, audit and gap analysis delivered and explained, standing refresh in
+place.
 
 ## Output format
 
@@ -295,6 +351,14 @@ per-product tagging" — only when grouping was skipped or the split needs expla
 #### Transformations
 No strong signal in this bucket for this product.
 <Use this explicit line when a bucket has no real finding — never a manufactured entry.>
+
+#### Gap analysis
+| Pain point | Status | Evidence |
+|---|---|---|
+| <pain theme> | Resolved / Partially addressed / Open | <one line: the transformation evidence, or "no transformation signal"> |
+<One line under the table naming the open gaps plainly — these are the unanswered pains
+and the biggest creative/product opportunities — plus any coverage caveat when the source
+mix cannot carry transformations.>
 
 #### Standout language
 - *"<Exact quote>"* — <attribution> · <why it stands out> · <source>

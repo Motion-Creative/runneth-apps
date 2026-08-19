@@ -26,13 +26,31 @@ voc-onboarding has completed for these workspaces: bramblewick-nyc, st-fig-co
 
 Also honor the legacy roster the combined meta-and-voc-onboarding package wrote
 (`runneth:meta-voc-onboarded`): that package already set up this workspace's VoC sync
-routines, so a workspace listed there counts as onboarded for this package too.
+routines, so a workspace listed there counts as fully onboarded for this package too.
 
 If either block lists **this conversation's workspace** and this is not an explicit
-reinstall or upgrade, VoC setup already ran here - skip the rest of this section and
-answer normally. On an explicit reinstall or upgrade, continue to the disclosed consent
-offer below before re-running anything. Do not try to read `/agent/user.md` through Bash;
-the runtime blocks that path, and the check is against the copy in this prompt.
+reinstall or upgrade, VoC onboarding already completed here - skip the rest of this
+section and answer normally. On an explicit reinstall or upgrade, continue to the
+disclosed consent offer below before re-running anything. Do not try to read
+`/agent/user.md` through Bash; the runtime blocks that path, and the check is against
+the copy in this prompt.
+
+Next, check the connected block this package writes when sources are syncing but the
+initial audit has not been delivered yet:
+
+```
+<!-- BEGIN runneth:voc-connected -->
+voc-onboarding has connected sources and started syncs for these workspaces (audit and gap analysis pending): bramblewick-nyc
+<!-- END runneth:voc-connected -->
+```
+
+If it lists this conversation's workspace, the technical half is done and the strategic
+half is in motion on its own: the daily sync routine offers the Voice of Customer Audit
+once the backfill covers, and delivering that audit (with its gap analysis) is what
+completes onboarding. Do not repeat the setup offer and do not nag - answer normally.
+If the person asks where things stand, say their customer voice is syncing and the
+audit is coming once enough history has landed. If they explicitly ask to run the
+audit now, that is the voc-audit skill's call to make (it has a coverage gate).
 
 Next, check the partial block this package writes when setup ran but Meta ad comments
 was the only reachable customer-voice source:
@@ -52,14 +70,17 @@ give a short reminder that leads with the ask, in the same warm first-person voi
 > Quick nudge: your Voice of Customer setup is still waiting on one thing - a
 > customer-voice integration. Your ad comments are flowing, but I can't hear your
 > customers in reviews or support conversations yet, and that's where the real signal
-> lives. Tell me which platform your team uses - Judge.me, Trustpilot, Yotpo, Gorgias,
-> Intercom, Zendesk, Klaviyo, or any other reviews, support, or survey tool - and I'll
-> walk you through connecting it and finish your setup.
+> lives. Where do you actually hear from customers? Reviews (Yotpo, Trustpilot,
+> Judge.me), support (Zendesk, Gorgias, Intercom), post-purchase surveys (Narvar,
+> AfterShip, Malomo), or social listening (Reddit threads, X)? Name one and I'll walk
+> you through connecting it and get your setup moving.
 
 If they name a platform or say yes, help them connect it at a high level (the OAuth
 connect or, for key-based platforms, the secret-collection flow - never ask for a key
-in chat), then re-run the post-install sequence as a resume for this workspace: it sets
-up the new platform's sync and moves the workspace to the completed roster. The
+in chat; Reddit, X, and other social listening connect through an Apify account), then
+re-run the post-install sequence as a resume for this workspace: it sets
+up the new platform's sync and moves the workspace to the connected block, and the
+audit pipeline finishes onboarding from there. The
 original consent already covered this setup, so no fresh disclosure is needed - just
 their platform answer. If they decline or ignore the reminder, drop it for the rest of
 the conversation; a later conversation reminds again, because the workspace remains in
@@ -79,19 +100,24 @@ always comes before any connected-account check, routine creation, or `/agent/us
 change:
 
 > Voice of Customer onboarding is ready for <workspace>. Here's what I'll do once you
-> give me the go-ahead: check which customer-voice platforms are connected for this
-> workspace - reviews, support, surveys, communities, and Meta ad comments - and set up
-> a daily sync for each one, so your customers' own words land in <workspace>'s brain
-> and stay fresh automatically. The first pass pulls the last 12 months in the
-> background, and I'll keep a note that this workspace is onboarded so I only ask once.
-> Then, once that first backfill is in, I'll offer to run a Voice of Customer Audit -
-> that part always waits for your yes. Want me to get started?
+> give me the go-ahead: first I'll check what I can already see - which customer-voice
+> platforms are connected for this workspace - and show you the list, then ask which
+> channels you actually hear from customers on: reviews, support, surveys, social
+> listening. We'll connect the ones that matter, and I'll set up a daily sync for each
+> so your customers' own words land in <workspace>'s brain and stay fresh
+> automatically. The first pass pulls the last 12 months in the background. Then, once
+> that history is in, I'll offer to run a Voice of Customer Audit with a gap analysis -
+> what your customers struggle with, what's already resolved, and what's still open.
+> That audit is what wraps up your onboarding, and it always waits for your yes. Want
+> me to get started?
 
 Fill only `<workspace>` from the resolved `Default workspace:` line. The wording may
 flex a little to fit the conversation, but it stays in this voice - warm, first-person,
-"here's what I'll do for you" - and always covers the same four facts: it will read
-connected accounts, create daily sync routines, record onboarding completion, and later
-offer (never auto-run) the audit. Never dress the offer, or any restatement of it, in
+"here's what I'll do for you" - and always covers the same five facts: it will read
+connected accounts and show what it found, ask which channels the person hears
+customers on, create daily sync routines, keep a note of where things stand so it only
+asks once, and later offer (never auto-run) the audit and gap analysis that complete
+onboarding. Never dress the offer, or any restatement of it, in
 internals: no file paths, no `/agent/user.md`, no roster or sentinel names, no routine
 name shapes, no package ids, no "post-install". Those are implementation details - the
 person hearing this is a customer, not an operator. Do not inspect the

@@ -5,10 +5,14 @@
 > A branch ref instead of `#main` is only for testing an unmerged branch or PR.
 
 This is the Voice of Customer half of the onboarding lifecycle: it lands the customer's
-raw voice - product reviews, support conversations, surveys, community posts, and ad
+raw voice - product reviews, support conversations, surveys, social listening, and ad
 comments - as standardized files in the workspace's brain folder, keeps them current with
-daily sync routines, and offers a manual Voice of Customer Audit once the backfill is
-covered. It is one of two independent installs (the other is the `meta-onboarding`
+daily sync routines, and offers a Voice of Customer Audit with gap analysis once the
+backfill is covered. Onboarding has two halves and is complete only when both land:
+the **technical half** (sources connected and syncing) and the **strategic half** (the
+initial audit and gap analysis delivered and explained, with a standing refresh routine
+that keeps surfacing new signal). Connection alone never closes out onboarding.
+It is one of two independent installs (the other is the `meta-onboarding`
 package, which owns Meta account context, guards, validation, and the walkthrough); each
 installs, activates, and completes on its own, and neither requires the other. Together
 they replace the combined `meta-and-voc-onboarding` package (see "Migrating from
@@ -18,13 +22,16 @@ install-time concern).
 The parts, and their operational nature:
 
 - **VoC Data Pull** - background: setup once, daily routines do the work.
-- **Voice of Customer Audit** - manual skill: turns synced customer language into durable
-  creative-strategy insight after a person says yes.
+- **Voice of Customer Audit** - turns synced customer language into durable
+  creative-strategy insight, always including a gap analysis. The initial run waits for
+  a person's yes; delivering it completes onboarding and starts a standing refresh that
+  keeps the audit current.
 
 The one-line model:
 
 > **The pull gives Runneth the org's raw customer voice, one file per item, per workspace.
-> The audit turns it into creative-strategy insight - only when a person asks.**
+> The audit and gap analysis turn it into creative-strategy insight - and delivering
+> them is what makes the workspace onboarded.**
 
 ---
 
@@ -167,11 +174,19 @@ Folder: `voc-data-pull/`
   `integrations list` reports catalog metadata only, so it is never part of the
   check) **and** the
   stored secrets for every VoC platform (any of them may be key-stored instead of
-  connected; Okendo and Stamped always are), plus the Motion workspace connection for
-  Meta ad
-  comments (never a data-pull probe) - and runs the skill's "Set up the recurring sync"
-  procedure for every reachable
-  one: one daily routine per platform per workspace (`voc-sync-<workspace>-<platform>`, 6am)
+  connected; Okendo and Stamped always are; a stored Apify key makes Reddit, X, and
+  Amazon Reviews reachable through Apify actors), plus the Motion workspace connection
+  for Meta ad
+  comments (never a data-pull probe). The findings are never silent: setup opens with
+  the transparent inventory ("here's what I can already see"), offers the connectable
+  categories with concrete examples - customer reviews (Yotpo, Trustpilot, Judge.me),
+  customer support (Zendesk, Gorgias, Intercom), post-purchase surveys (Narvar,
+  AfterShip, Malomo, Loop Returns, Rebuy), social listening (specific Reddit threads,
+  X - via Apify) - and asks which of these the person actually hears from customers
+  on. Their answer gets a numbered plan (connect, sync, choose where updates land)
+  before any work happens. Then Runneth runs the skill's "Set up the recurring sync"
+  procedure for every reachable or newly connected
+  platform: one daily routine per platform per workspace (`voc-sync-<workspace>-<platform>`, 6am)
   whose first run backfills
   and whose daily runs pull only new items. Platform accounts are org-level with no
   workspace tag, so setup starts by **pinning the account**: a human confirms which
@@ -197,12 +212,20 @@ Folder: `voc-audit/`
   numbered lists of distinct standalone findings — quotes, where they appear, verbatim and
   attributed inline (name, rating, source file), with an explicit no-signal line for empty
   buckets — and the same structure lands in the saved brain page, not just the chat view.
-  Products with at least 200 entries also receive evidence-backed personas.
-- **Runs manually.** The sync routine offers it once after the workspace's backfill is
-  fully covered; the offer previews the method and invites additions and reference docs
-  (existing personas especially), which the run honors. A yes or an explicit request such
-  as "run a VoC audit" invokes the skill. Connecting a source, syncing files, or completing
-  onboarding never runs it automatically. The audit requires at least 200 total entries.
+  **Every audit includes a gap analysis**: pain points mapped against transformations to
+  show what the product already resolves, what is partially addressed, and what is still
+  open — a standard section, never an ad-hoc addition. Products with at least 200 entries
+  also receive evidence-backed personas.
+- **The initial run is manual; refreshes are standing.** The sync routine offers the
+  audit once after the workspace's backfill is fully covered; the offer previews the
+  method and invites additions and reference docs (existing personas especially), which
+  the run honors. A yes or an explicit request such as "run a VoC audit" invokes the
+  skill. Connecting a source or syncing files never runs it automatically. The audit
+  requires at least 200 total entries. **Delivering the initial audit completes
+  onboarding**: the skill creates a daily `voc-audit-refresh-<workspace>` routine that
+  updates the audit and gap analysis when new customer voice lands, notifies the chosen
+  destination in plain language only when something moved, and once a month asks whether
+  there are insights or sources the audit isn't capturing.
 - **Reads raw evidence from:** `/agent/brain/<workspace>/data-sources/voc/<platform>/`.
 - **Persists compiled insight to:**
   `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. The skill rewrites this one
@@ -216,23 +239,34 @@ Folder: `voc-audit/`
 
 ## After install: offer onboarding and wait for approval
 
-The activation instruction checks the per-workspace completion rosters (this package's
-`runneth:voc-onboarded`, plus the legacy `runneth:meta-voc-onboarded` from the combined
+The activation instruction checks the per-workspace state blocks (this package's
+`runneth:voc-onboarded` roster and `runneth:voc-connected` block, plus the legacy
+`runneth:meta-voc-onboarded` from the combined
 package) and offers the setup at most once per conversation when this workspace is not
-listed. It states that setup will inspect connected accounts, create applicable routines,
-and record completion. Only an explicit human yes runs
+listed anywhere. It states that setup will show what's already visible, ask which
+channels the person hears customers on, inspect connected accounts, create applicable
+routines, and later offer the audit and gap analysis that complete onboarding. Only an
+explicit human yes runs
 [`post-install.md`](post-install.md). Installation, reinstall, or upgrade alone is never
 consent. Automatic updates never rewrite `/agent/user.md`.
 
-**Completion requires a dedicated customer-voice platform.** When setup runs and Meta ad
+**Onboarding completes in two halves.** Setup ending with dedicated sources syncing
+records the workspace in the `runneth:voc-connected` block - the technical half. The
+strategic half lands later: once the backfill covers, the sync routine offers the
+Voice of Customer Audit, and delivering it (with its gap analysis, plus the standing
+refresh routine the audit skill creates) is what moves the workspace to
+`runneth:voc-onboarded`. Post-install never writes the onboarded roster itself.
+
+**A dedicated customer-voice platform is required to even get that far.** When setup
+runs and Meta ad
 comments turns out to be the only reachable source, the workspace is recorded in a
-`runneth:voc-partial` block instead of the onboarded roster: the ad-comments sync runs,
+`runneth:voc-partial` block instead: the ad-comments sync runs,
 but the closing message leads with connecting an integration (not a completion report),
 and the activation gives a short once-per-conversation reminder in every later
-conversation until a dedicated platform - reviews, support, surveys, communities, or
-calls - is connected. Connecting one and saying yes resumes setup for that platform and
-graduates the workspace to `runneth:voc-onboarded`. That graduation is the moment
-onboarding is complete.
+conversation until a dedicated platform - reviews, support, post-purchase surveys, or
+social listening - is connected. Connecting one and saying yes resumes setup for that
+platform and moves the workspace to the connected block, where the audit pipeline takes
+over.
 
 ## Install and run order
 
@@ -244,23 +278,35 @@ onboarding is complete.
    context verbatim and states the name, workspaceId, and slug taken from it before
    anything else executes - existing folders, rosters, routines, and remembered context
    never identify the workspace.
-2. **Set up VoC data syncs.** Before the first routine is created, the person chooses
-   where routine updates land: the web conversation or a Slack channel/thread (offered
-   when Slack is connected) - one answer covers every VoC sync routine, asked once, never
-   guessed. Then for each reachable customer-voice source, pin the workspace's
+2. **Open with the inventory and the channel question.** Setup states what it can
+   already see (connected and reachable sources, in plain words), offers the
+   connectable categories with concrete examples - customer reviews, customer support,
+   post-purchase surveys, social listening - and asks which of these the person
+   actually hears from customers on. Their answer gets a numbered plan (connect the
+   named platforms, set up the daily syncs, confirm where updates land - this
+   conversation, Slack, or somewhere else) before any work happens. Social listening
+   channels connect through Apify.
+3. **Set up VoC data syncs.** For each reachable or newly connected customer-voice
+   source, pin the workspace's
    account, create the daily `voc-sync-<workspace>-<platform>` routine, and kick the first
    backfill. The 12-month backfills churn in the background; daily runs keep the corpus
    current afterward and notify the chosen destination only when something new landed -
    a run that found nothing new is silent, and the initial backfill is silent regardless
-   of volume (its completion surfaces through the audit offer). If ad comments end up the
+   of volume (its completion surfaces through the audit offer). This records the
+   workspace as connected, not onboarded. If ad comments end up the
    only reachable source, the workspace lands
    in the partial state described above - setup is not complete, and the person is urged
    to connect a dedicated platform until one is.
-3. **Run the Voice of Customer audit later.** Offered once by the sync routine after the
+4. **Run the Voice of Customer audit to complete onboarding.** Offered once by the sync
+   routine after the
    workspace's backfill is fully covered (deferring while a Meta onboarding is mid-flight)
    and run only on a person's yes, the `voc-audit` skill compiles
-   the workspace's cross-platform customer-voice findings to
-   `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. It is not an
-   install-time artifact.
-4. **Keep everything current.** VoC data refreshes itself through its daily routines once
-   set up. New daily files never regenerate the audit; a rerun is a person's ask.
+   the workspace's cross-platform customer-voice findings - five buckets, gap analysis,
+   personas - to
+   `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`. Delivering it
+   is what marks the workspace onboarded. It is not an install-time artifact.
+5. **Keep everything current.** VoC data refreshes itself through its daily sync
+   routines, and once onboarding completes, the standing `voc-audit-refresh-<workspace>`
+   routine updates the audit and gap analysis when new customer voice lands, notifies
+   in plain language only when something moved, and once a month asks whether anything
+   is missing from the picture. A person can still ask for a full rerun anytime.

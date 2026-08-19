@@ -10,7 +10,9 @@ description: |
   reachable platform whose data is customer voice - is reachable by any path - OAuth
   connection, stored API key, or Motion native - and its data should land in files, or when
   the user asks to "pull the reviews", "dump the reviews", "pull support tickets", "sync
-  customer conversations to files", or "run the VoC data pull".
+  customer conversations to files", or "run the VoC data pull". Social listening
+  (Reddit, X/Twitter) and Amazon Reviews route through a stored Apify key driving Apify
+  actors - suggest connecting Apify whenever those channels come up.
   Do NOT use for analyzing customer voice (use the voc-audit skill), building integration
   guides, or one-off API questions about a platform.
 ---
@@ -76,6 +78,7 @@ Two connection paths exist and the pull mechanics differ:
 |---|---|---|
 | Pipedream OAuth | `judge_me`, `trustpilot`, `yotpo`, `gorgias_oauth`, `intercom`, `reddit`, `zendesk`, `klaviyo`, `attentive`, `gong`, `hotjar`, `discord`, `youtube_data`, `junip`, `typeform` and `reviews_io` (keys-auth in Pipedream) | `integrations` CLI: check `integrations status --app <slug>`, then `integrations proxy --app <slug> --account <pinnedAccountId> --method GET --path <path>` (or the registered app command). The account id comes from the workspace's pin (see "Pin the account" under setup), never from picking off the list at pull time. |
 | Stored secret (customer API key) | `okendo`, `stamped`, `bazaarvoice`, `loox`, `fera`, `feefo`, `powerreviews`, `shopper_approved`, `provesource`, `qualtrics` - and **any platform above whose org stores a key instead of connecting OAuth** | `secure-fetch` (`secure-fetch run --url <url> --secret-key <SECRET_KEY> ...`) per `/runneth/references/secure-fetch-cli--command-contracts.md`. If no stored key exists, request one via the secret-collection flow - never ask for the key in chat. |
+| Apify (stored Apify key) | Reddit, X/Twitter, Amazon Reviews - social listening and marketplaces with no dependable native OAuth path | A stored Apify key drives Apify actors through `secure-fetch` against the Apify API. Locate the right actor for the target (a subreddit scraper, an X search actor, an Amazon reviews actor), run it with the date window, and map its dataset items onto the unified record through Step 2's no-recipe path. **This is the default path for social listening: any mention of Reddit, X, or "social listening" triggers an immediate suggestion to connect an Apify account** - never wait to be told Apify is the route. If no Apify key is stored, request one via the secret-collection flow. |
 | Motion native | Meta ad comments | `motion meta creative-comments` (no Runneth connect involved) |
 
 The path is how this customer set the platform up, not a property of the platform: any
@@ -341,7 +344,13 @@ adapter is a field-mapping exercise, not design work.
 All pulling happens through one daily routine per connected platform (`voc-sync-<workspace>-<platform>`).
 **Setup runs after the package activation receives an explicit human yes for the
 disclosed workspace setup, or when asked directly** - installation alone is never the
-ask, and setup never runs at any other unprompted moment. When triggered, do this for each
+ask, and setup never runs at any other unprompted moment. When setup runs on a direct
+ask (outside the post-install), follow the post-install's opening beats before creating
+anything: state what is already visible ("here's what I can already see"), ask which
+channels they actually hear from customers on (reviews, support, post-purchase surveys,
+social listening - with concrete platform examples), and when they answer, respond with
+the numbered plan - (1) connect the named platforms, (2) set up the daily sync, (3)
+confirm where updates should land - never a silent setup. When triggered, do this for each
 available VoC platform - recipe or no recipe (Step 1's scope rule), and available means
 the org can reach it by any path (OAuth connection, stored API key, or Motion native;
 Step 1 resolves which): run
@@ -388,6 +397,9 @@ folder state:
    literally from the answer: either `web conversation <conversation-id> (send with
    conversation send --to <conversation-id>)` or `the Slack
    channel/thread <channel> the person named, through the connected Slack integration`.
+   If they name somewhere else entirely, use it only when a connected integration can
+   actually deliver there (written literally the same way); otherwise say plainly what
+   destinations are available and ask again.
    Fill in the resolved workspace folder name for `<workspace>`, the resolved workspace
    id for `<workspaceId>`, and the pinned account's name and id for `<accountName>` /
    `<accountId>`; keep the cron and the name shape exactly as written. **Every one of those
@@ -400,7 +412,7 @@ folder state:
 
    ```
    routine add --name "voc-sync-<workspace>-<platform>" \
-     --delivery "Notify only when something new landed. If this run wrote one or more new items, send one brief note to <delivery-destination> naming the platform and what is new in plain words (for example '7 new Judge.me reviews came in'). If nothing new landed, send nothing at all - a quiet day is silent and the run summary in routine history is its only record. The initial 12-month backfill run is silent too, regardless of volume: its completion is announced through the audit offer below, never as a new-items note. Once full backfill coverage is reached across any voc-sync-<workspace>-* routine, each run checks whether the audit offer is still owed: if /agent/brain/<workspace>/_changelog.md already contains a voc-audit-offer entry, that offer stays silent. Otherwise check whether this workspace's Meta onboarding is mid-flight: read /agent/brain/<workspace>/data-sources/meta/account-context.md, and if it exists with interpretation fields not yet confirmed, hold the offer for this run - interrupting an onboarding is worse than a delayed offer, and a later daily run sends the offer once the context is confirmed. When no such file exists, or it shows the context confirmed, send one brief note to <delivery-destination>: name the source that finished, say the customer voice is ready, and offer a Voice of Customer Audit by previewing the plan in your own words - it will separate every entry by product, score each 1-5 for usefulness, and break the strong ones into five buckets (pain points, trigger moments, objections, transformations, standout language) plus personas per qualifying product - then ask whether they'd like anything added or have existing docs (like personas) to use as reference. Then append a dated voc-audit-offer entry to /agent/brain/<workspace>/_changelog.md. Never run the audit without a person's yes. If the run fails, the pinned account is disconnected, or coverage is incomplete, send a brief note to <delivery-destination>." \
+     --delivery "Notify only when something new landed. If this run wrote one or more new items, send one brief note to <delivery-destination> naming the platform and what is new in plain words (for example '7 new Judge.me reviews came in'). If nothing new landed, send nothing at all - a quiet day is silent and the run summary in routine history is its only record. The initial 12-month backfill run is silent too, regardless of volume: its completion is announced through the audit offer below, never as a new-items note. Once full backfill coverage is reached across any voc-sync-<workspace>-* routine, each run checks whether the audit offer is still owed: if /agent/brain/<workspace>/_changelog.md already contains a voc-audit-offer entry, that offer stays silent. Otherwise check whether this workspace's Meta onboarding is mid-flight: read /agent/brain/<workspace>/data-sources/meta/account-context.md, and if it exists with interpretation fields not yet confirmed, hold the offer for this run - interrupting an onboarding is worse than a delayed offer, and a later daily run sends the offer once the context is confirmed. When no such file exists, or it shows the context confirmed, send one brief note to <delivery-destination>: name the source that finished, say the customer voice is ready, and offer a Voice of Customer Audit by previewing the plan in your own words - it will separate every entry by product, score each 1-5 for usefulness, break the strong ones into five buckets (pain points, trigger moments, objections, transformations, standout language) plus personas per qualifying product, and include a gap analysis showing which customer pains the product already resolves and which are still open - then ask whether they'd like anything added or have existing docs (like personas) to use as reference, and say this audit is what wraps up their Voice of Customer onboarding. Then append a dated voc-audit-offer entry to /agent/brain/<workspace>/_changelog.md. Never run the audit without a person's yes. If the run fails, the pinned account is disconnected, or coverage is incomplete, send a brief note to <delivery-destination>." \
      --prompt "Run the voc-data-pull skill for <platform> as a recurring sync run for Motion workspace <workspace> (workspace id <workspaceId>). Pull only from the pinned account <accountName> (account id <accountId>): pass --account <accountId> on every integrations proxy call and never use another account of this platform, even if others are connected. Write every file under /agent/brain/<workspace>/data-sources/voc/<platform>/ and nowhere else; pass --workspace-id <workspaceId> on Motion commands that take it. Follow the skill's Recurring sync rules exactly - they define the pull window, disconnect handling, and coverage reporting." \
      --cron "0 6 * * *"
    ```
@@ -427,11 +439,12 @@ folder state:
    not mention routine mechanics unless asked. If Meta ad comments is the only
    customer-voice source this pass could set up, do not frame the setup as done -
    **lead with the ask**: the setup still needs a customer-voice integration, and it is
-   not complete until one is connected. Name the curated options conversationally
-   (reviews like Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, or Reviews.io;
-   support like Gorgias, Intercom, or Zendesk; surveys and messaging like Klaviyo,
-   Attentive, or Hotjar; communities like Reddit, Discord, or YouTube; or sales calls
-   with Gong - and any other reviews, support, or survey tool works too), invite them
+   not complete until one is connected. Name the curated categories conversationally
+   (customer reviews like Yotpo, Trustpilot, or Judge.me; customer support like
+   Zendesk, Gorgias, or Intercom; post-purchase surveys like Narvar, AfterShip, Malomo,
+   Loop Returns, or Rebuy; social listening like specific Reddit threads or X, which
+   connect through Apify - and any other reviews, support, or survey tool works too),
+   invite them
    to name theirs, and offer to walk them through connecting it. Mention ad comments
    once, at the end, as already flowing - never as the lead. (When this setup pass runs
    inside the voc-onboarding post-install, the post-install's connect-an-integration
@@ -439,9 +452,10 @@ folder state:
 
 Roster graduation: when this pass creates a dedicated platform's routine (any platform
 other than meta-ad-comments) for a workspace listed in the `runneth:voc-partial` block
-of `/agent/user.md`, onboarding just completed - follow the post-install's step 3 to
-move the workspace from the partial block to the `runneth:voc-onboarded` roster in one
-Write.
+of `/agent/user.md`, the technical half just completed - follow the post-install's
+step 5 to move the workspace from the partial block to the `runneth:voc-connected`
+block in one Write. The `runneth:voc-onboarded` roster is written only by the voc-audit
+skill, when the initial audit and gap analysis have been delivered.
 
 **Never run the pull inside the user's conversation.** All pulling happens in the routine's
 runs; a one-off refresh beyond the daily cadence is `routine run --id <routine-id>`.
@@ -488,9 +502,10 @@ skill flow:
   this workspace's `voc-sync-<workspace>-*` routines, the audit offer is owed: on each run
   where `/agent/brain/<workspace>/_changelog.md` has no `voc-audit-offer` entry yet, send
   one offer to the delivery destination — not a bare yes/no question but a short preview
-  of what the audit will do (split by product, score 1–5, the five buckets, personas),
+  of what the audit will do (split by product, score 1–5, the five buckets, the gap
+  analysis of resolved vs open pains, personas),
   closing with an invitation to add anything or supply reference docs such as existing
-  personas. One deferral check first: when the workspace's Meta onboarding is mid-flight —
+  personas, and noting that delivering the audit is what completes their onboarding. One deferral check first: when the workspace's Meta onboarding is mid-flight —
   `/agent/brain/<workspace>/data-sources/meta/account-context.md` exists with
   interpretation fields not yet confirmed — hold the offer for this run; a backfill completing
   mid-onboarding never interjects, and a later daily run sends the offer once the context

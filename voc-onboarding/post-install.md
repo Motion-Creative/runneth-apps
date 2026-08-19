@@ -50,31 +50,34 @@ landed. Post-install and the raw sync routines do not create it; its initial abs
 
 Idempotency, per workspace:
 
-- **This workspace's setup (steps 1 and 2):** done when this workspace is listed in the
-  `runneth:voc-onboarded` roster in `/agent/user.md` (step 3), **or** in the legacy
-  `runneth:meta-voc-onboarded` roster left by the combined meta-and-voc-onboarding
-  package - that package already created this workspace's VoC sync routines, so honor
-  its entry as completion and never re-run setup or duplicate its routines. If either
-  roster lists this workspace, this sequence already ran - do not repeat it. The one
+- **This workspace's setup (steps 1 through 4):** already ran when this workspace is
+  listed in the `runneth:voc-connected` block or the `runneth:voc-onboarded` roster in
+  `/agent/user.md` (step 5), **or** in the legacy `runneth:meta-voc-onboarded` roster
+  left by the combined meta-and-voc-onboarding package - that package already created
+  this workspace's VoC sync routines, so honor its entry as full completion and never
+  re-run setup or duplicate its routines. If any of those list this workspace, do not
+  repeat the sequence. A `voc-connected` workspace is not fully onboarded - the audit
+  pipeline owns the rest - but its technical setup is done; re-running for it only
+  happens as a resume to add a newly connected platform. The one
   exception is the explicit reinstall or upgrade the activation instruction names: then
   re-run the sequence for this workspace as a resume, never a restart - setup skips any
   platform whose workspace-named routine already exists (same pinned account, no
-  re-confirmation), and the roster entry stays exactly as it is - a workspace is never
-  listed twice. If neither roster lists it, run the steps now even when other workspace
+  re-confirmation), and the roster entries stay exactly as they are - a workspace is
+  never listed twice. If nothing lists it, run the steps now even when other workspace
   folders are already populated and other workspaces are listed in the rosters. Never
   read, copy, rename, or overwrite another workspace's folder to serve this one.
 - **Partial setup (`runneth:voc-partial`):** a workspace listed in the
-  `runneth:voc-partial` block (written by step 3 when Meta ad comments was the only
+  `runneth:voc-partial` block (written by step 5 when Meta ad comments was the only
   reachable customer-voice source) already ran this sequence - its ad-comments sync
-  exists and keeps running - but onboarding is incomplete by design: it finishes only
+  exists and keeps running - but onboarding is stalled by design: it moves only
   when a dedicated customer-voice platform is connected. Re-running the sequence for a
   partial workspace is always a resume: keep the existing routines, set up any newly
-  connected platform, and let step 3 decide whether the workspace graduates to the
-  onboarded roster.
-- **Interrupted runs:** if no roster and no partial block lists this workspace but its
-  `voc-sync-<workspace>-*` routines already exist, a previous run died before step 3:
-  resume rather than restart - keep the existing routines, set up any platform still
-  missing one, and finish through step 3.
+  connected platform, and let step 5 decide whether the workspace graduates to the
+  connected block.
+- **Interrupted runs:** if no roster and no partial or connected block lists this
+  workspace but its `voc-sync-<workspace>-*` routines already exist, a previous run
+  died before step 5: resume rather than restart - keep the existing routines, set up
+  any platform still missing one, and finish through step 5.
 - **Renames:** if this workspace has no routines under its current slug but active
   `voc-sync-*` routines carry this workspace's id in their prompt under an older name,
   the workspace was renamed - cancel those routines, move
@@ -129,12 +132,15 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
      Read the block from context - no command fetches it, and running probes to
      "discover" keys is wasted motion. A bounded `secure-fetch run` (or
      `secret run --env KEY=<SECRET_KEY> -- true`) confirms a specific key works before
-     building on it - confirmation, not discovery.
+     building on it - confirmation, not discovery. **A stored Apify key is itself a
+     reachability fact**: Reddit, X, and Amazon Reviews have no dependable native OAuth
+     path, so an Apify key makes them reachable through Apify actors - count them
+     reachable when the key exists.
    - **Meta: the workspace listing is the answer.** A Meta workspace showing as
      connected (`motion workspaces`) is the entire reachability test for ad comments -
      a connected Meta workspace is itself a reachable VoC platform, because ad
      comments are customer voice. Never verify Meta with a data pull - no insights
-     query, no creative probe: step 2 creates the routine on connected alone and its
+     query, no creative probe: step 4 creates the routine on connected alone and its
      scheduled runs absorb API errors, so a probe cannot change the outcome, only
      spend time.
 
@@ -150,24 +156,54 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    no recipe still counts. Integrations and stored secrets are VM-wide, so a platform
    reachable for one workspace is reachable here too; what changes per workspace is where
    its data lands.
-2. **Set up the recurring syncs (they run in the background).** For each reachable VoC
-   platform, run the
+2. **Open with the source inventory and the channel question - never a blind ask,
+   never a silent setup.** Step 1's probe runs silently; its findings do not stay that
+   way. Before any routine exists, send one message with three parts, in plain
+   customer language ("what I can already see", "where you hear from customers" -
+   never slugs, commands, or internals):
+   - **What is already visible.** Lead with the honest inventory: "Here's what I can
+     already see for <workspace>: ..." naming each connected or reachable source in
+     plain words - a Meta ad account, a Gorgias support inbox, an Apify account that
+     opens up Reddit and Amazon reviews. If ad comments are the only thing visible,
+     say so plainly; that frames why the next question matters.
+   - **What can be connected**, as categories with concrete examples, so the person
+     never has to know platform names cold:
+     - Customer reviews - Yotpo, Trustpilot, Judge.me
+     - Customer support - Zendesk, Gorgias, Intercom
+     - Post-purchase surveys - Narvar, AfterShip, Malomo, Loop Returns, Rebuy
+     - Social listening - specific Reddit threads, or X/Twitter
+   - **The direct question, as the closer:** "Which of these do you actually hear
+     from customers on?"
+
+   Stop there for the turn. The answer decides what gets connected next - a category
+   list is never a license to set up everything on it.
+3. **Answer with the plan, numbered, before any work happens.** When the person names
+   their channels, respond with the plan as explicit numbered steps - never move
+   silently into connection work:
+
+   1. Connect the named platforms that aren't connected yet. Any social-listening
+      channel - Reddit, X, or "social listening" generally - routes through Apify:
+      immediately suggest connecting an Apify account and locating the right actor
+      for it, since those platforms have no native connect path.
+   2. Set up the daily sync that lands each source in the brain.
+   3. Confirm where updates should land: this conversation, Slack (a named channel or
+      thread, offered only when the Slack integration is connected), or somewhere
+      else they name.
+
+   The plan message itself carries the open questions - the delivery-destination
+   choice (plan point 3) plus the account-confirmation question for every platform
+   that needs a pin - as one compact block, then stops for the turn. One destination
+   answer covers every routine this install creates; on a resume, reuse the
+   destination the workspace's existing `voc-sync-*` routines already carry instead
+   of re-asking. When the answers arrive, walk the person through any connections
+   plan point 1 named, then execute steps 4 through 6 in that same turn.
+4. **Set up the recurring syncs (they run in the background).** For each reachable or
+   newly connected VoC platform, run the
    voc-data-pull skill's "Set up the recurring sync" procedure: pin the platform account
-   to this workspace, create the `voc-sync-<workspace>-<platform>` routine, and kick its
-   first run. Two things can need a human answer before any routine exists. First, **the
-   delivery destination** - the skill requires asking where routine updates should land:
-   this web conversation, or Slack (a named channel or thread, offered only when the
-   Slack integration is connected). One answer covers every routine this install
-   creates; on a resume, reuse the destination the workspace's existing `voc-sync-*`
-   routines already carry instead of re-asking. Second, the pin - the skill's step 1 -
-   because accounts are org-level with no workspace tag, so which account belongs to
-   this workspace is never inferred. Handle both inside this install turn: after the
-   reachability check, ask one compact block - the delivery-destination question plus
-   the account-confirmation question for every platform that needs one - and stop there
-   for the turn. When the answers arrive, create and kick every confirmed platform's
-   routine (auto-pinnable platforms - the org has exactly one Motion workspace - and
-   Meta ad comments only waited on the destination), then continue through steps 3 and
-   4 in that same turn. A platform still waiting on its account answer appears in the
+   to this workspace (accounts are org-level with no workspace tag, so which account
+   belongs to this workspace is never inferred - that is what step 3's confirmations
+   settled), create the `voc-sync-<workspace>-<platform>` routine, and kick its
+   first run. A platform still waiting on its account answer appears in the
    closing message as "waiting on a person - account confirmation" and its routine is
    created the moment that answer arrives. A routine is never created on an unconfirmed
    account or an unconfirmed delivery destination just to keep the backfill
@@ -199,48 +235,52 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    VoC data inside this conversation. If old canceled `voc-sync-*` routines exist from a
    previous install, ignore them - canceled is terminal; never resume or reuse one, always
    create fresh. Leave other workspaces' `voc-sync-*` routines alone.
-3. **Record the outcome in `/agent/user.md`** - one Write (file-write tool only; Bash
+5. **Record the outcome in `/agent/user.md`** - one Write (file-write tool only; Bash
    cannot touch that file - reads and writes are both refused, and the edit/patch tool
    fails validation; the file's current contents are already in your system prompt).
    This is what the package's activation gate checks on every later turn, and it is per
-   workspace, so it is the last thing done after step 2's routines are created and
-   kicked. **Which block gets written depends on what step 2 reached:**
+   workspace, so it is the last thing done after step 4's routines are created and
+   kicked. Connection is the technical half of onboarding, so this step never writes
+   the onboarded roster - `runneth:voc-onboarded` is written only by the voc-audit
+   skill, when the initial audit and gap analysis have been delivered and the standing
+   refresh routine exists. **Which block this step writes depends on what step 4
+   reached:**
    - **At least one dedicated customer-voice platform** (any platform other than
      `meta-ad-comments`) got a routine created, or is waiting only on an account
      confirmation (its routine arrives in the follow-up turn and does not block this
-     write) -> onboarding is complete: append this workspace to the
-     `runneth:voc-onboarded` roster, and if a `runneth:voc-partial` block lists this
+     write) -> the technical half is done: append this workspace to the
+     `runneth:voc-connected` block, and if a `runneth:voc-partial` block lists this
      workspace, remove it from that list in the same Write (drop the whole partial
-     block when its list empties).
+     block when its list empties). The connected block:
+
+     > `<!-- BEGIN runneth:voc-connected -->`
+     > `voc-onboarding has connected sources and started syncs for these workspaces (audit and gap analysis pending): <workspace>[, <workspace>...]`
+     > `<!-- END runneth:voc-connected -->`
+
    - **Meta ad comments was the only reachable customer-voice source** -> onboarding is
-     **not complete** and this workspace is never written to the onboarded roster now.
-     Record it in the partial block instead, so the activation keeps reminding until a
-     dedicated platform is connected:
+     **not started in earnest** and this workspace is never written to the connected
+     block now. Record it in the partial block instead, so the activation keeps
+     reminding until a dedicated platform is connected:
 
      > `<!-- BEGIN runneth:voc-partial -->`
      > `voc-onboarding is waiting on a customer-voice integration for these workspaces: <workspace>[, <workspace>...]`
      > `<!-- END runneth:voc-partial -->`
 
-   Both blocks share the same mechanics: if the block is absent, add it; if it exists,
-   append this workspace to its list and leave the existing names alone - never rewrite
-   a list to hold only this workspace, and a workspace is never listed twice in one
-   block. Leave any legacy `runneth:meta-voc-onboarded` block exactly as it is - this
-   package neither writes nor removes it. Compose the whole file from its current
-   contents plus this change - current as of this moment in the turn, not as of the
-   turn's start - and follow the whole-file write chain above. Touch nothing outside
+   All the package's blocks share the same mechanics: if the block is absent, add it;
+   if it exists, append this workspace to its list and leave the existing names alone -
+   never rewrite a list to hold only this workspace, and a workspace is never listed
+   twice in one block. Leave any legacy `runneth:meta-voc-onboarded` block exactly as
+   it is - this package neither writes nor removes it. Compose the whole file from its
+   current contents plus this change - current as of this moment in the turn, not as of
+   the turn's start - and follow the whole-file write chain above. Touch nothing outside
    the sentinels, and check the payload before writing: the base document appears
    exactly once and each affected block's sentinel pair appears exactly once. After the
-   Write succeeds, retain that exact payload as the current one. The onboarded roster
-   block:
-
-   > `<!-- BEGIN runneth:voc-onboarded -->`
-   > `voc-onboarding has completed for these workspaces: <workspace>[, <workspace>...]`
-   > `<!-- END runneth:voc-onboarded -->`
+   Write succeeds, retain that exact payload as the current one.
 
    Write the resolved folder name, not the display name or the id - the same string used for
    `/agent/brain/<workspace>/`, so the gate and the folder always agree.
-4. **Close the turn. Which closing message goes out depends on what step 2 reached** -
-   the same fork as step 3:
+6. **Close the turn. Which closing message goes out depends on what step 4 reached** -
+   the same fork as step 5:
 
    **When at least one dedicated customer-voice platform got a routine (or waits only
    on account confirmation), send the readiness report - status only, never content.**
@@ -248,11 +288,14 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    person / skipped and why). The report carries no findings and no numbers of any
    kind: no account numbers or metrics, no tallies or counts, no version labels. If a
    part is waiting on a person, name the topic in two or three words ("account
-   confirmation"), not the question. The report's shape is literal:
+   confirmation"), not the question. The header says sources are connected - never
+   "install complete" or "onboarding complete", because onboarding finishes only when
+   the audit and gap analysis are delivered. The report's shape is literal:
 
-   > voc-onboarding - install complete for <workspace>
+   > voc-onboarding - sources connected for <workspace>
    > - VoC sync: <per-platform status, one line total>
-   > - Voice of Customer Audit: waits for backfill completion and a person's yes
+   > - Voice of Customer Audit & gap analysis: waits for backfill completion and a
+   >   person's yes - your onboarding wraps up when it's delivered
 
    Fill only the angle-bracket slots; append nothing else to any bullet. The workspace
    name in the header is identity, not a finding - it is the one detail that belongs there,
@@ -262,8 +305,8 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    detail after "done". Nothing follows the report.
 
    **When Meta ad comments is the only reachable customer-voice source, do not send
-   that report** - "install complete" would be false, and step 3 just recorded the
-   workspace as partial. Send the connect-an-integration message instead. Its one job
+   that report** - step 5 just recorded the workspace as partial. Send the
+   connect-an-integration message instead. Its one job
    is to get a customer-voice platform connected: the ask is the headline and the
    closing line, and ad comments appear exactly once, in a parenthetical at the end,
    never as the lead. The shape:
@@ -272,14 +315,13 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    > integration.**
    >
    > To find out what your customers actually think, I need to hear them somewhere -
-   > reviews, support tickets, surveys, that kind of thing. Pick whichever one your
-   > team already uses:
+   > reviews, support tickets, surveys, that kind of thing. Pick whichever ones your
+   > team actually hears from customers on:
    >
-   > - Reviews - Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io
-   > - Support - Gorgias, Intercom, Zendesk
-   > - Surveys & messaging - Klaviyo, Attentive, Hotjar
-   > - Communities - Reddit, Discord, YouTube
-   > - Sales calls - Gong
+   > - Customer reviews - Yotpo, Trustpilot, Judge.me
+   > - Customer support - Zendesk, Gorgias, Intercom
+   > - Post-purchase surveys - Narvar, AfterShip, Malomo, Loop Returns, Rebuy
+   > - Social listening - specific Reddit threads, or X/Twitter
    >
    > Tell me which one you use and I'll walk you through connecting it - and if yours
    > isn't on this list, name it anyway and I'll check. The moment it's linked, I'll
@@ -290,19 +332,21 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
 
    The wording may flex a little to fit the conversation, but it keeps this structure:
    the integration ask opens and closes the message, the platform list stays curated to
-   exactly these names (the catch-all sentence covers everything else - never dump the
-   full registry), the ad-comments line stays a single parenthetical at the bottom, and
-   nothing anywhere calls the setup complete, done, or finished. No commands, no
-   counts, no internals. When the person names a platform, walk them through connecting
-   it at a high level (the OAuth connect or, for key-based platforms, the secret-collection
-   flow) and, once connected, resume this sequence for that platform - step 3 then
-   graduates the workspace to the onboarded roster.
+   exactly these categories and names (the catch-all sentence covers everything else -
+   never dump the full registry), the ad-comments line stays a single parenthetical at
+   the bottom, and nothing anywhere calls the setup complete, done, or finished. No
+   commands, no counts, no internals. When the person names a platform, walk them
+   through connecting it at a high level (the OAuth connect or, for key-based platforms
+   and social listening via Apify, the secret-collection flow) and, once connected,
+   resume this sequence for that platform - step 5 then moves the workspace from the
+   partial block to the connected block, and onboarding completes when the audit and
+   gap analysis are delivered.
 
 Mechanics for every step above: when a step updates any existing file, do not use the
 edit/patch tool - it fails validation on this VM. Read the file and write it back whole
 (python for mechanical splices, the file-write tool for short files) - except
 `/agent/user.md`, which Bash cannot touch at all (the file-write tool is the only
-mechanism - the single Write in step 3).
+mechanism - the single Write in step 5).
 
 If nothing is reachable at all: say so and stop. Do not watch or poll; when a platform is
 connected later, setup runs on ask.
@@ -314,13 +358,19 @@ connected later, setup runs on ask.
   waiting on a customer-voice integration (see the activation instruction for its
   shape). When a person connects a platform and says yes - or names a platform to
   connect - this sequence re-runs as a resume for that workspace: the new platform gets
-  its sync, and step 3 moves the workspace from the partial block to the onboarded
-  roster. That is the moment onboarding completes.
+  its sync, and step 5 moves the workspace from the partial block to the connected
+  block.
 - **The Voice of Customer Audit offer** - once the workspace's VoC backfill is fully
   covered, the sync routine's daily runs offer the `voc-audit` skill once (deferring
-  while a Meta onboarding is mid-flight, per the skill's delivery rules). The skill runs
-  only on a yes or an explicit audit request, saves one compiled audit page, and never
-  auto-regenerates.
+  while a Meta onboarding is mid-flight, per the skill's delivery rules). The initial
+  audit runs only on a yes or an explicit audit request and always includes the gap
+  analysis. Delivering it is what completes onboarding: the skill creates the standing
+  `voc-audit-refresh-<workspace>` routine and moves the workspace from the connected
+  block to the `runneth:voc-onboarded` roster.
+- **The audit refresh** - after onboarding completes, the refresh routine keeps the
+  audit and gap analysis current as new customer voice lands, notifies the chosen
+  destination in plain language only when the audit moved, and once a month asks
+  whether anything is missing from the picture.
 - **Daily VoC syncs** - the routines created above. Each run notifies the chosen
   delivery destination (web conversation or Slack) only when something new landed;
   a run that found nothing new is silent.
