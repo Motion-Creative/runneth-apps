@@ -157,7 +157,7 @@ Folder: `voc-data-pull/`
   each comment's author, date, and platform, engagement, and the creative's total comment
   count). Recipes exist for
   Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom,
-  Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord, YouTube, and Meta ad comments
+  Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord, and Meta ad comments
   (the authoritative table is the skill's Step 1) - but the scope is customer-voice data,
   not the recipe list: any other reachable VoC platform gets pulled live-adapted, no recipe
   needed. Any platform may be reachable by OAuth connection **or** a stored API key - the

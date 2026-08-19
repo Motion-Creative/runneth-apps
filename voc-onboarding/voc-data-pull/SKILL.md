@@ -6,7 +6,7 @@ description: |
   the current workspace's brain folder, one file per item (Meta ad comments: one file per
   creative). Use when ANY VoC platform - one with a recipe
   (Judge.me, Trustpilot, Yotpo, Junip, Okendo, Stamped, Reviews.io, Gorgias, Intercom,
-  Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord, YouTube) or any other
+  Zendesk, Klaviyo, Attentive, Gong, Hotjar, Reddit, Discord) or any other
   reachable platform whose data is customer voice - is reachable by any path - OAuth
   connection, stored API key, or Motion native - and its data should land in files, or when
   the user asks to "pull the reviews", "dump the reviews", "pull support tickets", "sync
@@ -76,7 +76,7 @@ Two connection paths exist and the pull mechanics differ:
 
 | Path | Platforms | How to call the API |
 |---|---|---|
-| Pipedream OAuth | `judge_me`, `trustpilot`, `yotpo`, `gorgias_oauth`, `intercom`, `reddit`, `zendesk`, `klaviyo`, `attentive`, `gong`, `hotjar`, `discord`, `youtube_data`, `junip`, `typeform` and `reviews_io` (keys-auth in Pipedream) | `integrations` CLI: check `integrations status --app <slug>`, then `integrations proxy --app <slug> --account <pinnedAccountId> --method GET --path <path>` (or the registered app command). The account id comes from the workspace's pin (see "Pin the account" under setup), never from picking off the list at pull time. |
+| Pipedream OAuth | `judge_me`, `trustpilot`, `yotpo`, `gorgias_oauth`, `intercom`, `reddit`, `zendesk`, `klaviyo`, `attentive`, `gong`, `hotjar`, `discord`, `junip`, `typeform` and `reviews_io` (keys-auth in Pipedream) | `integrations` CLI: check `integrations status --app <slug>`, then `integrations proxy --app <slug> --account <pinnedAccountId> --method GET --path <path>` (or the registered app command). The account id comes from the workspace's pin (see "Pin the account" under setup), never from picking off the list at pull time. |
 | Stored secret (customer API key) | `okendo`, `stamped`, `bazaarvoice`, `loox`, `fera`, `feefo`, `powerreviews`, `shopper_approved`, `provesource`, `qualtrics` - and **any platform above whose org stores a key instead of connecting OAuth** | `secure-fetch` (`secure-fetch run --url <url> --secret-key <SECRET_KEY> ...`) per `/runneth/references/secure-fetch-cli--command-contracts.md`. If no stored key exists, request one via the secret-collection flow - never ask for the key in chat. |
 | Apify (stored Apify key) | Reddit, X/Twitter, Amazon Reviews - social listening and marketplaces with no dependable native OAuth path | A stored Apify key drives Apify actors through `secure-fetch` against the Apify API. Locate the right actor for the target (a subreddit scraper, an X search actor, an Amazon reviews actor), run it with the date window, and map its dataset items onto the unified record through Step 2's no-recipe path. **This is the default path for social listening: any mention of Reddit, X, or "social listening" triggers an immediate suggestion to connect an Apify account** - never wait to be told Apify is the route. If no Apify key is stored, request one via the secret-collection flow. |
 | Motion native | Meta ad comments | `motion meta creative-comments` (no Runneth connect involved) |
@@ -289,7 +289,7 @@ Common fields (every item; Meta ad-comment files use the per-creative record bel
 | `author_name` | Reviewer/customer/commenter display name |
 | `author_contact` | **Always null for now** (PII policy pending) |
 | `reply_count` | Number of replies/messages **beyond the root item** (a 4-message ticket has `reply_count: 3`); null when unknown |
-| `parent_ref` | For reply items (e.g. Reddit or YouTube comments): the parent item's `external_id`. Null for root items. |
+| `parent_ref` | For reply items (e.g. Reddit comments): the parent item's `external_id`. Null for root items. |
 | `source_url` | Link back to the item on the platform. Set it only from the recipe's `source_url` mapping; most platforms provide none in the list payload - then it is null. Never invent a URL pattern. |
 
 Review fields (null for the other types):

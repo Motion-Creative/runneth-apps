@@ -118,7 +118,7 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
      ```
      for s in judge_me trustpilot yotpo junip okendo stamped reviews_io \
               gorgias_oauth intercom zendesk klaviyo attentive gong hotjar \
-              reddit discord youtube_data typeform; do
+              reddit discord typeform; do
        echo "== $s"; integrations status --app "$s"
      done
      ```

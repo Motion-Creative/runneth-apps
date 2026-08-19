@@ -346,18 +346,6 @@ gap in the setup report rather than probing a key that cannot exist.
   `parent_ref` <- referenced message id for replies/threads; `source_url` <- message link
   (`https://discord.com/channels/<guild>/<channel>/<message>`).
 
-## youtube (registry: `youtube_data`) - doc-grounded, verify on first connect. Video comments.
-
-- Writes per-item `comment` files (community-post record, like Reddit comments). List:
-  `GET /youtube/v3/commentThreads?allThreadsRelatedToChannelId=<channelId>` (cursor
-  pagination via `pageToken`); replies ride in the thread payload or via `comments.list`.
-- Date bound: none server-side on threads - order by time and cut client-side on
-  `publishedAt`.
-- Field mapping (doc-grounded): body <- `textOriginal`; `author_name` <-
-  `authorDisplayName`; `created_at` <- `publishedAt`; `reactions_total` <- `likeCount`;
-  `reply_count` <- `totalReplyCount`; `parent_ref` <- parent comment id for replies;
-  `source_url` <- video URL + comment anchor.
-
 ## Variation summary (what actually changes per platform)
 
 | dimension | judge_me | trustpilot | yotpo | junip | okendo | stamped |

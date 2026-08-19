@@ -42,6 +42,9 @@ of onboarding install and test independently.
   new customer voice lands, notifies the chosen destination in plain language only
   when the audit moved, and once a month asks whether there are insights or sources
   the audit isn't capturing.
+- **YouTube is no longer a customer-voice source**: removed from the reachability
+  probe, the connection-path table, the recipes, and every curated list. It is not
+  offered, probed, or synced.
 - **A dedicated platform is still required**: when Meta ad comments is the only
   reachable customer-voice source, the workspace is recorded in a `runneth:voc-partial`
   block. The install closes with a
