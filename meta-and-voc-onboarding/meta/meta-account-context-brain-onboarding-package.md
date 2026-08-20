@@ -53,7 +53,7 @@ Merge the block using the standard behavior-snippet convention (author it from
 **MERGE INSTRUCTIONS:** If a block with the sentinel `runneth:account-context-guard` already
 exists in `/agent/user.md`, replace it in place. Otherwise append it. Never duplicate it. Do not
 edit anything outside the sentinels. The canonical copy of this block is the staged guard file
-`/agent/brain/meta-and-voc-onboarding/meta-onboarding-rules/meta-analysis-account-context.md` - merge from that file,
+`/agent/brain/packages/meta-and-voc-onboarding/meta-onboarding-rules/meta-analysis-account-context.md` - merge from that file,
 copying the block byte-for-byte; never paraphrase, condense, or restate any part of it (the
 package's post-install run does this in its single scripted guard merge). The block below is
 shown for context and must stay identical to the staged file.
@@ -62,12 +62,12 @@ shown for context and must stay identical to the staged file.
 <!-- BEGIN runneth:account-context-guard v3 -->
 Account context guard:
 
-- Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per
-  conversation; the `<workspace>` token above stays literal in this file.
+- Workspace folder: `/agent/brain/<brand>/`, where `<brand>` is this conversation's
+  brand name (the workspace's name) slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per
+  conversation; the `<brand>` token above stays literal in this file.
 - Before any ad-performance work for this account (rankings, "best ads," CPA/ROAS reads,
   winner or cut calls, creative performance judgments), read
-  /agent/brain/<workspace>/data-sources/meta/account-context.md first. Never read another workspace's folder to
+  /agent/brain/<brand>/integrations/meta/account-context.md first. Never read another workspace's folder to
   answer a question about this one.
 - If that file does not exist, or its required interpretation fields are not all [CONFIRMED],
   treat account interpretation as unknown. Offer to run the onboarding walkthrough (the
@@ -106,7 +106,7 @@ This context describes one workspace. Record the scope before pulling anything:
 Confirmed answers do not live in this worksheet. Runneth writes them to a durable brain file so
 future turns read them.
 
-- Create `/agent/brain/<workspace>/data-sources/meta/` if it does not exist. Save the filled
+- Create `/agent/brain/<brand>/integrations/meta/` if it does not exist. Save the filled
   result there as `account-context.md`. If a naming convention was confirmed, the operational
   decoder lives beside it as `naming-decoder.json` (Field 4 owns it). Per-creative content lives
   in Cacheth (summaries surfaced through Knoweth), not in brain files.
@@ -158,7 +158,7 @@ field_statuses:
   field_9_targets_thresholds: <CONFIRMED | AUTO | FLAGGED>
   field_10_reporting: <CONFIRMED | AUTO | FLAGGED>   # gates the report build, not validation
 open_flags: []                     # plain-language open items as a list; [] when none
-naming_decoder: </agent/brain/<workspace>/data-sources/meta/naming-decoder.json — or null when no convention>
+naming_decoder: </agent/brain/<brand>/integrations/meta/naming-decoder.json — or null when no convention>
 ```
 
 The account-context guard's all-confirmed check and the validation gate read
@@ -167,7 +167,7 @@ gates means Fields 1–9, the interpretation fields: validation never waits on F
 which gates only the report build. The one-line answer-register note
 lives in the "At a glance" section, not here — do not duplicate it into the metadata.
 
-- Index it in `/agent/INDEX.md` with aliases (account context, KPI hierarchy, how we judge ads,
+- Index it in `/agent/brain/brain-map.md` with aliases (account context, KPI hierarchy, how we judge ads,
   performance interpretation) and a one-line note.
 
 ---
@@ -257,7 +257,7 @@ real gap when an attribution tool is confirmed is which of its metrics the team 
 # Field-to-command map
 
 How to pull each field. Exact command shapes and flags live in the Motion CLI Data-Query Guide
-(`/agent/brain/meta-and-voc-onboarding/motion-cli-data-query-guide.md`); this table says which command
+(`/agent/brain/packages/meta-and-voc-onboarding/motion-cli-data-query-guide.md`); this table says which command
 answers which field and what to read from the result.
 
 | Field | Pull with | Extract |
@@ -461,13 +461,13 @@ sufficient.
 **Required output: the naming decoder JSON file**
 
 This field owns the account's naming interpretation; its operational output is a separate JSON
-decoder saved at `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`. Do not embed the full decoder in
+decoder saved at `/agent/brain/<brand>/integrations/meta/naming-decoder.json`. Do not embed the full decoder in
 `account-context.md` — it is too large for accounts with structured naming conventions.
 Reference it from `account-context.md` with a one-line note and a path link. The decoder is
 written and updated only through this field's confirmation; appending newly observed values to
 `known_values` is routine maintenance, structural changes go through re-confirmation.
 
-The decoder must be indexed in `/agent/INDEX.md` with aliases: naming decoder, ad name decoder,
+The decoder must be indexed in `/agent/brain/brain-map.md` with aliases: naming decoder, ad name decoder,
 naming convention, content program values, filter guide, creative identity.
 
 **JSON schema:**
@@ -543,7 +543,7 @@ the same identifier string.
 **Fields** (once, after the per-level entries)
 - Product/concept names live at: `<ad / ad set / campaign / multiple levels — AUTO, confirmed>` |
   Default filter level for bare product-name asks: `<adName unless confirmed otherwise>`
-- Decoder file: `</agent/brain/<workspace>/data-sources/meta/naming-decoder.json — written and indexed | not needed (no convention)>`
+- Decoder file: `</agent/brain/<brand>/integrations/meta/naming-decoder.json — written and indexed | not needed (no convention)>`
 
 ## Field 5 — Attribution model and windows
 
@@ -769,7 +769,7 @@ two beats in sequence.
 - Report sections: `<1. top ads | 2. by [dimension] | 3. seasonal | 4. naming breakdown>`
 - Confirmed or open: `<what the customer confirmed vs what is still pending>`
 
-On confirmation, write this into Field 10's own field section of `/agent/brain/<workspace>/data-sources/meta/account-context.md`, like every other field
+On confirmation, write this into Field 10's own field section of `/agent/brain/<brand>/integrations/meta/account-context.md`, like every other field
 (see "Where the filled result lives") — that is where the validation report build reads it.
 
 This field is also where report feedback lands. When a customer asks for a structural change
@@ -815,8 +815,8 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 - Fields confirmed: `<count>` / 10 (no report build until Field 10 confirms; validation
   starts on Fields 1–9)
 - Flagged fields needing the customer: `<list>`
-- Written to: `/agent/brain/<workspace>/data-sources/meta/account-context.md`
-- Indexed in `/agent/INDEX.md`: `<yes | no>`
+- Written to: `/agent/brain/<brand>/integrations/meta/account-context.md`
+- Indexed in `/agent/brain/brain-map.md`: `<yes | no>`
 - Guard merged into `/agent/user.md`: `<yes | no>`
 
 ---

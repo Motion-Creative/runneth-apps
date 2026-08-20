@@ -6,7 +6,7 @@
 building their weekly report. This is the "catch" in Connect → Train → Validate.**
 
 This is the third part of the Meta onboarding package. It runs after the
-**Account Context Brain** (`/agent/brain/<workspace>/data-sources/meta/account-context.md`) and the
+**Account Context Brain** (`/agent/brain/<brand>/integrations/meta/account-context.md`) and the
 **creative content layer** (Cacheth, summaries surfaced through Knoweth) are in place.
 
 The one-line model:
@@ -25,7 +25,7 @@ person catches the ball. This part is the catch.
 
 The question loop and the report build are **one training loop over one brain**. Every piece of
 feedback the customer gives during either is a training signal for
-`/agent/brain/<workspace>/data-sources/meta/account-context.md` (and its satellite, the naming decoder — Field 10 is one of its ten fields) —
+`/agent/brain/<brand>/integrations/meta/account-context.md` (and its satellite, the naming decoder — Field 10 is one of its ten fields) —
 never a fix to apply to the output directly. The report is a rendering of the context: the only
 way to fix the report is to fix the context and regenerate. The loop converges when the brain
 produces answers and a report the team recognizes as their own on the first try — corrections
@@ -71,7 +71,7 @@ idempotent.
 **MERGE INSTRUCTIONS:** If a block with the sentinel `runneth:meta-validation-gate` already
 exists in `/agent/user.md`, replace it in place. Otherwise append it. Never duplicate it. Do not
 edit anything outside the sentinels. The canonical copy of this block is the staged guard file
-`/agent/brain/meta-and-voc-onboarding/meta-onboarding-rules/meta-analysis-validation.md` - merge from that file,
+`/agent/brain/packages/meta-and-voc-onboarding/meta-onboarding-rules/meta-analysis-validation.md` - merge from that file,
 copying the block byte-for-byte; never paraphrase, condense, or restate any part of it (the
 package's post-install run does this in its single scripted guard merge). The block below is
 shown for context and must stay identical to the staged file.
@@ -80,22 +80,22 @@ shown for context and must stay identical to the staged file.
 <!-- BEGIN runneth:meta-validation-gate v8 -->
 Meta validation gate:
 
-- Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
-  workspace name slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
-  `<workspace>` token stays literal in this file. Every path below is inside this
+- Workspace folder: `/agent/brain/<brand>/`, where `<brand>` is this conversation's
+  brand name (the workspace's name) slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). Resolve it per conversation; the
+  `<brand>` token stays literal in this file. Every path below is inside this
   conversation's workspace folder, and each workspace validates independently.
-- When the Account Context Brain (/agent/brain/<workspace>/data-sources/meta/account-context.md) has all required
+- When the Account Context Brain (/agent/brain/<brand>/integrations/meta/account-context.md) has all required
   fields [CONFIRMED] and the creative content layer resolves (the workspace's creatives in
   Cacheth, surfaced through Knoweth - or, where the sandbox cache feature is disabled, live
   content pulls per the Cacheth Command Reference's ladder), and validation has not yet been
-  completed (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
+  completed (/agent/brain/<brand>/integrations/meta/validation.md missing or MVCE state = off), open the validation
   experience described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
   the customer has confirmed Runneth's answers through the question loop, the weekly report is
   built, live, and approved by the customer (in the form they picked — deck, dashboard, or
   document), a refresh routine keeps the report updated on an agreed cadence, and Slack is
   connected so the team can ask questions. Record that state in
-  /agent/brain/<workspace>/data-sources/meta/validation.md.
+  /agent/brain/<brand>/integrations/meta/validation.md.
 - The question loop always runs first. Never proactively offer or lead with the weekly report
   before the question set has been run and confirmed - the report is a soft offer at the end.
   A person who explicitly asks for a report in any form (deck, dashboard, or document) still
@@ -121,7 +121,7 @@ Meta validation gate:
 Do not start validation until both are true:
 
 1. **Account Context Brain is `[CONFIRMED]`** - check the field statuses in the "File
-   metadata" block at the end of `/agent/brain/<workspace>/data-sources/meta/account-context.md`. The interpretation
+   metadata" block at the end of `/agent/brain/<brand>/integrations/meta/account-context.md`. The interpretation
    fields (1-9) all signed off by a person; Field 10 confirms alongside them when its
    walkthrough section ran, but validation never waits on it - it gates only the report build.
    If any of Fields 1-9 is still `[AUTO]` or `[FLAGGED]`, finish that first. Validating
@@ -151,7 +151,7 @@ the sync, not files.
 
 ## 4. Where the result lives (persistence)
 
-Save the validation record to `/agent/brain/<workspace>/data-sources/meta/validation.md`. It captures:
+Save the validation record to `/agent/brain/<brand>/integrations/meta/validation.md`. It captures:
 
 - The question set the customer validated — the generated baseline and account-specific
   questions plus any they added — and their confirmed answers.
@@ -165,7 +165,7 @@ Save the validation record to `/agent/brain/<workspace>/data-sources/meta/valida
 - The MVCE state block (on/off, date, who signed off).
 
 Write it as a plain-language reference document, the way a sharp analyst would hand off an account
-to a teammate. State conclusions, not statuses. Index it in `/agent/INDEX.md` with aliases
+to a teammate. State conclusions, not statuses. Index it in `/agent/brain/brain-map.md` with aliases
 (validation, MVCE, weekly report, starter questions, onboarding proof) and a one-line note.
 
 **Write it incrementally, not at the end.** Update `validation.md` after every confirmed
@@ -236,7 +236,7 @@ confirms or adds.** These are the foundational questions, not frequent queries.
    ready to scale?
 5. Show me all our [product] ads — using a real product or concept name from the confirmed
    naming decoder.
-6. When `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` exists: What are
+6. When `/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md` exists: What are
    customers telling us they love, object to, or misunderstand — and which of our current
    ads speak to those signals?
 
@@ -369,8 +369,8 @@ Rules for the loop:
   one-line answer-register note in account-context.md's "at a glance" section — the guard
   makes every future performance answer load it. See the Data-Query Guide's answering
   posture.
-- Every correction is logged to `/agent/brain/<workspace>/data-sources/meta/validation.md` and applied to
-  `/agent/brain/<workspace>/data-sources/meta/account-context.md` so the fix is durable.
+- Every correction is logged to `/agent/brain/<brand>/integrations/meta/validation.md` and applied to
+  `/agent/brain/<brand>/integrations/meta/account-context.md` so the fix is durable.
 
 ## Step 3 — Offer the weekly report (the artifact)
 
@@ -490,7 +490,7 @@ Validation is complete, and the Minimum Viable Context Engine is on, when all fi
 4. A refresh routine keeps the report updated on an agreed cadence.
 5. Slack is connected so the team can ask Runneth questions.
 
-Record the state in `/agent/brain/<workspace>/data-sources/meta/validation.md`:
+Record the state in `/agent/brain/<brand>/integrations/meta/validation.md`:
 
 ```yaml
 mvce_state: on            # on | off
@@ -517,7 +517,7 @@ a report — but MVCE stays off until the report is built and approved, which re
 Field 10 spec first.
 
 **When MVCE flips on, pass the baton.** Validation's last act is pointing at the Knoweth
-organize part (`knoweth-organize-onboarding-package.md`, staged beside this doc): its gates
+organize part (`knoweth-setup.md`, staged beside this doc): its gates
 open the organize step once the account questions are answered and content has landed. Check
 that its guard blocks (`runneth:knoweth-organize`, `runneth:knoweth-brain`) are merged into
 `/agent/user.md` per that doc's MERGE INSTRUCTIONS; if they are not, offer the merge now.
@@ -542,7 +542,7 @@ confidence, worth a follow-up, not a silent pass.
   conversion event, a naming-system change, a new product line, or a materially different funnel. Re-running
   the affected questions in the loop is enough; a full re-onboard is not.
 - Log re-validations in
-  `/agent/brain/<workspace>/data-sources/meta/_changelog.md`, the same convention the other
+  `/agent/brain/<brand>/integrations/meta/_changelog.md`, the same convention the other
   Meta parts use.
 
 ---

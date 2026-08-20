@@ -1,6 +1,7 @@
 # Template: support conversation file
+(`<bank-home>` = the routine's resolved customer-voice bank home - the literal path in the routine prompt.)
 
-Path: `/agent/brain/<workspace>/data-sources/voc/<platform>/ticket-<external_id>.md`
+Path: `<bank-home>/<platform>/ticket-<external_id>.md`
 (keyed by ticket id so re-pulls overwrite the same file).
 
 Layout: H1 headline, bold-label human header (two trailing spaces end every label line;

@@ -4,6 +4,40 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 7 - 2026-08-19
+
+- Renamed the seeded layout to the brand schema: brand-named brain homes
+  (`/agent/brain/<brand>/`), per-source families under `integrations/`, the raw
+  customer-voice bank at `integrations/voice-of-customer/`, and package docs under
+  `/agent/brain/packages/meta-and-voc-onboarding/`. Slug rule, exact-workspace-ID
+  authority, skill IDs, and `voc-sync-*` routine names unchanged. Existing installs
+  keep their current paths as adopted homes; nothing migrates automatically.
+- Seeded the brain map: `/agent/brain/brain-map.md` created from a staged template at
+  activation (ask routing, a lanes section with the cacheth corpus lane pre-declared,
+  the map, entries), with existing `/agent/INDEX.md` entries carried over verbatim and
+  a pointer left at the old path. A fifth guard (`runneth:brain-map` v2) keeps it
+  current: banks get corpus-lane declarations, brand homes declare their workspace ID,
+  person homes declare `kind: user` - created on a verified person's first personal
+  save (the VM's own person-area convention, else `team/<name>/<name>.md`), one home
+  and one declaration per person.
+- Declared the onboarded workspace's lanes at install: the brand lane and the
+  voice-of-customer corpus lane land in the map during post-install; the organize step
+  (guard v6) refreshes coverage and declares any further banks. Additional workspaces
+  add declarations beside the first.
+- Added install-time brain reading (step 0.5): classify the brain, inventory existing
+  structure into the map as lane declarations in the brain's own terms, adopt existing
+  brand homes and customer-voice caches, import corpus-search source registrations as
+  person-confirmed corpus lanes, and never write a duplicate sync over an external
+  pipeline without a yes.
+- Replaced the knoweth-organize reference with `knoweth-setup.md`: the lane-first
+  retrieval model (corpus, brand, user, general), what the package sets up versus what
+  the runtime owns, what is true today versus arriving, and search-by-kind-of-place.
+  The knoweth-organize (v6) and knoweth-brain (v5) guards drop engine-version claims;
+  the brain-maintenance routine's sweep now owns brain-map freshness including
+  rebuild-from-scan.
+- Rewrote the activation offer and readiness report in customer language; retrieval
+  and packaging vocabulary is banned from customer-visible text.
+
 ## 6 - 2026-08-14
 
 - Made `dashboard-design` an automatic internal handoff whenever Meta Validation builds,
@@ -62,17 +96,17 @@ The package as it ships:
   of the GitHub source. `installPolicy: manual`, `updatePolicy: auto`,
   `categories: []`.
 - Stages onboarding docs and four ready-made guard blocks into
-  `/agent/brain/meta-and-voc-onboarding/`, plus the `voc-data-pull`, `voc-audit`,
+  `/agent/brain/packages/meta-and-voc-onboarding/`, plus the `voc-data-pull`, `voc-audit`,
   `meta-ad-performance-analysis`, and `onboarding-walkthrough` skills into the
   skills root.
 - **One folder per workspace.** Everything the package produces lands in
-  `/agent/brain/<workspace>/` (workspace name slugged: lowercase; non-alphanumeric
+  `/agent/brain/<brand>/` (brand name (the workspace's name) slugged: lowercase; non-alphanumeric
   runs become one hyphen; trim hyphens): the Meta interpretation layer under
-  `data-sources/meta/` (`account-context.md`, `naming-decoder.json`,
-  `validation.md`, `_changelog.md`), VoC data under `data-sources/voc/<platform>/`
+  `integrations/meta/` (`account-context.md`, `naming-decoder.json`,
+  `validation.md`, `_changelog.md`), VoC data under `integrations/voice-of-customer/<platform>/`
   (Meta ad comments are the standard pull of every onboarding, one file per creative
-  under `data-sources/voc/meta-ad-comments/`),
-  the compiled VoC audit at `data-sources/voc/voice-of-customer-audit.md`, and
+  under `integrations/voice-of-customer/meta-ad-comments/`),
+  the compiled VoC audit at `integrations/voice-of-customer/voice-of-customer-audit.md`, and
   `_tag-vocabulary.md` at the workspace root alongside that workspace's general
   `_changelog.md`. A second workspace in the same org onboards additively without
   touching the first.
@@ -92,7 +126,7 @@ The package as it ships:
   pins a human-confirmed account per workspace per platform; every sync run
   addresses that exact account (`--account <accountId>`) and never falls back to
   another. Auto-pin only when the org has exactly one Motion workspace. Routines
-  are workspace-named (`voc-sync-<workspace>-<platform>`), each carrying its
+  are workspace-named (`voc-sync-<brand>-<platform>`), each carrying its
   workspace folder path, workspace id, and pinned account id literally - routine
   runs have no workspace attached to resolve.
 - **Voice of Customer Audit** (`voc-audit` skill): the manually triggered compiled
@@ -107,10 +141,10 @@ The package as it ships:
   preview the method (split by product, score 1-5, the five buckets, personas)
   and invite additions and reference docs such as existing personas, which the
   run honors. It saves one canonical compiled page at
-  `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`, with
+  `/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md`, with
   Knoweth metadata and raw-item citations, indexed in `/agent/INDEX.md`. The
   workspace's first fully covered VoC backfill offers the audit once and records
-  the offer in `/agent/brain/<workspace>/_changelog.md`; the audit runs only on a
+  the offer in `/agent/brain/<brand>/_changelog.md`; the audit runs only on a
   person's yes or explicit request - never on connection, sync, install, or daily
   refresh - and person-approved reruns regenerate that page rather than creating
   duplicates. `meta-ad-performance-analysis` reads the audit for customer-side WHY
@@ -139,7 +173,7 @@ The package as it ships:
   remembered context never identify the workspace. It then runs silently in the
   installing conversation: reachability check
   (`integrations status --app <slug>` per known VoC platform, stored secrets,
-  Meta workspace connection), one daily `voc-sync-<workspace>-<platform>` routine
+  Meta workspace connection), one daily `voc-sync-<brand>-<platform>` routine
   per reachable platform with the first run kicked, single-Write guard merge into
   `/agent/user.md` with an anti-duplication check, Creative Attributes, and the
   Account Context Brain autofill persisted to disk - asking nothing else except
@@ -255,7 +289,7 @@ The package as it ships:
   corrections in any later conversation get the same routing, no scheduled
   check-ins.
 - Meta reachability is connection-status-driven: a connected Meta workspace gets
-  `voc-sync-<workspace>-meta-ad-comments` even when API probes error, and the
+  `voc-sync-<brand>-meta-ad-comments` even when API probes error, and the
   account-context scaffold is always written, blockers recorded per field.
 - Install-failure posture: report the exact error and stop - never hand-copy
   staged files or edit state under `/agent/.runneth/packages/`.

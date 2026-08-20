@@ -1,7 +1,8 @@
 # Template: community post file (Reddit)
+(`<bank-home>` = the routine's resolved customer-voice bank home - the literal path in the routine prompt.)
 
-Paths: `/agent/brain/<workspace>/data-sources/voc/reddit/post-<external_id>.md` for posts,
-`/agent/brain/<workspace>/data-sources/voc/reddit/comment-<external_id>.md` for pulled comments
+Paths: `<bank-home>/reddit/post-<external_id>.md` for posts,
+`<bank-home>/reddit/comment-<external_id>.md` for pulled comments
 (each comment is its own file with `parent_ref` set - never nested blobs).
 
 Every metadata field is always present; `null` when the source lacks the concept. The

@@ -1,6 +1,7 @@
 # Template: review file
+(`<bank-home>` = the routine's resolved customer-voice bank home - the literal path in the routine prompt.)
 
-Path: `/agent/brain/<workspace>/data-sources/voc/<platform>/review-<external_id>.md`
+Path: `<bank-home>/<platform>/review-<external_id>.md`
 
 Layout: H1 headline with stars (omit the quoted title when null), bold-label human header
 (two trailing spaces end every label line), the review text between `---` rules, then the

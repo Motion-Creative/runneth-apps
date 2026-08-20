@@ -1,6 +1,7 @@
 # Template: Meta ad-comments file (one per creative)
+(`<bank-home>` = the routine's resolved customer-voice bank home - the literal path in the routine prompt.)
 
-Path: `/agent/brain/<workspace>/data-sources/voc/meta-ad-comments/creative-<creative_asset_id>.md`
+Path: `<bank-home>/meta-ad-comments/creative-<creative_asset_id>.md`
 
 Layout: H1 headline, bold-label human header (two trailing spaces end every label line),
 every comment on the creative between `---` rules - one `###` section per comment, newest
