@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "id": "ai-work-systems-observatory",
+  "name": "AI Work Systems Observatory",
+  "version": "1",
+  "description": "Stages a portable, read-only operating review for how an organization uses AI across meaningful workflows. The package includes a governed workflow ledger, evidence and maturity rules, deterministic discovery tools, setup and refresh skills, and a private dashboard template. Installation only delivers files: it does not inspect organization data, create an app, create routines, or write organization-specific state. Setup discloses every intended read and write, preserves unresolved identities, defaults to team-level aggregation, and waits for explicit approval before discovery or activation.",
+  "installPolicy": "manual",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "readme",
+      "type": "file",
+      "sourcePath": "README.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "ai-work-systems-observatory/README.md"
+      }
+    },
+    {
+      "id": "observatory-reference",
+      "type": "directory",
+      "sourcePath": "brain",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_brain",
+        "path": "ai-work-systems-observatory/reference"
+      }
+    },
+    {
+      "id": "observatory-app-template",
+      "type": "directory",
+      "sourcePath": "app-template",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_brain",
+        "path": "ai-work-systems-observatory/app-template"
+      }
+    },
+    {
+      "id": "observatory-collector",
+      "type": "directory",
+      "sourcePath": "tools/collect-system-ledger",
+      "executablePaths": [
+        "collect.mjs"
+      ],
+      "target": {
+        "root": "agent_tools",
+        "path": "ai-work-systems-observatory/collect-system-ledger"
+      }
+    },
+    {
+      "id": "observatory-validator",
+      "type": "directory",
+      "sourcePath": "tools/validate-system-ledger",
+      "executablePaths": [
+        "validate.mjs"
+      ],
+      "target": {
+        "root": "agent_tools",
+        "path": "ai-work-systems-observatory/validate-system-ledger"
+      }
+    },
+    {
+      "id": "setup-observatory-skill",
+      "type": "directory",
+      "sourcePath": "skills/setup-ai-work-systems-observatory",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_skills",
+        "path": "setup-ai-work-systems-observatory"
+      }
+    },
+    {
+      "id": "refresh-observatory-skill",
+      "type": "directory",
+      "sourcePath": "skills/refresh-ai-work-systems-observatory",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_skills",
+        "path": "refresh-ai-work-systems-observatory"
+      }
+    },
+    {
+      "id": "review-systemization-skill",
+      "type": "directory",
+      "sourcePath": "skills/review-systemization-opportunities",
+      "executablePaths": [],
+      "target": {
+        "root": "agent_skills",
+        "path": "review-systemization-opportunities"
+      }
+    },
+    {
+      "id": "activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
+    }
+  ]
+}

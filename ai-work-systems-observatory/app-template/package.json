@@ -1,0 +1,23 @@
+{
+  "name": "@buildeth/ai-work-systems-observatory",
+  "private": true,
+  "type": "module",
+  "buildeth": {
+    "webawesomeVersion": "3.10.0"
+  },
+  "scripts": {
+    "build": "astro check && astro build && tsc --noEmit",
+    "dev": "astro dev",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@phosphor-icons/core": "2.1.1",
+    "astro": "7.1.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.6",
+    "esbuild": "0.25.11",
+    "tsc": "npm:typescript@7.0.2",
+    "typescript": "npm:@typescript/typescript6@6.0.2"
+  }
+}

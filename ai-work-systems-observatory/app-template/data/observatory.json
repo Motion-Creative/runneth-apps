@@ -1,0 +1,295 @@
+{
+  "meta": {
+    "mode": "illustrative",
+    "organizationName": "Illustrative organization",
+    "refreshedAt": "2026-08-20T16:00:00.000Z",
+    "sourceCoverage": [
+      {
+        "sourceId": "routines",
+        "label": "Routines",
+        "available": true,
+        "note": "Illustrative local inventory metadata"
+      },
+      {
+        "sourceId": "apps",
+        "label": "Apps",
+        "available": true,
+        "note": "Illustrative local inventory metadata"
+      },
+      {
+        "sourceId": "team-members",
+        "label": "Team members",
+        "available": false,
+        "note": "Live identity access is intentionally not represented in the sample"
+      },
+      {
+        "sourceId": "outcomes",
+        "label": "Outcomes",
+        "available": false,
+        "note": "No validated external outcome source is attached"
+      }
+    ]
+  },
+  "executive": {
+    "summary": "Eight illustrative workflows show the operating shape leadership needs to review: ownership is incomplete, delivery evidence is stronger than use evidence, and no value claim has a validated manual baseline yet.",
+    "kpis": [
+      {
+        "value": "8",
+        "label": "Meaningful workflows",
+        "delta": "Illustrative sample only"
+      },
+      {
+        "value": "63%",
+        "label": "Confirmed ownership",
+        "delta": "5 of 8 workflows"
+      },
+      {
+        "value": "3",
+        "label": "Decisions required",
+        "delta": "Ownership, evidence, or governance"
+      },
+      {
+        "value": "0",
+        "label": "Validated value claims",
+        "delta": "No approved baseline attached"
+      }
+    ],
+    "narrativeCards": [
+      {
+        "title": "What changed",
+        "body": "Two repeatable workflows now have a confirmed trigger and maintenance path. Their maturity improved, but outcome evidence did not change."
+      },
+      {
+        "title": "Evidence of value",
+        "body": "One workflow has documented use and three have delivery evidence. None has an owner-approved baseline, so capacity and ROI remain unclaimed."
+      },
+      {
+        "title": "Decision required",
+        "body": "Leadership should assign owners to three workflows and decide whether outcome instrumentation is worth adding to the weekly operating review."
+      }
+    ],
+    "maturityDistribution": [
+      {
+        "level": "L0",
+        "label": "Unobserved manual",
+        "systems": 1
+      },
+      {
+        "level": "L1",
+        "label": "Isolated assistance",
+        "systems": 1
+      },
+      {
+        "level": "L2",
+        "label": "Repeatable workflow",
+        "systems": 2
+      },
+      {
+        "level": "L3",
+        "label": "Owned routine",
+        "systems": 2
+      },
+      {
+        "level": "L4",
+        "label": "Proactive system",
+        "systems": 2
+      },
+      {
+        "level": "L5",
+        "label": "Closed loop",
+        "systems": 0
+      }
+    ]
+  },
+  "teams": {
+    "rows": [
+      {
+        "team": "Creative",
+        "meaningfulWorkflows": 2,
+        "ownedCoverage": 50,
+        "proactiveShare": 35,
+        "highestEvidence": "Delivered",
+        "sourceCoverage": 70,
+        "note": "Production handoff is visible. Usefulness has not been verified."
+      },
+      {
+        "team": "Customer",
+        "meaningfulWorkflows": 2,
+        "ownedCoverage": 50,
+        "proactiveShare": 25,
+        "highestEvidence": "Consumed",
+        "sourceCoverage": 55,
+        "note": "Audience consumption exists for one review, but downstream action is not attached."
+      },
+      {
+        "team": "Growth",
+        "meaningfulWorkflows": 3,
+        "ownedCoverage": 67,
+        "proactiveShare": 60,
+        "highestEvidence": "Used",
+        "sourceCoverage": 80,
+        "note": "Weekly performance review has a recorded decision but no validated outcome baseline."
+      },
+      {
+        "team": "Operations",
+        "meaningfulWorkflows": 1,
+        "ownedCoverage": 100,
+        "proactiveShare": 100,
+        "highestEvidence": "Delivered",
+        "sourceCoverage": 90,
+        "note": "Deterministic health checks are separated from agentic interpretation."
+      }
+    ]
+  },
+  "systems": {
+    "rows": [
+      {
+        "name": "Weekly performance operating review",
+        "businessJob": "Turn fresh channel evidence into a decision-ready weekly review",
+        "team": "Growth",
+        "ownerStatus": "Confirmed",
+        "trigger": "Weekly schedule",
+        "health": "Healthy",
+        "maturity": "Level 4",
+        "evidenceStage": "Used",
+        "humanControl": "Owner records accept, change, or reject"
+      },
+      {
+        "name": "Customer language intelligence",
+        "businessJob": "Refresh customer pain, desire, objection, and comparison themes",
+        "team": "Customer",
+        "ownerStatus": "Unresolved",
+        "trigger": "Manual refresh",
+        "health": "Unknown",
+        "maturity": "Level 2",
+        "evidenceStage": "Consumed",
+        "humanControl": "Human review required before reuse"
+      },
+      {
+        "name": "Creative production handoff",
+        "businessJob": "Move an approved concept into a production-ready handoff",
+        "team": "Creative",
+        "ownerStatus": "Confirmed",
+        "trigger": "Approved brief",
+        "health": "Watch",
+        "maturity": "Level 3",
+        "evidenceStage": "Delivered",
+        "humanControl": "Producer approval before production"
+      },
+      {
+        "name": "Routine reliability monitor",
+        "businessJob": "Detect failed or stale recurring work and surface remediation",
+        "team": "Operations",
+        "ownerStatus": "Confirmed",
+        "trigger": "Daily schedule",
+        "health": "Healthy",
+        "maturity": "Level 4",
+        "evidenceStage": "Delivered",
+        "humanControl": "No autonomous external remediation"
+      },
+      {
+        "name": "Competitor change review",
+        "businessJob": "Identify meaningful changes in active competitor creative",
+        "team": "Growth",
+        "ownerStatus": "Unresolved",
+        "trigger": "Weekly schedule",
+        "health": "Watch",
+        "maturity": "Level 3",
+        "evidenceStage": "Delivered",
+        "humanControl": "Strategist approves recommendations"
+      },
+      {
+        "name": "Naming and metadata quality check",
+        "businessJob": "Catch naming and safe-zone errors before launch staging",
+        "team": "Creative",
+        "ownerStatus": "Confirmed",
+        "trigger": "Asset handoff",
+        "health": "Healthy",
+        "maturity": "Level 2",
+        "evidenceStage": "Executed",
+        "humanControl": "Human resolves flagged errors"
+      },
+      {
+        "name": "Leadership AI operating pulse",
+        "businessJob": "Summarize systems, risks, evidence, and decisions for leadership",
+        "team": "Growth",
+        "ownerStatus": "Unresolved",
+        "trigger": "Proposed monthly schedule",
+        "health": "Not active",
+        "maturity": "Level 1",
+        "evidenceStage": "Executed",
+        "humanControl": "Executive review required"
+      },
+      {
+        "name": "Manual request intake",
+        "businessJob": "Route recurring requests to the right owner and workflow",
+        "team": "Customer",
+        "ownerStatus": "Confirmed",
+        "trigger": "Ad hoc request",
+        "health": "Unknown",
+        "maturity": "Level 0",
+        "evidenceStage": "Executed",
+        "humanControl": "Manual triage"
+      }
+    ]
+  },
+  "risks": {
+    "rows": [
+      {
+        "risk": "Three workflows lack confirmed ownership",
+        "category": "Ownership",
+        "severity": "Decision",
+        "affectedWorkflows": 3,
+        "decisionRequired": "Assign an accountable owner or retire the workflow from the operating review",
+        "ownerStatus": "Unassigned",
+        "reviewBy": "Next review"
+      },
+      {
+        "risk": "Delivery is observed without use evidence",
+        "category": "Evidence",
+        "severity": "Watch",
+        "affectedWorkflows": 3,
+        "decisionRequired": "Decide whether consumption or decision capture is worth instrumenting",
+        "ownerStatus": "Leadership",
+        "reviewBy": "This month"
+      },
+      {
+        "risk": "Outcome source coverage is unavailable",
+        "category": "Coverage",
+        "severity": "Boundary",
+        "affectedWorkflows": 8,
+        "decisionRequired": "Keep value claims disabled or approve one bounded outcome adapter",
+        "ownerStatus": "Leadership",
+        "reviewBy": "Before claims"
+      }
+    ]
+  },
+  "decisions": {
+    "rows": [
+      {
+        "decision": "Who owns the competitor change review?",
+        "whyNow": "The workflow runs weekly, but maintenance and escalation responsibility are unresolved.",
+        "ownerStatus": "Unassigned",
+        "status": "Open"
+      },
+      {
+        "decision": "Should the weekly review capture downstream decisions?",
+        "whyNow": "Delivery is reliable, but only one workflow has documented use evidence.",
+        "ownerStatus": "Leadership",
+        "status": "Open"
+      },
+      {
+        "decision": "Which outcome source, if any, is worth connecting?",
+        "whyNow": "No validated value claim can be made from current activity and delivery evidence alone.",
+        "ownerStatus": "Leadership",
+        "status": "Open"
+      }
+    ]
+  },
+  "methodology": {
+    "sourceCoverageSummary": "Two illustrative local inventory sources are represented. Live identity and outcome evidence are intentionally unavailable in this sample.",
+    "evidenceBoundary": "Executed, delivered, consumed, used, outcome linked, and validated value remain separate. A workflow that only delivered is described as: Delivered successfully. Usefulness not yet verified.",
+    "methodology": "The unit is a meaningful workflow. Inventory records are evidence inputs, not automatic workflows. Maturity reflects operating structure and is assigned only when every requirement for a level is met.",
+    "privacy": "Team-level aggregation is the default. Person-level ownership requires authorization and confirmed identity. Raw conversations, sensitive source content, and people leaderboards are excluded."
+  }
+}

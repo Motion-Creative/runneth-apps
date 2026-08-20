@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 1,
+  "meta": {
+    "mode": "illustrative",
+    "organizationName": "Illustrative organization",
+    "generatedAt": "2026-08-20T16:00:00.000Z",
+    "interpretationBoundary": "This sample demonstrates structure only. It does not describe a real organization."
+  },
+  "sourceCoverage": [
+    {
+      "sourceId": "routines",
+      "available": true,
+      "readAt": "2026-08-20T16:00:00.000Z",
+      "rowsObserved": 4,
+      "limitations": "Illustrative inventory metadata only"
+    },
+    {
+      "sourceId": "apps",
+      "available": true,
+      "readAt": "2026-08-20T16:00:00.000Z",
+      "rowsObserved": 3,
+      "limitations": "Illustrative inventory metadata only"
+    },
+    {
+      "sourceId": "team-members",
+      "available": false,
+      "readAt": "2026-08-20T16:00:00.000Z",
+      "rowsObserved": null,
+      "limitations": "No live identity source is attached to the sample"
+    },
+    {
+      "sourceId": "outcomes",
+      "available": false,
+      "readAt": "2026-08-20T16:00:00.000Z",
+      "rowsObserved": null,
+      "limitations": "No external outcome source is attached"
+    }
+  ],
+  "teams": [
+    {
+      "teamId": "team-creative",
+      "name": "Creative"
+    },
+    {
+      "teamId": "team-customer",
+      "name": "Customer"
+    },
+    {
+      "teamId": "team-growth",
+      "name": "Growth"
+    },
+    {
+      "teamId": "team-operations",
+      "name": "Operations"
+    }
+  ],
+  "systems": [
+    {
+      "systemId": "system-performance-review",
+      "name": "Weekly performance operating review",
+      "maturityLevel": 4,
+      "confidence": "medium",
+      "lastConfirmedAt": "2026-08-20T16:00:00.000Z"
+    },
+    {
+      "systemId": "system-customer-language",
+      "name": "Customer language intelligence",
+      "maturityLevel": 2,
+      "confidence": "low",
+      "lastConfirmedAt": "2026-08-20T16:00:00.000Z"
+    },
+    {
+      "systemId": "system-production-handoff",
+      "name": "Creative production handoff",
+      "maturityLevel": 3,
+      "confidence": "medium",
+      "lastConfirmedAt": "2026-08-20T16:00:00.000Z"
+    },
+    {
+      "systemId": "system-reliability-monitor",
+      "name": "Routine reliability monitor",
+      "maturityLevel": 4,
+      "confidence": "medium",
+      "lastConfirmedAt": "2026-08-20T16:00:00.000Z"
+    },
+    {
+      "systemId": "system-competitor-review",
+      "name": "Competitor change review",
+      "maturityLevel": 3,
+      "confidence": "low",
+      "lastConfirmedAt": "2026-08-20T16:00:00.000Z"
+    },
+    {
+      "systemId": "system-metadata-quality",
+      "name": "Naming and metadata quality check",
+      "maturityLevel": 2,
+      "confidence": "medium",
+      "lastConfirmedAt": "2026-08-20T16:00:00.000Z"
+    },
+    {
+      "systemId": "system-leadership-pulse",
+      "name": "Leadership AI operating pulse",
+      "maturityLevel": 1,
+      "confidence": "low",
+      "lastConfirmedAt": "2026-08-20T16:00:00.000Z"
+    },
+    {
+      "systemId": "system-request-intake",
+      "name": "Manual request intake",
+      "maturityLevel": 0,
+      "confidence": "low",
+      "lastConfirmedAt": "2026-08-20T16:00:00.000Z"
+    }
+  ],
+  "workflows": [
+    {
+      "workflowId": "workflow-performance-review",
+      "systemId": "system-performance-review",
+      "name": "Compile and review weekly performance evidence",
+      "ownerTeamId": "team-growth",
+      "ownerStatus": "confirmed",
+      "businessJob": "Prepare a decision-ready weekly review",
+      "trigger": {
+        "type": "schedule",
+        "description": "Weekly"
+      },
+      "evidenceStage": "used",
+      "evidenceConfidence": "medium",
+      "successContractId": "contract-performance-review"
+    },
+    {
+      "workflowId": "workflow-customer-language",
+      "systemId": "system-customer-language",
+      "name": "Refresh customer-language themes",
+      "ownerTeamId": "team-customer",
+      "ownerStatus": "unresolved",
+      "businessJob": "Keep pain, desire, objection, and comparison themes current",
+      "trigger": {
+        "type": "manual",
+        "description": "Manual refresh"
+      },
+      "evidenceStage": "consumed",
+      "evidenceConfidence": "low"
+    },
+    {
+      "workflowId": "workflow-production-handoff",
+      "systemId": "system-production-handoff",
+      "name": "Turn an approved concept into a production handoff",
+      "ownerTeamId": "team-creative",
+      "ownerStatus": "confirmed",
+      "businessJob": "Move approved concepts into production-ready work",
+      "trigger": {
+        "type": "event",
+        "description": "Brief approval"
+      },
+      "evidenceStage": "delivered",
+      "evidenceConfidence": "medium"
+    },
+    {
+      "workflowId": "workflow-reliability-monitor",
+      "systemId": "system-reliability-monitor",
+      "name": "Check recurring work for failures and stale state",
+      "ownerTeamId": "team-operations",
+      "ownerStatus": "confirmed",
+      "businessJob": "Surface reliability risks without autonomous remediation",
+      "trigger": {
+        "type": "schedule",
+        "description": "Daily"
+      },
+      "evidenceStage": "delivered",
+      "evidenceConfidence": "medium"
+    },
+    {
+      "workflowId": "workflow-competitor-review",
+      "systemId": "system-competitor-review",
+      "name": "Review meaningful competitor creative changes",
+      "ownerTeamId": "team-growth",
+      "ownerStatus": "unresolved",
+      "businessJob": "Turn competitor deltas into strategist-reviewed implications",
+      "trigger": {
+        "type": "schedule",
+        "description": "Weekly"
+      },
+      "evidenceStage": "delivered",
+      "evidenceConfidence": "low"
+    },
+    {
+      "workflowId": "workflow-metadata-quality",
+      "systemId": "system-metadata-quality",
+      "name": "Check naming and metadata before launch staging",
+      "ownerTeamId": "team-creative",
+      "ownerStatus": "confirmed",
+      "businessJob": "Catch preventable naming and safe-zone errors",
+      "trigger": {
+        "type": "event",
+        "description": "Asset handoff"
+      },
+      "evidenceStage": "executed",
+      "evidenceConfidence": "medium"
+    },
+    {
+      "workflowId": "workflow-leadership-pulse",
+      "systemId": "system-leadership-pulse",
+      "name": "Prepare a monthly leadership operating pulse",
+      "ownerTeamId": "team-growth",
+      "ownerStatus": "unresolved",
+      "businessJob": "Summarize systems, risks, evidence, and decisions",
+      "trigger": {
+        "type": "unknown",
+        "description": "Proposed monthly review"
+      },
+      "evidenceStage": "executed",
+      "evidenceConfidence": "low"
+    },
+    {
+      "workflowId": "workflow-request-intake",
+      "systemId": "system-request-intake",
+      "name": "Triage recurring manual requests",
+      "ownerTeamId": "team-customer",
+      "ownerStatus": "confirmed",
+      "businessJob": "Route recurring requests to the right owner and workflow",
+      "trigger": {
+        "type": "manual",
+        "description": "Ad hoc request"
+      },
+      "evidenceStage": "executed",
+      "evidenceConfidence": "low"
+    }
+  ],
+  "risks": [
+    {
+      "riskId": "risk-ownership",
+      "description": "Three workflows lack confirmed ownership"
+    },
+    {
+      "riskId": "risk-use-evidence",
+      "description": "Delivery evidence is stronger than use evidence"
+    },
+    {
+      "riskId": "risk-outcome-coverage",
+      "description": "No validated external outcome source is attached"
+    }
+  ],
+  "decisions": [
+    {
+      "decisionId": "decision-owner",
+      "description": "Assign accountable owners to unresolved workflows",
+      "status": "open"
+    },
+    {
+      "decisionId": "decision-use-evidence",
+      "description": "Decide whether downstream decision capture is worth adding",
+      "status": "open"
+    },
+    {
+      "decisionId": "decision-outcome-source",
+      "description": "Keep value claims disabled or approve one bounded outcome adapter",
+      "status": "open"
+    }
+  ],
+  "manualBaselines": [],
+  "successContracts": [
+    {
+      "contractId": "contract-performance-review",
+      "workflowId": "workflow-performance-review",
+      "ownerStatus": "illustrative",
+      "decisionJob": "Support the weekly performance decision meeting",
+      "acceptanceStates": [
+        "accept",
+        "change",
+        "reject"
+      ],
+      "approvedAt": null,
+      "version": 1
+    }
+  ]
+}

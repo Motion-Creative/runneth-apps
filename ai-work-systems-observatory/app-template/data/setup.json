@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "mode": "illustrative",
+  "organizationName": "Illustrative organization",
+  "executiveObjective": "Demonstrate the operating review shape without making claims about a real organization.",
+  "visibilityPolicy": {
+    "defaultAggregation": "team",
+    "personLevelOwnership": "authorized_and_confirmed_only",
+    "rawConversationBrowser": false,
+    "peopleLeaderboard": false
+  },
+  "allowedSources": [
+    "illustrative-routines",
+    "illustrative-apps"
+  ],
+  "excludedSources": [
+    "message-bodies",
+    "sensitive-content",
+    "external-outcomes"
+  ],
+  "routinePlan": [],
+  "approvedAt": null,
+  "approvedBy": null
+}

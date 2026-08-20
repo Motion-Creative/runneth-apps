@@ -1,0 +1,77 @@
+---
+import "../styles.css";
+
+import templatePackage from "../../package.json";
+import themeUrl from "../themes/runneth.css?url";
+
+interface Props {
+  readonly title: string;
+}
+
+const { title } = Astro.props;
+const webawesomeCdnPrefix = `https://ka-f.webawesome.com/webawesome@${templatePackage.buildeth.webawesomeVersion}/`;
+---
+
+<!doctype html>
+<html lang="en" class="wa-theme-runneth wa-light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="./favicon.svg" />
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const storageKey = "buildeth-theme";
+        // Storage can be unavailable in sandboxed iframes and private
+        // contexts; theming must keep working without persistence there.
+        const getStoredTheme = () => {
+          try {
+            return window.localStorage.getItem(storageKey);
+          } catch {
+            return null;
+          }
+        };
+        const setStoredTheme = (theme) => {
+          try {
+            window.localStorage.setItem(storageKey, theme);
+          } catch {}
+        };
+        const applyTheme = (theme) => {
+          root.classList.toggle("wa-dark", theme === "dark");
+          root.classList.toggle("wa-light", theme === "light");
+          root.dataset.theme = theme;
+          document.dispatchEvent(
+            new CustomEvent("buildeth:theme-change", { detail: { theme } }),
+          );
+        };
+        const storedTheme = getStoredTheme();
+        applyTheme(storedTheme === "dark" ? "dark" : "light");
+        document.addEventListener("buildeth:set-theme", (event) => {
+          setStoredTheme(event.detail.theme);
+          applyTheme(event.detail.theme);
+        });
+      })();
+    </script>
+    <link
+      rel="stylesheet"
+      href={`${webawesomeCdnPrefix}styles/webawesome.css`}
+    />
+    <link rel="stylesheet" href={themeUrl} />
+    <script is:inline type="module" src="./scripts/phosphor-icons.js"></script>
+    <script
+      is:inline
+      type="module"
+      src={`${webawesomeCdnPrefix}webawesome.loader.js`}
+    ></script>
+    <script>
+      // Registers the Buildeth custom elements (creative-*, kpi-strip,
+      // report-*, buildeth-theme-toggle) and loads their CSS plus the
+      // CSS-only layout-* tags for every page using this layout.
+      import "../components/index";
+    </script>
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

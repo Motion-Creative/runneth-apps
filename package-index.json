@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-18-01",
+  "indexRevision": "2026-08-20-01",
   "packages": [
     {
       "id": "creative-strategy-guidance",
       "name": "Creative Strategy Guidance",
-      "description": "Provides the editable strategic guidance used by Runneth’s creative workflows: the Creative Strategy Engine, creative-analysis methodology, hook and headline standards, and customer-review mining guidance. It does not install skills; both default and custom skills can use these files from the agent brain.",
+      "description": "Provides the editable strategic guidance used by Runneth\u2019s creative workflows: the Creative Strategy Engine, creative-analysis methodology, hook and headline standards, and customer-review mining guidance. It does not install skills; both default and custom skills can use these files from the agent brain.",
       "version": "1",
       "packageManagerVersion": 1,
       "categories": [
@@ -25,7 +25,7 @@
     {
       "id": "creative-strategy-foundations",
       "name": "Creative Strategy Foundations",
-      "description": "Provides Runneth’s default workflows for analyzing creative performance, generating creative direction, and producing briefs. It installs the analyzing, creative-generation, and briefing skills plus their routing instruction, uses the shared Creative Strategy Guidance package, and can be uninstalled when a user wants to rely only on custom skills.",
+      "description": "Provides Runneth\u2019s default workflows for analyzing creative performance, generating creative direction, and producing briefs. It installs the analyzing, creative-generation, and briefing skills plus their routing instruction, uses the shared Creative Strategy Guidance package, and can be uninstalled when a user wants to rely only on custom skills.",
       "version": "3",
       "packageManagerVersion": 1,
       "categories": [
@@ -97,6 +97,24 @@
         "path": "creator-intel",
         "ref": "main"
       },
+      "updatePolicy": "auto",
+      "uninstallPolicy": "allowed"
+    },
+    {
+      "id": "ai-work-systems-observatory",
+      "name": "AI Work Systems Observatory",
+      "description": "Stages a portable, read-only operating review for how an organization uses AI across meaningful workflows. The package includes a governed workflow ledger, evidence and maturity rules, deterministic discovery tools, setup and refresh skills, and a private dashboard template. Installation only delivers files: it does not inspect organization data, create an app, create routines, or write organization-specific state. Setup discloses every intended read and write, preserves unresolved identities, defaults to team-level aggregation, and waits for explicit approval before discovery or activation.",
+      "version": "1",
+      "packageManagerVersion": 1,
+      "categories": [],
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "ai-work-systems-observatory",
+        "ref": "main"
+      },
+      "installPolicy": "manual",
       "updatePolicy": "auto",
       "uninstallPolicy": "allowed"
     }

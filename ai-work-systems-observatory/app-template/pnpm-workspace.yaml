@@ -1,0 +1,84 @@
+packages: []
+
+allowUnusedPatches: true
+verifyDepsBeforeRun: false
+confirmModulesPurge: false
+minimumReleaseAge: 2880
+minimumReleaseAgeStrict: false
+minimumReleaseAgeIgnoreMissingTime: true
+blockExoticSubdeps: true
+engineStrict: true
+strictDepBuilds: true
+
+allowBuilds:
+  "@datadog/native-appsec": false
+  "@datadog/native-iast-taint-tracking": false
+  "@datadog/native-metrics": false
+  "@datadog/pprof": false
+  "@swc/core": false
+  "argon2": false
+  "better-sqlite3": false
+  "bufferutil": false
+  "cpu-features": false
+  "dd-trace": false
+  "esbuild": false
+  "koffi": false
+  "msgpackr-extract": false
+  "msw": false
+  "protobufjs": false
+  "sharp": false
+  "sqlite3": false
+  "ssh2": false
+  "unrs-resolver": false
+
+overrides:
+  "@babel/core": "7.29.6"
+  "@codemirror/state": "6.5.4"
+  "@tanstack/history": "1.161.6"
+  "@tanstack/router-core": "1.169.2"
+  "@tanstack/router-generator": "1.166.42"
+  "@tanstack/router-plugin": "1.167.35"
+  "@tanstack/router-utils": "1.161.8"
+  "@tanstack/virtual-file-routes": "1.161.7"
+  "ajv@6": "6.14.0"
+  "ajv@8": "8.18.0"
+  "basic-ftp": "5.3.0"
+  "brace-expansion": "5.0.8"
+  "dompurify": "3.4.12"
+  "esbuild": "0.28.1"
+  "fast-uri": "3.1.4"
+  "fast-xml-builder": "1.1.7"
+  "fast-xml-parser": "5.5.7"
+  "fastify": "5.8.5"
+  "find-my-way": "9.7.0"
+  "file-type": "21.3.2"
+  "flatted": "3.4.2"
+  "hono": "4.12.27"
+  "ip-address": "10.3.1"
+  "ioredis": "^5.9.0"
+  "js-yaml@4": "4.3.0"
+  "jws": "4.0.1"
+  "lodash": "4.18.1"
+  "lodash-es": "4.18.1"
+  "markdown-it": "14.2.0"
+  "mermaid": "11.15.0"
+  "minimatch@10": "10.2.3"
+  "minimatch@3": "3.1.4"
+  "picomatch@2": "2.3.2"
+  "picomatch@4": "4.0.4"
+  "postcss": "8.5.18"
+  "protobufjs": "7.6.5"
+  "qs": "6.14.2"
+  "rollup": "4.59.0"
+  "sharp": "0.35.0"
+  "svgo": "4.0.2"
+  "tar": ">=7.5.8"
+  "vite": "8.0.16"
+
+packageExtensions:
+  "@uiw/codemirror-theme-github@*":
+    dependencies:
+      "@babel/runtime": "^7.28.6"
+
+patchedDependencies:
+  brace-expansion@5.0.8: patches/brace-expansion@5.0.8.patch
