@@ -1,12 +1,27 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  buildDiscoveryLedger,
   parseAppList,
   parsePackageList,
   parseRoutineList,
   parseTaskList,
   parseWorkflowList,
 } from "./lib.mjs";
+import { validateLedger } from "../validate-system-ledger/lib.mjs";
+
+test("builds discovery output that satisfies the governed ledger contract", () => {
+  const generatedAt = "2026-08-20T00:00:00.000Z";
+  const output = buildDiscoveryLedger({
+    generatedAt,
+    sourceCoverage: [{ sourceId: "apps", available: true, readAt: generatedAt }],
+    inventory: { apps: [] },
+  });
+
+  assert.equal(output.meta.mode, "discovery");
+  assert.deepEqual(output.systems, []);
+  assert.equal(validateLedger(output).valid, true);
+});
 
 test("parses compact routine output", () => {
   const rows = parseRoutineList(JSON.stringify({

@@ -12,6 +12,7 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import {
+  buildDiscoveryLedger,
   parseAppList,
   parsePackageList,
   parseRoutineList,
@@ -122,16 +123,11 @@ sourceCoverage.push({
   limitations: "Message bodies are excluded by default. Bounded metadata or corpus retrieval requires separate explicit approval.",
 });
 
-const output = {
-  schemaVersion: 1,
+const output = buildDiscoveryLedger({
   generatedAt: new Date().toISOString(),
-  mode: "discovery",
   sourceCoverage,
   inventory,
-  candidateWorkflows: [],
-  unresolved: [],
-  interpretationBoundary: "Inventory records are evidence inputs, not meaningful workflows. Workflow grouping, ownership, maturity, use, outcomes, and value require approved reconciliation and explicit evidence.",
-};
+});
 
 const serialized = `${JSON.stringify(output, null, 2)}\n`;
 if (outPath) {

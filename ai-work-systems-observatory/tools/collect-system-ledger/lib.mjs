@@ -8,6 +8,26 @@ export function compactRecord(record, keys) {
   return output;
 }
 
+export function buildDiscoveryLedger({ generatedAt, sourceCoverage, inventory }) {
+  return {
+    schemaVersion: 1,
+    generatedAt,
+    meta: { mode: "discovery", generatedAt },
+    sourceCoverage,
+    teams: [],
+    systems: [],
+    workflows: [],
+    risks: [],
+    decisions: [],
+    manualBaselines: [],
+    successContracts: [],
+    inventory,
+    candidateWorkflows: [],
+    unresolved: [],
+    interpretationBoundary: "Inventory records are evidence inputs, not meaningful workflows. Workflow grouping, ownership, maturity, use, outcomes, and value require approved reconciliation and explicit evidence.",
+  };
+}
+
 export function parseJsonSource(text) {
   const trimmed = String(text ?? "").trim();
   if (!trimmed) throw new Error("Command returned no output");
