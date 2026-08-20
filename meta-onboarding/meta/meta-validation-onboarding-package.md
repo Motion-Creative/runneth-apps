@@ -122,11 +122,15 @@ Do not start validation until both are true:
 
 1. **Account Context Brain is `[CONFIRMED]`** - check the field statuses in the "File
    metadata" block at the end of `/agent/brain/<workspace>/data-sources/meta/account-context.md`. The interpretation
-   fields (1-9) all signed off by a person (Field 8's benchmark question carries its
-   default inline - "no benchmarks" or a skip confirms it with the account's last-30-day
-   averages as the baseline); Field 10 confirms alongside them when its
+   fields - the essential set: 1 (sources of truth), 2 (conversion events), 3 (metric
+   gotchas), 4 (naming conventions), 7 (funnel map), and 9 (targets/thresholds) - all
+   signed off by a person. The supporting fields (5 attribution, 6 account structure,
+   8 creative benchmarks) are never waited on: their defaults are in effect until
+   someone answers, and they get asked only when something needs the real
+   answer; Field 10 confirms alongside the essentials when its
    walkthrough section ran, but validation never waits on it - it gates only the report build.
-   If any of Fields 1-7 or 9 is still `[AUTO]` or `[FLAGGED]`, finish that first. Validating
+   If any of Fields 1, 2, 3, 4, 7, or 9 is still `[AUTO]` or `[FLAGGED]`, finish that
+   first. Validating
    against a guessed lens teaches the customer the wrong thing.
 2. **The creative content layer resolves.** In the normal case the workspace's creatives are
    in Cacheth: Knoweth injects matching summaries into the turn, and

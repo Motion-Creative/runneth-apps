@@ -65,6 +65,14 @@ reading like a form:
   three. Each is one sentence carrying one ask; compound phrasing ("or do you…, and
   also…") is banned — split it or cut it.
 
+Real questions are reserved for the **essential fields** (the ACB package's tiers:
+sources of truth, conversion events, metric gotchas, naming conventions, funnel map,
+targets/thresholds, reporting structure). A supporting field (attribution, account
+structure, creative benchmarks) never spends a real question: it rides as an assumption
+on its default, or waits until something actually needs the answer. The one sanctioned
+exception is Field 8's benchmark question, which carries its default inline — any answer
+settles it and nothing waits on it.
+
 More than five questions surviving triage means the triage was too timid — re-triage
 with honest defaults. Only when six or more are genuinely un-inferable do the
 highest-stakes five go in this presentation, with the rest following in one short beat

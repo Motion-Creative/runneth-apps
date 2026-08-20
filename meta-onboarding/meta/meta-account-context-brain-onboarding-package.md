@@ -148,7 +148,7 @@ schema_version: 1
 workspace_id: <workspaceId>
 ad_account: <ad account name>
 last_refreshed: <YYYY-MM-DD>
-fields_confirmed: <0-10>           # count of fields at CONFIRMED; validation gates on fields 1-9
+fields_confirmed: <0-10>           # count of fields at CONFIRMED; validation gates on the essential fields (1, 2, 3, 4, 7, 9)
 field_statuses:
   field_1_sources_of_truth: <CONFIRMED | AUTO | FLAGGED>
   field_2_conversion_events: <CONFIRMED | AUTO | FLAGGED>
@@ -166,10 +166,15 @@ naming_decoder: </agent/brain/<workspace>/data-sources/meta/naming-decoder.json 
 
 The account-context guard's all-confirmed check and the validation gate read
 `fields_confirmed` and `field_statuses` from this block. "All required fields" for those
-gates means Fields 1–9, the interpretation fields a person confirms (Field 8's question
-carries its default inline, so any answer — including "no benchmarks" or a skip — confirms
-it), and validation
-never waits on Field 10, which gates only the report build. The one-line answer-register note
+gates means the **essential fields — 1, 2, 3, 4, 7, and 9** (sources of truth, conversion
+events, metric gotchas, naming conventions, funnel map, and targets/thresholds/decision
+rules): the reads a person must sign off before validation. Fields 5, 6, and 8 are
+**supporting fields** — auto-filled from pulls or sensible defaults, surfaced as
+assumptions when worth blessing, and never blocking any gate: if the team doesn't have an
+answer, that's fine, and each is asked directly only when something actually needs it.
+Validation never waits on Field 10 either, but Field 10 is essential to onboarding: it
+gates the report build and must be person-confirmed before onboarding is complete. The
+one-line answer-register note
 lives in the "At a glance" section, not here — do not duplicate it into the metadata.
 
 - Index it in `/agent/INDEX.md` with aliases (account context, KPI hierarchy, how we judge ads,
@@ -397,14 +402,25 @@ mechanics live in the walkthrough skill; the field mechanics are:
 
 ---
 
-# Required context fields
+# Context fields — essential and supporting
 
-All ten fields are required. Runneth auto-fills every one of them — Fields 1–9 from their
-own pulls, Field 10 synthesized from those same pulls. There is no optional set. Field 10
-differs from the others in exactly two ways: it needs decoded ad names to synthesize (when
-the provisional decode carries nothing, its walkthrough section is skipped and its beats run
-at report time in validation), and it gates the report build, not validation — the question
-loop runs once Fields 1–9 confirm (see Field 10).
+Runneth auto-fills all ten fields — Fields 1–9 from their own pulls, Field 10 synthesized
+from those same pulls — but they split into two tiers:
+
+- **Essential fields — a person must confirm these: 1 (sources of truth), 2 (conversion
+  events / primary KPI), 3 (metric gotchas), 4 (naming conventions), 7 (funnel map),
+  9 (targets, thresholds, decision rules), and 10 (reporting structure).** Fields 1, 2, 3,
+  4, 7, and 9 gate validation — the question loop runs once they confirm. Field 10 is
+  essential too but gates the report build instead (it needs decoded ad names to
+  synthesize; when the provisional decode carries nothing, its walkthrough section is
+  skipped and its beats run at report time in validation).
+- **Supporting fields — okay if the team doesn't have an answer: 5 (attribution), 6
+  (account structure), and 8 (creative performance metrics).** These fill from pulls or
+  sensible defaults, ride as assumptions when worth blessing, and never block validation,
+  the report build, or any other gate. An unanswered supporting field simply keeps its
+  default in effect (status stays `[AUTO]` — no silent confirmation) and gets asked
+  directly only when something actually needs the real answer: a discrepancy surfaces, a
+  task depends on it, or the person raises it themselves.
 
 ## Field 1 — Sources of truth
 
@@ -692,6 +708,11 @@ the same identifier string.
 
 Status: `[EMPTY]`
 
+Supporting field: never blocks a gate. The default rides as an assumption; if it goes
+unanswered, reads proceed on 7-day click / 1-day view, and the field is asked directly
+only when something needs the real answer (a reconciliation discrepancy, a question that
+hinges on windows).
+
 **Auto-pull:** Nothing. Do not read from Motion workspace configuration.
 
 **What to present:** Propose **7-day click, 1-day view** as the default. Ask if that's correct
@@ -704,6 +725,10 @@ or if the team uses different windows. Do not ask them to specify windows cold.
 ## Field 6 — Account structure
 
 Status: `[EMPTY]`
+
+Supporting field: never blocks a gate. The detected structure rides as an assumption when
+worth blessing; the human-only parts (test batching, pause/cut rules) are asked only when
+a task actually needs them, never as an onboarding requirement.
 
 **Auto-pull**
 - Detect CBO vs ABO. Note ad set counts and ads per ad set.
@@ -759,7 +784,9 @@ Status: `[EMPTY]`
   read everything against your account's own last-30-day averages."
 - Any answer confirms the field: a stated target or floor is recorded per metric; "no,"
   "use the averages," or a skip records the account average as the baseline. Either way the
-  field moves to `[CONFIRMED]` — this question never gets a follow-up.
+  field moves to `[CONFIRMED]` — this question never gets a follow-up. It is a supporting
+  field: unanswered, the account-average default is simply in effect and nothing waits
+  on it.
 
 **Fields** (repeat per metric)
 - Metric: `<...>` | Account average: `<AUTO>` | Target or floor: `<stated by the person, or
@@ -966,7 +993,8 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 ## Overall status
 
 - Fields confirmed: `<count>` / 10 (no report build until Field 10 confirms; validation
-  starts once Fields 1–9 confirm)
+  starts once the essential fields — 1, 2, 3, 4, 7, 9 — confirm; supporting fields 5, 6,
+  and 8 never block)
 - Flagged fields needing the customer: `<list>`
 - Written to: `/agent/brain/<workspace>/data-sources/meta/account-context.md`
 - Indexed in `/agent/INDEX.md`: `<yes | no>`

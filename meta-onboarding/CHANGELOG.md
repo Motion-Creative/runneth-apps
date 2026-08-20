@@ -40,7 +40,16 @@ of onboarding install and test independently.
   default stated inline, so "no" costs the person nothing. A stated target is recorded
   per metric; "no," "use the averages," or a skip confirms the field with the account's
   own last-30-day averages as the baseline. Any answer confirms it, the question never
-  gets a follow-up, and the confirmation gates wait on Fields 1-9.
+  gets a follow-up, and nothing waits on it (it is a supporting field).
+- **Fields split into essential and supporting tiers**: a person must confirm the
+  essentials - sources of truth, conversion events (primary KPI), metric gotchas, naming
+  conventions, funnel map, targets/thresholds/decision rules, and reporting structure.
+  The supporting fields - attribution, account structure, and creative benchmarks - are
+  okay to not have: they fill from pulls or sensible defaults, ride as assumptions when
+  worth blessing, never block validation or the report build, and get asked directly
+  only when something actually needs the real answer. Validation gates on the essential
+  fields (1, 2, 3, 4, 7, 9); reporting structure (Field 10) stays essential through the
+  report-build gate.
 - **The walkthrough opens with an on-ramp**: Part 1 gains a third beat - why the
   questions are worth a few minutes, the voice-note tip ("feel free to voice-note your
   answers"), and the star tip. The onboarding chat is named predictably

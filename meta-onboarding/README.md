@@ -262,9 +262,11 @@ File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta
   (no report without it; questions-only customers never need it, and the report is never
   led with — though an explicit ask still gets one),
   lock-in (report approval, refresh routine, Slack), and the MVCE gate.
-- **Runs third, gated.** Starts only when the Account Context Brain's interpretation fields
-  (1–9) are confirmed (Field 8's benchmark question carries its default inline, so any
-  answer confirms it; Field 10 gates only the report build)
+- **Runs third, gated.** Starts only when the Account Context Brain's essential fields —
+  sources of truth, conversion events, metric gotchas, naming conventions, funnel map,
+  and targets/thresholds (1, 2, 3, 4, 7, 9) — are confirmed. Supporting fields
+  (attribution, account structure, creative benchmarks) never block: their defaults hold
+  until someone answers, and Field 10 gates only the report build
   and the creative content layer resolves (creatives in Cacheth — or live content pulls where
   the sandbox cache feature is disabled; cache coverage, not files). Every correction in
   the loop heals the specific Account Context Brain field behind it — never move past a wrong
