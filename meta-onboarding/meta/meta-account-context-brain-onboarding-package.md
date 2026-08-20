@@ -91,7 +91,10 @@ This context describes one workspace. Record the scope before pulling anything:
   default to `last_365d` (the last 365 days of creatives), so onboarding sees enough history to
   interpret the account. This window governs the fill-in pulls only. It is not a standing default
   for later performance queries; those still use their own requested window, or the normal
-  defaults, unless the user asks otherwise.
+  defaults, unless the user asks otherwise. **One exception: performance baselines (Field 8's
+  account averages and Field 9's reference CPA) default to the last 30 days** — a
+  365-day average buries what the account looks like now. A person naming a different
+  window overrides it; record whichever window was used beside the values.
 - Every `[AUTO]` pull passes `--workspace-id <workspaceId>` explicitly. Customer brains are
   usually one workspace, but multi-workspace orgs are real and the pulls must name the account.
 - Platform scope: Meta only. Never look for, pull, or reason about other ad platforms (TikTok,
@@ -272,8 +275,8 @@ answers which field and what to read from the result.
 | 5. Attribution | No pull | propose 7-day click / 1-day view and confirm |
 | 6. Account structure | `motion meta ads --grain ads --include-associated-objects` | budget level (CBO vs ABO) and ad set counts from `associatedObjectDetails.campaigns[]` / `.adSets[]` — the ad's own name is the `name` key; ad rows carry no `adName`/`adsetName`/`campaignName` keys |
 | 7. Funnel map | `motion meta ads --grain ads --include-associated-objects`; `motion meta insights` campaign names on rows | campaign names and objectives from `associatedObjectDetails.campaigns[]` (`name`, `objective`); campaign-to-stage grouping; flag agency-managed or ASC campaigns |
-| 8. Creative performance metrics | `motion meta insights --date-range last_365d --include-metrics --table-kpi <keys>` | account averages for CPA, thumbstop, hold rate, CTR; video-only for engagement metrics |
-| 9. Targets, thresholds, decision rules | `motion meta insights --include-metrics --table-kpi <cost-per key>` | reference CPA baseline; surface material variation across product lines / campaign types |
+| 8. Creative performance metrics | `motion meta insights --date-range last_30d --include-metrics --table-kpi <keys>` | account averages for CPA, thumbstop, hold rate, CTR over the **last 30 days** (the performance baseline defaults to 30 days, not the 365-day interpretation window — a person can name a different window); video-only for engagement metrics |
+| 9. Targets, thresholds, decision rules | `motion meta insights --date-range last_30d --include-metrics --table-kpi <cost-per key>` | reference CPA baseline over the **last 30 days** by default; surface material variation across product lines / campaign types |
 | 10. Reporting structure and marketing calendar | No new pull — synthesize from the same pulls that fill Fields 4, 7, and 9 (provisional reads are enough; requires decoded ad names) | marketing calendar from the decoder's campaign-type and launch-date positions; reporting structure from the Field 4/7/9 reads |
 
 **The ads-grain response shape (read before extracting).** Rows from `motion meta ads
@@ -734,7 +737,9 @@ Status: `[EMPTY]`
 Status: `[EMPTY]`
 
 **Auto-pull**
-- Pull metric values and current account averages.
+- Pull metric values and current account averages **over the last 30 days by default** —
+  never the fill-in's 365-day interpretation window. A person naming a different window
+  overrides the default; record the window beside the averages either way.
 - Compute video-only metrics (thumbstop, hold rate) from video creatives only.
   Static image ads have no such metrics: mark them not applicable, never 0.
 - Resolve exact metric keys with `motion meta metric-reference` before requesting.
@@ -765,7 +770,8 @@ The goal is a simple operational reference — not an exhaustive ruleset. Runnet
 judgment to edge cases; this field covers the four things that need to be captured explicitly.
 
 **Auto-pull**
-- Pull current CPA (or equivalent attribution tool metric) across the account as a reference baseline.
+- Pull current CPA (or equivalent attribution tool metric) across the account as a reference
+  baseline, over the last 30 days by default (a person naming a different window overrides it).
 - If variation across product lines or campaign types is material, surface it anchored in the
   data before asking for targets: "I can see CPA ranges from roughly $X for [A] to $Y for [B] —
   does your target account for that difference?"

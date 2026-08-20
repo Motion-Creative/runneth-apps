@@ -72,23 +72,36 @@ after the first answers arrive — never a second wall. The cap never works the 
 a shaky read must not become an assumption to duck it. A lazily blessed wrong default
 poisons every downstream answer; confidence is the test, not convenience.
 
-**Part 2 — Field sections.** One section per field, in field order. Sanctioned consolidations
-(Fields 1–3 under a confirmed attribution tool) count as one section. Each section is: a bold
+**Part 2 — Field sections, but only the ones that earn their place.** A section earns its
+place by giving the customer something to **scan or answer**: structured data they need to
+check (the naming tables, the calendar, the report outline), findings that ground a real
+question, or a read they would be surprised by later. Everything else stays out of the
+body. Specifically:
+
+- A field whose confirmation triaged to an **assumption** and has nothing to scan gets
+  **no body section at all** — its assumption appears exactly once, in the closing bless
+  list. Never state an assumption in both a body section and the bless list; the bless
+  list is its only home. When a body section carries the evidence behind an assumption
+  (the naming tables), the bless-list line points at it ("the naming decode tables above
+  are correct as read") instead of restating it.
+- A field the pull fully settles with nothing the customer would be surprised by gets no
+  section either — it lives in the saved file, not the readout.
+- Sections that do appear run in field order; sanctioned consolidations (Fields 1–3 under
+  a confirmed attribution tool) count as one. A typical readout carries three to six body
+  sections, and the whole presentation should read in about a minute — when it runs long,
+  cut body sections, never the closing block.
+
+Each surviving section is: a bold
 plain-language heading (never "Field N," never a status badge), then 2–4 bullets — lead with
-the read, support with this account's real names and numbers, no prose paragraphs. A section
-whose confirmation triaged to an **assumption** carries no question: its bullets state the
-assumed read plainly and it settles at the close. Only a section with a **real question**
+the read, support with this account's real names and numbers, no prose paragraphs. Only a
+section with a **real question**
 ends with one — bold, standing alone as the section's last line, never
 appended to the end of a finding bullet and never sharing a line with an observation — it
-gets its own line, so it can't be missed. A field the pull
-fully settles gets no question and no assumption: say what you know in the bullets and move
-on. Two real questions
+gets its own line, so it can't be missed. Two real questions
 are allowed only when one section genuinely covers two distinct un-inferable confirmations
 (Field 4's two decoder confirmations; Field 10's two beats — though triage applies to those
 too, and usually settles at least one as an assumption); more than
-two means the section is too broad — split it or cut a question. Lead with what you know: the ratio
-should feel like mostly settled reads, a short list of assumptions to bless, and a few
-specific things genuinely open.
+two means the section is too broad — split it or cut a question.
 
 **Conversation evidence seeds assumptions.** When pre-flight
 step 4 found a person's own prior statement answering a section's open confirmation, the
@@ -161,13 +174,8 @@ spend and creative count.>
 **<The one real question this leaves open — alone on its own line, never tacked onto a
 bullet? Only when triage kept it a question.>**
 
-**<Next topic heading>**
-- <Findings, 2–4 bullets. This field's confirmation triaged to an assumption — the bullets
-  state the assumed read plainly; no question here, it settles in the closing bless list.>
-
-**<Next topic heading>**
-- <Findings, 2–4 bullets. This field is settled by the pull — the bullets say how it will be
-  read, no question and no assumption.>
+<Fields whose assumptions carry nothing to scan have no section here — they appear only in
+the closing bless list. Settled fields with nothing surprising are omitted entirely.>
 
 **<Naming-conventions heading>**
 <One-line lead-in: what the ad names encode and how reliable the pattern is.>
@@ -188,7 +196,7 @@ bullet? Only when triage kept it a question.>**
 sheet or doc somewhere, just drop it in here — I'll read it and save you the typing.">
 
 
-<...one section per remaining field, in field order...>
+<...only the remaining sections that earn their place, in field order...>
 
 **Marketing calendar** <(source, e.g. "detected from your campaign launch dates"):>
 
@@ -226,7 +234,10 @@ Just answer what you know — I'll write the context file from your responses.
   all three beats: brand story, account findings, on-ramp (value line, voice-note tip,
   skip line, star tip). The skip line appears in the on-ramp only — never restated under
   individual questions.
-- Part 2 sections are in field order; consolidated sections count as one.
+- Part 2 sections are in field order; consolidated sections count as one. Every section
+  earns its place (something to scan or answer); assumption-only fields with nothing to
+  scan have no section, and no assumption is stated in both a body section and the bless
+  list. Three to six body sections is the norm; the whole readout reads in about a minute.
 - Every Part 2 section is 2–4 bullets under its bold heading — no prose paragraphs — except
   where a table carries structured data the customer needs to scan and confirm, and except
   the Field 10 section, which follows its fixed two-beat shape (calendar table, then

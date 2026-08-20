@@ -47,6 +47,17 @@ of onboarding install and test independently.
   answers"), and the star tip. The onboarding chat is named predictably
   ("Runneth Onboarding - [Brand]") when the runtime supports setting the title, with a
   rename ask as the fallback.
+- **Performance baselines default to the last 30 days**: Field 8's account averages and
+  Field 9's reference CPA are pulled over the last 30 days by default, never the
+  fill-in's 365-day interpretation window - a year-long average buries what the account
+  looks like now. A person naming a different window overrides it, and the window used
+  is recorded beside the values.
+- **The readout is short by rule**: a body section must earn its place (something to
+  scan or answer); assumption-only fields with nothing to scan appear exactly once, in
+  the closing bless list, never restated in the body; settled fields with nothing
+  surprising are omitted. Three to six body sections is the norm and the whole readout
+  should read in about a minute - when it runs long, body sections get cut, never the
+  closing block.
 - **The naming section invites a sheet, casually**: the naming-conventions ask always
   closes with one friendly line - "if your naming conventions already live in a sheet
   or doc somewhere, just drop it in here - I'll read it and save you the typing."
