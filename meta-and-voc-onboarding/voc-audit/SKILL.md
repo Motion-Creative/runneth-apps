@@ -58,10 +58,13 @@ from its voice-of-customer lane in `/agent/brain/brain-map.md`, else
 `/agent/brain/<brand>/integrations/voice-of-customer`)
 
 Start from the brand's voice-of-customer lane in `/agent/brain/brain-map.md` and
-inspect every folder that lane covers - the adopted bank home(s) recorded there plus
-the standard `/agent/brain/<brand>/integrations/voice-of-customer/` where it exists.
-An audit that reads only one home on a brain that has an adopted bank undercounts the
-evidence. Where no map or declaration exists, fall back to the standard path. Do
+inspect exactly the folders that lane covers - nothing more. The lane declaration is
+authoritative: a location the lane does not cover (a stray canonical directory left by
+an earlier split or partial setup) is never silently read - report it in the audit's
+coverage note as a possible split for a person to resolve. Only when no map or
+declaration exists at all, fall back to the standard path. Count items by their
+external id, not by file: the same review appearing in two locations counts once, and
+the 200-entry gate is judged on unique items. Do
 not ask the person to paste data or choose an integration before checking what is already
 synced.
 
