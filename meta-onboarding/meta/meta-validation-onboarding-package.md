@@ -122,9 +122,9 @@ Do not start validation until both are true:
 
 1. **Account Context Brain is `[CONFIRMED]`** - check the field statuses in the "File
    metadata" block at the end of `/agent/brain/<workspace>/data-sources/meta/account-context.md`. The interpretation
-   fields (1-7 and 9) all signed off by a person; Field 8 settles from the account's own
-   averages and normally rests at `[AUTO]` - never wait on it and never ask for a
-   benchmark to confirm it; Field 10 confirms alongside them when its
+   fields (1-9) all signed off by a person (Field 8's benchmark question carries its
+   default inline - "no benchmarks" or a skip confirms it with the account's last-30-day
+   averages as the baseline); Field 10 confirms alongside them when its
    walkthrough section ran, but validation never waits on it - it gates only the report build.
    If any of Fields 1-7 or 9 is still `[AUTO]` or `[FLAGGED]`, finish that first. Validating
    against a guessed lens teaches the customer the wrong thing.

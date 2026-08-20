@@ -35,13 +35,12 @@ of onboarding install and test independently.
   read - the readout leads with "you said X on <date>" plus a short verbatim quote, and
   the open question becomes a one-word confirm. Citations never confirm a field by
   themselves; the person's answer in the walkthrough still does.
-- **The creative-metric benchmark question is removed**: Field 8 no longer asks for a
-  goal, target, or floor on thumbstop, hold rate, CTR, or any creative metric - most
-  teams don't carry benchmarks and the question consistently failed to land. The
-  account's own averages are the baseline and outliers are read against them. Field 8
-  settles by pull (normal resting status `[AUTO]`), the confirmation gates now wait on
-  Fields 1-7 and 9 only, and a volunteered target is still recorded when the customer
-  offers one unprompted.
+- **The creative-metric benchmark question is optional with a default**: Field 8 asks one
+  question - do you hold your creative to any thumbstop or CTR benchmarks? - with the
+  default stated inline, so "no" costs the person nothing. A stated target is recorded
+  per metric; "no," "use the averages," or a skip confirms the field with the account's
+  own last-30-day averages as the baseline. Any answer confirms it, the question never
+  gets a follow-up, and the confirmation gates wait on Fields 1-9.
 - **The walkthrough opens with an on-ramp**: Part 1 gains a third beat - why the
   questions are worth a few minutes, the voice-note tip ("feel free to voice-note your
   answers"), and the star tip. The onboarding chat is named predictably

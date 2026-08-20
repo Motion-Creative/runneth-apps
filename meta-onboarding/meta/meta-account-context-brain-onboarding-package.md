@@ -148,7 +148,7 @@ schema_version: 1
 workspace_id: <workspaceId>
 ad_account: <ad account name>
 last_refreshed: <YYYY-MM-DD>
-fields_confirmed: <0-10>           # count of fields at CONFIRMED; validation gates on fields 1-7 and 9 (field 8 settles by pull)
+fields_confirmed: <0-10>           # count of fields at CONFIRMED; validation gates on fields 1-9
 field_statuses:
   field_1_sources_of_truth: <CONFIRMED | AUTO | FLAGGED>
   field_2_conversion_events: <CONFIRMED | AUTO | FLAGGED>
@@ -166,9 +166,9 @@ naming_decoder: </agent/brain/<workspace>/data-sources/meta/naming-decoder.json 
 
 The account-context guard's all-confirmed check and the validation gate read
 `fields_confirmed` and `field_statuses` from this block. "All required fields" for those
-gates means Fields 1–7 and 9, the interpretation fields a person confirms: Field 8 is
-settled by the pull (the account's own averages are the baseline; it carries no question,
-so `[AUTO]` is its normal resting status and the gates never wait on it), and validation
+gates means Fields 1–9, the interpretation fields a person confirms (Field 8's question
+carries its default inline, so any answer — including "no benchmarks" or a skip — confirms
+it), and validation
 never waits on Field 10, which gates only the report build. The one-line answer-register note
 lives in the "At a glance" section, not here — do not duplicate it into the metadata.
 
@@ -404,7 +404,7 @@ own pulls, Field 10 synthesized from those same pulls. There is no optional set.
 differs from the others in exactly two ways: it needs decoded ad names to synthesize (when
 the provisional decode carries nothing, its walkthrough section is skipped and its beats run
 at report time in validation), and it gates the report build, not validation — the question
-loop runs once Fields 1–7 and 9 confirm (Field 8 settles by pull; see Field 10).
+loop runs once Fields 1–9 confirm (see Field 10).
 
 ## Field 1 — Sources of truth
 
@@ -745,21 +745,22 @@ Status: `[EMPTY]`
 - Resolve exact metric keys with `motion meta metric-reference` before requesting.
 
 **What to understand**
-- Nothing to ask — this field is settled by the pull. Most teams do not carry creative-metric
-  benchmarks, and asking for one consistently fails to land, so the benchmark question is
-  banned: never ask for a goal, target, or floor on thumbstop, hold rate, CTR, or any other
-  creative metric. The account's own averages are the baseline, and outliers are read against
-  the account average, never against an external or invented benchmark.
-- If the customer volunteers a target or floor unprompted — in the walkthrough or any later
-  conversation — record it. Volunteered targets are welcome; solicited ones are not.
+- Whether the team holds creative to its own thumbstop or CTR benchmarks. Most teams do
+  not, and that is a fine answer — the question carries its default inside it so "no" costs
+  the person nothing. Never press for a number, never invent an external benchmark, and
+  never treat "we don't have one" as a gap: the account's own last-30-day averages are the
+  baseline in that case, and outliers are read against them.
+
+**[ASK] Ask (one question, default stated inline)**
+- "Do you hold your creative to any thumbstop or CTR benchmarks? If not, no problem — I'll
+  read everything against your account's own last-30-day averages."
+- Any answer confirms the field: a stated target or floor is recorded per metric; "no,"
+  "use the averages," or a skip records the account average as the baseline. Either way the
+  field moves to `[CONFIRMED]` — this question never gets a follow-up.
 
 **Fields** (repeat per metric)
-- Metric: `<...>` | Account average: `<AUTO>` | Target or floor: `<volunteered only — absent
-  means the account average is the baseline>`
-
-Because it carries no question, Field 8 normally rests at `[AUTO]` and the confirmation
-gates never wait on it (see the file-metadata contract): it reaches `[CONFIRMED]` only if
-the customer volunteers or corrects something in it.
+- Metric: `<...>` | Account average: `<AUTO>` | Target or floor: `<stated by the person, or
+  absent — absent means the account average is the baseline>`
 
 ## Field 9 — Targets, thresholds and decision rules
 
@@ -962,7 +963,7 @@ Run these as a suite once fields are filled. Each is the acceptance test for its
 ## Overall status
 
 - Fields confirmed: `<count>` / 10 (no report build until Field 10 confirms; validation
-  starts once Fields 1–7 and 9 confirm — Field 8 settles by pull)
+  starts once Fields 1–9 confirm)
 - Flagged fields needing the customer: `<list>`
 - Written to: `/agent/brain/<workspace>/data-sources/meta/account-context.md`
 - Indexed in `/agent/INDEX.md`: `<yes | no>`
