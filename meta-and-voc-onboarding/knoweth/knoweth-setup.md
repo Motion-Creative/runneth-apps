@@ -70,8 +70,10 @@ that route every ask correctly now, and the ready input for the runtime step.
 ## What is true today, and what to never claim
 
 - **True on every VM:** the whole brain is indexed and searchable by keyword and
-  meaning; a few ranked chunks arrive as context each turn; brand separation comes
-  from the folder plus attribution (every page names its brand and cites its paths).
+  meaning; retrieval is something Runneth does on purpose - route through the map,
+  then search - not something that arrives automatically each turn; brand separation
+  comes from the folder plus attribution (every page names its brand and cites its
+  paths).
 - **True where the current engine runs:** search routes itself — meaning-search for
   aggregate and recall asks, precision for exact lookups — and the `cacheth` lane is
   live, fed by the runtime.
