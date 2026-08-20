@@ -89,7 +89,11 @@ top level of `/agent/brain/` and act on what kind of brain this is:
   those are this VM's adopted homes. Already-onboarded workspaces keep writing to
   their existing paths exactly as they are; only a brand onboarded for the first time
   uses the current layout. Do not migrate old paths - a path move is a separate,
-  explicitly approved change, never part of an install or upgrade.
+  explicitly approved change, never part of an install or upgrade. Record every
+  adopted home in the brain map exactly as the self-organized case below does: the
+  brand's entry names its legacy bank home and its voice-of-customer lane declaration
+  covers that path - an adopted home that goes unrecorded is what makes later routine
+  setup fall back to the standard path and split the bank.
 - **A brain people have organized themselves:** inventory before writing. Give every
   top-level home one line in the brain map, in this brain's own terms - and declare
   lanes for what qualifies: every existing bank of similar raw items gets a corpus
