@@ -175,7 +175,12 @@ starts: the workspace name, workspaceId, and slug every step below uses came fro
    or "the connected account": routine
    conversations run with no workspace attached, so a routine that tries to resolve one at run
    time has nothing to resolve. Its output path is
-   `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/`, written out in full.
+   `<bank-home>/<platform>/`, written out in full, where `<bank-home>` is this brand's
+   ONE customer-voice bank home, resolved once right here at setup: the adopted home
+   step 0.5 recorded for this brand when one exists (a new platform gets a new folder
+   INSIDE the adopted home, beside the existing platform folders, same layout),
+   otherwise `/agent/brain/<brand>/integrations/voice-of-customer/`. A brand never has
+   two bank homes - history and new syncs always land in the same one.
    **A connected Meta workspace is
    itself a reachable VoC platform** - ad comments are customer voice, pulled with
    `motion meta creative-comments` (platform slug `meta-ad-comments`; one file per creative

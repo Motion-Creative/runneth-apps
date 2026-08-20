@@ -57,7 +57,9 @@ the window rules below fully determine what to pull.
   contract; recipes only state per-platform mechanics.
 - **Raw data files are separate from integration guides.** Never write pulled data into
   `/agent/brain/integrations/<source>/` - the integration guide spec explicitly forbids raw
-  dumps in guides. VoC data lives only under `/agent/brain/<brand>/integrations/voice-of-customer/`.
+  dumps in guides. VoC data lives only under the brand's one customer-voice bank home
+(the adopted home when the brain map records one, else
+`/agent/brain/<brand>/integrations/voice-of-customer/`).
 - **The later audit is not a pull output.** The Voice of Customer audit skill runs later in
   onboarding, after raw data has landed. It writes
   `/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md`. This raw-pull skill
@@ -176,7 +178,11 @@ silently. A missing recipe is never a reason to stop.
 
 ### Folder convention
 
-Root: `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/`, where `<brand>` is the
+Root: `<bank-home>/<platform>/` - the brand's one customer-voice bank home: the
+adopted home recorded in the brain map's voice-of-customer lane for this brand when
+one exists, otherwise `/agent/brain/<brand>/integrations/voice-of-customer/`. Resolve
+it once at setup and carry it literally; never split a brand across two homes.
+`<brand>` is the
 brand - the Motion workspace this pull belongs to - slugged - lowercase, every run of characters that is not a-z or 0-9 becomes one hyphen, trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. Fig & Co." -> `st-fig-co`). **Every pull is scoped to one workspace.** The workspace folder is the boundary that
 keeps two brands' customer voice apart: a pull for one workspace never writes into another's
 folder, and pulls are never merged into a shared root. Items are keyed by `external_id`, so a

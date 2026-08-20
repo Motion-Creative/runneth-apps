@@ -55,7 +55,11 @@ The package's canonical source is:
 
 `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/`
 
-Start at `/agent/brain/<brand>/integrations/voice-of-customer/` and inspect all platform folders. Do
+Start from the brand's voice-of-customer lane in `/agent/brain/brain-map.md` and
+inspect every folder that lane covers - the adopted bank home(s) recorded there plus
+the standard `/agent/brain/<brand>/integrations/voice-of-customer/` where it exists.
+An audit that reads only one home on a brain that has an adopted bank undercounts the
+evidence. Where no map or declaration exists, fall back to the standard path. Do
 not ask the person to paste data or choose an integration before checking what is already
 synced.
 
