@@ -561,31 +561,32 @@ normal confirmation, and the decoder notes the sheet as a source.
 **Presentation rule for Field 4 (the fill-in section for this field)**
 
 **The naming breakdown is always a table — never bullets, never prose — and campaign
-names get the same table treatment as ad names.** Whatever the detection found, the
-customer scans and corrects it as rows, one tag or position per row, at both levels.
+names and ad set names get the same table treatment as ad names.** Whatever the detection
+found, the customer scans and corrects it as rows, one tag or position per row, at every
+level that carries a pattern.
 
 When a naming decoder exists (from Creative Attributes or a prior fill-in run), embed the
 full filterable-field table inline in the section, in two parts:
 
 - **Part A — Filterable dimensions** (one row per `segment_filter` field): Field | Known
-  values. These are the dimensions the team can ask about by name. Campaign-level
-  dimensions (positions whose `query_field` is `campaignName`) appear as their own rows
-  here, alongside the ad-name dimensions.
+  values. These are the dimensions the team can ask about by name. Campaign-level and
+  ad-set-level dimensions (positions whose `query_field` is `campaignName` or `adsetName`)
+  appear as their own rows here, alongside the ad-name dimensions.
 - **Part B — Context-only fields** (one row per `context_only` or metadata field): Field |
   What it captures. These are visible in names but not used for filtering.
 
 When the detection found multiple schemas rather than one convention, each schema gets its
 own table (Tag | Meaning, one row per tag), with a one-line lead-in naming the schema and
-where it appears — never a bullet list of tags per schema. Ad names and campaign names are
-separate schemas by definition when both carry a pattern: the campaign breakdown gets its
-own table with a lead-in naming the level, never a one-line summary under the ad-name
-table. When no reliable pattern was detected at all, present what was found as a table of
+where it appears — never a bullet list of tags per schema. Ad names, ad set names, and
+campaign names are separate schemas by definition when they carry a pattern: each level's
+breakdown gets its own table with a lead-in naming the level, never a one-line summary
+under another level's table. Only a level with no detectable pattern at all may compress
+to one line with an example ("ad sets carry audience + week labels, e.g. `Broad_WK17`").
+When no reliable pattern was detected at any level, present what was found as a table of
 the observed name shapes with one example each — at each level — and ask the customer to
 confirm or correct the structure.
 
-Follow with the ad set naming format (one line, with an example) — ad set is the only
-level that may stay a one-liner. Then ask the two confirmation questions as the section's
-final bold line.
+Then ask the two confirmation questions as the section's final bold line.
 
 The customer must be able to scan the table and correct a value, a tag meaning, or a field
 type without asking for more detail. A prose or bullet summary of a decoder is not
@@ -613,6 +614,7 @@ naming convention, content program values, filter guide, creative identity.
   "delimiter": "_",
   "format_string": "<full ad-name position template, e.g. {creative-id}_{content-program}_...>",
   "campaign_format_string": "<full campaign-name position template when campaigns carry a pattern; null otherwise>",
+  "adset_format_string": "<full ad-set-name position template when ad sets carry a pattern; null otherwise>",
   "positions": [
     {
       "position": <N>,
@@ -631,14 +633,15 @@ naming convention, content program values, filter guide, creative identity.
 ```
 
 The `positions` array holds every decoded level in one list: ad-name positions carry
-`query_field: "adName"` and campaign-name positions carry `query_field: "campaignName"` —
-a campaign convention is decoded into typed positions exactly like an ad-name convention,
+`query_field: "adName"`, ad-set positions carry `query_field: "adsetName"`, and
+campaign-name positions carry `query_field: "campaignName"` — a campaign or ad-set
+convention is decoded into typed positions exactly like an ad-name convention,
 never summarized in a note.
 
 **Type definitions and enumeration rules:**
 
 - `segment_filter` — a discrete value the user would ask for by name. Filter using `_VALUE_` in
-  the position's own `query_field` level (`adName` or `campaignName`). Enumerate all known
+  the position's own `query_field` level (`adName`, `adsetName`, or `campaignName`). Enumerate all known
   values as a full array. New values in this position follow the
   same `_VALUE_` pattern automatically. Example positions: content program, product line, product,
   funnel stage, format, market.

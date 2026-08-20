@@ -118,9 +118,10 @@ the customer needs to scan and confirm — never force bullets onto a table. And
 naming-conventions section is **always a table** per Field 4's presentation rule in the ACB
 package — the full breakdown as rows (one table per schema when there are several), never
 bullets, never prose, and never compressed to a settled one-liner, even when the decoder is
-confirmed. Campaign names get the same treatment as ad names: when campaigns carry their
-own pattern, the campaign breakdown is its own table in this section with a lead-in naming
-the level — never a one-line summary under the ad-name table. This section always closes
+confirmed. Campaign names and ad set names get the same treatment as ad names: when a
+level carries its own pattern, its breakdown is its own table in this section with a
+lead-in naming the level — never a one-line summary under another level's table (only a
+level with no detectable pattern may compress to one line with an example). This section always closes
 with the sheet shortcut, one casual line right after its confirmation ask: "And if your
 naming conventions already live in a sheet or doc somewhere, just drop it in here — I'll
 read it and save you the typing." Warm and offhand, never a formal upload step; a sheet
@@ -143,19 +144,24 @@ no mention — and Field 10's beats run at report time inside validation instead
 the customer makes to Fields 4, 7, or 9 in this conversation update the Field 10 read
 before it saves.
 
-**Part 3 — Closing block, two piles.** First pile, under the bold heading **Here's what
-I'll assume unless you correct me:** — every assumption as a one-line bullet, in Part 2
-order, each stated as a read in plain words (a conversation-evidence citation rides along
-where one seeded it), followed by this line: "One reply covers this list — \"all good\"
-works, or correct just the ones that are wrong." Second pile, under the bold heading
-**And the <N> things only you can tell me:** (N written out — "three"), the real questions
-as a numbered list, one line each, one ask each, in Part 2 order. Close with this line
-verbatim: "Just answer what you know — I'll write the context file from your responses."
-An empty pile is dropped along with its lead-in (no questions means the closing line
-follows the bless list directly; no assumptions means the block opens with the questions).
-If nothing is open at all, replace the whole block with: "Nothing open — I'll write
-the context file now." This is the most important UX moment: the customer settles
-everything from this block without scrolling back.
+**Part 3 — Closing block: "What I need from you."** The whole closing block sits under
+one bold header, verbatim: **What I need from you** — so the customer knows exactly where
+their work starts. Two clearly labeled lists follow, each under its own bold sub-heading:
+
+- First, **Confirm these assumptions are right:** — every assumption as a one-line
+  bullet, in Part 2 order, each stated as a read in plain words (a conversation-evidence
+  citation rides along where one seeded it), followed by this line: "One reply covers
+  this list — \"all good\" works, or correct just the ones that are wrong."
+- Second, **Questions to answer before onboarding is complete:** — the real questions as
+  a numbered list, one line each, one ask each, in Part 2 order. Close with this line
+  verbatim: "Just answer what you know — I'll write the context file from your responses."
+
+An empty list is dropped along with its sub-heading (no questions means the closing line
+follows the assumptions directly; no assumptions means "What I need from you" opens
+straight onto the questions). The **What I need from you** header stays as long as either
+list has items; if nothing is open at all, replace the whole block with: "Nothing open —
+I'll write the context file now." This is the most important UX moment: the customer
+settles everything from this block without scrolling back.
 
 **Skeleton (structure is literal; every `<...>` is account-specific):**
 
@@ -183,6 +189,13 @@ the closing bless list. Settled fields with nothing surprising are omitted entir
 | <Field / Tag> | <Known values / Meaning> |
 | --- | --- |
 | <one row per tag or position — the full breakdown, one table per schema if several> | <...> |
+
+<One-line lead-in for the ad-set-name breakdown, when ad sets carry a pattern; a level
+with no pattern compresses to one line with an example instead of a table.>
+
+| <Field / Tag> | <Known values / Meaning> |
+| --- | --- |
+| <one row per ad-set-name tag or position — same full-breakdown rule as ad names> | <...> |
 
 <One-line lead-in for the campaign-name breakdown, when campaigns carry a pattern.>
 
@@ -215,16 +228,19 @@ Here's the report I'd build from what you've confirmed:
 **<Beat 2's ask — usually an assumption ("I'll run this weekly unless you'd rather
 another cadence"), a bold question only when triage kept it one.>**
 
-**Here's what I'll assume unless you correct me:**
+**What I need from you**
+
+**Confirm these assumptions are right:**
 - <Assumption, one line, stated as a read — "(you said this on <date>)" when
   conversation evidence seeded it>
 - <Assumption>
 
 One reply covers this list — "all good" works, or correct just the ones that are wrong.
 
-**And the <N> things only you can tell me:**
+**Questions to answer before onboarding is complete:**
 1. <Real question — one sentence, one ask, same order as above>
 2. <Real question>
+
 Just answer what you know — I'll write the context file from your responses.
 ```
 
@@ -244,8 +260,9 @@ Just answer what you know — I'll write the context file from your responses.
   numbered report sections).
 - The naming-conventions section carries the full breakdown as a table — one table per
   schema when there are several (Field 4's presentation rule) — never bullets or a prose
-  summary of the decoder. When campaigns carry their own pattern, the campaign-name
-  breakdown appears as its own table, not a one-liner.
+  summary of the decoder. When ad sets or campaigns carry their own pattern, that level's
+  breakdown appears as its own table, not a one-liner; only a level with no detectable
+  pattern compresses to one line with an example.
 - No field numbers, status badges, or worksheet labels anywhere.
 - The triage ran: every open confirmation is either an assumption (high-confidence read
   only — never a shaky guess promoted to duck the cap) or a real question. Real questions
@@ -258,9 +275,11 @@ Just answer what you know — I'll write the context file from your responses.
 - Every conversation citation carries a date and a short verbatim quote from a
   human-authored message; no quote is paraphrased or stretched into a claim the person
   did not make.
-- The closing block carries both piles in Part 2 order — every assumption in the bless
-  list (with its citation when seeded), every real question in the numbered list — and
-  ends with the verbatim closing line. Nothing open appears in neither pile.
+- The closing block opens with the bold **What I need from you** header and carries both
+  labeled lists in Part 2 order — every assumption under "Confirm these assumptions are
+  right:" (with its citation when seeded), every real question under "Questions to answer
+  before onboarding is complete:" — and ends with the verbatim closing line. Nothing open
+  appears in neither list.
 
 ## After the presentation
 

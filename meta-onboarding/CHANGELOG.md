@@ -64,7 +64,7 @@ of onboarding install and test independently.
   become cited assumptions; where it disagrees, the mismatch surfaces as one plain
   question.
 - **Questions are triaged into two piles**: everything Runneth can read with high
-  confidence becomes an assumption ("here's what I'll assume unless you correct me"),
+  confidence becomes an assumption,
   blessed in one reply; only genuinely un-inferable asks stay real questions, capped at
   five and aimed at three, each one sentence with one ask. A blanket "all good" is
   explicit sign-off for every listed assumption; silence confirms nothing, and
@@ -81,13 +81,21 @@ of onboarding install and test independently.
 - **Progress recall returns questions, not numbers**: "where am I at?" answers with the
   full text of every still-open question, one per line - never question numbers or a
   bare count - and resumed walkthroughs restate open questions the same way.
-- **Campaign names are first-class in the naming decode**: the Creative Attributes
-  provisional decode analyzes campaign names independently of ad names (both lists come
-  from the same Cacheth export - `campaignNames[]` alongside `adNames[]`), Field 4's
-  decoder holds campaign positions as typed entries (`query_field: "campaignName"`,
-  optional `campaign_format_string`), and the walkthrough's naming section surfaces the
-  campaign breakdown as its own table with the same full-breakdown rule as ad names -
-  never a one-line summary.
+- **Campaign names and ad set names are first-class in the naming decode**: the Creative
+  Attributes provisional decode analyzes ad set and campaign names independently of ad
+  names (all three lists come from the same Cacheth export - `adsetNames[]` and
+  `campaignNames[]` alongside `adNames[]`), Field 4's
+  decoder holds their positions as typed entries (`query_field: "adsetName"` /
+  `"campaignName"`, optional `adset_format_string` / `campaign_format_string`), and the
+  walkthrough's naming section surfaces each level's
+  breakdown as its own table with the same full-breakdown rule as ad names -
+  never a one-line summary. Only a level with no detectable pattern compresses to one
+  line with an example.
+- **The closing block is labeled "What I need from you"**: the walkthrough's close opens
+  with that bold header, then two clearly labeled lists - "Confirm these assumptions are
+  right:" (blessed in one reply, "all good" works) and "Questions to answer before
+  onboarding is complete:" (numbered, one ask each) - so the customer sees exactly where
+  their work starts and what stands between them and done.
   Staged docs move to `/agent/brain/meta-onboarding/` and every internal path reference
   follows.
 - Carries the v6 behavior of the combined package's Meta parts otherwise, including the
