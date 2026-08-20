@@ -101,9 +101,10 @@ of onboarding install and test independently.
   never a one-line summary. Only a level with no detectable pattern compresses to one
   line with an example.
 - **The closing block is labeled "What I need from you"**: the walkthrough's close opens
-  with that bold header, then two clearly labeled lists - "Confirm these assumptions are
-  right:" (blessed in one reply, "all good" works) and "Questions to answer before
-  onboarding is complete:" (numbered, one ask each) - so the customer sees exactly where
+  with that bold header, then two clearly labeled lists - "A quick gut check - I'll run
+  with these unless you say otherwise:" (blessed in one reply, "all good" works) and
+  "And the questions only you can answer - once these are in, we're done:" (numbered,
+  one ask each) - so the customer sees exactly where
   their work starts and what stands between them and done.
   Staged docs move to `/agent/brain/meta-onboarding/` and every internal path reference
   follows.

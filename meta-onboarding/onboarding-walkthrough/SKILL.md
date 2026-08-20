@@ -156,13 +156,15 @@ before it saves.
 one bold header, verbatim: **What I need from you** — so the customer knows exactly where
 their work starts. Two clearly labeled lists follow, each under its own bold sub-heading:
 
-- First, **Confirm these assumptions are right:** — every assumption as a one-line
+- First, **A quick gut check — I'll run with these unless you say otherwise:** — every
+  assumption as a one-line
   bullet, in Part 2 order, each stated as a read in plain words (a conversation-evidence
   citation rides along where one seeded it), followed by this line: "One reply covers
-  this list — \"all good\" works, or correct just the ones that are wrong."
-- Second, **Questions to answer before onboarding is complete:** — the real questions as
+  the list — \"all good\" works, or just correct anything that's off."
+- Second, **And the questions only you can answer — once these are in, we're done:** —
+  the real questions as
   a numbered list, one line each, one ask each, in Part 2 order. Close with this line
-  verbatim: "Just answer what you know — I'll write the context file from your responses."
+  verbatim: "Just answer what you know — I'll take it from there."
 
 An empty list is dropped along with its sub-heading (no questions means the closing line
 follows the assumptions directly; no assumptions means "What I need from you" opens
@@ -238,18 +240,18 @@ another cadence"), a bold question only when triage kept it one.>**
 
 **What I need from you**
 
-**Confirm these assumptions are right:**
+**A quick gut check — I'll run with these unless you say otherwise:**
 - <Assumption, one line, stated as a read — "(you said this on <date>)" when
   conversation evidence seeded it>
 - <Assumption>
 
-One reply covers this list — "all good" works, or correct just the ones that are wrong.
+One reply covers the list — "all good" works, or just correct anything that's off.
 
-**Questions to answer before onboarding is complete:**
+**And the questions only you can answer — once these are in, we're done:**
 1. <Real question — one sentence, one ask, same order as above>
 2. <Real question>
 
-Just answer what you know — I'll write the context file from your responses.
+Just answer what you know — I'll take it from there.
 ```
 
 **Before sending, verify:**
@@ -284,9 +286,9 @@ Just answer what you know — I'll write the context file from your responses.
   human-authored message; no quote is paraphrased or stretched into a claim the person
   did not make.
 - The closing block opens with the bold **What I need from you** header and carries both
-  labeled lists in Part 2 order — every assumption under "Confirm these assumptions are
-  right:" (with its citation when seeded), every real question under "Questions to answer
-  before onboarding is complete:" — and ends with the verbatim closing line. Nothing open
+  labeled lists in Part 2 order — every assumption under the gut-check heading (with its
+  citation when seeded), every real question under the questions heading — and ends with
+  the verbatim closing line. Nothing open
   appears in neither list.
 
 ## After the presentation
