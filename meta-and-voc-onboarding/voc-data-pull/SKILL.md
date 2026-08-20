@@ -62,7 +62,7 @@ the window rules below fully determine what to pull.
 `/agent/brain/<brand>/integrations/voice-of-customer/`).
 - **The later audit is not a pull output.** The Voice of Customer audit skill runs later in
   onboarding, after raw data has landed. It writes
-  `/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md`. This raw-pull skill
+  `<bank-home>/voice-of-customer-audit.md`. This raw-pull skill
   never creates or updates that file, and its absence during install or backfill is expected.
 - **PII: leave `author_contact` null.** The unified template keeps the field, but the policy
   call on storing customer emails is pending. Do not populate it until told the policy allows
@@ -192,17 +192,17 @@ corpus, which is worse. Under the workspace folder, all VoC pulls live under the
 slug as the folder name (`judge_me`, `gorgias_oauth`, ...; Meta ad comments use
 `meta-ad-comments` - it sits at the same level as every other platform folder).
 The later Voice of Customer audit is the one non-item artifact at the `voc/` root:
-`/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md`. It is created by the
+`<bank-home>/voice-of-customer-audit.md`. It is created by the
 later audit skill, not by these pull or recurring-sync procedures. Raw platform folders remain
 items-only.
 The filename prefix carries the source type:
 
-- Reviews: `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/review-<external_id>.md`
-- Support tickets/conversations: `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/ticket-<external_id>.md`
-- Meta ad comments: `/agent/brain/<brand>/integrations/voice-of-customer/meta-ad-comments/creative-<creative_asset_id>.md`
+- Reviews: `<bank-home>/<platform>/review-<external_id>.md`
+- Support tickets/conversations: `<bank-home>/<platform>/ticket-<external_id>.md`
+- Meta ad comments: `<bank-home>/meta-ad-comments/creative-<creative_asset_id>.md`
   - **one file per creative**, carrying every comment pulled for that creative
-- Community posts/comments (Reddit): `/agent/brain/<brand>/integrations/voice-of-customer/reddit/post-<external_id>.md`
-  and `/agent/brain/<brand>/integrations/voice-of-customer/reddit/comment-<external_id>.md`
+- Community posts/comments (Reddit): `<bank-home>/reddit/post-<external_id>.md`
+  and `<bank-home>/reddit/comment-<external_id>.md`
 
 Every raw-item path is keyed by the item's `external_id` and nothing else - for Meta ad
 comments the creative is the item, so the file is keyed by its `creative_asset_id`. This is
@@ -434,8 +434,11 @@ skill flow:
 
 - **Pull window** (this is what makes runs incremental - id-keyed files only dedupe
   writes, they do not shrink API paging):
-  - `/agent/brain/<brand>/integrations/voice-of-customer/<platform>/` empty -> pull the trailing 12 months (this
-    run is the backfill).
+  - The routine's own output folder - the literal `<bank-home>/<platform>/` path in the
+    routine prompt - empty -> pull the trailing 12 months (this run is the backfill).
+    Always check the folder the routine writes to, never the standard path: on a brain
+    with an adopted bank home they differ, and checking the wrong one re-runs the
+    backfill forever or splits the bank.
   - Otherwise -> pull from the **newest existing item's `created_at` minus 2 days**
     (overlap for safety; self-healing across paused or failed runs), never further back
     than 12 months. For support tickets, use the platform's `updated_at` bound where the

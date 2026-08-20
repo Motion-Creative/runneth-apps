@@ -53,7 +53,9 @@ trim leading and trailing hyphens ("Bramblewick NYC" -> `bramblewick-nyc`, "St. 
 
 The package's canonical source is:
 
-`/agent/brain/<brand>/integrations/voice-of-customer/<platform>/`
+`<bank-home>/<platform>/` (`<bank-home>` = the brand's one customer-voice bank home
+from its voice-of-customer lane in `/agent/brain/brain-map.md`, else
+`/agent/brain/<brand>/integrations/voice-of-customer`)
 
 Start from the brand's voice-of-customer lane in `/agent/brain/brain-map.md` and
 inspect every folder that lane covers - the adopted bank home(s) recorded there plus
@@ -66,10 +68,10 @@ synced.
 - Use all available VoC sources unless the person requests a particular platform, product,
   or source type.
 - Ignore compiled files such as
-  `/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md`; the audit's
+  `<bank-home>/voice-of-customer-audit.md`; the audit's
   evidence set is the id-keyed raw items inside platform folders.
 - Never read another workspace's folder to fill a gap in this one. If this workspace's
-  `integrations/voice-of-customer/` root is absent, its sync has not landed yet - say what paths were
+  bank home is absent, its sync has not landed yet - say what paths were
   checked instead of borrowing another workspace's data. If the person explicitly wants a
   different workspace audited, that audit runs from a conversation in that workspace.
 - Only ask for an upload when no matching VoC data exists for this workspace. Say what
@@ -214,7 +216,7 @@ makes the insights available to validation and future questions.
 
 Write or replace this single canonical file:
 
-`/agent/brain/<brand>/integrations/voice-of-customer/voice-of-customer-audit.md`
+`<bank-home>/voice-of-customer-audit.md`
 
 This file is compiled understanding, not raw evidence. Never edit the source item files.
 The saved page uses the same structure as the chat output — numbered standalone findings
@@ -227,7 +229,7 @@ just the conversation view. Use the Knoweth compiled-page contract:
 page_type: compiled
 substance: interpretation
 sources:
-  - /agent/brain/<brand>/integrations/voice-of-customer/<platform>/<raw-item-file>
+  - <bank-home>/<platform>/<raw-item-file>
 last_compiled: <ISO-8601 timestamp>
 confidence: <high | medium | low, with a short reason>
 tags:
