@@ -12,13 +12,37 @@ description: >
 
 # Setup: Creative QA
 
-Direct questions, friendly tone. One question at a time, plain language, no technical
-terms. The person on the other side is a marketer, not a developer. Never show file
-paths, JSON, or API language unless they ask.
+Direct questions, friendly tone. Plain language, no technical terms — and prefer words
+from a creative strategist's vocabulary: say "guidelines" or "grading criteria" rather
+than "rubric" in anything user-facing (files keep their internal names). The person on
+the other side is a marketer, not a developer. Never show file paths, JSON, or API
+language unless they ask.
 
-Format every question for scanning: a short bold header naming the topic, then the
-question, with bullets when it has parts. Tell the user up front they can answer
-however is easiest — typed, pasted files or screenshots, or voice notes.
+Deliver the gap questions as **one message grouped into short bold sections**, each
+section a bolded header with its questions as bullets beneath it — always this shape:
+
+```
+**Where assets live**
+- Where do new ads show up for review?
+- Drop the link to that exact board or channel.
+
+**Who reviews**
+- Who sends you the ads, and who has final say on whether one ships? ("It depends
+  who briefed it" is fine — just name the people and the rule.)
+
+**What you check**
+- What do you check before approving an ad?
+- What are the most common reasons an ad gets sent back?
+- Do you review videos, statics, or both?
+- Anything specific on pacing or hook timing, how early the product shows up,
+  on-screen text, spelling, CTA rules?
+
+Answer however is easiest — type it out, paste screenshots, or send one voice note
+covering everything. I'll follow up only on whatever's missing.
+```
+
+Drop sections the artifacts already answered (confirm those in a line instead); never
+deliver the questions as prose paragraphs or one at a time.
 
 The output of this skill is a complete workspace QA config plus rubrics that have
 already been validated against the team's own past assets. Nothing goes live on an
@@ -59,12 +83,13 @@ deliberately left to the calibration loop — so keep the interview short.
    intake question can arrive as a suggestion, not a cold ask.
 4. Open with one question: "Do you have any guidelines or QA notes written down
    anywhere — brand rules, claims or legal restrictions, a do-not-say list, a
-   checklist? Share whatever you have and I'll build from it." Anything counts — a
-   checklist, a per-product spec sheet, even a single slide.
+   checklist? Share whatever you have and I'll build from it, so I can check every ad
+   against the same rules you do." Anything counts — a checklist, a per-product spec
+   sheet, even a single slide.
 
-Build a draft picture from all of that, then ask **only the questions the artifacts
-left open**, one at a time. Never re-ask something already answered — confirm it
-instead ("sounds like X has final say — right?").
+Build a draft picture from all of that, then send **only the questions the artifacts
+left open**, batched into one sectioned message. Never re-ask something already
+answered — confirm it instead ("sounds like X has final say — right?").
 
 **The question bank** (skip whatever is already known):
 
@@ -74,18 +99,18 @@ instead ("sounds like X has final say — right?").
   or channel link — mapping starts from the real thing, not a description of it.
 - Review criteria: "What do you check before approving an ad?" Seeds the process map
   and the first taste dimensions.
-- Authority: "Who sends you the ads, and who has final say on whether one ships?" The
-  final-say person is the **reviewer of record**; capture their identity in the source
-  tool too (handle, tag, or account) — delivery tagging and skip rules need it.
-- Dealbreakers: "What always gets an ad sent back?" Hard-fail criteria from day one.
+- Authority: "Who sends you the ads, and who has final say on whether one ships?"
+  "It depends" is a normal answer: config accepts several **reviewers of record** plus
+  the resolution rule ("whoever briefed the ad"), and any listed reviewer's feedback
+  counts as training signal. Capture each reviewer's identity in the source tool
+  (handle, tag, or account) — delivery tagging and skip rules need it.
+- Dealbreakers: "What are the most common reasons an ad gets sent back?" The recurring
+  ones become hard-fail criteria from day one.
+- Formats, grouped with the check questions: "Do you review videos, statics, or both?"
+  One rubric per asset type.
 - Taste dimensions not yet covered, briefly, in their language: pacing and hook timing,
   how early the product shows up, on-screen text rules, spelling and grammar, CTA
   rules. Severity starts strict and the loop tunes it — do not interrogate edge cases.
-- Formats: "Do you review videos, statics, or both?" One rubric per asset type.
-- Content-type rules: "Are any of these submissions you can't edit — creator or partner
-  work that's approve/reject only?" Editable assets get fix notes; uneditable ones get
-  approve/reject with a one-line reason. Also ask for platform context the rubric
-  should not flag (for example a missing CTA the ad platform adds itself).
 
 Expect the artifacts plus a handful of gap questions to cover plumbing and authority,
 and the rubric to still arrive incomplete: in every production setup it was built from
@@ -97,7 +122,11 @@ the interview alone.
 Do not burn interview time on things the reviewer will naturally see in output and
 correct: strictness (always start strict — a bad approval that leaks cannot be
 calibrated back, so calibration only ever loosens), severity tiering (a reviewer's
-"that's fine, don't flag it" moves a check down-tier), the escalation boundary
+"that's fine, don't flag it" moves a check down-tier), content-type rules (default:
+every asset gets fix notes; when some submissions turn out to be approve/reject-only —
+creator or partner work that can't be edited — the reviewer will say so and it lands
+in config), platform context not to flag (surfaces as waved-off flags), the escalation
+boundary
 (default: only never-events interrupt the reviewer; everything else rides in the
 written feedback — tune from which flags they act on), the judgment-layer checks that
 only surface as disagreements, feedback tone and phrasing (seed from anything they
@@ -219,7 +248,8 @@ correction so the rubric keeps converging on their taste for as long as the pack
 ## Phase 5 — Lock in and go live
 
 1. Confirm the rubric(s) as v1 with the reviewer. Archive nothing yet; this is v1.
-2. Write `config.json` with: scope, reviewer of record (name + platform identity),
+2. Write `config.json` with: scope, reviewer(s) of record (names + platform
+   identities, plus the resolution rule when the reviewer varies per ad),
    asset types, intake adapters (each with its trigger condition, asset carrier, and
    approved-state signal), delivery adapters (with notification style and feedback-out
    phrasing), content-type rules (editable vs approve/reject-only), naming mode,

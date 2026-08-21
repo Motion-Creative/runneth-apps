@@ -94,7 +94,8 @@ The proposed name is part of the QA output either way.
 ## Step 6 — Deliver
 
 Post to every configured destination: the source tool first (task comment, review-tool
-comments, thread reply), then the Slack summary tagging the reviewer of record. End the
+comments, thread reply), then the Slack summary tagging the reviewer of record for this
+asset (resolved per config's rule when there are several). End the
 summary with the standing out: a one-line way for the reviewer to reject the review
 itself (for example "reply no if this shouldn't have editor comments"), because that
 reply is training signal.
