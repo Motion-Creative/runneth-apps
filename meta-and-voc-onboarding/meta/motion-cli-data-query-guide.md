@@ -219,8 +219,11 @@ home:
     primary store — summary sections and hooks via Knoweth injection first, then the
     `motion cache` CLI, plus transcripts and AI tags on the full record
     (`motion cache get-creative`). When the cache cannot serve (errors, empty, missing
-    record, or disabled for the sandbox), the creative read is not skipped — it falls
-    through to the live pull per the layer's ladder in the Cacheth Command Reference. When
+    record, a layer that has not hydrated, or disabled for the sandbox), the creative read
+    is not skipped — with the cache on, the repair is `motion cache refresh` plus one
+    re-read; the live pull is the content path only where the sandbox cache feature is off,
+    per the layer's ladder in the Cacheth Command Reference (the `meta insights` content
+    flags read this same cache when it is on). When
     pairing content with metrics, pull the metrics lean and join content from the cache on
     `creativeId` — do not add content flags to a metrics pull for convenience; it slows the
     call. Cacheth holds no performance data: stating a number from memory or from a summary

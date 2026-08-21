@@ -129,10 +129,11 @@ Do not start validation until both are true:
 2. **The creative content layer resolves.** In the normal case the workspace's creatives are
    in Cacheth: Knoweth injects matching summaries into the turn, and
    `motion cache search-summaries` finds them. In a sandbox where the cache feature is not
-   enabled (the `motion cache` commands fail with the explicit "Motion cache is disabled for
-   this sandbox" message), the layer's live rung stands in (per the Cacheth Command
-   Reference's ladder) — validation proceeds on live content reads; they are just slower. A
-   cache that exists but has not synced yet is neither: the fix is the sync.
+   enabled (the `motion cache` commands are absent from the catalogue, and a named invocation
+   fails with the explicit "Motion cache is disabled for this sandbox" message), the layer's
+   live rung stands in (per the Cacheth Command Reference's ladder) — validation proceeds on
+   live content reads; they are just slower. A cache that exists but has not synced or fully
+   hydrated yet is neither: the fix is `motion cache refresh`, not live reads.
 
 If either is missing, say so plainly and route back to that step. Do not fake a validation on an
 incomplete foundation. Routing back means telling the person what is missing — it never means
@@ -310,7 +311,8 @@ one exception noted below:
   ladder as written in the Cacheth Command Reference — Knoweth-injected context first,
   `motion cache search-summaries` by theme text next, `motion cache get-creative` per
   confirmed winner for AI tags and transcripts (one `--creative-id` per call; tags live
-  only on the full record), the live rung only when the cache cannot serve.
+  only on the full record), `motion cache refresh` + re-read when a layer has not
+  hydrated, and the live rung only where the sandbox cache feature is off.
 
 Answer every question from these files, using the account's own interpretation (their
 metrics, their naming, their targets). For Question 6 and any customer-side WHY question
