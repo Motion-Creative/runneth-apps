@@ -78,12 +78,13 @@ deliberately left to the calibration loop — so keep the interview short.
    feedback, rejection notes, guidelines, complaints about ads that shipped wrong.
 2. Read the shared brand sources every creative package uses — `motion brand-context`
    (voice, tone, positioning), the shared brand kit at
-   `/agent/brain/brand/<scope>/brand-kit.md` (fonts, colors, logo rules), and the
-   brand-audit bundle under `/agent/brain/brand-audit/<scope>/` — plus what other
-   packages captured in the brain (Meta onboarding account context, claims rules).
-   Brand facts found there are never re-asked; brand-level rules the team shares
-   during setup (fonts, colors, logo rules) are written back to the shared brand kit,
-   never kept as a package-private copy.
+   `/agent/brain/<brand>/brand-kit.md` in the brand's brain folder (locate via
+   `/agent/brain/brain-map.md` on organized brains), and the brand-audit bundle under
+   `/agent/brain/brand-audit/<scope>/` — plus what other packages captured in the
+   brain (Meta onboarding account context, claims rules). Brand facts found there are
+   never re-asked; brand-level rules the team shares during setup (fonts, colors,
+   logo rules) are written back to the shared brand kit, never kept as a
+   package-private copy.
 3. Check the connected integrations and the workspace's integration notes for where
    creative work already lives (a PM tool, Slack channels, Drive, a review tool) so the
    intake question can arrive as a suggestion, not a cold ask.
@@ -144,7 +145,7 @@ loop learns the real ones.
 Seed each rubric from, in priority order: (a) their imported checklist or rubric,
 (b) their historical reviewer feedback (Phase 4 harvests it), (c) the shared brand
 sources — `motion brand-context`, the shared brand kit at
-`/agent/brain/brand/<scope>/brand-kit.md`, and the brand-audit bundle under
+`/agent/brain/<brand>/brand-kit.md`, and the brand-audit bundle under
 `/agent/brain/brand-audit/<scope>/` — when present, (d) a sensible default. Keep
 imported reviewer criteria in their own section that automatic refreshes never rewrite.
 
@@ -157,10 +158,10 @@ timestamped for video / location-referenced for static).
 This package normally runs after Meta onboarding, so the convention should already be
 on file. Read, in order:
 
-1. `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json` — the operational
-   naming decoder written by Meta onboarding.
-2. The naming-conventions section of
-   `/agent/brain/<workspace>/data-sources/meta/account-context.md`.
+1. The operational naming decoder written by Meta onboarding: `naming-decoder.json`
+   at `/agent/brain/<brand>/integrations/meta/` on brains with the brand schema, or
+   at the legacy `/agent/brain/<workspace>/data-sources/meta/` path.
+2. The naming-conventions section of `account-context.md` in the same folder.
 
 When found, confirm in one line that the same scheme applies to the creative files sent
 for review, and move on — do not re-interview. Only when neither exists,
