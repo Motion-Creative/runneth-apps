@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "static-ad-generation",
+  "name": "Static Ad Generation",
+  "version": "1",
+  "description": "Brief-to-finished static ad generation with a self-growing template engine. Setup builds per-product context (reference photos, copy bank, claims rules) on top of the shared workspace brand kit in plain questions; the generation skill turns a request into finished 4:5 statics through deterministic gates (claims guard, ratio enforcement, reference-photo fidelity diff) under a reference-images-only prompt rule; the template library harvests competitor statics and mints reusable format patterns scored by performance, cohort, and coverage signals. The scheduled weekly batch is approval-gated. Available only through an explicit package install; installation only delivers files, and setup waits for explicit human approval before secrets, routine creation, or writes to external tools.",
+  "installPolicy": "manual",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "behavior-instruction",
+      "type": "package_instruction",
+      "sourcePath": "instructions/behavior.md"
+    },
+    {
+      "id": "static-ad-generation-skills",
+      "type": "directory",
+      "sourcePath": "skills",
+      "target": {
+        "root": "agent_skills",
+        "path": "static-ad-generation"
+      },
+      "executablePaths": []
+    }
+  ]
+}
