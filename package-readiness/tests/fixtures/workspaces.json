@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "workspaces": [
+    {
+      "id": "workspace-1",
+      "name": "Acme",
+      "slug": "acme"
+    },
+    {
+      "id": "workspace-2",
+      "name": "Second Brand",
+      "slug": "second-brand"
+    }
+  ]
+}

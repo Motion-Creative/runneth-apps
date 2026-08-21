@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "packageId": "sample-onboarding",
+  "scope": "workspace",
+  "readyStage": "context-confirmed",
+  "stages": [
+    {
+      "id": "context-seeded",
+      "label": "Context seeded",
+      "requires": [
+        "context-file"
+      ]
+    },
+    {
+      "id": "context-confirmed",
+      "label": "Context confirmed",
+      "requires": [
+        "context-confirmed"
+      ]
+    },
+    {
+      "id": "validation-on",
+      "label": "Validation on",
+      "requires": [
+        "validation-on"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "context-file",
+      "type": "markdown-yaml",
+      "source": {
+        "type": "glob",
+        "pattern": "brain/*/data-sources/sample/context.md",
+        "identity": {
+          "key": "workspace_id",
+          "equals": "${workspace.id}"
+        }
+      },
+      "assertions": [
+        {
+          "type": "equals",
+          "key": "schema_version",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "context-confirmed",
+      "type": "markdown-yaml",
+      "source": {
+        "type": "check",
+        "checkId": "context-file"
+      },
+      "assertions": [
+        {
+          "type": "equals",
+          "key": "field_statuses.field_1",
+          "value": "CONFIRMED"
+        },
+        {
+          "type": "count-values-equals",
+          "key": "fields_confirmed",
+          "objectKey": "field_statuses",
+          "value": "CONFIRMED"
+        }
+      ]
+    },
+    {
+      "id": "validation-on",
+      "type": "markdown-yaml",
+      "source": {
+        "type": "sibling",
+        "checkId": "context-file",
+        "path": "validation.md"
+      },
+      "assertions": [
+        {
+          "type": "equals",
+          "key": "state",
+          "value": "on"
+        }
+      ]
+    }
+  ]
+}

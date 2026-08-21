@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://runneth.com/schemas/package-readiness-contract-v1.json",
+  "title": "Runneth package readiness contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "packageId",
+    "scope",
+    "readyStage",
+    "stages",
+    "checks"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "packageId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "scope": { "enum": ["vm", "workspace"] },
+    "readyStage": { "$ref": "#/$defs/id" },
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "requires"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "label": { "type": "string", "minLength": 1 },
+          "requires": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/$defs/id" }
+          }
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/check" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "scalar": {
+      "type": ["string", "number", "boolean", "null"]
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "equals"],
+      "properties": {
+        "key": { "type": "string", "minLength": 1 },
+        "equals": { "$ref": "#/$defs/scalar" }
+      }
+    },
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "pattern"],
+          "properties": {
+            "type": { "const": "glob" },
+            "pattern": { "type": "string", "minLength": 1 },
+            "identity": { "$ref": "#/$defs/identity" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "checkId"],
+          "properties": {
+            "type": { "const": "check" },
+            "checkId": { "$ref": "#/$defs/id" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "checkId", "path"],
+          "properties": {
+            "type": { "const": "sibling" },
+            "checkId": { "$ref": "#/$defs/id" },
+            "path": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "assertion": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "key", "value"],
+          "properties": {
+            "type": { "const": "equals" },
+            "key": { "type": "string", "minLength": 1 },
+            "value": { "$ref": "#/$defs/scalar" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "key", "objectKey", "value"],
+          "properties": {
+            "type": { "const": "count-values-equals" },
+            "key": { "type": "string", "minLength": 1 },
+            "objectKey": { "type": "string", "minLength": 1 },
+            "value": { "$ref": "#/$defs/scalar" }
+          }
+        }
+      ]
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "source", "assertions"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "type": { "const": "markdown-yaml" },
+        "source": { "$ref": "#/$defs/source" },
+        "assertions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/assertion" }
+        }
+      }
+    }
+  }
+}

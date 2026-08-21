@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "package-readiness",
+  "name": "Package Readiness",
+  "version": "1",
+  "description": "Evaluates opt-in package-owned readiness contracts on a VM and emits a sanitized, deterministic snapshot for the existing package-state relay. Installation is manual during the canary and does not run checks, create routines, or publish state without explicit approval.",
+  "installPolicy": "manual",
+  "updatePolicy": "manual",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "readme",
+      "type": "file",
+      "sourcePath": "README.md",
+      "executable": false,
+      "target": {
+        "root": "agent_brain",
+        "path": "package-readiness/README.md"
+      }
+    },
+    {
+      "id": "package-readiness-runtime",
+      "type": "directory",
+      "sourcePath": "runtime",
+      "executablePaths": [
+        "check.mjs"
+      ],
+      "target": {
+        "root": "agent_tools",
+        "path": "package-readiness"
+      }
+    },
+    {
+      "id": "activation",
+      "type": "package_instruction",
+      "sourcePath": "instructions/activation.md"
+    }
+  ]
+}

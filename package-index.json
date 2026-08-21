@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-18-01",
+  "indexRevision": "2026-08-21-01",
   "packages": [
     {
       "id": "creative-strategy-guidance",
@@ -98,6 +98,24 @@
         "ref": "main"
       },
       "updatePolicy": "auto",
+      "uninstallPolicy": "allowed"
+    },
+    {
+      "id": "package-readiness",
+      "name": "Package Readiness",
+      "description": "Evaluates opt-in package-owned readiness contracts on a VM and emits a sanitized, deterministic snapshot for the existing package-state relay. Installation is manual during the canary and does not run checks, create routines, or publish state without explicit approval.",
+      "version": "1",
+      "categories": [],
+      "installPolicy": "manual",
+      "packageManagerVersion": 1,
+      "source": {
+        "type": "github",
+        "owner": "Motion-Creative",
+        "repo": "runneth-apps",
+        "path": "package-readiness",
+        "ref": "main"
+      },
+      "updatePolicy": "manual",
       "uninstallPolicy": "allowed"
     }
   ]
