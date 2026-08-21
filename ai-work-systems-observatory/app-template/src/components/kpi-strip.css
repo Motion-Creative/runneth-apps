@@ -1,0 +1,74 @@
+/*
+ * kpi-strip element styles (light DOM). The host establishes the query
+ * container; the inner grid can't be both the container and the thing the
+ * query restyles. The strip owns its full border and radius, so every cell
+ * carries its own padding — including the first. Cell dividers are the grid
+ * gap showing the container's border color through, which keeps them correct
+ * in both axes however the container-query breakpoints reflow the columns.
+ */
+
+kpi-strip {
+  display: block;
+  container-type: inline-size;
+}
+
+kpi-strip .kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--kpi-count), minmax(0, 1fr));
+  gap: var(--wa-border-width-s);
+  overflow: hidden;
+  border: var(--wa-border-width-s) var(--wa-border-style)
+    var(--wa-color-surface-border);
+  border-radius: var(--wa-panel-border-radius);
+  /* Shows through the grid gap as the divider between cells. */
+  background-color: var(--wa-color-surface-border);
+}
+
+kpi-strip .kpi-item {
+  padding: var(--wa-space-l);
+  background-color: var(--wa-color-surface-default);
+}
+
+kpi-strip .kpi-value {
+  font-size: var(--wa-font-size-2xl);
+  font-weight: var(--wa-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+kpi-strip .kpi-label {
+  margin-block-start: var(--wa-space-2xs);
+  font-size: var(--wa-font-size-s);
+}
+
+kpi-strip .kpi-delta {
+  color: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+kpi-strip .kpi-delta[data-tone="positive"] {
+  color: var(--wa-color-success-on-quiet);
+}
+
+kpi-strip .kpi-delta[data-tone="negative"] {
+  color: var(--wa-color-danger-on-quiet);
+}
+
+/* Two columns once single-row cells get cramped. An odd third item spans
+   the full last row so no empty divider-colored cell shows. */
+@container (max-width: 40rem) {
+  kpi-strip .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  kpi-strip[data-count="3"] .kpi-item:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@container (max-width: 22rem) {
+  kpi-strip .kpi-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

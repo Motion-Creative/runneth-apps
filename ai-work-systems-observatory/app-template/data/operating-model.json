@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 2,
+  "documentType": "proposed-operating-model",
+  "meta": {
+    "mode": "illustrative",
+    "organizationName": "Illustrative organization",
+    "generatedAt": "2026-08-20T16:00:00.000Z",
+    "lastConfirmedAt": "2026-08-20T16:00:00.000Z",
+    "scope": "Illustrative operating-model example",
+    "interpretationBoundary": "The sample demonstrates report structure only and does not describe a real organization."
+  },
+  "executiveThesis": {
+    "headline": "Move the team from weekly evidence assembly to continuously prepared decisions",
+    "narrative": "The team already has one consumed weekly decision system. The next operating-model move is to connect customer language, creative priorities, and production handoff while preserving explicit human approval.",
+    "evidenceRefs": [
+      "e-rhythm-weekly",
+      "e-consumption",
+      "e-friction"
+    ]
+  },
+  "synthesis": {
+    "manualCoordination": "Customer-language synthesis, context assembly, and production handoff are rebuilt manually around the Monday review.",
+    "decisionsPrepared": [
+      "Weekly creative priority",
+      "Which customer objection needs a new test",
+      "Which approved concept enters production"
+    ],
+    "continuouslyUpdatedOutputs": [
+      "Customer-language evidence bank",
+      "Decision brief",
+      "Production queue"
+    ],
+    "mandatoryHumanJudgment": [
+      "Accepting priorities",
+      "Approving claims and concepts",
+      "Committing production capacity"
+    ],
+    "highestCapacityUnlock": "A connected weekly creative operating loop that prepares evidence before the meeting and carries approved decisions into production.",
+    "mondayChange": "The team arrives to a current decision brief, reviews exceptions, and approves priorities instead of rebuilding context live."
+  },
+  "proposedSystems": [
+    {
+      "systemId": "proposed-voc-intelligence",
+      "name": "Continuous customer-language intelligence",
+      "status": "proposed",
+      "layer": "proposed",
+      "currentGap": "Customer language is synthesized manually and the existing refresh lacks qualified ownership and consumption evidence.",
+      "trigger": "Weekly source refresh plus new evidence threshold",
+      "aiRole": "Normalize new language, retain verbatim evidence, and surface changed pain, desire, objection, and proof themes.",
+      "humanRole": "A strategist approves theme changes and claims before they enter briefs.",
+      "output": "Current customer-language evidence bank and change brief",
+      "destination": "Weekly creative decision brief",
+      "ownerRecommendation": "Creative strategist",
+      "successSignal": "The strategist approves the update and the weekly priority brief cites it repeatedly.",
+      "rationale": "This removes recurring evidence assembly while keeping messaging judgment human.",
+      "evidenceRefs": [
+        "e-friction"
+      ]
+    },
+    {
+      "systemId": "proposed-priority-orchestrator",
+      "name": "Weekly creative priority orchestrator",
+      "status": "proposed",
+      "layer": "proposed",
+      "currentGap": "The existing decision brief stops at recommendation and the producer handoff is reconstructed manually.",
+      "trigger": "Monday decision brief approval",
+      "aiRole": "Convert accepted priorities into a production-ready queue with evidence, owner, due point, and approval status.",
+      "humanRole": "The growth lead approves priorities; the producer accepts capacity and sequencing.",
+      "output": "Approved production queue",
+      "destination": "Producer planning surface",
+      "ownerRecommendation": "Growth lead with producer as downstream owner",
+      "successSignal": "Approved priorities appear in production without context being recopied.",
+      "rationale": "This closes the strongest observed handoff gap around an already consumed system.",
+      "evidenceRefs": [
+        "e-rhythm-weekly",
+        "e-consumption",
+        "e-friction"
+      ]
+    },
+    {
+      "systemId": "proposed-learning-loop",
+      "name": "Creative learning and iteration loop",
+      "status": "proposed",
+      "layer": "proposed",
+      "currentGap": "Results are reviewed weekly but accepted lessons are not maintained as durable rules for the next cycle.",
+      "trigger": "A test reaches the agreed evidence threshold",
+      "aiRole": "Prepare the performance and creative evidence, propose the lesson, and identify the next iteration.",
+      "humanRole": "The strategist approves the lesson; the growth lead approves the next test.",
+      "output": "Approved learning record and iteration brief",
+      "destination": "Creative knowledge base and production queue",
+      "ownerRecommendation": "Creative strategist",
+      "successSignal": "Approved learnings are reused in later briefs and linked to the tests that produced them.",
+      "rationale": "This converts weekly review into cumulative learning rather than repeated interpretation.",
+      "evidenceRefs": [
+        "e-rhythm-weekly",
+        "e-consumption"
+      ]
+    }
+  ],
+  "roleChanges": [
+    {
+      "role": "Growth lead",
+      "stop": "Rebuilding the evidence packet",
+      "continue": "Owning the weekly priority decision",
+      "start": "Reviewing exceptions and approving prepared priorities",
+      "evidenceRefs": [
+        "e-role-growth",
+        "e-friction"
+      ]
+    },
+    {
+      "role": "Creative strategist",
+      "stop": "Manually re-synthesizing the same customer language",
+      "continue": "Applying messaging and claims judgment",
+      "start": "Approving durable language and learning updates",
+      "evidenceRefs": [
+        "e-friction"
+      ]
+    },
+    {
+      "role": "Producer",
+      "stop": "Re-copying context from the weekly review",
+      "continue": "Owning capacity and execution sequencing",
+      "start": "Accepting an evidence-linked production queue",
+      "evidenceRefs": [
+        "e-rhythm-weekly",
+        "e-friction"
+      ]
+    }
+  ],
+  "weeklyCadence": [
+    {
+      "when": "Friday",
+      "system": "Customer-language intelligence",
+      "ai": "Refresh evidence and flag meaningful changes",
+      "human": "Strategist approves changes"
+    },
+    {
+      "when": "Monday morning",
+      "system": "Priority orchestrator",
+      "ai": "Prepare decision brief and ranked options",
+      "human": "Growth lead approves priorities"
+    },
+    {
+      "when": "Monday afternoon",
+      "system": "Production handoff",
+      "ai": "Create evidence-linked queue",
+      "human": "Producer accepts sequencing"
+    },
+    {
+      "when": "After evidence threshold",
+      "system": "Learning loop",
+      "ai": "Prepare lesson and iteration",
+      "human": "Strategist and growth lead approve"
+    }
+  ],
+  "opportunities": [
+    {
+      "rank": 1,
+      "title": "Close the weekly priority-to-production loop",
+      "value": "Highest operating leverage because it extends an already consumed system",
+      "readiness": "High",
+      "nextMove": "Confirm the producer handoff fields and destination",
+      "evidenceRefs": [
+        "e-rhythm-weekly",
+        "e-consumption",
+        "e-friction"
+      ]
+    },
+    {
+      "rank": 2,
+      "title": "Qualify customer-language intelligence",
+      "value": "Removes repeated synthesis and keeps inputs current",
+      "readiness": "Medium",
+      "nextMove": "Confirm the strategist owner and consumption destination",
+      "evidenceRefs": [
+        "e-friction"
+      ]
+    },
+    {
+      "rank": 3,
+      "title": "Persist approved creative learnings",
+      "value": "Turns weekly review into cumulative decision memory",
+      "readiness": "Medium",
+      "nextMove": "Define the evidence threshold and approval record",
+      "evidenceRefs": [
+        "e-rhythm-weekly",
+        "e-consumption"
+      ]
+    }
+  ],
+  "buildSequence": [
+    {
+      "phase": "1. Prove the handoff",
+      "timing": "First",
+      "systems": [
+        "Weekly creative priority orchestrator"
+      ],
+      "exit": "Two approved queues reach production without manual context reconstruction"
+    },
+    {
+      "phase": "2. Keep inputs current",
+      "timing": "Next",
+      "systems": [
+        "Continuous customer-language intelligence"
+      ],
+      "exit": "Owner and repeated consumption are observed"
+    },
+    {
+      "phase": "3. Close the learning loop",
+      "timing": "Then",
+      "systems": [
+        "Creative learning and iteration loop"
+      ],
+      "exit": "Approved learnings are reused in later briefs"
+    }
+  ],
+  "limitations": [
+    "Value statements are hypotheses because no owner-approved manual baseline or independent outcome source is attached."
+  ]
+}

@@ -1,0 +1,21 @@
+:host {
+  display: block;
+}
+
+.section-kicker {
+  margin-block-end: var(--wa-space-s);
+}
+
+.section-kicker.is-empty {
+  display: none;
+  margin: 0;
+}
+
+.section-title {
+  width: fit-content;
+  padding-block-end: var(--wa-space-2xs);
+  font-family: var(--wa-font-family-heading);
+  font-size: var(--wa-font-size-l);
+  font-style: italic;
+  font-weight: var(--wa-font-weight-bold);
+}

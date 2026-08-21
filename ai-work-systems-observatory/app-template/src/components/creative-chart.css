@@ -1,0 +1,186 @@
+creative-chart {
+  --chart-1: var(--wa-color-brand-fill-loud);
+  --chart-2: var(--wa-color-warning-fill-loud);
+  --chart-3: var(--wa-color-danger-fill-loud);
+  --chart-4: var(--wa-color-success-fill-loud);
+
+  display: block;
+  width: 100%;
+  font-family: var(--wa-font-family-body);
+}
+
+creative-chart .ccx-scroll {
+  overflow-x: auto;
+  width: 100%;
+}
+
+creative-chart .ccx-root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: var(--ccx-min-width, auto);
+}
+
+creative-chart .ccx-metric-header {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--wa-space-s);
+  padding-bottom: var(--wa-space-2xs);
+  pointer-events: none;
+}
+
+creative-chart .ccx-metric-header[data-count="1"] {
+  justify-content: flex-start;
+}
+
+creative-chart .ccx-metric-header[data-count="2"] {
+  justify-content: space-between;
+}
+
+creative-chart .ccx-metric-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--wa-color-text-normal);
+  font-size: var(--wa-font-size-s);
+  font-weight: var(--wa-font-weight-semibold);
+  line-height: var(--wa-line-height-condensed);
+}
+
+creative-chart .ccx-metric-label[data-align="right"] {
+  text-align: right;
+}
+
+creative-chart .ccx-chart {
+  position: relative;
+  flex-shrink: 0;
+  height: var(--ccx-height, 360px);
+}
+
+creative-chart .ccx-chart-svg {
+  display: block;
+  overflow: visible;
+}
+
+creative-chart .ccx-axis-tick-label {
+  fill: var(--wa-color-text-normal);
+  font-size: var(--wa-font-size-2xs);
+}
+
+creative-chart .ccx-axis-tick-placeholder {
+  fill: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-2xs);
+  font-weight: var(--wa-font-weight-semibold);
+}
+
+creative-chart .ccx-value-label {
+  fill: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-2xs);
+  paint-order: stroke;
+  stroke: var(--wa-color-surface-default);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+creative-chart .ccx-y-tick {
+  fill: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-2xs);
+}
+
+creative-chart .ccx-bar-group {
+  transition: opacity var(--wa-transition-normal) var(--wa-transition-easing);
+}
+
+creative-chart .ccx-chart[data-hovering] .ccx-bar-group:not([data-hovered]) {
+  opacity: 0.8;
+}
+
+creative-chart .ccx-cursor-line {
+  stroke: var(--wa-color-neutral-border-normal);
+  stroke-width: 1;
+  opacity: 0;
+  transition: opacity var(--wa-transition-fast) var(--wa-transition-easing);
+}
+
+creative-chart .ccx-cursor-line[data-visible] {
+  opacity: 1;
+}
+
+creative-chart .ccx-tooltip {
+  position: absolute;
+  z-index: 1;
+  display: none;
+  min-width: 14rem;
+  padding: var(--wa-space-s);
+  border: var(--wa-border-width-s) solid var(--wa-color-surface-border);
+  border-radius: var(--wa-border-radius-m);
+  background: var(--wa-color-surface-raised);
+  box-shadow: var(--wa-shadow-l);
+  pointer-events: none;
+}
+
+creative-chart .ccx-tooltip[data-visible] {
+  display: grid;
+  gap: var(--wa-space-2xs);
+}
+
+creative-chart .ccx-tooltip-title {
+  max-width: 250px;
+  max-height: 2.25em;
+  overflow: hidden;
+  color: var(--wa-color-text-normal);
+  font-size: var(--wa-font-size-xs);
+  font-weight: var(--wa-font-weight-semibold);
+  line-height: var(--wa-line-height-condensed);
+  text-overflow: ellipsis;
+}
+
+creative-chart .ccx-tooltip-rows {
+  display: grid;
+  gap: var(--wa-space-2xs);
+}
+
+creative-chart .ccx-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-2xs);
+  color: var(--wa-color-text-normal);
+  font-size: var(--wa-font-size-xs);
+}
+
+creative-chart .ccx-tooltip-swatch {
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  border-radius: var(--wa-border-radius-s);
+}
+
+creative-chart .ccx-tooltip-value {
+  margin-inline-start: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+creative-chart .ccx-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--wa-space-m);
+  padding-top: var(--wa-space-s);
+}
+
+creative-chart .ccx-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-2xs);
+  color: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-xs);
+}
+
+creative-chart .ccx-legend-swatch {
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  border-radius: var(--wa-border-radius-s);
+}

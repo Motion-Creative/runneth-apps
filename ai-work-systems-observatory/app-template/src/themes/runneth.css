@@ -1,0 +1,79 @@
+.wa-theme-runneth {
+  color-scheme: light;
+
+  --wa-color-brand-95: #f7ffd9;
+  --wa-color-brand-90: #edffb5;
+  --wa-color-brand-80: #dcff84;
+  --wa-color-brand-70: #ceff5b;
+  --wa-color-brand-60: #bce944;
+  --wa-color-brand-50: #9fc72f;
+  --wa-color-brand-40: #718f1f;
+  --wa-color-brand-30: #526816;
+  --wa-color-brand-20: #35430e;
+  --wa-color-brand-10: #232b0a;
+  --wa-color-brand-05: #151a06;
+  --wa-color-brand: #ceff5b;
+  --wa-color-brand-on: #1c180e;
+
+  --wa-color-neutral-95: #f6f6f6;
+  --wa-color-neutral-90: #ece8d9;
+  --wa-color-neutral-80: #d8d2bd;
+  --wa-color-neutral-70: #b8af92;
+  --wa-color-neutral-60: #93896d;
+  --wa-color-neutral-50: #70674f;
+  --wa-color-neutral-40: #554d3a;
+  --wa-color-neutral-30: #3f3829;
+  --wa-color-neutral-20: #2b261a;
+  --wa-color-neutral-10: #1c180e;
+  --wa-color-neutral-05: #110f09;
+
+  --wa-color-surface-raised: #ffffff;
+  --wa-color-surface-default: #ffffff;
+  --wa-color-surface-lowered: #fff7d6;
+  --wa-color-surface-border: #ece8d9;
+  --wa-color-text-normal: #1c180e;
+  --wa-color-text-quiet: #70674f;
+  --wa-color-text-link: #526816;
+  --wa-color-focus: #718f1f;
+  --wa-color-brand-fill-quiet: #f7ffd9;
+  --wa-color-brand-fill-normal: #edffb5;
+  --wa-color-brand-fill-loud: #ceff5b;
+  --wa-color-brand-border-quiet: #edffb5;
+  --wa-color-brand-border-normal: #dcff84;
+  --wa-color-brand-border-loud: #9fc72f;
+  --wa-color-brand-on-quiet: #526816;
+  --wa-color-brand-on-normal: #35430e;
+  --wa-color-brand-on-loud: #1c180e;
+
+  --wa-font-family-body: Inter, ui-sans-serif, system-ui, sans-serif;
+  --wa-font-family-heading: Inter, ui-sans-serif, system-ui, sans-serif;
+  --wa-font-family-longform: Inter, ui-sans-serif, system-ui, sans-serif;
+  --wa-font-weight-normal: 400;
+  --wa-font-weight-semibold: 600;
+  --wa-font-weight-bold: 700;
+  --wa-font-weight-heading: 700;
+  --wa-line-height-condensed: 1.16;
+  --wa-line-height-normal: 1.55;
+
+  --wa-border-radius-scale: 1;
+  --wa-border-radius-s: 6px;
+  --wa-border-radius-m: 10px;
+  --wa-border-radius-l: 10px;
+  --wa-panel-border-radius: 10px;
+  --wa-form-control-border-radius: 10px;
+
+  --wa-shadow-s: none;
+  --wa-shadow-m: none;
+  --wa-shadow-l: none;
+}
+
+.wa-theme-runneth.wa-dark {
+  color-scheme: dark;
+  --wa-color-surface-raised: #2b261a;
+  --wa-color-surface-default: #1c180e;
+  --wa-color-surface-lowered: #110f09;
+  --wa-color-surface-border: #554d3a;
+  --wa-color-text-normal: #fff7d6;
+  --wa-color-text-quiet: #d8d2bd;
+  --wa-color-text-link: #ceff5b;
+}

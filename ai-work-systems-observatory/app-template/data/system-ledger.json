@@ -1,0 +1,351 @@
+{
+  "schemaVersion": 2,
+  "documentType": "observed-state-ledger",
+  "generatedAt": "2026-08-20T16:00:00.000Z",
+  "meta": {
+    "mode": "illustrative",
+    "organizationName": "Illustrative organization",
+    "generatedAt": "2026-08-20T16:00:00.000Z",
+    "lastConfirmedAt": "2026-08-20T16:00:00.000Z",
+    "scope": "Illustrative operating-model example",
+    "interpretationBoundary": "The sample demonstrates report structure only and does not describe a real organization."
+  },
+  "sourceCoverage": [
+    {
+      "sourceId": "routines",
+      "label": "Routine inventory and run history",
+      "available": true,
+      "readAt": "2026-08-20T16:00:00.000Z",
+      "rowsObserved": 1,
+      "limitations": "Illustrative evidence"
+    },
+    {
+      "sourceId": "conversations",
+      "label": "Bounded workflow evidence",
+      "available": true,
+      "readAt": "2026-08-20T16:00:00.000Z",
+      "rowsObserved": 4,
+      "limitations": "Only workflow-relevant excerpts are represented"
+    },
+    {
+      "sourceId": "outcomes",
+      "label": "Validated business outcomes",
+      "available": false,
+      "readAt": "2026-08-20T16:00:00.000Z",
+      "rowsObserved": null,
+      "limitations": "No approved baseline or independent outcome source"
+    }
+  ],
+  "evidence": [
+    {
+      "evidenceId": "e-role-growth",
+      "sourceId": "conversations",
+      "kind": "direct-confirmation",
+      "observedAt": "2026-08-20T16:00:00.000Z",
+      "summary": "The growth lead confirmed ownership of the weekly performance review.",
+      "reference": "illustrative:conversation:owner",
+      "confidence": "high"
+    },
+    {
+      "evidenceId": "e-rhythm-weekly",
+      "sourceId": "conversations",
+      "kind": "operating-rhythm",
+      "observedAt": "2026-08-20T16:00:00.000Z",
+      "summary": "A Monday performance review prepares creative priorities for the week.",
+      "reference": "illustrative:conversation:rhythm",
+      "confidence": "medium"
+    },
+    {
+      "evidenceId": "e-run-history",
+      "sourceId": "routines",
+      "kind": "run-history",
+      "observedAt": "2026-08-20T16:00:00.000Z",
+      "summary": "Three of four scheduled decision-brief runs completed in the assessment window.",
+      "reference": "illustrative:routine:history",
+      "confidence": "high"
+    },
+    {
+      "evidenceId": "e-consumption",
+      "sourceId": "conversations",
+      "kind": "consumption",
+      "observedAt": "2026-08-20T16:00:00.000Z",
+      "summary": "The growth lead reviewed each delivered brief and recorded the weekly priority decision.",
+      "reference": "illustrative:conversation:consumption",
+      "confidence": "medium"
+    },
+    {
+      "evidenceId": "e-friction",
+      "sourceId": "conversations",
+      "kind": "manual-friction",
+      "observedAt": "2026-08-20T16:00:00.000Z",
+      "summary": "Customer-language synthesis and brief assembly are repeated manually before reviews.",
+      "reference": "illustrative:conversation:friction",
+      "confidence": "medium"
+    }
+  ],
+  "observedState": {
+    "roles": [
+      {
+        "roleId": "role-growth-lead",
+        "title": "Growth lead",
+        "responsibilities": [
+          "Set weekly testing priorities",
+          "Approve scale or iteration decisions"
+        ],
+        "evidenceRefs": [
+          "e-role-growth"
+        ],
+        "confidence": "high"
+      },
+      {
+        "roleId": "role-strategist",
+        "title": "Creative strategist",
+        "responsibilities": [
+          "Interpret customer and performance evidence",
+          "Recommend concepts and iterations"
+        ],
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-friction"
+        ],
+        "confidence": "medium"
+      },
+      {
+        "roleId": "role-producer",
+        "title": "Producer",
+        "responsibilities": [
+          "Turn approved priorities into production-ready work"
+        ],
+        "evidenceRefs": [
+          "e-rhythm-weekly"
+        ],
+        "confidence": "medium"
+      }
+    ],
+    "operatingRhythms": [
+      {
+        "rhythmId": "rhythm-weekly-review",
+        "name": "Monday performance and creative review",
+        "cadence": "Weekly",
+        "decisions": [
+          "What to iterate",
+          "What evidence needs deeper review"
+        ],
+        "participants": [
+          "Growth lead",
+          "Creative strategist",
+          "Producer"
+        ],
+        "handoffs": [
+          "Decision brief to creative priorities"
+        ],
+        "outputs": [
+          "Approved testing priorities"
+        ],
+        "evidenceRefs": [
+          "e-rhythm-weekly"
+        ],
+        "confidence": "medium"
+      }
+    ],
+    "handoffs": [
+      {
+        "handoffId": "handoff-priority-production",
+        "from": "Growth lead",
+        "to": "Producer",
+        "artifact": "Approved testing priorities",
+        "friction": "Context is reassembled manually",
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-friction"
+        ]
+      }
+    ],
+    "decisions": [
+      {
+        "decisionId": "decision-weekly-priority",
+        "name": "Weekly creative priority",
+        "cadence": "Weekly",
+        "decisionOwner": "Growth lead",
+        "evidenceRefs": [
+          "e-role-growth",
+          "e-rhythm-weekly"
+        ]
+      }
+    ],
+    "approvals": [
+      {
+        "approvalId": "approval-priority",
+        "name": "Testing priority approval",
+        "approver": "Growth lead",
+        "evidenceRefs": [
+          "e-role-growth"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "outputId": "output-decision-brief",
+        "name": "Weekly decision brief",
+        "audience": "Growth and creative",
+        "destination": "Monday review",
+        "evidenceRefs": [
+          "e-consumption"
+        ]
+      }
+    ],
+    "manualFriction": [
+      {
+        "frictionId": "friction-brief-assembly",
+        "name": "Rebuilding evidence before the weekly review",
+        "frequency": "Weekly",
+        "impact": "Decision time is spent assembling context",
+        "evidenceRefs": [
+          "e-friction"
+        ]
+      }
+    ],
+    "currentSystems": [
+      {
+        "systemId": "system-weekly-decision-brief",
+        "name": "Weekly performance decision brief",
+        "lifecycle": "current-operating-system",
+        "businessJob": "Prepare the evidence needed for the Monday creative-priority decision",
+        "owner": {
+          "status": "confirmed",
+          "label": "Growth lead",
+          "evidenceRefs": [
+            "e-role-growth"
+          ]
+        },
+        "trigger": {
+          "type": "schedule",
+          "cadence": "Every Monday before the review",
+          "evidenceRefs": [
+            "e-run-history",
+            "e-rhythm-weekly"
+          ]
+        },
+        "inputs": [
+          "Current performance evidence",
+          "Active test context"
+        ],
+        "output": {
+          "artifact": "Decision brief",
+          "audience": "Growth lead and creative team",
+          "destination": "Monday performance review"
+        },
+        "consumption": {
+          "status": "observed",
+          "description": "Reviewed and used to record the weekly priority decision",
+          "evidenceRefs": [
+            "e-consumption"
+          ]
+        },
+        "health": {
+          "status": "watch",
+          "window": {
+            "start": "2026-07-27",
+            "end": "2026-08-20"
+          },
+          "successfulRuns": 3,
+          "failedRuns": 1,
+          "evidenceRefs": [
+            "e-run-history"
+          ]
+        },
+        "humanControl": "The growth lead accepts, changes, or rejects each proposed priority.",
+        "confidence": "high",
+        "lastConfirmedAt": "2026-08-20T16:00:00.000Z",
+        "evidenceRefs": [
+          "e-role-growth",
+          "e-rhythm-weekly",
+          "e-run-history",
+          "e-consumption"
+        ]
+      }
+    ],
+    "recurringMechanisms": [
+      {
+        "mechanismId": "mechanism-voc-refresh",
+        "name": "Customer-language refresh",
+        "lifecycle": "recurring-mechanism",
+        "mechanismType": "routine",
+        "status": "active",
+        "triggerHint": "Weekly",
+        "evidenceRefs": [
+          "e-friction"
+        ],
+        "qualificationGaps": [
+          "directly confirmed owner",
+          "observed consumption",
+          "run-health assessment window"
+        ]
+      }
+    ],
+    "capabilities": [
+      {
+        "capabilityId": "capability-creator-intel",
+        "name": "Creator intelligence package",
+        "lifecycle": "available-capability",
+        "availabilityStatus": "installed",
+        "sourceType": "package",
+        "evidenceRefs": [
+          "e-friction"
+        ],
+        "qualificationNote": "Available, not proven in use."
+      }
+    ],
+    "deliveredAssets": [
+      {
+        "assetId": "asset-top-performers",
+        "name": "Top-performers app",
+        "lifecycle": "delivered-asset",
+        "deliveryStatus": "ready",
+        "audience": "unknown",
+        "consumptionStatus": "unknown",
+        "evidenceRefs": [
+          "e-friction"
+        ],
+        "qualificationNote": "Delivery is observed; use is not."
+      }
+    ],
+    "incompleteSetups": [
+      {
+        "setupId": "setup-validation-loop",
+        "name": "Weekly validation loop",
+        "lifecycle": "incomplete-setup",
+        "sourceId": "conversation",
+        "status": "incomplete",
+        "missing": [
+          "confirmed owner",
+          "approved cadence"
+        ],
+        "evidenceRefs": [
+          "e-friction"
+        ]
+      }
+    ]
+  },
+  "adoptionDefinition": {
+    "name": "qualified-system consumption coverage",
+    "unit": "systems",
+    "population": "qualified current operating systems in scope",
+    "rule": "A qualified system counts as adopted when repeat consumption, approval, action, or downstream reliance is observed.",
+    "numerator": 1,
+    "denominator": 1,
+    "evidenceRefs": [
+      "e-consumption"
+    ],
+    "status": "computed"
+  },
+  "limitations": [
+    "No validated outcome source or owner-approved manual baseline is attached.",
+    "The example does not measure employee productivity or total AI spend."
+  ],
+  "unknowns": [
+    "Who should own the customer-language refresh?",
+    "Who consumes the delivered top-performers app?"
+  ],
+  "inventory": {}
+}

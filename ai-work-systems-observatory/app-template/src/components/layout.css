@@ -1,0 +1,307 @@
+/*
+ * Layout primitives as CSS-rendered custom tags. Each tag mirrors a Web Awesome
+ * layout utility (https://webawesome.com/docs/utilities/#layout-utilities)
+ * with the same behavior and tokens, but works identically in Astro pages,
+ * browser TypeScript, and plain HTML. JS registration is validation-only; no
+ * shadow DOM or framework wrapper changes rendering.
+ *
+ *   <layout-stack gap="l">            column      (wa-stack)
+ *   <layout-cluster gap="xs">         wrapping row (wa-cluster)
+ *   <layout-grid gap="l">             responsive columns (wa-grid)
+ *   <layout-split>                    opposite ends (wa-split)
+ *   <layout-flank>                    fixed + flexible pair (wa-flank)
+ *   <layout-frame aspect="landscape"> aspect-ratio box (wa-frame)
+ *
+ * Enumerated options are attributes. Runtime value tables and their exported
+ * TypeScript unions live in scaffold-contracts.ts:
+ *   gap="0|3xs|2xs|xs|s|m|l|xl|2xl|3xl|4xl|5xl"
+ *   align-items="start|end|center|stretch|baseline"
+ *   justify-content="start|end|center|space-around|space-between|space-evenly"
+ *   wrap="wrap|nowrap|wrap-reverse"
+ *   layout-split:  direction="column"
+ *   layout-flank:  position="end"
+ *   layout-frame:  aspect="square|landscape|portrait", radius="s|m|l|pill|circle|square"
+ *
+ * Arbitrary lengths go through the underlying custom properties on style:
+ *   <layout-grid style="--min-column-size: 16rem">
+ *   <layout-flank style="--flank-size: 3rem; --content-percentage: 70%">
+ *   <layout-frame style="aspect-ratio: 4 / 3">
+ *
+ * Add class="wa-span-grid" to a layout-grid child to span all columns.
+ */
+
+/* Shared: children own no outer margins; the container's gap is the rhythm. */
+:is(
+    layout-stack,
+    layout-cluster,
+    layout-grid,
+    layout-split,
+    layout-flank,
+    layout-frame
+  )
+  > * {
+  margin-block: 0;
+  margin-inline: 0;
+}
+
+:where(
+  layout-stack,
+  layout-cluster,
+  layout-grid,
+  layout-split,
+  layout-flank,
+  layout-frame
+) {
+  gap: var(--wa-space-m);
+}
+
+/* #region Stack */
+layout-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+:where(layout-stack) {
+  align-items: stretch;
+  justify-content: flex-start;
+}
+/* #endregion */
+
+/* #region Cluster */
+layout-cluster {
+  display: flex;
+}
+
+:where(layout-cluster) {
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+/* #endregion */
+
+/* #region Grid */
+layout-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(var(--min-column-size, 20ch), 100%), 1fr)
+  );
+
+  --min-column-size: initial;
+}
+
+layout-grid > .wa-span-grid {
+  grid-column: 1 / -1;
+}
+/* #endregion */
+
+/* #region Split */
+layout-split {
+  display: flex;
+  flex-direction: row;
+  block-size: auto;
+  inline-size: 100%;
+}
+
+layout-split:not([direction="column"]) > :first-child {
+  flex: 0 1 auto;
+}
+
+layout-split[direction="column"] {
+  flex-direction: column;
+  block-size: auto;
+  inline-size: auto;
+  align-self: stretch;
+}
+
+:where(layout-split) {
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+/* #endregion */
+
+/* #region Flank */
+layout-flank {
+  display: flex;
+
+  --content-percentage: initial;
+  --flank-size: initial;
+}
+
+layout-flank:not([position="end"]) > :first-child {
+  flex-basis: var(--flank-size, auto);
+  flex-grow: 1;
+}
+
+layout-flank:not([position="end"]) > :last-child {
+  flex-basis: 0;
+  flex-grow: 999;
+  min-inline-size: var(--content-percentage, 50%);
+}
+
+layout-flank[position="end"] > :last-child {
+  flex-basis: var(--flank-size, auto);
+  flex-grow: 1;
+}
+
+layout-flank[position="end"] > :first-child {
+  flex-basis: 0;
+  flex-grow: 999;
+  min-inline-size: var(--content-percentage, 50%);
+}
+
+:where(layout-flank) {
+  align-items: center;
+  flex-wrap: wrap;
+}
+/* #endregion */
+
+/* #region Frame */
+layout-frame {
+  display: flex;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+layout-frame > img,
+layout-frame > video {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+}
+
+layout-frame[aspect="square"] {
+  aspect-ratio: 1 / 1;
+}
+
+layout-frame[aspect="landscape"] {
+  aspect-ratio: 16 / 9;
+}
+
+layout-frame[aspect="portrait"] {
+  aspect-ratio: 9 / 16;
+}
+
+layout-frame[radius="s"] {
+  border-radius: var(--wa-border-radius-s);
+}
+
+layout-frame[radius="m"] {
+  border-radius: var(--wa-border-radius-m);
+}
+
+layout-frame[radius="l"] {
+  border-radius: var(--wa-border-radius-l);
+}
+
+layout-frame[radius="pill"] {
+  border-radius: var(--wa-border-radius-pill);
+}
+
+layout-frame[radius="circle"] {
+  border-radius: var(--wa-border-radius-circle);
+}
+
+layout-frame[radius="square"] {
+  border-radius: var(--wa-border-radius-square);
+}
+
+:where(layout-frame) {
+  align-items: center;
+  justify-content: center;
+}
+/* #endregion */
+
+/* #region Shared enumerated attributes */
+:where(
+  layout-stack,
+  layout-cluster,
+  layout-grid,
+  layout-split,
+  layout-flank,
+  layout-frame
+) {
+  &[gap="0"] {
+    gap: 0px;
+  }
+  &[gap="3xs"] {
+    gap: var(--wa-space-3xs);
+  }
+  &[gap="2xs"] {
+    gap: var(--wa-space-2xs);
+  }
+  &[gap="xs"] {
+    gap: var(--wa-space-xs);
+  }
+  &[gap="s"] {
+    gap: var(--wa-space-s);
+  }
+  &[gap="m"] {
+    gap: var(--wa-space-m);
+  }
+  &[gap="l"] {
+    gap: var(--wa-space-l);
+  }
+  &[gap="xl"] {
+    gap: var(--wa-space-xl);
+  }
+  &[gap="2xl"] {
+    gap: var(--wa-space-2xl);
+  }
+  &[gap="3xl"] {
+    gap: var(--wa-space-3xl);
+  }
+  &[gap="4xl"] {
+    gap: var(--wa-space-4xl);
+  }
+  &[gap="5xl"] {
+    gap: var(--wa-space-5xl);
+  }
+
+  &[align-items="start"] {
+    align-items: flex-start;
+  }
+  &[align-items="end"] {
+    align-items: flex-end;
+  }
+  &[align-items="center"] {
+    align-items: center;
+  }
+  &[align-items="stretch"] {
+    align-items: stretch;
+  }
+  &[align-items="baseline"] {
+    align-items: baseline;
+  }
+
+  &[justify-content="start"] {
+    justify-content: flex-start;
+  }
+  &[justify-content="end"] {
+    justify-content: flex-end;
+  }
+  &[justify-content="center"] {
+    justify-content: center;
+  }
+  &[justify-content="space-around"] {
+    justify-content: space-around;
+  }
+  &[justify-content="space-between"] {
+    justify-content: space-between;
+  }
+  &[justify-content="space-evenly"] {
+    justify-content: space-evenly;
+  }
+
+  &[wrap="wrap"] {
+    flex-wrap: wrap;
+  }
+  &[wrap="nowrap"] {
+    flex-wrap: nowrap;
+  }
+  &[wrap="wrap-reverse"] {
+    flex-wrap: wrap-reverse;
+  }
+}
+/* #endregion */

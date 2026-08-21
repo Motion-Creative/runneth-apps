@@ -1,0 +1,537 @@
+{
+  "schemaVersion": 2,
+  "documentType": "executive-operating-report",
+  "meta": {
+    "mode": "illustrative",
+    "organizationName": "Illustrative organization",
+    "refreshedAt": "2026-08-20T16:00:00.000Z",
+    "scope": "Illustrative roles, one qualified system, and three proposed systems",
+    "adoptionDefinition": "Qualified-system consumption coverage: 1 of 1 qualified systems shows repeat use.",
+    "sourceCoverage": [
+      {
+        "sourceId": "routines",
+        "label": "Routine inventory and run history",
+        "available": true,
+        "readAt": "2026-08-20T16:00:00.000Z",
+        "rowsObserved": 1,
+        "limitations": "Illustrative evidence"
+      },
+      {
+        "sourceId": "conversations",
+        "label": "Bounded workflow evidence",
+        "available": true,
+        "readAt": "2026-08-20T16:00:00.000Z",
+        "rowsObserved": 4,
+        "limitations": "Only workflow-relevant excerpts are represented"
+      },
+      {
+        "sourceId": "outcomes",
+        "label": "Validated business outcomes",
+        "available": false,
+        "readAt": "2026-08-20T16:00:00.000Z",
+        "rowsObserved": null,
+        "limitations": "No approved baseline or independent outcome source"
+      }
+    ]
+  },
+  "executiveThesis": {
+    "kicker": "Executive operating-model review",
+    "heading": "From weekly AI output to an owned decision system",
+    "lede": "The team already has one recurring AI system that people use. The next step is not more disconnected capability. It is to connect customer evidence, weekly priorities, and production handoff while preserving human judgment.",
+    "mondayChange": "On Monday, the team reviews a current decision brief and approves exceptions instead of rebuilding context during the meeting.",
+    "observedBasis": "One system passes every qualification gate. Other packages, apps, and incomplete setup remain outside the current-system count."
+  },
+  "headlineMetrics": [
+    {
+      "value": "1",
+      "label": "Qualified current system",
+      "delta": "Owner, consumption, and run health evidenced"
+    },
+    {
+      "value": "1 of 1",
+      "label": "System adoption",
+      "delta": "Qualified-system consumption coverage"
+    },
+    {
+      "value": "3",
+      "label": "Proposed next systems",
+      "delta": "Recommendations, not current state"
+    },
+    {
+      "value": "0",
+      "label": "Validated value claims",
+      "delta": "No approved baseline or outcome source"
+    }
+  ],
+  "currentOperatingModel": {
+    "narrative": "The weekly priority decision is the operating anchor. Growth owns the decision, strategy assembles interpretation, and production receives the result. The repeated friction sits in evidence assembly and the handoff after approval.",
+    "roles": [
+      {
+        "roleId": "role-growth-lead",
+        "title": "Growth lead",
+        "responsibilities": [
+          "Set weekly testing priorities",
+          "Approve scale or iteration decisions"
+        ],
+        "evidenceRefs": [
+          "e-role-growth"
+        ],
+        "confidence": "high"
+      },
+      {
+        "roleId": "role-strategist",
+        "title": "Creative strategist",
+        "responsibilities": [
+          "Interpret customer and performance evidence",
+          "Recommend concepts and iterations"
+        ],
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-friction"
+        ],
+        "confidence": "medium"
+      },
+      {
+        "roleId": "role-producer",
+        "title": "Producer",
+        "responsibilities": [
+          "Turn approved priorities into production-ready work"
+        ],
+        "evidenceRefs": [
+          "e-rhythm-weekly"
+        ],
+        "confidence": "medium"
+      }
+    ],
+    "rhythms": [
+      {
+        "rhythmId": "rhythm-weekly-review",
+        "name": "Monday performance and creative review",
+        "cadence": "Weekly",
+        "decisions": [
+          "What to iterate",
+          "What evidence needs deeper review"
+        ],
+        "participants": [
+          "Growth lead",
+          "Creative strategist",
+          "Producer"
+        ],
+        "handoffs": [
+          "Decision brief to creative priorities"
+        ],
+        "outputs": [
+          "Approved testing priorities"
+        ],
+        "evidenceRefs": [
+          "e-rhythm-weekly"
+        ],
+        "confidence": "medium"
+      }
+    ],
+    "handoffs": [
+      {
+        "handoffId": "handoff-priority-production",
+        "from": "Growth lead",
+        "to": "Producer",
+        "artifact": "Approved testing priorities",
+        "friction": "Context is reassembled manually",
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-friction"
+        ]
+      }
+    ],
+    "manualFriction": [
+      {
+        "frictionId": "friction-brief-assembly",
+        "name": "Rebuilding evidence before the weekly review",
+        "frequency": "Weekly",
+        "impact": "Decision time is spent assembling context",
+        "evidenceRefs": [
+          "e-friction"
+        ]
+      }
+    ]
+  },
+  "currentSystems": {
+    "narrative": "Only the weekly decision brief qualifies as a current operating system. The customer-language routine, installed capability, one-time app, and unfinished validation loop remain correctly classified outside this section.",
+    "systems": [
+      {
+        "systemId": "system-weekly-decision-brief",
+        "name": "Weekly performance decision brief",
+        "layer": "observed",
+        "lifecycle": "current-operating-system",
+        "businessJob": "Prepare the Monday creative-priority decision",
+        "owner": "Growth lead (directly confirmed)",
+        "trigger": "Every Monday before the review",
+        "inputs": [
+          "Performance evidence",
+          "Active test context"
+        ],
+        "aiRole": "Assemble evidence and prepare ranked options",
+        "output": "Decision brief in the Monday review",
+        "audience": "Growth lead and creative team",
+        "humanControl": "Growth lead accepts, changes, or rejects priorities",
+        "consumption": "Reviewed and used to record the weekly decision",
+        "health": "Watch: 3 of 4 runs completed",
+        "healthWindow": "July 27th to August 20th, 2026",
+        "evidenceRefs": [
+          "e-role-growth",
+          "e-rhythm-weekly",
+          "e-run-history",
+          "e-consumption"
+        ]
+      }
+    ],
+    "excludedInventory": [
+      {
+        "name": "Customer-language refresh",
+        "classification": "Recurring mechanism",
+        "reason": "Owner, consumption, and health are unproven"
+      },
+      {
+        "name": "Creator intelligence package",
+        "classification": "Available capability",
+        "reason": "Installation does not prove use"
+      },
+      {
+        "name": "Top-performers app",
+        "classification": "Delivered asset",
+        "reason": "Audience consumption is unknown"
+      },
+      {
+        "name": "Weekly validation loop",
+        "classification": "Incomplete setup",
+        "reason": "Owner and cadence are unresolved"
+      }
+    ]
+  },
+  "futureOperatingModel": {
+    "narrative": "The recommended model turns one consumed weekly brief into a connected operating loop. AI keeps evidence current and prepares decisions. People approve meaning, priorities, claims, and production commitments.",
+    "systems": [
+      {
+        "name": "Continuous customer-language intelligence",
+        "status": "proposed",
+        "layer": "proposed",
+        "currentGap": "Repeated manual synthesis",
+        "trigger": "Weekly refresh or meaningful evidence change",
+        "aiRole": "Normalize evidence and prepare changed themes",
+        "humanRole": "Strategist approves language and claims",
+        "output": "Current evidence bank and change brief",
+        "destination": "Weekly decision brief",
+        "ownerRecommendation": "Creative strategist",
+        "successSignal": "Approved updates are repeatedly cited",
+        "evidenceRefs": [
+          "e-friction"
+        ]
+      },
+      {
+        "name": "Weekly creative priority orchestrator",
+        "status": "proposed",
+        "layer": "proposed",
+        "currentGap": "Approved priorities are manually recopied into production",
+        "trigger": "Monday priority approval",
+        "aiRole": "Create an evidence-linked production queue",
+        "humanRole": "Growth lead approves priorities; producer accepts capacity",
+        "output": "Approved production queue",
+        "destination": "Producer planning surface",
+        "ownerRecommendation": "Growth lead and producer",
+        "successSignal": "No manual context reconstruction",
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-consumption",
+          "e-friction"
+        ]
+      },
+      {
+        "name": "Creative learning and iteration loop",
+        "status": "proposed",
+        "layer": "proposed",
+        "currentGap": "Weekly lessons are not maintained as reusable rules",
+        "trigger": "Test reaches evidence threshold",
+        "aiRole": "Prepare lesson and next iteration",
+        "humanRole": "Strategist approves lesson; growth lead approves next test",
+        "output": "Learning record and iteration brief",
+        "destination": "Knowledge base and production queue",
+        "ownerRecommendation": "Creative strategist",
+        "successSignal": "Approved learnings reappear in later briefs",
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-consumption"
+        ]
+      }
+    ]
+  },
+  "roleAndRhythmChanges": {
+    "narrative": "The proposed model shifts people from recurring assembly to explicit judgment and ownership.",
+    "stopContinueStart": [
+      {
+        "role": "Growth lead",
+        "stop": "Rebuilding the evidence packet",
+        "continue": "Owning the weekly priority decision",
+        "start": "Reviewing exceptions and approving prepared priorities",
+        "evidenceRefs": [
+          "e-role-growth",
+          "e-friction"
+        ]
+      },
+      {
+        "role": "Creative strategist",
+        "stop": "Manually re-synthesizing the same customer language",
+        "continue": "Applying messaging and claims judgment",
+        "start": "Approving durable language and learning updates",
+        "evidenceRefs": [
+          "e-friction"
+        ]
+      },
+      {
+        "role": "Producer",
+        "stop": "Re-copying context from the weekly review",
+        "continue": "Owning capacity and execution sequencing",
+        "start": "Accepting an evidence-linked production queue",
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-friction"
+        ]
+      }
+    ],
+    "weeklyCadence": [
+      {
+        "when": "Friday",
+        "system": "Customer-language intelligence",
+        "ai": "Refresh evidence and flag meaningful changes",
+        "human": "Strategist approves changes"
+      },
+      {
+        "when": "Monday morning",
+        "system": "Priority orchestrator",
+        "ai": "Prepare decision brief and ranked options",
+        "human": "Growth lead approves priorities"
+      },
+      {
+        "when": "Monday afternoon",
+        "system": "Production handoff",
+        "ai": "Create evidence-linked queue",
+        "human": "Producer accepts sequencing"
+      },
+      {
+        "when": "After evidence threshold",
+        "system": "Learning loop",
+        "ai": "Prepare lesson and iteration",
+        "human": "Strategist and growth lead approve"
+      }
+    ]
+  },
+  "opportunityPortfolio": {
+    "narrative": "Start with the handoff closest to an already used system. Then improve input freshness. Close the learning loop only after the first two behaviors are stable.",
+    "topThree": [
+      {
+        "rank": 1,
+        "title": "Close the weekly priority-to-production loop",
+        "value": "Highest operating leverage because it extends an already consumed system",
+        "readiness": "High",
+        "nextMove": "Confirm the producer handoff fields and destination",
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-consumption",
+          "e-friction"
+        ]
+      },
+      {
+        "rank": 2,
+        "title": "Qualify customer-language intelligence",
+        "value": "Removes repeated synthesis and keeps inputs current",
+        "readiness": "Medium",
+        "nextMove": "Confirm the strategist owner and consumption destination",
+        "evidenceRefs": [
+          "e-friction"
+        ]
+      },
+      {
+        "rank": 3,
+        "title": "Persist approved creative learnings",
+        "value": "Turns weekly review into cumulative decision memory",
+        "readiness": "Medium",
+        "nextMove": "Define the evidence threshold and approval record",
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-consumption"
+        ]
+      }
+    ],
+    "opportunities": [
+      {
+        "rank": 1,
+        "title": "Close the weekly priority-to-production loop",
+        "value": "Highest operating leverage because it extends an already consumed system",
+        "readiness": "High",
+        "nextMove": "Confirm the producer handoff fields and destination",
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-consumption",
+          "e-friction"
+        ]
+      },
+      {
+        "rank": 2,
+        "title": "Qualify customer-language intelligence",
+        "value": "Removes repeated synthesis and keeps inputs current",
+        "readiness": "Medium",
+        "nextMove": "Confirm the strategist owner and consumption destination",
+        "evidenceRefs": [
+          "e-friction"
+        ]
+      },
+      {
+        "rank": 3,
+        "title": "Persist approved creative learnings",
+        "value": "Turns weekly review into cumulative decision memory",
+        "readiness": "Medium",
+        "nextMove": "Define the evidence threshold and approval record",
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-consumption"
+        ]
+      }
+    ],
+    "buildSequence": [
+      {
+        "phase": "1. Prove the handoff",
+        "timing": "First",
+        "systems": [
+          "Weekly creative priority orchestrator"
+        ],
+        "exit": "Two approved queues reach production without manual context reconstruction"
+      },
+      {
+        "phase": "2. Keep inputs current",
+        "timing": "Next",
+        "systems": [
+          "Continuous customer-language intelligence"
+        ],
+        "exit": "Owner and repeated consumption are observed"
+      },
+      {
+        "phase": "3. Close the learning loop",
+        "timing": "Then",
+        "systems": [
+          "Creative learning and iteration loop"
+        ],
+        "exit": "Approved learnings are reused in later briefs"
+      }
+    ]
+  },
+  "evidenceGovernance": {
+    "sourceCoverageSummary": "Two illustrative evidence sources are available; validated outcomes are not.",
+    "observedClaims": [
+      {
+        "claim": "The Monday review is a recurring decision rhythm.",
+        "type": "fact",
+        "confidence": "medium",
+        "evidenceRefs": [
+          "e-rhythm-weekly"
+        ]
+      },
+      {
+        "claim": "The weekly decision brief is consumed and used.",
+        "type": "fact",
+        "confidence": "medium",
+        "evidenceRefs": [
+          "e-consumption"
+        ]
+      },
+      {
+        "claim": "The production handoff is reconstructed manually.",
+        "type": "inference",
+        "confidence": "medium",
+        "evidenceRefs": [
+          "e-friction"
+        ]
+      },
+      {
+        "claim": "The customer-language routine has an accountable owner.",
+        "type": "unknown",
+        "confidence": "unresolved",
+        "evidenceRefs": []
+      }
+    ],
+    "recommendations": [
+      {
+        "claim": "Build the priority orchestrator first.",
+        "type": "recommendation",
+        "evidenceRefs": [
+          "e-rhythm-weekly",
+          "e-consumption",
+          "e-friction"
+        ]
+      },
+      {
+        "claim": "Qualify customer-language intelligence second.",
+        "type": "recommendation",
+        "evidenceRefs": [
+          "e-friction"
+        ]
+      }
+    ],
+    "sourceCoverage": [
+      {
+        "sourceId": "routines",
+        "label": "Routine inventory and run history",
+        "available": true,
+        "readAt": "2026-08-20T16:00:00.000Z",
+        "rowsObserved": 1,
+        "limitations": "Illustrative evidence"
+      },
+      {
+        "sourceId": "conversations",
+        "label": "Bounded workflow evidence",
+        "available": true,
+        "readAt": "2026-08-20T16:00:00.000Z",
+        "rowsObserved": 4,
+        "limitations": "Only workflow-relevant excerpts are represented"
+      },
+      {
+        "sourceId": "outcomes",
+        "label": "Validated business outcomes",
+        "available": false,
+        "readAt": "2026-08-20T16:00:00.000Z",
+        "rowsObserved": null,
+        "limitations": "No approved baseline or independent outcome source"
+      }
+    ],
+    "limitations": [
+      "No validated outcome source or owner-approved manual baseline is attached.",
+      "The example does not measure employee productivity or total AI spend."
+    ],
+    "unknowns": [
+      "Who should own the customer-language refresh?",
+      "Who consumes the delivered top-performers app?"
+    ],
+    "governance": [
+      "Human approval remains mandatory for priorities, claims, creative lessons, and production commitment.",
+      "No people leaderboard or employee productivity score is permitted.",
+      "No value claim is published without an approved baseline or validated outcome source."
+    ]
+  },
+  "regressionAnswers": {
+    "mondayChange": "The current decision brief arrives before the review; the team spends the meeting approving exceptions and priorities.",
+    "rolesWorkingDifferently": [
+      "Growth lead shifts from evidence assembly to decision approval",
+      "Strategist shifts from repeated synthesis to approving durable language and learnings",
+      "Producer receives an evidence-linked queue instead of reconstructed context"
+    ],
+    "aiResponsibilities": "AI refreshes evidence, prepares decision options, maintains the queue, and drafts learning records.",
+    "humanApprovals": "People approve messaging, claims, priorities, production capacity, and durable lessons.",
+    "topThreeSystems": [
+      "Weekly creative priority orchestrator",
+      "Continuous customer-language intelligence",
+      "Creative learning and iteration loop"
+    ],
+    "supportingEvidence": "The recommendations are grounded in the observed Monday rhythm, repeated manual assembly, consumed weekly brief, and explicit handoff gaps."
+  },
+  "limitations": [
+    "No validated outcome source or owner-approved manual baseline is attached.",
+    "The example does not measure employee productivity or total AI spend."
+  ]
+}

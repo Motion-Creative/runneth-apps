@@ -1,0 +1,16 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="AI Work Systems Observatory">
+  <wa-page class="wa-cloak">
+    <report-page id="observatory-report" colophon="Observed evidence and proposed operating model are intentionally separated.">
+      <wa-callout id="report-loading" variant="brand">Preparing the executive operating-model report…</wa-callout>
+      <wa-callout id="report-error" variant="danger" hidden></wa-callout>
+    </report-page>
+  </wa-page>
+  <buildeth-theme-toggle class="theme-toggle"></buildeth-theme-toggle>
+  <script>
+    import "../scripts/observatory-controller";
+  </script>
+</Base>

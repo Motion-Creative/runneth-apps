@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+
+.kicker-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--wa-space-m);
+  color: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-2xs);
+  font-weight: var(--wa-font-weight-semibold);
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin-block: var(--wa-space-2xl) 0;
+  max-width: 24ch;
+  font-family: var(--wa-font-family-heading);
+  font-size: clamp(2.5rem, 6vw, 3.75rem);
+  font-style: italic;
+  font-weight: var(--wa-font-weight-semibold);
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.lede {
+  margin-block: var(--wa-space-xl) 0;
+  max-width: 46rem;
+  color: var(--wa-color-text-quiet);
+  line-height: var(--wa-line-height-normal);
+}
+
+.lede.is-empty {
+  display: none;
+  margin: 0;
+}

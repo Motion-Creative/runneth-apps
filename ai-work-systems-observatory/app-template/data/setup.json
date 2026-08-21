@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 2,
+  "mode": "illustrative",
+  "organizationName": "Illustrative organization",
+  "executiveObjective": "Demonstrate the executive operating-model report without making claims about a real organization.",
+  "visibilityPolicy": {
+    "defaultAggregation": "team-and-system",
+    "personLevelOwnership": "authorized_and_directly_confirmed_only",
+    "rawConversationBrowser": false,
+    "peopleLeaderboard": false
+  },
+  "allowedSources": [
+    "illustrative-routine-history",
+    "illustrative-bounded-workflow-evidence"
+  ],
+  "boundedConversationSearch": {
+    "approved": true,
+    "scope": "Workflow roles, rhythms, handoffs, outputs, and consumption only",
+    "dateWindow": "Illustrative"
+  },
+  "excludedSources": [
+    "unbounded-message-bodies",
+    "sensitive-content",
+    "unvalidated-outcomes"
+  ],
+  "routinePlan": [],
+  "approvedAt": null,
+  "approvedBy": null
+}

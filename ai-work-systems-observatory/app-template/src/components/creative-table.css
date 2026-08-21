@@ -1,0 +1,273 @@
+/*
+ * creative-table element styles (light DOM). Host is the scroll/pagination
+ * container; inner markup is rebuilt on config changes.
+ */
+
+creative-table {
+  display: block;
+  width: 100%;
+}
+
+creative-table .ct-scroll {
+  overflow: auto;
+  max-height: var(--ct-max-height, none);
+}
+
+creative-table table {
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  line-height: var(--wa-line-height-condensed);
+}
+
+/* Every cell gets an opaque background so sticky cells cover the content
+   scrolling beneath them. Row states (zebra, hover) set --ct-row-bg /
+   --ct-row-tint; cell coloring paints --ct-cell-tint on top. */
+creative-table th,
+creative-table td {
+  padding: var(--wa-space-s) var(--wa-space-m);
+  border-block-end: var(--wa-border-width-s) var(--wa-border-style)
+    var(--wa-color-surface-border);
+  background-color: var(--ct-row-bg, var(--wa-color-surface-default));
+  background-image: var(--ct-cell-tint, none), var(--ct-row-tint, none);
+  white-space: nowrap;
+  text-align: start;
+  vertical-align: middle;
+}
+
+creative-table thead th {
+  color: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-s);
+  font-weight: var(--wa-font-weight-semibold);
+}
+
+creative-table tbody th {
+  font-weight: var(--wa-font-weight-semibold);
+}
+
+creative-table tr[hidden] {
+  display: none;
+}
+
+/* Table row height acts as a minimum — rows still grow with content. */
+creative-table tbody tr {
+  height: var(--ct-row-min-height, 58px);
+}
+
+creative-table [data-align="end"] {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+creative-table [data-align="center"] {
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------ */
+/* Row states                                                          */
+/* ------------------------------------------------------------------ */
+
+creative-table[data-zebra] tbody tr[data-alt] {
+  --ct-row-bg: var(--wa-color-surface-lowered);
+}
+
+creative-table[data-hover] tbody tr:hover {
+  --ct-row-hover: color-mix(
+    in oklab,
+    var(--wa-color-neutral-fill-quiet) 50%,
+    transparent
+  );
+  --ct-row-tint: linear-gradient(var(--ct-row-hover), var(--ct-row-hover));
+}
+
+/* ------------------------------------------------------------------ */
+/* Cell coloring                                                       */
+/* ------------------------------------------------------------------ */
+
+creative-table [data-tone="positive"] {
+  --ct-cell-tint: linear-gradient(
+    var(--wa-color-success-fill-quiet),
+    var(--wa-color-success-fill-quiet)
+  );
+  color: var(--wa-color-success-on-quiet);
+}
+
+creative-table [data-tone="negative"] {
+  --ct-cell-tint: linear-gradient(
+    var(--wa-color-danger-fill-quiet),
+    var(--wa-color-danger-fill-quiet)
+  );
+  color: var(--wa-color-danger-on-quiet);
+}
+
+creative-table .ct-heat {
+  --ct-heat-fill: color-mix(
+    in oklab,
+    var(--ct-heat-color, var(--wa-color-brand-fill-loud)) var(--ct-mix, 0%),
+    transparent
+  );
+  --ct-cell-tint: linear-gradient(var(--ct-heat-fill), var(--ct-heat-fill));
+}
+
+creative-table .ct-heat[data-scale="success"] {
+  --ct-heat-color: var(--wa-color-success-fill-loud);
+}
+
+creative-table .ct-heat[data-scale="warning"] {
+  --ct-heat-color: var(--wa-color-warning-fill-loud);
+}
+
+creative-table .ct-heat[data-scale="danger"] {
+  --ct-heat-color: var(--wa-color-danger-fill-loud);
+}
+
+creative-table .ct-heat[data-scale="neutral"] {
+  --ct-heat-color: var(--wa-color-neutral-fill-loud);
+}
+
+/* ------------------------------------------------------------------ */
+/* Sticky column and header                                            */
+/* ------------------------------------------------------------------ */
+
+/* [data-pin-disabled] is set by the element when the pinned column would
+   cover most of a narrow container — the column then scrolls normally. */
+creative-table[data-sticky-col]:not([data-pin-disabled]) .ct-pin {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 2;
+}
+
+/* Soft edge that fades in once the content actually scrolls under the
+   pinned column. */
+creative-table[data-sticky-col]:not([data-pin-disabled]) .ct-pin::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 100%;
+  width: var(--wa-space-s);
+  background: linear-gradient(to right, rgb(0 0 0 / 0.08), transparent);
+  opacity: 0;
+  transition: opacity var(--wa-transition-normal) var(--wa-transition-easing);
+  pointer-events: none;
+}
+
+creative-table[data-scroll-x][data-sticky-col]:not([data-pin-disabled])
+  .ct-pin::after {
+  opacity: 1;
+}
+
+creative-table[data-sticky-header] thead th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 3;
+}
+
+creative-table[data-sticky-header][data-sticky-col] thead .ct-pin {
+  z-index: 4;
+}
+
+creative-table[data-sticky-header] thead th::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 100%;
+  height: var(--wa-space-s);
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.08), transparent);
+  opacity: 0;
+  transition: opacity var(--wa-transition-normal) var(--wa-transition-easing);
+  pointer-events: none;
+}
+
+creative-table[data-sticky-header][data-scroll-y] thead th::before {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------ */
+/* Totals                                                              */
+/* ------------------------------------------------------------------ */
+
+creative-table tfoot th,
+creative-table tfoot td {
+  border-block-end: none;
+  font-size: var(--wa-font-size-s);
+  font-weight: var(--wa-font-weight-semibold);
+}
+
+/* ------------------------------------------------------------------ */
+/* Media cells                                                         */
+/* ------------------------------------------------------------------ */
+
+creative-table .ct-media {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-xs);
+  min-width: 0;
+}
+
+creative-table .ct-media img {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--wa-border-radius-s);
+  object-fit: cover;
+  background-color: var(--wa-color-surface-lowered);
+}
+
+/* ------------------------------------------------------------------ */
+/* Pagination                                                          */
+/* ------------------------------------------------------------------ */
+
+creative-table .ct-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--wa-space-s);
+  padding-block-start: var(--wa-space-s);
+  color: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-s);
+}
+
+/* wa-cluster wraps by design (and subpixel max-content rounding makes it
+   wrap even when content fits) — the controls must stay on one line. */
+creative-table .ct-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-s);
+}
+
+creative-table .ct-controls[hidden] {
+  display: none;
+}
+
+creative-table .ct-info {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+creative-table .ct-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-s);
+}
+
+/* Native selects default to fluid width; size to content here. */
+creative-table .ct-size-select {
+  width: auto;
+}
+
+creative-table .ct-pages {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-3xs);
+  font-variant-numeric: tabular-nums;
+}
+
+creative-table .ct-page-btn[aria-current="page"] {
+  background-color: var(--wa-color-neutral-fill-quiet);
+  color: var(--wa-color-text-normal);
+}
+
+creative-table .ct-ellipsis {
+  padding-inline: var(--wa-space-2xs);
+}
