@@ -4,6 +4,19 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 7 - 2026-08-21
+
+- Added an opt-in workspace-scoped readiness contract for Package Readiness.
+- Defined `context-seeded` from a schema-v1 Account Context file whose
+  `workspace_id` matches the workspace, including renamed workspace folders.
+- Made Fields 1-9 plus a consistent `fields_confirmed` count the package-ready
+  gate; Field 10 remains the separate report-build gate.
+- Added `MVCE on` as a higher stage that trusts the canonical
+  `validation.md` value `mvce_state: on` instead of reconstructing MVCE from
+  account-context fields.
+- Kept installation and automatic updates non-executing; the contract alone
+  reads or publishes nothing.
+
 ## 6 - 2026-08-14
 
 - Made `dashboard-design` an automatic internal handoff whenever Meta Validation builds,

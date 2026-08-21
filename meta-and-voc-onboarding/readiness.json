@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "packageId": "meta-and-voc-onboarding",
+  "scope": "workspace",
+  "readyStage": "account-context-confirmed",
+  "stages": [
+    {
+      "id": "context-seeded",
+      "label": "Context seeded",
+      "requires": [
+        "account-context-file"
+      ]
+    },
+    {
+      "id": "account-context-confirmed",
+      "label": "Account context confirmed",
+      "requires": [
+        "account-context-confirmed"
+      ]
+    },
+    {
+      "id": "mvce-on",
+      "label": "MVCE on",
+      "requires": [
+        "mvce-on"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "account-context-file",
+      "type": "markdown-yaml",
+      "source": {
+        "type": "glob",
+        "pattern": "brain/*/data-sources/meta/account-context.md",
+        "identity": {
+          "key": "workspace_id",
+          "equals": "${workspace.id}"
+        }
+      },
+      "assertions": [
+        {
+          "type": "equals",
+          "key": "schema_version",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "account-context-confirmed",
+      "type": "markdown-yaml",
+      "source": {
+        "type": "check",
+        "checkId": "account-context-file"
+      },
+      "assertions": [
+        {
+          "type": "equals",
+          "key": "field_statuses.field_1_sources_of_truth",
+          "value": "CONFIRMED"
+        },
+        {
+          "type": "equals",
+          "key": "field_statuses.field_2_conversion_events",
+          "value": "CONFIRMED"
+        },
+        {
+          "type": "equals",
+          "key": "field_statuses.field_3_metric_gotchas",
+          "value": "CONFIRMED"
+        },
+        {
+          "type": "equals",
+          "key": "field_statuses.field_4_naming_conventions",
+          "value": "CONFIRMED"
+        },
+        {
+          "type": "equals",
+          "key": "field_statuses.field_5_attribution",
+          "value": "CONFIRMED"
+        },
+        {
+          "type": "equals",
+          "key": "field_statuses.field_6_account_structure",
+          "value": "CONFIRMED"
+        },
+        {
+          "type": "equals",
+          "key": "field_statuses.field_7_funnel_map",
+          "value": "CONFIRMED"
+        },
+        {
+          "type": "equals",
+          "key": "field_statuses.field_8_creative_metrics",
+          "value": "CONFIRMED"
+        },
+        {
+          "type": "equals",
+          "key": "field_statuses.field_9_targets_thresholds",
+          "value": "CONFIRMED"
+        },
+        {
+          "type": "count-values-equals",
+          "key": "fields_confirmed",
+          "objectKey": "field_statuses",
+          "value": "CONFIRMED"
+        }
+      ]
+    },
+    {
+      "id": "mvce-on",
+      "type": "markdown-yaml",
+      "source": {
+        "type": "sibling",
+        "checkId": "account-context-file",
+        "path": "validation.md"
+      },
+      "assertions": [
+        {
+          "type": "equals",
+          "key": "mvce_state",
+          "value": "on"
+        }
+      ]
+    }
+  ]
+}
