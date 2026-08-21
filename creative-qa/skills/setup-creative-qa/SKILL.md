@@ -16,6 +16,10 @@ Direct questions, friendly tone. One question at a time, plain language, no tech
 terms. The person on the other side is a marketer, not a developer. Never show file
 paths, JSON, or API language unless they ask.
 
+Format every question for scanning: a short bold header naming the topic, then the
+question, with bullets when it has parts. Tell the user up front they can answer
+however is easiest — typed, pasted files or screenshots, or voice notes.
+
 The output of this skill is a complete workspace QA config plus rubrics that have
 already been validated against the team's own past assets. Nothing goes live on an
 untested rubric.
@@ -37,59 +41,67 @@ state.json             — processed-asset ledger for dedup, pending-feedback qu
 rubric-history/        — archived rubric versions
 ```
 
-## Phase 1 — Learn what can't be guessed
+## Phase 1 — Artifacts first, then the gaps
 
 Discovery exists to nail the things feedback can never teach: plumbing (if it's wrong
 the agent simply doesn't run), authority (wrong guesses are politically expensive), and
-hard constraints (a missed never-event that ships is an incident, not a learning
-opportunity). Everything else is deliberately left to the calibration loop.
+hard constraints (a missed never-event that ships is an incident). Everything else is
+deliberately left to the calibration loop — so keep the interview short.
 
-Ask, one at a time, adapting to answers:
+**Gather before asking.** Before the first question:
 
-1. "Walk me through your review process: where do new ads show up, what do you check,
-   and what happens before one goes live?" One answer seeds the process map, the intake
-   location, and the first taste dimensions at once. Ask them to paste the exact board
-   or channel link — mapping starts from the real thing, not a description of it.
-2. "Who sends you the ads, and who has final say on whether one ships?" The final-say
-   person is the **reviewer of record**; their feedback trains the rubric. Capture
-   their identity in the source tool too (handle, tag, or account) — delivery tagging
-   and skip rules need it.
-3. "When I find a problem, what should I ping you about right away, and what should
-   just go in the written feedback?" Record the escalation boundary in config.
-4. "Has an ad ever gone live with a mistake? What happened?" The answer sets the
-   initial conservatism posture — a team that has shipped a compliance mistake gets a
-   stricter default than one that has never been burned. Conservatism can be calibrated
-   down later; it cannot be calibrated up after a bad approval has already leaked.
-5. "What are your dealbreakers — what always gets an ad sent back?" These are
-   hard-fail criteria from day one.
-6. Walk the remaining taste dimensions briefly, in their language, skipping anything
-   already covered: pacing and hook timing, how early the product shows up, on-screen
-   text rules, spelling and grammar, CTA rules. These seed rubric criteria whose
-   severity starts conservative and is tuned by the loop — do not interrogate edge
-   cases here.
-7. "Do you review videos, statics, or both?" Build one rubric per asset type; this
-   also determines what the agent must be able to ingest.
-8. "Are any of these submissions you can't edit — creator or partner work that's
-   approve/reject only?" Editable internal assets get fix notes; uneditable submissions
-   get approve/reject with a one-line reason. Also ask for platform context the rubric
-   should not flag (for example a missing CTA the ad platform adds itself). Record
-   content-type rules in config.
-9. "Do you have any written guidelines — brand rules, claims or legal restrictions, a
-   do-not-say list, a QA checklist? Share whatever you have and I'll build from it."
-   Anything counts — a checklist, a per-product spec sheet, even a single slide.
-   Then: "Does anyone's taste override everything — a founder or brand lead? What are
-   their known vetoes?" Written rules and named vetoes are never-events.
+1. Scan this conversation and recent workspace context for existing QA signal: review
+   feedback, rejection notes, guidelines, complaints about ads that shipped wrong.
+2. Check the workspace brain for what other packages already captured — brand-audit
+   bundle, Meta onboarding account context, claims rules.
+3. Check the connected integrations and the workspace's integration notes for where
+   creative work already lives (a PM tool, Slack channels, Drive, a review tool) so the
+   intake question can arrive as a suggestion, not a cold ask.
+4. Open with one question: "Do you have any guidelines or QA notes written down
+   anywhere — brand rules, claims or legal restrictions, a do-not-say list, a
+   checklist? Share whatever you have and I'll build from it." Anything counts — a
+   checklist, a per-product spec sheet, even a single slide.
 
-Expect process questions to be answered easily and the rubric to arrive incomplete:
-in every production setup, the rubric came from the team's artifacts plus their
-historical feedback plus adjudication during calibration — never from the interview
-alone. The interview nails plumbing and authority; calibration builds taste.
+Build a draft picture from all of that, then ask **only the questions the artifacts
+left open**, one at a time. Never re-ask something already answered — confirm it
+instead ("sounds like X has final say — right?").
+
+**The question bank** (skip whatever is already known):
+
+- Intake: "Where do new ads show up for review?" When the integration map already
+  hints at the answer, lead with the suggestion instead ("I can see Asana is connected
+  — is that where finished ads land?"). Either way, ask them to paste the exact board
+  or channel link — mapping starts from the real thing, not a description of it.
+- Review criteria: "What do you check before approving an ad?" Seeds the process map
+  and the first taste dimensions.
+- Authority: "Who sends you the ads, and who has final say on whether one ships?" The
+  final-say person is the **reviewer of record**; capture their identity in the source
+  tool too (handle, tag, or account) — delivery tagging and skip rules need it.
+- Dealbreakers: "What always gets an ad sent back?" Hard-fail criteria from day one.
+- Taste dimensions not yet covered, briefly, in their language: pacing and hook timing,
+  how early the product shows up, on-screen text rules, spelling and grammar, CTA
+  rules. Severity starts strict and the loop tunes it — do not interrogate edge cases.
+- Formats: "Do you review videos, statics, or both?" One rubric per asset type.
+- Content-type rules: "Are any of these submissions you can't edit — creator or partner
+  work that's approve/reject only?" Editable assets get fix notes; uneditable ones get
+  approve/reject with a one-line reason. Also ask for platform context the rubric
+  should not flag (for example a missing CTA the ad platform adds itself).
+- Taste vetoes: "Does anyone's taste override everything — a founder or brand lead?
+  What are their known vetoes?" Named vetoes are never-events.
+
+Expect the artifacts plus a handful of gap questions to cover plumbing and authority,
+and the rubric to still arrive incomplete: in every production setup it was built from
+artifacts plus historical feedback plus adjudication during calibration — never from
+the interview alone.
 
 ### Deliberately not asked — the loop calibrates these
 
 Do not burn interview time on things the reviewer will naturally see in output and
-correct: severity tiering (start conservative — only never-events block; a reviewer's
-"that's fine, don't flag it" moves a check down-tier), the judgment-layer checks that
+correct: strictness (always start strict — a bad approval that leaks cannot be
+calibrated back, so calibration only ever loosens), severity tiering (a reviewer's
+"that's fine, don't flag it" moves a check down-tier), the escalation boundary
+(default: only never-events interrupt the reviewer; everything else rides in the
+written feedback — tune from which flags they act on), the judgment-layer checks that
 only surface as disagreements, feedback tone and phrasing (seed from anything they
 share, refine as they edit), how nitpicky to be per format, which checks weigh most in
 practice, turnaround expectations, and vocabulary (adopt their words for hook, end
@@ -162,6 +174,11 @@ Slack summary tagging the reviewer. Record every destination in config, along wi
 notification style and the feedback-out phrasing every summary ends with (default:
 "reply no if this shouldn't have editor comments").
 
+Never proactively offer to build an app, dashboard, or new surface for QA intake or
+delivery — this package leans heavily on living in the tools the team already uses
+(their PM tool, review tool like Frame.io, Drive, or Slack). If the user explicitly
+asks for an app, build it; just never steer them there.
+
 Per-platform intake and delivery mechanics live in the review skill's
 `references/platform-recipes.md`, with evidence levels per platform. The recipe list is
 not the scope: any platform the team names is supported through the no-recipe path there.
@@ -208,9 +225,9 @@ correction so the rubric keeps converging on their taste for as long as the pack
    asset types, intake adapters (each with its trigger condition, asset carrier, and
    approved-state signal), delivery adapters (with notification style and feedback-out
    phrasing), content-type rules (editable vs approve/reject-only), naming mode,
-   escalation boundary, initial conservatism posture, refresh cadence (default: every
-   10 signals or rejection rate above 30%), owner to alert on failures, and status
-   flipped from `calibrating` to `live`.
+   escalation rule (default: interrupt only for never-events), refresh cadence
+   (default: every 10 signals or rejection rate above 30%), owner to alert on failures,
+   and status flipped from `calibrating` to `live`.
 3. The intake routine(s) normally already exist from Phase 4 calibration — confirm the
    schedule still suits and update in place rather than recreate. If calibration ran
    without a watch, stand up the routine(s) now with the user's explicit confirmation of
