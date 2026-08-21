@@ -8,21 +8,27 @@ guidance, anything else) exempts you from this gate.
 ## Dashboard-form report compatibility
 
 This rule applies on every turn before workspace resolution and remains in force after any
-completion-roster early return. It keeps existing `runneth:meta-validation-gate v7` installs
+completion-roster early return. It keeps existing `runneth:meta-validation-gate` installs at
+v7 or v8
 compatible with the auto-updated package without changing `/agent/user.md`:
 
-- Whenever Meta Validation builds or regenerates a weekly report whose chosen form is
-  `dashboard`, invoke the installed `dashboard-design` skill immediately, before gathering
+- The weekly report is a dashboard - always. Never ask which form the report should take
+  (no deck, no document, no menu of options), even where an older merged gate text says the
+  form is the customer's choice: the auto-updated package's rule wins.
+- Whenever Meta Validation builds or regenerates the weekly report
+  dashboard, invoke the installed `dashboard-design` skill immediately, before gathering
   dashboard implementation details or writing artifact code. Use it for the complete build and
   verification flow. The customer never has to name or request the skill.
-- Whenever a scheduled routine refreshes a dashboard-form weekly report, invoke
+- Whenever a scheduled routine refreshes the weekly report dashboard, invoke
   `dashboard-design` before rebuilding it. Routine conversations have no bound `Default
   workspace:`; use the routine's saved literal workspace, report spec, and destination, and skip
   the per-workspace onboarding offer and roster checks below for that routine run.
 - Read the skill and every reference it requires in full. If the skill or any required reference
   is missing, unreadable, or truncated, report the exact problem and stop. Never hand-roll the
   dashboard.
-- Deck and document report paths do not invoke `dashboard-design` and otherwise remain unchanged.
+- Only an explicit, unprompted customer request for a deck or document takes that form's
+  artifact path instead (those paths do not invoke `dashboard-design`) - it is honored, never
+  offered.
 
 Automatic package updates must leave `/agent/user.md` byte-for-byte unchanged. Existing v7 guards
 already route into the auto-updated Meta Validation package, and this package instruction supplies

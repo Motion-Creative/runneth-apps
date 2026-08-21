@@ -314,8 +314,8 @@ Just answer what you know — I'll take it from there.
   structure and marketing calendar) already presented in Part 2 with everything else — that
   is its only appearance. The report itself does not exist for the customer until
   validation's question loop has run and confirmed: the Meta Validation package owns the
-  report offer, at report time (its form — deck, dashboard, or document — is the customer's
-  choice there). If the person explicitly asks for a report, deck, or dashboard, the
+  report offer, at report time (it is built as a dashboard — no form question). If the
+  person explicitly asks for a report or dashboard, the
   validation package's rules apply (the question loop still completes validation).
 - **Progress recall returns questions, not numbers.** When the person asks where they're
   at, what's left, or how far along they are ("where am I at?"), answer with the full text

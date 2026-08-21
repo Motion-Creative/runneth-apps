@@ -859,8 +859,8 @@ Status: `[EMPTY]`
 
 **This field is the report gate, not a validation gate.** The validation question loop runs
 without it, but no weekly report is built until it is confirmed: the report's structure,
-cadence, and exclusions come from here (its form — deck, dashboard, or document — is the
-customer's choice, gathered at build time). It presents in the walkthrough's Part 2 as the
+cadence, and exclusions come from here (it is built as a dashboard — the validation
+package never asks about form). It presents in the walkthrough's Part 2 as the
 last field section — two beats, two questions, landing in the closing TLDR with everything
 else, never as a separate offer and never framed as an artifact to build. If it was skipped
 there (no decoded ad names to synthesize from) and validation reaches the report build

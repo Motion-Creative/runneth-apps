@@ -258,7 +258,7 @@ File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta
   filtered name level shown) plus account-specific questions derived from the naming
   decoder and funnel map, all pre-answered in batch over the date window the customer
   confirmed at kickoff and presented together. Then a soft offer of the weekly report —
-  in the form the customer picks: deck, dashboard, or document — pre-filled from Field 10
+  built as a live dashboard, no form question — pre-filled from Field 10
   (no report without it; questions-only customers never need it, and the report is never
   led with — though an explicit ask still gets one),
   lock-in (report approval, refresh routine, Slack), and the MVCE gate.
@@ -274,8 +274,8 @@ File: `meta/meta-validation-onboarding-package.md` (staged at `/agent/brain/meta
 - **Persists to:** `/agent/brain/<workspace>/data-sources/meta/validation.md` (confirmed answers, corrections, report
   form and route, lock-in state, MVCE block).
 - **Activation:** merges the `runneth:meta-validation-gate` guard block into `/agent/user.md`;
-  once merged, the trigger fires on its own when the prerequisites are met. If the customer
-  chooses a dashboard as the weekly-report form, validation invokes `dashboard-design`
+  once merged, the trigger fires on its own when the prerequisites are met. The weekly
+  report is always built as a dashboard (no form question), so validation invokes `dashboard-design`
   internally for the initial build, every regeneration, and scheduled refresh; the customer
   never has to know or name the skill. Existing v7 guards remain compatible because the
   auto-updated package instruction enforces the same dashboard handoff without rewriting the

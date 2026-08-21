@@ -1,6 +1,6 @@
 # Meta Validation: Onboarding Experience (Onboarding Package)
 
-### Version 1.17 — the deck, dashboard, or document choice is preserved; dashboard selections automatically invoke dashboard-design (August 2026)
+### Version 1.18 — the weekly report is a dashboard; the form question is gone (August 2026)
 
 **How Runneth proves it understood the account, by answering the customer's real questions and
 building their weekly report. This is the "catch" in Connect → Train → Validate.**
@@ -77,7 +77,7 @@ package's post-install run does this in its single scripted guard merge). The bl
 shown for context and must stay identical to the staged file.
 
 ```
-<!-- BEGIN runneth:meta-validation-gate v8 -->
+<!-- BEGIN runneth:meta-validation-gate v9 -->
 Meta validation gate:
 
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
@@ -91,20 +91,21 @@ Meta validation gate:
   completed (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
   experience described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
-  the customer has confirmed Runneth's answers through the question loop, the weekly report is
-  built, live, and approved by the customer (in the form they picked — deck, dashboard, or
-  document), a refresh routine keeps the report updated on an agreed cadence, and Slack is
-  connected so the team can ask questions. Record that state in
+  the customer has confirmed Runneth's answers through the question loop, the weekly report
+  dashboard is built, live, and approved by the customer, a refresh routine keeps it updated
+  on an agreed cadence, and Slack is connected so the team can ask questions. Record that state in
   /agent/brain/<workspace>/data-sources/meta/validation.md.
 - The question loop always runs first. Never proactively offer or lead with the weekly report
   before the question set has been run and confirmed - the report is a soft offer at the end.
-  A person who explicitly asks for a report in any form (deck, dashboard, or document) still
-  gets one (Field 10 confirmed first), but the question loop still runs to complete validation.
-- Whenever the weekly report's chosen form is a dashboard, invoke the installed
-  `dashboard-design` skill immediately when the customer selects dashboard, then use it for the
-  initial build, every regeneration, and every scheduled refresh. The customer never has to
-  name or request the skill. Do not hand-roll a dashboard when that skill or one of its required
-  references is unavailable.
+  A person who explicitly asks for a report still gets one (Field 10 confirmed first), but the
+  question loop still runs to complete validation.
+- The weekly report is a dashboard - always. Never ask which form the report should take
+  (no deck, no document, no menu of options): on a yes to the report offer, invoke the installed
+  `dashboard-design` skill immediately, then use it for the initial build, every regeneration,
+  and every scheduled refresh. The customer never has to name or request the skill. Do not
+  hand-roll a dashboard when that skill or one of its required references is unavailable. If a
+  customer explicitly asks for a deck or a document instead, honor their ask - but it is never
+  offered.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
 - A report change request is a context correction too: route it to the field behind it
@@ -113,7 +114,7 @@ Meta validation gate:
   from context - never hand-edit the report output. Durable corrections in any later
   conversation get the same routing; one-off or current-state remarks shape the answer or the
   current render, never the file.
-<!-- END runneth:meta-validation-gate v8 -->
+<!-- END runneth:meta-validation-gate v9 -->
 ```
 
 ## 2. Prerequisites (hard gate)
@@ -163,10 +164,11 @@ Save the validation record to `/agent/brain/<workspace>/data-sources/meta/valida
   questions plus any they added — and their confirmed answers.
 - Every context correction made during the loop (which Account Context Brain field changed, and
   what it changed to).
-- The weekly report: its form (deck, dashboard, or document — the customer's choice), its
+- The weekly report: its
   route, its structure, the reference it was built from, and the standing look-and-feel
   preferences the customer has confirmed — the refresh routine rebuilds from these, so a
-  visual preference not recorded here is lost on the next refresh.
+  visual preference not recorded here is lost on the next refresh. The form is a
+  dashboard unless the customer explicitly asked for something else; record it either way.
 - The lock-in state: report approval, refresh routine id and cadence, Slack connection status.
 - The MVCE state block (on/off, date, who signed off).
 
@@ -211,8 +213,8 @@ question still wins for that answer.
 builds directly from the confirmed answers — report review covers look and feel and spec
 approval, not a repeat of the questions. The report is never led with and never positioned
 as the expected next step: it is a soft offer once the question set has been run and
-confirmed (Step 3). A person who explicitly asks for a report in any form — a deck, a
-dashboard, a document — at any point still gets one — read Field 10 first (if it is not
+confirmed (Step 3). A person who explicitly asks for a report
+at any point still gets one — read Field 10 first (if it is not
 confirmed, run its two beats: they synthesize from already-confirmed fields — two questions,
 no new pull), then build. An explicit early report
 does not replace the loop: corrections raised in its review route through Step 2's
@@ -380,11 +382,11 @@ Rules for the loop:
 
 ## Step 3 — Offer the weekly report (the artifact)
 
-**The report is offered, never led with — and its form is the customer's choice.** Once the
+**The report is offered, never led with — and it is a dashboard.** Once the
 question set has been run and every answer confirmed, close the loop with a soft offer, in
-Runneth's own words — "want me to build the weekly report?" — never as the expected next
-step, and never presuming a form: the report can be a deck, a dashboard, or a document,
-whichever the customer picks. Runneth never proactively offers the report before the
+Runneth's own words — "want me to build your weekly dashboard?" — never as the expected next
+step. There is no form question: no deck, no document, no menu of options. Runneth never
+proactively offers the report before the
 questions are done; a customer who explicitly asks for one at any point still gets it (per
 Step 1), but the ask has to be theirs. A customer who only wants the question loop can skip
 the report — and Field 10 — entirely.
@@ -395,37 +397,29 @@ known — pre-fill from it and do not re-ask. If it is not confirmed, run Field 
 right here (they synthesize from already-confirmed fields — two questions, no new pull),
 then build. No report is built without a confirmed Field 10.
 
-On a yes, move to the report:
+On a yes, invoke the installed `dashboard-design` skill immediately — before gathering any
+dashboard implementation details or writing any artifact code — and confirm the plan in
+one line, never as a question about form:
 
-> "I have your report structure ready — [the confirmed sections from Field 10]. Which form do
-> you want it in: a deck, a dashboard, or a document?"
-
-Branch on that answer immediately:
-
-- **Dashboard:** invoke the installed `dashboard-design` skill now, before gathering any
-  dashboard implementation details or writing any artifact code. Continue the same onboarding
-  flow under that skill; the customer does not issue a second request and does not see or choose
-  the internal handoff.
-- **Deck or document:** continue through that form's artifact path without invoking
-  `dashboard-design`.
+> "I have your report structure ready — [the confirmed sections from Field 10]. Building it
+> as a live dashboard now."
 
 Gather only what Field 10 does not already answer:
 
-- **Form.** Deck, dashboard, or document — the customer's call, never presumed. Record it
-  in the report record in `validation.md`; the refresh routine rebuilds in that form.
 - **Visual reference (if any).** An existing report to match for look and feel only — not
   for structure. Structure comes from Field 10.
 - **Look and feel.** MotionUI by default, playable videos, equal-size creative cards.
 
-**Automatic dashboard-design handoff.** When the chosen form is `dashboard`, the branch above
+**Automatic dashboard-design handoff.** The yes above
 has already invoked the installed `dashboard-design` skill; follow it for the initial build. This is
 internal orchestration: never ask the customer to say "use dashboard-design," never make them
 choose a skill, and never expose the handoff as an extra onboarding step. Read the skill and all
 of its required references before implementation. The same handoff is mandatory for every
 dashboard regeneration caused by review feedback and for every scheduled refresh. If the skill
 or a required reference is missing or unreadable, stop and report the exact package/reference
-problem; do not fall back to a hand-rolled dashboard. Deck and document forms continue through
-their own artifact paths and do not invoke this skill.
+problem; do not fall back to a hand-rolled dashboard. Only an explicit, unprompted customer
+request for a deck or document takes that form's artifact path instead — it is honored,
+never offered.
 
 Do not re-gather sections, snapshots, or date controls — Field 10 already answered them. The
 report builds from the already-confirmed answers, and the review is about the artifact: look
@@ -456,8 +450,7 @@ ask Runneth questions. Three things, all required:
    performance." Every change request routes through the training loop before anything is
    rebuilt: report structure, sections, cadence, or slicing → Field 10; what counts as a winner
    or which metric leads → the interpretation field behind it (Fields 1, 2, 9); names and
-   labels → Field 4; standing look-and-feel or a form change (deck to dashboard, dashboard to
-   doc) → the report record in `validation.md` (the refresh
+   labels → Field 4; standing look-and-feel changes → the report record in `validation.md` (the refresh
    routine rebuilds from it); one-offs → this render only, reverting on refresh — say so.
    Update the home first, then regenerate the report from it — never hand-edit the report
    output directly; a hand-fixed report reverts on its next scheduled refresh. Rebuild at the
@@ -508,7 +501,7 @@ account_specific_questions_confirmed: <count>
 questions_clean: <n of m — latest answer confirmed without correction>
 context_corrections: <total>
 report_rebuilds: <count>
-weekly_report_form: <deck | dashboard | document>
+weekly_report_form: <dashboard — always, unless the customer explicitly asked for a deck or document>
 weekly_report_route: <app route>
 weekly_report_built_from: <reference | description>
 weekly_report_approved: <yes | no>

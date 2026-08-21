@@ -66,6 +66,13 @@ of onboarding install and test independently.
   surprising are omitted. Three to six body sections is the norm and the whole readout
   should read in about a minute - when it runs long, body sections get cut, never the
   closing block.
+- **The weekly report is a dashboard - always**: validation never asks which form the
+  report should take (the "deck, dashboard, or document?" question is gone). On a yes to
+  the report offer, the dashboard build starts immediately through the dashboard-design
+  skill. An explicit, unprompted customer request for a deck or document is still
+  honored, but never offered. The `runneth:meta-validation-gate` guard bumps v8 -> v9,
+  and the activation's compatibility rule enforces dashboard-only on older merged gates
+  without touching `/agent/user.md`.
 - **The naming section invites a sheet, casually**: the naming-conventions ask always
   closes with one friendly line - "if your naming conventions already live in a sheet
   or doc somewhere, just drop it in here - I'll read it and save you the typing."

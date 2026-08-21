@@ -1,6 +1,6 @@
 ---
 name: dashboard-design
-description: Build and refine polished Runneth dashboards and app-style pages with the Web Awesome design system, Astro app shell, dashboard data files, KPI strips, creative galleries, charts, tables, responsive layouts, theme tokens, and browser controllers. Use when creating, redesigning, reviewing, or fixing a dashboard, analytics page, performance report, or other data-heavy app UI, including requests involving chart composition, creative thumbnails, performer galleries, dashboard interaction patterns, or dashboard visual consistency. Also use automatically whenever Meta validation builds, rebuilds, or refreshes a dashboard-form weekly report during onboarding; the customer never has to name this skill.
+description: Build and refine polished Runneth dashboards and app-style pages with the Web Awesome design system, Astro app shell, dashboard data files, KPI strips, creative galleries, charts, tables, responsive layouts, theme tokens, and browser controllers. Use when creating, redesigning, reviewing, or fixing a dashboard, analytics page, performance report, or other data-heavy app UI, including requests involving chart composition, creative thumbnails, performer galleries, dashboard interaction patterns, or dashboard visual consistency. Also use automatically whenever Meta validation builds, rebuilds, or refreshes the weekly report dashboard during onboarding; the customer never has to name this skill.
 ---
 
 # Dashboard Design

@@ -1,4 +1,4 @@
-<!-- BEGIN runneth:meta-validation-gate v8 -->
+<!-- BEGIN runneth:meta-validation-gate v9 -->
 Meta validation gate:
 
 - Workspace folder: `/agent/brain/<workspace>/`, where `<workspace>` is this conversation's
@@ -12,20 +12,21 @@ Meta validation gate:
   completed (/agent/brain/<workspace>/data-sources/meta/validation.md missing or MVCE state = off), open the validation
   experience described in the Meta Validation onboarding package. Do not wait to be asked.
 - Validation is complete only when: must-have Meta context sources are connected and refreshing,
-  the customer has confirmed Runneth's answers through the question loop, the weekly report is
-  built, live, and approved by the customer (in the form they picked — deck, dashboard, or
-  document), a refresh routine keeps the report updated on an agreed cadence, and Slack is
-  connected so the team can ask questions. Record that state in
+  the customer has confirmed Runneth's answers through the question loop, the weekly report
+  dashboard is built, live, and approved by the customer, a refresh routine keeps it updated
+  on an agreed cadence, and Slack is connected so the team can ask questions. Record that state in
   /agent/brain/<workspace>/data-sources/meta/validation.md.
 - The question loop always runs first. Never proactively offer or lead with the weekly report
   before the question set has been run and confirmed - the report is a soft offer at the end.
-  A person who explicitly asks for a report in any form (deck, dashboard, or document) still
-  gets one (Field 10 confirmed first), but the question loop still runs to complete validation.
-- Whenever the weekly report's chosen form is a dashboard, invoke the installed
-  `dashboard-design` skill immediately when the customer selects dashboard, then use it for the
-  initial build, every regeneration, and every scheduled refresh. The customer never has to
-  name or request the skill. Do not hand-roll a dashboard when that skill or one of its required
-  references is unavailable.
+  A person who explicitly asks for a report still gets one (Field 10 confirmed first), but the
+  question loop still runs to complete validation.
+- The weekly report is a dashboard - always. Never ask which form the report should take
+  (no deck, no document, no menu of options): on a yes to the report offer, invoke the installed
+  `dashboard-design` skill immediately, then use it for the initial build, every regeneration,
+  and every scheduled refresh. The customer never has to name or request the skill. Do not
+  hand-roll a dashboard when that skill or one of its required references is unavailable. If a
+  customer explicitly asks for a deck or a document instead, honor their ask - but it is never
+  offered.
 - A confirmed answer that the customer corrects is not a failure. Update the specific Account
   Context Brain field behind it, then continue. Never move on from a wrong answer.
 - A report change request is a context correction too: route it to the field behind it
@@ -34,4 +35,4 @@ Meta validation gate:
   from context - never hand-edit the report output. Durable corrections in any later
   conversation get the same routing; one-off or current-state remarks shape the answer or the
   current render, never the file.
-<!-- END runneth:meta-validation-gate v8 -->
+<!-- END runneth:meta-validation-gate v9 -->
