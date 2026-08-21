@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "creative-qa",
+  "name": "Creative QA",
+  "version": "1",
+  "description": "Source-agnostic creative QA for ad assets (video and static). Installs a setup interview that learns the team's review process, naming convention, and routing; a review skill that runs deterministic checks first and AI checks second against a per-workspace rubric; and a calibration loop that backtests the rubric on past assets and refines it from reviewer feedback every 10 signals. Works with any intake platform (Slack, Asana, Frame.io, Notion, Drive links, direct upload) and any feedback destination. Installation only delivers files; setup, integration connections, routine creation, and any writes to external tools wait for explicit human approval.",
+  "installPolicy": "manual",
+  "updatePolicy": "auto",
+  "uninstallPolicy": "allowed",
+  "resources": [
+    {
+      "id": "behavior-instruction",
+      "type": "package_instruction",
+      "sourcePath": "instructions/behavior.md"
+    },
+    {
+      "id": "creative-qa-skills",
+      "type": "directory",
+      "sourcePath": "skills",
+      "target": {
+        "root": "agent_skills",
+        "path": "creative-qa"
+      },
+      "executablePaths": []
+    }
+  ]
+}
