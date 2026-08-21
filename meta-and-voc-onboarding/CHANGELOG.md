@@ -29,9 +29,24 @@ change to the package, not per commit. Entries are newest-first.
   vocabulary and a specific creative's tags.
 - Added `--limit`'s max of 100 on `motion cache search-summaries`, and the `workspaceId`,
   `organizationId`, `source`, and `text` fields on `export-summaries` records.
-- Added "a partial record is a fall-through too" to the creative content layer's ladder, and
-  threaded the un-hydrated-layer trigger through the Creative Attributes playbook, the Motion
-  CLI Data-Query Guide, and the Meta ad performance analysis skill.
+- Rebuilt the creative content layer's ladder around what the code actually does on a
+  cache-on VM: the `meta insights` content flags read cacheth itself (`hydrateMissing:
+  false` for summaries and transcripts — only glossary hydrates on demand), so they cannot
+  rescue a cache miss. The repair rung is now `motion cache refresh`, which synchronously
+  re-syncs inventory and hydrates every missing layer before returning; the live content
+  flags are the standing path only where the sandbox cache feature is off. Threaded the
+  corrected fall-through through the Creative Attributes playbook, the Motion CLI Data-Query
+  Guide, and the Meta ad performance analysis skill.
+- Qualified the no-fetch claims with the one-time cold bootstrap: a data-reading cache
+  command on a never-bootstrapped workspace synchronously bootstraps inventory, glossary,
+  and custom conversions first.
+- Scoped transcript absence to eligibility (Meta video only) so a transcript missing from a
+  TikTok or image creative is read as a fact, not a hydration gap; corrected the search-match
+  `format` enum to `video`/`image`/`unknown` (no `carousel`); documented `--limit`'s default
+  of 10; corrected the `text` export field's description (the `search-summaries` surface —
+  Knoweth indexes parallel markdown renderings, not this field); and completed the
+  full-record table (`headline-tactic` and account-custom glossary categories,
+  `callToAction`/`landingPageUrl`/`imageUrl` on ad units).
 
 ## 6 - 2026-08-14
 

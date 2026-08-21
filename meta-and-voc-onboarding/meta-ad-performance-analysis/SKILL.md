@@ -17,7 +17,7 @@ This skill runs inside the Meta onboarding package's contracts:
 - **Pull metrics live via the `motion` CLI**, per the Motion CLI Data-Query Guide installed beside the package docs. Performance metrics are never stored to files — every read is a fresh pull.
 - **Resolve the workspace explicitly.** Every pull passes `--workspace-id <id>`; never assume the default workspace.
 - **Decode names before filtering by them.** Before filtering by campaign, ad set, or ad name, read the account's naming decode — Field 4 of account-context.md and its operational appendix `/agent/brain/<workspace>/data-sources/meta/naming-decoder.json`. Wrap filter values in underscores (`_VALUE_`, not `VALUE`) when filtering `adName`; use `adsetName`/`campaignName` for those levels, per the Data-Query Guide's name-level rules.
-- **Per-creative content comes from the creative content layer** — Cacheth first, always: summary artifacts surfaced through Knoweth, full records (incl. transcript and AI tags) through the `motion cache` CLI. If the cache cannot serve (error, empty, missing record, an un-hydrated layer on an otherwise-present record, or disabled for the sandbox), the content read falls through to the live `motion meta insights` content flags per the Cacheth Command Reference's ladder — a cache failure never skips the creative read. This skill writes nothing to brain files.
+- **Per-creative content comes from the creative content layer** — Cacheth first, always: summary artifacts surfaced through Knoweth, full records (incl. transcript and AI tags) through the `motion cache` CLI. If the cache cannot serve (error, empty, missing record, an un-hydrated layer on an otherwise-present record, or disabled for the sandbox), the content read follows the Cacheth Command Reference's ladder — with the cache on, one `motion cache refresh` plus a re-read (the `meta insights` content flags read the same cache, so they cannot rescue a miss); the live content flags only where the sandbox cache feature is off. A cache failure never skips the creative read. This skill writes nothing to brain files.
 - **Read customer voice for customer-side WHY.** When the question asks why customers
   respond, what they love, object to, or misunderstand, or what the team should make next,
   read `/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md` when it exists. Use its
@@ -155,8 +155,9 @@ After the efficiency read, steps 3–6 trace the viewer's path through the ad: s
 7. To explain any of it, read the creative itself — and the customer. Metrics locate where
    an ad wins or loses — the WHAT. The WHY lives in the creative's content (the creative
    content layer: summary sections and hook via Knoweth injection or the `motion cache` CLI;
-   transcript and AI tags via `motion cache get-creative`; the live content flags only when
-   the cache cannot serve) and in the customer's voice. Read the saved Voice of Customer
+   transcript and AI tags via `motion cache get-creative`; `motion cache refresh` + re-read
+   when a layer has not hydrated; the live content flags only where the sandbox cache
+   feature is off) and in the customer's voice. Read the saved Voice of Customer
    Audit (`/agent/brain/<workspace>/data-sources/voc/voice-of-customer-audit.md`) first,
    then its cited reviews, support themes, community posts, and ad comments when the
    question is how people are responding. Tie the drop-off to what the ad actually says

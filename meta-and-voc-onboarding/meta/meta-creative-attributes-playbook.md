@@ -50,7 +50,8 @@ Cacheth syncs each workspace's creative records from Motion automatically. A ful
   status, thumbnails, and the primary ad copy.
 - **Glossary tags with definitions:** asset type, visual format, messaging angle, hook tactic,
   intended audience, seasonality, offer type.
-- **Transcript** (video only): full text plus timed segments, language, duration.
+- **Transcript** (Meta video creatives only — TikTok assets and non-video formats never
+  hydrate transcripts): full text plus timed segments, language, duration.
 - **Summary sections:** ad description and format; spoken / text-overlay / visual hooks with
   timestamps; a creative breakdown (scene-by-scene storyline, point of view, visuals, people,
   music, fonts); messaging and positioning (features, benefits, value props, pain points, CTA,
@@ -92,8 +93,11 @@ Runneth reaches this content two ways, cheapest first:
    - `motion cache status` — when the cache last synced, how many creatives it holds, and how
      many are still missing ad units, summaries, or transcripts (`missingAdUnitsCount`,
      `missingSummaryCount`, `missingTranscriptCount`) — the per-layer readiness check.
-   - `motion cache refresh` — trigger a fresh sync from Motion to pull in newly launched
-     creatives or updated summaries (the one cache command that reaches out to Motion).
+   - `motion cache refresh` — trigger a fresh sync from Motion, synchronously: it pulls in
+     newly launched creatives and hydrates every missing layer of already-cached ones, which
+     makes it the repair step when a record is missing a layer. (It is the cache command whose
+     job is reaching out to Motion; note any data-reading cache command on a workspace that
+     has never bootstrapped will first run the one-time cold bootstrap itself.)
 
    Every cache command accepts `--workspace-id <id>`; pass it explicitly per the Step 1 scope
    rule. All of these write their output to a file under `./workdir/` and return a pointer plus
@@ -105,10 +109,12 @@ Runneth reaches this content two ways, cheapest first:
    installed beside the Data-Query Guide.
 
 Freshness is the sync's job, not Runneth's: the cache bootstraps per workspace and keeps
-hydrating in the background. If a creative seems to be missing, check `motion cache status` and
-run `motion cache refresh`; if it is still absent, fall through to the live content flags on
-`motion meta insights` per the creative content layer's ladder (Cacheth Command Reference) —
-never reconstruct the record by hand.
+hydrating in the background. If a creative or one of its layers seems to be missing, check
+`motion cache status`, run `motion cache refresh` (it hydrates missing layers synchronously),
+and re-read — one repair attempt, per the creative content layer's ladder (Cacheth Command
+Reference). The live content flags on `motion meta insights` are the content path only where
+the sandbox cache feature is off — with the cache on they read this same cache. Never
+reconstruct the record by hand.
 
 ---
 
