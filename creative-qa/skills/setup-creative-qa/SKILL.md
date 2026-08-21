@@ -86,8 +86,6 @@ instead ("sounds like X has final say — right?").
   work that's approve/reject only?" Editable assets get fix notes; uneditable ones get
   approve/reject with a one-line reason. Also ask for platform context the rubric
   should not flag (for example a missing CTA the ad platform adds itself).
-- Taste vetoes: "Does anyone's taste override everything — a founder or brand lead?
-  What are their known vetoes?" Named vetoes are never-events.
 
 Expect the artifacts plus a handful of gap questions to cover plumbing and authority,
 and the rubric to still arrive incomplete: in every production setup it was built from

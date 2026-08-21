@@ -74,7 +74,7 @@ equivalent and must be coerced to one form so a boolean can never slip past a st
 - **PASS** — ships as-is (naming fix alone does not block a PASS).
 
 Severity always starts strict and only calibration loosens it: hard constraints (banned
-claims, legal rules, named vetoes, and the other HARD_FAIL causes) block from day one;
+claims, legal rules, and the other HARD_FAIL causes) block from day one;
 every other check flags (SOFT_FAIL at most) until the reviewer's responses tune it.
 A check never moves up to blocking without their explicit confirmation. Escalation
 follows the config rule (default: only never-events interrupt the reviewer directly;
