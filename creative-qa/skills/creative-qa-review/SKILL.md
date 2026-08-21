@@ -73,6 +73,11 @@ equivalent and must be coerced to one form so a boolean can never slip past a st
 - **SOFT_FAIL** — real issues worth fixing that a human could still waive.
 - **PASS** — ships as-is (naming fix alone does not block a PASS).
 
+Severity starts conservative and is tuned by the loop: hard constraints (banned claims,
+legal rules, named vetoes, and the other HARD_FAIL causes) block from day one; every
+other check only flags (SOFT_FAIL at most) until the reviewer has confirmed it matters.
+A check never moves up to blocking without their explicit confirmation.
+
 Write 3-6 comments max, most important first, per the rubric's feedback rules:
 timestamped for video, location-referenced for static. Each comment states the issue,
 the evidence, and the fix. Respect content-type rules in config: editable internal

@@ -1,8 +1,8 @@
 ---
 name: creative-qa-calibrate
 description: >
-  The training loop for Creative QA. Two modes: backtest (co-QA recent ads with the
-  reviewer before going live to align the draft rubric) and refresh (fold accumulated
+  The training loop for Creative QA. Two modes: pre-launch calibration (QA the team's
+  next real ads alongside the reviewer until agreement is good) and refresh (fold accumulated
   reviewer signals back into the rubric on the configured cadence, version-bump, and track
   the agreement score toward 90-100%).
   Triggers: "calibrate QA", "backtest the rubric", "refresh the rubric", refresh threshold
@@ -39,17 +39,21 @@ reactions are what make it smarter.
 2. Archive the current rubric to `rubric-history/<type>-vN-YYYY-MM-DD.md`.
 3. Rewrite the rubric: sharpen criteria the reviewer consistently confirms, soften or
    remove dimensions with high rejection, absorb corrections as new criteria, update
-   the analysis prompt. Never rewrite the reviewer-supplied criteria section without
-   their explicit approval.
+   the analysis prompt. New criteria get adjudicated with the reviewer: permanent
+   pass/fail (compliance, claims), situational judgment, or campaign-scoped with an
+   expiry note — only permanent pass/fail can hard-block. Move checks between severity
+   tiers as responses show: a waved-off flag moves down-tier or out; nothing moves up
+   to blocking without the reviewer's explicit confirmation. Never rewrite the
+   reviewer-supplied criteria section without their explicit approval.
 4. Score the new version against the graded set and log score + trend in the rubric's
    Learning Notes. Target: 90-100% agreement, video and static scored separately.
 5. Tell the reviewer in one short message what changed and the new version number.
 
-## Backtest mode (pre-launch co-QA)
+## Calibration mode (pre-launch)
 
-Same mechanics, run during setup: the team shares their 5-10 most recent finished ads,
-the reviewer and Runneth QA them independently, present "would this have been your
-feedback?", grade, fold in corrections, and repeat on a fresh batch for 2-3 rounds or
-until agreement is acceptable to the reviewer. Historical reviewer feedback from the
-intake source is harvested as extra seed signal when it is cheap to read, never
-required. The rubric locks as v1 only after this pass.
+Same mechanics, run during setup on the team's next real ads: finished ads carry no
+training signal, so the team keeps working normally while the draft rubric QAs each new
+arrival through the configured intake, clearly marked as calibration. Grade every
+review, fold in corrections, and harvest past reviewer feedback from the intake source
+when it is cheap to read (a bonus, never a dependency). The rubric locks as v1 after
+~10 graded reviews, or earlier if the reviewer calls agreement good enough.

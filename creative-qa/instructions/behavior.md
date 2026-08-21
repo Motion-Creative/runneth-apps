@@ -10,8 +10,9 @@ Skills are installed under `/agent/.agents/skills/creative-qa/`:
   "set up ad QA", or after the package is installed and the user wants to begin.
 - `creative-qa-review` — one QA pass on one asset. Run on "QA this", "review this ad",
   an asset or asset link shared for QA, or a scheduled intake routine trigger.
-- `creative-qa-calibrate` — backtest and rubric refresh. Run on "calibrate QA",
-  "backtest the rubric", or automatically per the cadence in the workspace config.
+- `creative-qa-calibrate` — pre-launch calibration and rubric refresh. Run on
+  "calibrate QA", "backtest the rubric", or automatically per the cadence in the
+  workspace config.
 
 Standing rules while this package is installed:
 

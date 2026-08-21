@@ -1,7 +1,7 @@
 # Creative QA
 
 Source-agnostic, self-improving QA for ad creatives (video and static). One shared core
-— rubric, training log, backtest, naming — with swappable adapters for where assets come
+— rubric, training log, calibration, naming — with swappable adapters for where assets come
 from and where feedback goes.
 
 ## Why it is shaped this way
@@ -20,7 +20,7 @@ Generalized from five real production deployments:
 3. **PM-board watch** — Asana board watch, QA posted as task comments, rubric seeded by
    harvesting the reviewer's historical feedback and watching the flagged videos, rubric
    self-update every 10 reviewer comments. Lessons: seed from real approver judgment;
-   backtest before going live; deliver where the review already happens.
+   calibrate before going live; deliver where the review already happens.
 4. **Bring-your-own-rubric install** — installed the original video-qa app, brought
    their own rubric, needed image + video support; the file-drop trigger failed
    silently. Lessons: rubric import path; multi-format; triggers must be deterministic
@@ -34,13 +34,31 @@ Generalized from five real production deployments:
 
 - `instructions/behavior.md` — standing routing and safety rules.
 - `skills/setup-creative-qa` — plain-question interview: process, taste dimensions,
-  naming, routing, co-QA calibration, lock-in.
+  naming, routing, live calibration, lock-in.
 - `skills/creative-qa-review` — one QA pass: deterministic gates, AI evidence capture,
   verdict, 3-6 comments, rename, delivery, state record.
 - `skills/creative-qa-calibrate` — signal collection, rubric refresh with versioned
   history, agreement score toward 90-100%.
 
 Per-workspace state lives at `/agent/brain/creative-qa/<scope>/`.
+
+## Before install — what the team should have on hand
+
+The setup interview goes fastest when the customer arrives with:
+
+- The exact board or channel where finished ads land (a link, not a description), and
+  which field or comment carries the actual file.
+- The reviewer of record's name and their handle in that tool.
+- Any written rules: brand guidelines, claims/legal restrictions, do-not-say lists, QA
+  checklists, per-product specs — any form counts, even a single slide.
+- Three recent file names, if naming wasn't already captured by Meta onboarding.
+- Where feedback should go and how the reviewer wants to be notified.
+- Access: expect a "how do I get in" moment per tool (an OAuth connect or a token
+  walkthrough) before any watch can run.
+
+Expect the rubric to be incomplete at install. In every production setup it was built
+from the team's artifacts plus their historical feedback plus adjudication during
+calibration — never from the interview alone.
 
 ## v1 boundaries
 
