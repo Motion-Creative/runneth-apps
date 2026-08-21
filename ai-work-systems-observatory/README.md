@@ -1,44 +1,35 @@
 # AI Work Systems Observatory
 
-A portable, read-only operating review for how an organization uses AI across meaningful workflows.
+A portable executive operating-model report for showing how a team works today, which AI systems are genuinely operating, and which systems should be built next.
 
-## What installation does
+The Observatory is not a prompt leaderboard, package inventory, or activity dashboard. It produces an evidence-backed executive narrative with two strict layers:
 
-Installation stages reusable skills, governance references, deterministic local discovery tools, and a dashboard template. It does not read organization data, create a dashboard, create routines, connect integrations, or write organization-specific state.
+1. **Observed state**: verified roles, operating rhythms, handoffs, recurring decisions, current systems, consumption, run health, and source limitations.
+2. **Proposed operating model**: strategist recommendations for the next systems, role changes, human approval gates, weekly cadence, and phased build sequence.
 
-## What setup can create after approval
+These layers never blend. Installed packages remain available capabilities. One-time apps remain delivered assets. Incomplete onboarding remains incomplete setup. A record becomes a current operating system only after the validator can prove a confirmed owner, real trigger, identifiable output, observed consumption, and run-history-based health.
 
-- A private, Motion-authenticated dashboard named `ai-work-systems-observatory`.
-- An organization-specific workflow ledger and source-coverage register under that app's `data/` directory.
-- Optional approved routines for daily deterministic telemetry, weekly reconciliation, and a monthly executive pulse.
+## What the report answers
 
-Each of those effects is previewed before it happens. The alpha is read-only and never takes autonomous external action.
+- What changes on Monday?
+- Which roles work differently?
+- What does AI prepare or maintain?
+- What do humans still approve?
+- Which three systems have the highest value to build next?
+- What evidence supports each recommendation?
 
-## Core unit
+## Package contents
 
-The core unit is a **meaningful workflow**, not a prompt, message, token, app, routine, or person. Every workflow is expected to carry an owner, audience, trigger, inputs and provenance, output and delivery, health, human control, evidence confidence, outcome evidence, and maintenance path.
+- `brain/`: data, qualification, evidence, maturity, success, report, and presentation contracts.
+- `tools/collect-system-ledger/`: deterministic inventory collector. It gathers evidence and classifies inventory without manufacturing systems.
+- `tools/validate-system-ledger/`: deterministic validation for observed ledgers, proposed operating models, and executive reports.
+- `skills/`: approved setup, refresh, and opportunity-review workflows.
+- `app-template/`: private, runtime-loaded executive report using Motion's Web Awesome report scaffold.
+
+## Safe lifecycle
+
+Installation only stages files. Setup must disclose intended reads and writes, obtain approval, collect bounded evidence, ask one focused follow-up when decisive facts remain unknown, validate all data files, create or update the private report app, verify it, and only then offer a refresh routine. No routine, app, organization-specific state, or external post is created by installation alone.
 
 ## Evidence boundary
 
-The observatory distinguishes execution from value:
-
-1. Executed
-2. Delivered
-3. Consumed
-4. Used
-5. Outcome linked
-6. Validated value
-
-If a workflow ran but use is unverified, the required language is: **Delivered successfully. Usefulness not yet verified.**
-
-## Default privacy posture
-
-- Team-level aggregation by default.
-- No raw conversation browser.
-- No ranking people by activity, cost, messages, app count, or routine count.
-- No time-saved or ROI claims without an owner-approved manual baseline.
-- No effectiveness claims from activity or cost alone.
-- Unresolved identities remain unresolved.
-- Inferences carry confidence and last-confirmed metadata.
-
-Prior pilot organizations informed the acceptance criteria. No pilot-specific identity, count, metric, or workflow is embedded as an assumption or package data.
+Current claims require evidence references. Confirmed ownership requires direct confirmation evidence. Working status requires execution plus observed consumption. Health requires run history and an assessment window. Adoption uses one explicit numerator, denominator, population, and rule. ROI, time-saved, avoided-hiring, and capacity claims require an owner-approved manual baseline or independently validated outcome source.

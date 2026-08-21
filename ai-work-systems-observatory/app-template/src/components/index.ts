@@ -23,3 +23,4 @@ import './creative-chart';
 import './creative-table';
 import './kpi-strip';
 import './layout-tag-guards';
+import './report-elements';

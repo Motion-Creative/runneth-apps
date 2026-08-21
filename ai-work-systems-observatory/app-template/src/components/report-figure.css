@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  margin: 0;
+}
+
+.fig {
+  margin-block: var(--wa-space-m) 0;
+  color: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-xs);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.fig-label {
+  font-family: var(--wa-font-family-longform);
+  font-style: italic;
+}

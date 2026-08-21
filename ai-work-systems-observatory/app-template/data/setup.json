@@ -1,22 +1,27 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "mode": "illustrative",
   "organizationName": "Illustrative organization",
-  "executiveObjective": "Demonstrate the operating review shape without making claims about a real organization.",
+  "executiveObjective": "Demonstrate the executive operating-model report without making claims about a real organization.",
   "visibilityPolicy": {
-    "defaultAggregation": "team",
-    "personLevelOwnership": "authorized_and_confirmed_only",
+    "defaultAggregation": "team-and-system",
+    "personLevelOwnership": "authorized_and_directly_confirmed_only",
     "rawConversationBrowser": false,
     "peopleLeaderboard": false
   },
   "allowedSources": [
-    "illustrative-routines",
-    "illustrative-apps"
+    "illustrative-routine-history",
+    "illustrative-bounded-workflow-evidence"
   ],
+  "boundedConversationSearch": {
+    "approved": true,
+    "scope": "Workflow roles, rhythms, handoffs, outputs, and consumption only",
+    "dateWindow": "Illustrative"
+  },
   "excludedSources": [
-    "message-bodies",
+    "unbounded-message-bodies",
     "sensitive-content",
-    "external-outcomes"
+    "unvalidated-outcomes"
   ],
   "routinePlan": [],
   "approvedAt": null,

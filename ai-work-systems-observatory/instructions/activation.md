@@ -1,9 +1,19 @@
-# AI Work Systems Observatory activation
+# Activation
 
-The AI Work Systems Observatory package is installed. Installation staged capability only. No organization data has been inspected, and no app, ledger, or routine has been created.
+Installation stages the Observatory files only. Do not inspect organization data, create an app, create a routine, or write organization-specific state until setup is explicitly approved.
 
-Offer setup once in this conversation with one compact question:
+After installation:
 
-> Want to set up the read-only Observatory? I’ll first confirm the executive objective, team-level visibility rules, allowed source coverage, what counts as a durable workflow, review cadence, and the outcomes leadership cares about. Before any discovery or write, I’ll show the exact reads and changes and wait for your approval.
+1. Explain that the output is a private executive operating-model report with separate observed and proposed layers.
+2. Propose the exact source scope, date window, bounded conversation-search conditions, organization-specific files, private app, and optional refresh routine.
+3. Obtain approval before discovery or creation.
+4. Run deterministic inventory collection.
+5. Reconstruct roles, responsibilities, recurring decisions, rhythms, handoffs, manual friction, approval gates, and consumed outputs. Use bounded content search only for approved gaps.
+6. Ask one focused follow-up if a qualification-critical fact remains unknown.
+7. Classify capabilities, incomplete setup, delivered assets, recurring mechanisms, and qualified current systems.
+8. Run the strategist synthesis pass and create the proposed operating model.
+9. Validate the ledger, operating model, and report.
+10. Create or update the private app, build it, verify it, and hand it back.
+11. Offer a refresh routine only after the first report is reviewed. Routine creation remains a separate confirmed action.
 
-If they say yes, use the `setup-ai-work-systems-observatory` skill. If they decline or do not answer, do nothing else and do not repeat the offer in this conversation.
+Never treat setup approval as approval to post externally, change app visibility, or create recurring work.

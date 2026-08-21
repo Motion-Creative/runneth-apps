@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "indexRevision": "2026-08-20-01",
+  "indexRevision": "2026-08-21-01",
   "packages": [
     {
       "id": "creative-strategy-guidance",
@@ -103,8 +103,8 @@
     {
       "id": "ai-work-systems-observatory",
       "name": "AI Work Systems Observatory",
-      "description": "Stages a portable, read-only operating review for how an organization uses AI across meaningful workflows. The package includes a governed workflow ledger, evidence and maturity rules, deterministic discovery tools, setup and refresh skills, and a private dashboard template. Installation only delivers files: it does not inspect organization data, create an app, create routines, or write organization-specific state. Setup discloses every intended read and write, preserves unresolved identities, defaults to team-level aggregation, and waits for explicit approval before discovery or activation.",
-      "version": "1",
+      "description": "Stages a portable executive operating-model report that separates verified current work systems from strategist recommendations. It includes governed observed-state and proposed-model contracts, deterministic inventory classification, strict validation, approved setup and refresh skills, and a private runtime-loaded report template. Installation only delivers files. Setup discloses every intended read and write, uses bounded evidence retrieval, preserves unresolved facts, and waits for approval before organization-specific discovery or activation.",
+      "version": "2",
       "packageManagerVersion": 1,
       "categories": [],
       "source": {

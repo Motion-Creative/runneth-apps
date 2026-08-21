@@ -1,60 +1,32 @@
-# Dashboard specification
+# Executive report specification
 
-## Product position
+## Page shape
 
-The Observatory is a system ledger and operating review. It is not a token meter, prompt leaderboard, transcript browser, or employee scorecard.
+The Observatory is a browser-openable executive report. It is not a dashboard shell and has no navigation rail. Use a headerless `wa-page` containing `report-page`, a masthead, one KPI strip, seven report sections, and a floating theme toggle.
 
-## Navigation
+## Narrative order
 
-1. **Executive overview**
-   - What changed?
-   - What evidence of value exists?
-   - What is at risk?
-   - Which workflows need intervention?
-   - What decisions must leadership make?
+1. Executive thesis and Monday change.
+2. Role and responsibility map with current rhythms and handoffs.
+3. Qualified current systems as end-to-end loops.
+4. Proposed future systems as separately labeled recommendations.
+5. Stop, continue, start and the future weekly cadence.
+6. Opportunity portfolio and phased roadmap.
+7. Collapsible evidence, source coverage, governance, limitations, and unknowns.
 
-2. **How teams work**
-   - Team-level workflow coverage.
-   - Proactive versus interactive work as an activity distribution only.
-   - Ownership coverage.
-   - Consumption and use evidence.
-   - Missing source or identity coverage.
+## Runtime data
 
-3. **Operating systems**
-   - System and workflow portfolio.
-   - Business job, owner, trigger, input provenance, output, health, control, evidence stage, and maintenance path.
-   - Maturity distribution with confidence and last-confirmed date.
+The browser controller fetches `/data/observatory.json` with `cache: no-store`. Do not import the data into the build. Do not load browser TypeScript with `?url`. The Astro page contains only loading and error states; the controller creates report elements after valid data arrives so empty charts, tables, and KPI strips never connect.
 
-4. **Risks and decisions**
-   - Missing owners.
-   - Stale inferences.
-   - Failed or degrading execution.
-   - Missing human controls.
-   - Sensitive-data and source-scope gaps.
-   - Decisions required with accountable owner and review date.
+## Visual contract
 
-## Visual language
+- Use Motion's Web Awesome report elements and layout primitives.
+- KPI strips and tables support the narrative but never lead it.
+- Current loops and proposed loops must have distinct labels and tones.
+- Use Runneth cream, warm brown, lime, and butter tokens; Inter; 10px corners; flat surfaces; no shadows or gradients.
+- Surface refreshed time, source scope, evidence confidence, last-confirmed dates, limitations, and adoption definition.
+- Keep the app private by default.
 
-Borrow Wispr's calm hierarchy, large interpretable metrics, narrative cards, and approachable progress language. Do not borrow its people leaderboard as a performance model.
+## Empty and partial states
 
-Use the Runneth brand system:
-
-- Cream page background.
-- White or warm gray cards.
-- Dark warm brown text.
-- Lime accent.
-- Butter-yellow highlight panels.
-- Inter typography.
-- Ten-pixel card radius.
-- Flat design with no shadows and no gradients.
-- Light theme by default.
-
-Use Motion's Astro and Web Awesome scaffold, `wa-page`, `kpi-strip`, `layout-*`, `wa-card`, `creative-chart`, `creative-table`, and `buildeth-theme-toggle`. Do not hand-roll cards, tables, charts, controls, or layout grids.
-
-## Data behavior
-
-- Load `data/observatory.json` at runtime with cache disabled.
-- Keep source data sparse. Do not invent, interpolate, or backfill missing evidence.
-- Show a visible illustrative-data banner when `meta.mode` is `illustrative`.
-- Show source coverage and last refreshed timestamp on every view.
-- App visibility is private by default and reversible.
+Show a plain-language callout when data is illustrative, incomplete, or unavailable. Never infer a current system from a package, app, or incomplete workflow. If no system qualifies, say so and render the evidence gaps and proposed model without inventing a portfolio.

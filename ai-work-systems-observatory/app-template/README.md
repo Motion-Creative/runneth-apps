@@ -1,7 +1,13 @@
-# Observatory app template
+# Observatory report template
 
-This is a staged view template, not a registered app.
+This is the presentation layer for the AI Work Systems Observatory. The app is private by default and reads `data/observatory.json` at runtime with caching disabled, so approved refreshes update the report without rebuilding it.
 
-The setup skill creates the app through the app lifecycle first, then copies this template without overwriting the generated `buildeth.app.json`. Organization, workspace, conversation, and app IDs are setup-time values and must never be copied from another organization.
+The durable model uses three files:
 
-The page runtime-loads `/ai-work-systems-observatory/data/observatory.json`, so ordinary data refreshes do not require an app rebuild. The included JSON is clearly marked illustrative and must be replaced before a live handoff.
+- `system-ledger.json`: observed-state evidence only.
+- `operating-model.json`: proposed systems and operating-model recommendations only.
+- `observatory.json`: report-ready synthesis that keeps observed claims and recommendations visibly separate.
+
+The page is an editorial executive report, not a dashboard shell. It uses `report-page`, `report-masthead`, `report-section`, `report-entry`, `report-figure`, one KPI strip, Web Awesome components, and the standard Buildeth layout elements. The browser controller creates data-heavy components only after the report loads, preventing empty custom-element errors.
+
+Before publishing an organization-specific report, validate all three files and confirm the regression questions in `brain/executive-report-contract.md` are answered. Keep Motion authentication enabled unless an authorized requester explicitly chooses public access.

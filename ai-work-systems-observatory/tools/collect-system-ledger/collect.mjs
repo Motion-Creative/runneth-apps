@@ -120,7 +120,7 @@ sourceCoverage.push({
   available: false,
   readAt: new Date().toISOString(),
   rowsObserved: null,
-  limitations: "Message bodies are excluded by default. Bounded metadata or corpus retrieval requires separate explicit approval.",
+  limitations: "Message bodies are excluded from the deterministic collector. The approved setup flow may run bounded conversation retrieval only within its confirmed organization, date, and topic scope.",
 });
 
 const output = buildDiscoveryLedger({

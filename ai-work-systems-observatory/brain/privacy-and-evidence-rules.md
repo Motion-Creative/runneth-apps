@@ -1,68 +1,33 @@
 # Privacy and evidence rules
 
-## Default visibility
+## Evidence types
 
-1. Aggregate at the team level by default.
-2. Show person-level details only to authorized viewers and only when ownership is confirmed.
-3. Do not provide a raw conversation browser.
-4. Do not rank people by messages, spend, token use, app count, routine count, or inferred performance.
-5. If team activity is shown, label it as activity and explain the scope.
+Every material statement is one of: `fact`, `inference`, `unknown`, or `recommendation`. Facts cite evidence. Inferences carry confidence and cannot become confirmed ownership. Unknowns stay visible. Recommendations are always labeled and remain separate from observed state.
 
-## Identity
+## Bounded discovery
 
-- Prefer live team-member links, provider IDs, and explicit account links.
-- Names and matching labels are weak evidence.
-- Preserve unresolved and conflicted identities instead of guessing.
-- Keep confidence and last-confirmed metadata on identity and ownership inferences.
+Start with approved inventory and metadata. If job, owner, audience, output, consumption, role, rhythm, or handoff cannot be established, use only the already-approved bounded conversation search: constrained by organization, date window, topic, and smallest useful result set. Do not open an unrestricted transcript browser. If decisive uncertainty remains, ask one focused question.
 
-## Read-only alpha
+## Ownership and identity
 
-The alpha may inspect approved local records and connected-source metadata. It must not:
+Confirmed ownership requires a direct statement, authoritative record, or explicit approval tied to the system. Name similarity, app authorship, installation, or likely responsibility is inference only. Preserve unresolved identity rather than guessing.
 
-- Send external messages.
-- Create or modify provider records.
-- Enable or edit workflows.
-- Change access or permissions.
-- Launch ads or publish content.
-- Take any external action on behalf of a person.
+## Consumption and health
 
-Optional routines may refresh local observatory state and a private dashboard only after explicit setup approval.
+Delivery is not use. Working requires execution plus observed consumption, approval, action, or repeated downstream reliance. Health is derived from run history over a visible assessment window; missing history means health is unknown and blocks current-system qualification.
 
-## Evidence ladder
+## Adoption
 
-1. **Executed**: the workflow ran.
-2. **Delivered**: an output reached its intended destination.
-3. **Consumed**: the intended audience opened, read, or otherwise consumed it.
-4. **Used**: a person made a decision or took a documented action based on it.
-5. **Outcome linked**: a later outcome is attached with its source and causal status.
-6. **Validated value**: the owner approved the baseline, measure, and value interpretation.
+Use one stable definition: qualified-system consumption coverage. Always show numerator, denominator, population, rule, and evidence. Do not use message volume or conversation participation as a substitute.
 
-Do not collapse these stages. The default message for a delivered workflow without use evidence is:
+## Value
 
-> Delivered successfully. Usefulness not yet verified.
+No ROI, time-saved, avoided-hiring, reclaimed-capacity, productivity, or effectiveness claim without an owner-approved manual baseline or independently validated outcome source. Missing outcome coverage is a limitation, not zero value.
 
-## Claim rules
+## People safety
 
-- Activity is not productivity.
-- Spend is not value.
-- Cost is not effectiveness.
-- Routine count, app count, and output volume are not success.
-- Correlation is not causation.
-- Time saved, capacity reclaimed, avoided hiring, tool replacement, and ROI require validated baselines.
-- Missing data is unavailable, not zero.
-- Directional reads must be labeled directional.
+No employee rankings, productivity scores, or covert performance surveillance. Default to team and system views. Person-level ownership appears only when authorized and directly confirmed.
 
-## Source provenance
+## External actions
 
-Every visible claim includes or links to:
-
-- Source family and scope.
-- Read timestamp.
-- Coverage limitations.
-- Evidence stage.
-- Confidence.
-- Last-confirmed timestamp when the fact can drift.
-
-## Sensitive data
-
-Setup must record allowed sources, excluded sources, connector scope, sensitive-data exclusions, and who can see person-level detail. New sources are opt-in and require a new approval before use.
+Discovery is read-only. External posts, routine creation, app visibility changes, and third-party writes require their normal confirmation and permission gates.

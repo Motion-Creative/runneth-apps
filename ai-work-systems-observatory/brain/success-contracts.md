@@ -1,38 +1,19 @@
 # Success contracts
 
-A success contract is owner-approved. The observatory does not define good work globally.
+A system success contract defines what useful delivery looks like before value is claimed.
 
-## Required fields
+Required fields:
 
-- `contractId`
-- `workflowId`
-- `ownerPersonId`
-- `approvedAt`
-- `decisionJob`
-- `deliveryDeadline`
-- `freshnessRequirement`
-- `requiredSources`
-- `evidenceRequirements`
-- `humanReviewRequirement`
-- `acceptanceStates`: `accept`, `change`, and `reject`
-- `outcomeMeasure`
-- `baselineId`
-- `reviewCadence`
-- `version`
+- business job and intended decision
+- accountable owner and direct confirmation evidence
+- trigger or cadence
+- input scope and freshness
+- output, audience, and destination
+- human approval or control
+- consumption signal
+- run-health window and acceptable reliability
+- success signal and evidence source
+- manual baseline or validated outcome source when value is claimed
+- review date and retirement condition
 
-## Example: Weekly creative performance review
-
-The review succeeds only when:
-
-- It covers the correct account and time period.
-- Inputs meet the agreed freshness requirement.
-- Claims cite evidence.
-- Weak evidence is labeled directional.
-- Delivery happens before the decision meeting.
-- Uncertainty is visible.
-- The owner reviews the output.
-- A decision is recorded.
-- The owner marks the output accept, change, or reject.
-- Later outcomes are attached without unsupported causal claims.
-
-This example is a reusable shape, not a universal standard. Every organization adapts it with the workflow owner.
+Evidence stages remain distinct: executed, delivered, consumed, used, outcome linked, validated value. A later stage requires evidence from every earlier stage. Delivered successfully means only delivery. Usefulness is not verified until consumption or use is observed.

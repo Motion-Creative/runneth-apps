@@ -1,54 +1,14 @@
 ---
 name: review-systemization-opportunities
-description: Review an established Observatory ledger for work that could become a stronger reusable AI system. Use when someone asks "what should we systemize", "where are our AI workflow gaps", "which workflows should become routines", or "review systemization opportunities".
+description: Review an Observatory report for the highest-value systems to build next, grounded in observed operating friction and human judgment boundaries.
 ---
 
-# Review systemization opportunities
+# Review Systemization Opportunities
 
-Identify workflow opportunities without treating people or activity volume as performance.
-
-## Inputs
-
-- Existing `data/system-ledger.json`.
-- Existing `data/setup.json`.
-- The maturity rubric, evidence rules, and owner-approved success contracts.
-- Approved source coverage only.
-
-## Opportunity signals
-
-A workflow can be a candidate when one or more are true:
-
-- The same business job recurs, but execution is still ad hoc.
-- A reusable template exists without an owner, trigger, health signal, or maintenance path.
-- A system delivers outputs repeatedly, but consumption and use are unverified.
-- A high-value decision depends on stale manual collection.
-- A workflow has strong use evidence but weak reliability, ownership, or governance.
-- Several overlapping systems create duplicate maintenance or inconsistent truth.
-- A workflow has enough structure for deterministic collection and agentic interpretation to be separated.
-
-## Exclusions
-
-Do not prioritize from message volume, spend, token use, app count, routine count, or output volume alone. Do not recommend systemizing sensitive or consequential work unless a clear human-control path exists.
-
-## Review method
-
-1. Group opportunities by business job and team, not by individual activity rank.
-2. State the evidence that makes each opportunity credible.
-3. Label confidence and missing evidence.
-4. Propose the smallest next system step: observe, template, assign owner, add trigger, add delivery evidence, add human review, attach outcomes, or validate a baseline.
-5. Identify what should remain manual.
-6. Keep external action disabled.
-
-## Output
-
-Return a short ranked backlog at the workflow level with:
-
-- Workflow or candidate workflow.
-- Current maturity.
-- Evidence and confidence.
-- Missing operating element.
-- Smallest next step.
-- Required owner decision.
-- Governance or source caveat.
-
-The ranking is a systemization backlog, not a people leaderboard. Use leadership importance, recurrence, reliability risk, evidence quality, and implementation reversibility as the ranking factors.
+1. Read the observed-state ledger and proposed operating model separately.
+2. Exclude installed capabilities, incomplete setup, and delivered assets from current-system counts.
+3. Identify manual coordination, repeated decision preparation, stale shared outputs, fragile handoffs, concentrated ownership, and missing approval gates.
+4. Score opportunities on business importance, recurrence, evidence quality, implementation readiness, control clarity, and expected operating change. Value remains a hypothesis unless independently validated.
+5. Recommend exactly three highest-value systems unless the requester asks for another count. For each, state the current gap, trigger, inputs, AI role, human approval, output, destination, owner recommendation, success signal, evidence, and first build move.
+6. Explain what changes on Monday, which roles work differently, and how the weekly rhythm changes.
+7. Keep facts, inferences, unknowns, and recommendations labeled. Ask one focused question only when it would materially change the top-three sequence.
