@@ -25,6 +25,10 @@ Read, in order:
 
 ## Step 1 — Acquire the asset
 
+Read `references/platform-recipes.md` in this skill folder for the source platform's
+intake mechanics and evidence level. A platform with no recipe is still in scope through
+the no-recipe path defined there; a stale recipe never blocks a pull.
+
 Resolve the asset from wherever it lives: download the file from the link (Drive,
 review tool, DAM, Slack file), or use the uploaded file directly. Delete downloaded
 files when the pass completes. If acquisition fails, report the failure to the
@@ -88,8 +92,8 @@ reply is training signal.
 
 ## Step 7 — Record
 
-Update `state.json`: mark the asset processed with verdict, comment list, destination
-message ids, and queue it for feedback collection. Append nothing to the training log
+Write one unified QA record per `templates/qa-record.md` into `state.json`: verdict,
+gate results, comment list, destination message ids, and the awaiting-feedback flag. Append nothing to the training log
 yet; signals are collected when the reviewer responds (see `creative-qa-calibrate`).
 
 If the count of unprocessed signals in `training-log.json` has reached the refresh

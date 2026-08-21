@@ -93,6 +93,9 @@ be notified. Default: post the QA back into the tool where the review already ha
 (Asana task comment, Frame.io timestamped comments, the Slack thread), plus an optional
 Slack summary tagging the reviewer. Record every destination in config.
 
+Per-platform intake and delivery mechanics live in the review skill's
+`references/platform-recipes.md`, with evidence levels per platform. The recipe list is
+not the scope: any platform the team names is supported through the no-recipe path there.
 If a needed tool is not connected yet, use the standard integration connect flow
 (registry app or native connection) before writing the adapter into config. Do not
 hand-roll credentials.
