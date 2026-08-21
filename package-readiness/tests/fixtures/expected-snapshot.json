@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "evaluatedAt": "2026-08-21T12:00:00.000Z",
+  "evaluator": {
+    "id": "package-readiness",
+    "version": "1"
+  },
+  "packages": [
+    {
+      "packageId": "sample-onboarding",
+      "contractDigest": "055bc2b9cf156a66a2163d45e2ffb6054c00c9ca210ea7f7cd4d610e3436fc4b",
+      "scope": "workspace",
+      "readyStage": "context-confirmed",
+      "state": "partial",
+      "stageId": null,
+      "stageLabel": null,
+      "counts": {
+        "ready": 1,
+        "total": 2
+      },
+      "workspaces": [
+        {
+          "workspaceId": "workspace-1",
+          "workspaceName": "Acme",
+          "state": "ready",
+          "stageId": "validation-on",
+          "stageLabel": "Validation on",
+          "ready": true,
+          "checks": [
+            {
+              "id": "context-file",
+              "status": "passed"
+            },
+            {
+              "id": "context-confirmed",
+              "status": "passed"
+            },
+            {
+              "id": "validation-on",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "workspaceId": "workspace-2",
+          "workspaceName": "Second Brand",
+          "state": "needs_setup",
+          "stageId": null,
+          "stageLabel": null,
+          "ready": false,
+          "checks": [
+            {
+              "id": "context-file",
+              "reason": "identity-not-found",
+              "status": "failed"
+            },
+            {
+              "id": "context-confirmed",
+              "reason": "dependency-not-passed",
+              "status": "failed"
+            },
+            {
+              "id": "validation-on",
+              "reason": "dependency-not-passed",
+              "status": "failed"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
