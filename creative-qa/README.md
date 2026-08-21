@@ -6,34 +6,35 @@ from and where feedback goes.
 
 ## Why it is shaped this way
 
-Generalized from five real customer setups:
+Generalized from five real production deployments:
 
-1. **Harry's / Flamingo** — deterministic pre/post-render gates on generated statics
-   (placeholder, banned claims, aspect, dedup) plus a 3-layer AI fidelity gate graded
-   against real product photos. Lessons: deterministic first, AI second; grade against
-   reality; normalize model verdict outputs; block, don't fix.
-2. **Cozy Earth** — scheduled Frame.io link scan from a Slack channel, rubric-based video
-   QA, timestamped comments back into the review tool, training log with rubric rewrite
-   thresholds, token health checks, loud failure alerts. Lessons: deterministic link
-   detection with a state file; a failed read is a failure, not a quiet run; weak feedback
-   signal is the loop's main risk.
-3. **Spot & Tango** — Asana board watch, QA posted as task comments, rubric seeded by
+1. **Generated-statics pipeline** — deterministic pre/post-render gates on generated
+   statics (placeholder, banned claims, aspect, dedup) plus a 3-layer AI fidelity gate
+   graded against real product photos. Lessons: deterministic first, AI second; grade
+   against reality; normalize model verdict outputs; block, don't fix.
+2. **Review-tool link scan from Slack** — scheduled Frame.io link scan from a Slack
+   channel, rubric-based video QA, timestamped comments back into the review tool,
+   training log with rubric rewrite thresholds, token health checks, loud failure
+   alerts. Lessons: deterministic link detection with a state file; a failed read is a
+   failure, not a quiet run; weak feedback signal is the loop's main risk.
+3. **PM-board watch** — Asana board watch, QA posted as task comments, rubric seeded by
    harvesting the reviewer's historical feedback and watching the flagged videos, rubric
    self-update every 10 reviewer comments. Lessons: seed from real approver judgment;
    backtest before going live; deliver where the review already happens.
-4. **Manychat** — installed the original video-qa app, brought their own rubric, needed
-   image + video support; the file-drop trigger failed silently. Lessons: rubric import
-   path; multi-format; triggers must be deterministic and alert on failure.
-5. **Dose** — checklist-driven QA with naming conventions, trigger phrases, and status
-   watches. Lessons: naming is part of QA; one canonical rubric the live workflow actually
-   points at (their skill rubric and real checklists had drifted apart); stale triggers
-   need a drift check.
+4. **Bring-your-own-rubric install** — installed the original video-qa app, brought
+   their own rubric, needed image + video support; the file-drop trigger failed
+   silently. Lessons: rubric import path; multi-format; triggers must be deterministic
+   and alert on failure.
+5. **Checklist-and-naming workflow** — checklist-driven QA with naming conventions,
+   trigger phrases, and status watches. Lessons: naming is part of QA; one canonical
+   rubric the live workflow actually points at (their skill rubric and real checklists
+   had drifted apart); stale triggers need a drift check.
 
 ## What installs
 
 - `instructions/behavior.md` — standing routing and safety rules.
-- `skills/setup-creative-qa` — plain-question interview: process, naming, routing,
-  backtest, lock-in.
+- `skills/setup-creative-qa` — plain-question interview: process, taste dimensions,
+  naming, routing, co-QA calibration, lock-in.
 - `skills/creative-qa-review` — one QA pass: deterministic gates, AI evidence capture,
   verdict, 3-6 comments, rename, delivery, state record.
 - `skills/creative-qa-calibrate` — signal collection, rubric refresh with versioned

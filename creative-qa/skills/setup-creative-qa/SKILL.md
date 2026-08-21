@@ -1,13 +1,13 @@
 ---
 name: setup-creative-qa
 description: >
-  Interview-driven setup for the Creative QA package. Learns the team's review process in
-  plain questions, captures or reverse-engineers their naming convention, resolves where
-  assets come from and where feedback goes (source-agnostic: Slack, Asana, Frame.io, Notion,
-  Monday, Trello, Drive links, direct upload, or any connected tool), backtests the rubric
-  on their last 10 assets, and only then locks v1 and stands up the intake routine.
-  Triggers: "set up creative QA", "set up ad QA", "configure QA", "reconfigure creative QA",
-  first use after package install.
+  Run on "set up creative QA", "set up ad QA", "configure QA", "reconfigure creative QA",
+  or first use after install. Interview-driven setup: learns the team's review
+  process in plain questions, captures or reverse-engineers their
+  naming convention, resolves where assets come from and where feedback goes (Slack, Asana,
+  Frame.io, Notion, Drive links, direct upload, or any connected tool), co-QAs recent
+  ads with the reviewer to calibrate the rubric, then locks v1 and stands up the intake
+  routine.
 ---
 
 # Setup: Creative QA
@@ -23,7 +23,9 @@ untested rubric.
 ## Scope
 
 All durable state lives at `/agent/brain/creative-qa/<scope>/` where `<scope>` is the
-workspace slug (or org slug for single-brand orgs):
+Motion workspaceId (from the system context or `motion workspaces`; for a single-brand
+org that reviews across the whole org, use the organizationId). Never invent a slug —
+IDs are the only workspace keys the platform resolves consistently:
 
 ```
 config.json            — reviewer, intake adapter, delivery adapters, naming, cadence, status
@@ -44,8 +46,13 @@ Ask, one at a time, adapting to answers:
 2. "Who sends you the asset — a creator, a designer, an editor? And who has the final say?"
    The final-say person is the **reviewer of record**; their feedback trains the rubric.
 3. "What do you look for? Tell me the last three things you rejected an ad for."
-4. "Do you review videos, statics, or both?" Build one rubric per asset type they use.
-5. "Do you have an existing QA checklist, rubric, brand guidelines, claims rules, or
+4. Walk their taste dimension by dimension, in their language, skipping anything they
+   already covered: pacing and hook timing, how early the product shows up, on-screen
+   text rules, how harshly to treat spelling and grammar mistakes, brand and legal
+   guidelines, banned or risky claims, CTA rules. Anything they say they don't care
+   about stays out of the rubric.
+5. "Do you review videos, statics, or both?" Build one rubric per asset type they use.
+6. "Do you have an existing QA checklist, rubric, brand guidelines, claims rules, or
    do-not-say list? Share anything you have — paste it or drop files."
 
 Seed each rubric from, in priority order: (a) their imported checklist or rubric,
@@ -100,22 +107,31 @@ If a needed tool is not connected yet, use the standard integration connect flow
 (registry app or native connection) before writing the adapter into config. Do not
 hand-roll credentials.
 
-## Phase 4 — Backtest before going live
+## Phase 4 — Co-QA calibration before going live
 
-The trust-builder. Before anything runs on a schedule:
+The trust-builder, and round one of a loop that never stops. Before anything runs on a
+schedule:
 
-1. Pull the team's last ~10 reviewed assets from their intake source, including the
-   reviewer's real comments and verdicts where available.
-2. Where the reviewer's feedback references specific moments, analyze the actual assets,
-   not just the comment text.
-3. Run each asset through the draft rubric and present: "Here's the feedback I would have
-   given on these. Would this have been your feedback?"
+1. Ask the team to share their 5-10 most recent finished ads (upload or Drive links —
+   whatever is easiest for them). If the intake source from Phase 3 makes past reviewer
+   feedback cheap to read (for example a PM board with the reviewer's comments on each
+   task), harvest it first as extra seed signal; if it is not cheap, skip it without
+   ceremony — history is a bonus, never a dependency.
+2. Both sides QA the same ads independently: the reviewer their way (a sentence or two
+   per ad is enough), Runneth against the draft rubric with real asset analysis.
+3. Present side by side: "Here's the feedback I would have given on these. Would this
+   have been your feedback?"
 4. The reviewer grades each review (agree / disagree / missed something). Fold every
    correction into the rubric. Record all signals in `training-log.json`.
-5. Repeat on a second small batch if agreement is clearly low.
+5. Repeat on a fresh small batch for 2-3 rounds, or until agreement is acceptable to
+   the reviewer. The rubric locks as v1 only after this pass.
 
-If no historical assets exist, say so and start live in a supervised mode where the first
-10 live QAs are explicitly framed as training.
+Setup calibration is only the first round: the same loop keeps running live (see
+`creative-qa-calibrate`), inheriting the reviewer's judgment from every reaction and
+correction so the rubric keeps converging on their taste for as long as the package runs.
+
+If the team has no finished ads to share yet, say so and start live in a supervised mode
+where the first 10 live QAs are explicitly framed as training.
 
 ## Phase 5 — Lock in and go live
 
@@ -125,7 +141,8 @@ If no historical assets exist, say so and start live in a supervised mode where 
    (default: every 10 signals or rejection rate above 30%), owner to alert on failures,
    and status `live`.
 3. Stand up the intake routine(s) per the adapters, with the user's explicit confirmation
-   of schedule and destinations before creation. Include in every routine prompt: the
+   of schedule and destinations before creation. If the user has no schedule preference
+   or does not answer, default to once daily. Include in every routine prompt: the
    deterministic detection contract, the state-file update step, the skip rules
    (already processed, already human-approved), and the failure-alert rule.
 4. Tell the team how to give feedback in one line, and that the rubric refreshes itself

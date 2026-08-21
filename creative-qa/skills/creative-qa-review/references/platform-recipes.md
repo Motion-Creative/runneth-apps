@@ -18,6 +18,16 @@ read the source live, diff against the processed ledger in `state.json`, treat a
 read as a failure that alerts the configured owner, and skip anything already processed
 or already human-approved. Newness is never eyeballed.
 
+Two platform constraints every scheduled intake inherits:
+
+- **Cadence:** recurring routines run at most once per hour; `routine add` rejects
+  sub-hourly schedules. Offer hourly or slower, never a 15- or 30-minute watch.
+  Default when the team states no preference: once daily.
+- **Failure alerting is prompt-level, not platform-level.** There is no routine
+  failure-alert flag. The alert-the-owner rule only works if the routine's `--prompt`
+  explicitly instructs it and the owner is reachable through the routine's `--delivery`
+  target. Every intake routine must carry both.
+
 ---
 
 ## slack (native CLI) - live-verified
@@ -29,10 +39,15 @@ or already human-approved. Newness is never eyeballed.
 - Delivery: reply in the asset's thread tagging the reviewer of record; channel-root
   summary only if config says so. End with the standing feedback out ("reply no if ...").
 
-## asana (stored secret or registry app) - live-verified
+## asana (registry app) - live-verified
 
-Ran in production for months on a creator-briefs board (30-min and 2-h watches).
+Ran in production for months on a creator-briefs board (30-min and 2-h watches at the
+time; current routines cap at hourly, so offer hourly or slower).
 
+- Connect: registry app `asana` through the standard `oauth-connect` flow, then make the
+  calls below with `integrations proxy --app asana --account <id> --method GET --path ...`
+  or a registered command. A stored personal access token with `secure-fetch` is the
+  fallback only when the registry connect is unavailable.
 - Discovery: project GID, reviewer's user GID, any custom field GIDs config needs.
 - Intake: `GET /api/1.0/tasks?project={projectGid}&assignee={reviewerGid}&opt_fields=gid,name,completed&completed_since=now`
   then per task `GET /api/1.0/tasks/{gid}/stories?opt_fields=gid,text,created_by.gid,created_by.name,type,resource_subtype,created_at`.
@@ -41,13 +56,17 @@ Ran in production for months on a creator-briefs board (30-min and 2-h watches).
 - Delivery: `POST /api/1.0/tasks/{gid}/stories` with `{"data":{"text":"<QA comment>"}}`.
   Reviewer replies on the same task are the calibration signal source.
 
-## frame_io (registry app) - registry-verified, verify v4 on first connect
+## frame_io (registry app) - download capability unverified
 
-- Connect through the registry (`frame_io`). One production deployment needed the v4
-  content endpoints for asset download and found legacy v2 tokens unusable there;
-  verify v4 coverage with a bounded call on first connect before promising downloads.
+- Connect through the registry (`frame_io`). The registry proxy is v2, GET/POST only,
+  and poorly suited to binary content; one production deployment needed the v4 content
+  endpoints for asset download and found legacy v2 tokens unusable there. Treat asset
+  download as unverified until a bounded call on the connected account proves it, and
+  never promise downloads before that check.
 - Intake: review links posted in Slack or a PM tool; resolve the short link to the asset
-  and file id, pull the download URL and name, download, delete after the pass.
+  and file id. If download cannot be verified, fall back: ask the team to share the
+  asset alongside the review link (Drive link or Slack upload) and keep Frame.io for
+  delivery only.
 - Delivery: one comment per finding plus a verdict comment at 0:00, then the Slack
   summary. Reviewer replies in the Slack thread are the signal source.
 
@@ -65,9 +84,10 @@ Ran in production for months on a creator-briefs board (30-min and 2-h watches).
 ## google drive links (native CLI) - live-verified
 
 - Intake transport only: assets referenced by Drive URL inside messages or task
-  comments. Download by link, QA, delete the local copy. Renaming to convention happens
-  on the QA output (proposed name in feedback, or rename via the Drive connection when
-  the workspace granted edit access to the file).
+  comments. Download by link (`google drive download <url>` lands the file in
+  `./uploads`), QA, delete the local copy. Renaming for Drive-hosted assets is
+  propose-in-feedback only: there is no Drive rename command (copying under a new name
+  duplicates the file), so the QA output carries the corrected name and a human applies it.
 - Folder-watching as a trigger is out of v1.
 
 ## direct upload / app drop - live-verified failure mode, in-turn path only

@@ -1,15 +1,12 @@
 ---
 name: creative-qa-review
 description: >
-  One QA pass on one ad asset (video or static) against the workspace's trained rubric.
-  Deterministic checks first (naming, placeholders, banned claims, spec, dedup), AI checks
-  second (content vs rubric, copy transcription and spelling, reference fidelity when
-  references exist). Produces a verdict plus 3-6 comments, renames the file to convention
-  when configured, and delivers feedback to the configured destinations. Source-agnostic:
-  the asset can arrive from a Slack drop, a PM-tool task, a review-tool link, a Drive link,
-  a direct upload, or a scheduled intake routine.
-  Triggers: "QA this", "review this ad", "is this ready", an asset shared for review,
-  a scheduled intake run.
+  Run on "QA this", "review this ad", "is this ready", an asset shared for review, or a
+  scheduled intake run. One QA pass on one ad asset (video or static) against the
+  workspace's trained rubric: deterministic checks first (naming, placeholders, banned
+  claims, spec, dedup), AI checks second (content vs rubric, copy spelling, reference
+  fidelity). Produces a verdict plus 3-6 comments, renames to convention when configured,
+  and delivers feedback to the configured destinations. Source-agnostic.
 ---
 
 # Creative QA Review
@@ -30,9 +27,11 @@ intake mechanics and evidence level. A platform with no recipe is still in scope
 the no-recipe path defined there; a stale recipe never blocks a pull.
 
 Resolve the asset from wherever it lives: download the file from the link (Drive,
-review tool, DAM, Slack file), or use the uploaded file directly. Delete downloaded
-files when the pass completes. If acquisition fails, report the failure to the
-configured owner; never mark the asset processed.
+review tool, DAM, Slack file), or use the uploaded file directly. Downloads must land
+in the conversation's `./uploads` directory — `google drive download` and
+`slack download` already put them there — because media analysis can only read files
+there. Delete downloaded files when the pass completes. If acquisition fails, report
+the failure to the configured owner; never mark the asset processed.
 
 ## Step 2 — Deterministic gates (hard checks, before any AI judgment)
 
@@ -50,10 +49,13 @@ the verdict floor:
 
 ## Step 3 — Evidence capture (AI, graded against the rubric)
 
-- **Video:** analyze with `motion analyze-media` using the rubric's analysis prompt.
+- **Video:** analyze with
+  `motion analyze-media --filename <name> --prompt "<rubric analysis prompt>"`
+  (video files only, file must be in `./uploads`, max 50 files per call).
   Capture transcript, on-screen text inventory, scene/cut structure, hook window, audio.
-- **Static:** visual read against the rubric's analysis prompt. Capture full text
-  inventory, hierarchy, CTA, logo, safe zones.
+- **Static:** read the image file directly (multimodal file read; `analyze-media` is
+  video-only) against the rubric's analysis prompt. Capture full text inventory,
+  hierarchy, CTA, logo, safe zones.
 - **Copy spelling:** transcribe every word and number exactly as rendered; any
   misspelling is a hard fail.
 - **Reference fidelity (when the workspace stores product reference photos):** grade the

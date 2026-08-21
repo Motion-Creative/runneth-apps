@@ -1,8 +1,8 @@
 ---
 name: creative-qa-calibrate
 description: >
-  The training loop for Creative QA. Two modes: backtest (grade the draft rubric against
-  the team's last ~10 reviewed assets before going live) and refresh (fold accumulated
+  The training loop for Creative QA. Two modes: backtest (co-QA recent ads with the
+  reviewer before going live to align the draft rubric) and refresh (fold accumulated
   reviewer signals back into the rubric on the configured cadence, version-bump, and track
   the agreement score toward 90-100%).
   Triggers: "calibrate QA", "backtest the rubric", "refresh the rubric", refresh threshold
@@ -45,9 +45,11 @@ reactions are what make it smarter.
    Learning Notes. Target: 90-100% agreement, video and static scored separately.
 5. Tell the reviewer in one short message what changed and the new version number.
 
-## Backtest mode (pre-launch)
+## Backtest mode (pre-launch co-QA)
 
-Same mechanics, run against historical assets: pull the last ~10 reviewed assets and the
-reviewer's real feedback, QA each with the draft rubric, present "would this have been
-your feedback?", grade, fold in corrections, and repeat on a second batch if agreement
-is clearly low. The rubric locks as v1 only after this pass.
+Same mechanics, run during setup: the team shares their 5-10 most recent finished ads,
+the reviewer and Runneth QA them independently, present "would this have been your
+feedback?", grade, fold in corrections, and repeat on a fresh batch for 2-3 rounds or
+until agreement is acceptable to the reviewer. Historical reviewer feedback from the
+intake source is harvested as extra seed signal when it is cheap to read, never
+required. The rubric locks as v1 only after this pass.
