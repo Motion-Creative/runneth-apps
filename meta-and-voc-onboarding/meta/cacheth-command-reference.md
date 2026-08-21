@@ -1,6 +1,7 @@
 # Cacheth Command Reference
 
-All five `motion cache` commands, with every flag, option, and usage note.
+All five `motion cache` commands, with every flag, option, and usage note — plus the two
+commands outside `motion cache` that read cacheth underneath.
 
 ---
 
@@ -19,12 +20,24 @@ Before leaning on the cache in a workspace, run `motion cache status` once. If i
 shows an empty/unbuilt cache, do not loop retries against the data commands: run
 `motion cache refresh` when the cache merely has not synced yet, and for the answer at hand
 fall through the creative content layer's ladder (see "How the creative content layer
-resolves," below). If the command fails with the explicit message "Motion cache is disabled
-for this sandbox," the cache is off for the whole VM (it is a sandbox-level feature, not
-per-workspace) and the ladder's live rung is the standing path.
+resolves," below).
 
-There is no section filtering within a record. `get-creative` always returns the full record.
-Use `jq` on the returned file to extract only the layer you need.
+**When the sandbox cache feature is off, these five commands do not exist.** They are
+capability-gated on the sandbox's `MOTION_CACHE_ENABLED` runtime flag: with the cache disabled
+they are filtered out of the `motion` command catalogue entirely, so their absence from the
+CLI's own command list is itself the signal that cacheth is off for this VM — not a broken
+install. Invoking one by name anyway still fails with the disabled message rather than an
+unknown-command error:
+
+> Motion cache is disabled for this sandbox. Use live Motion commands or enable the sandbox
+> Motion cache feature before retrying cache commands.
+
+The cache is off for the whole VM (it is a sandbox-level feature, not per-workspace) and the
+ladder's live rung is the standing path.
+
+There is no section filtering within a record: `get-creative` returns the record as stored and
+you narrow it with `jq` on the returned file. That is not a guarantee that every layer is
+present — see "Hydration is not guaranteed" under `get-creative`.
 
 ---
 
@@ -46,7 +59,30 @@ motion cache status --workspace-id <workspaceId>
 |---|---|---|
 | `--workspace-id <value>` | No | Target workspace. Omits for the current default. |
 
-**Returns:** Cache-level metadata only. No creative records.
+**Returns:** Cache-level metadata only — no creative records beyond a 20-ID sample.
+
+Inline summary, in the shell output:
+
+| Field | Meaning |
+|---|---|
+| `creativeCount` | Creatives currently in the cache |
+| `customConversionsCount` | Cached Meta custom-conversion definitions |
+| `missingAdUnitsCount` | Creatives whose ad-unit layer has not hydrated |
+| `missingSummaryCount` | Creatives with no summary, or an incomplete one |
+| `missingTranscriptCount` | Transcript-eligible creatives with no usable transcript |
+| `refreshStatus` | The manifest's current refresh state |
+
+The returned file carries more than the summary: `creativeIdSample` (the first 20 creative
+IDs), `missingGlossaryCount` (**not** in the inline summary — `jq` the file for it), `exports`
+(the summary-artifact paths Knoweth indexes), and the full `manifest`, including
+`bootstrapCompletedAt`, `lastIncrementalRefreshAt`, and `nextScheduledRefreshAt`.
+
+**Read the `missing*Count` fields before trusting a layer.** They are the per-layer readiness
+signal, and they are what makes the difference between "this creative has no transcript" and
+"transcripts have not hydrated yet." A healthy `creativeCount` alongside a large
+`missingTranscriptCount` means inventory landed but transcripts did not, and a transcript
+question still needs the ladder's live rung. A `manifest.bootstrapCompletedAt` of `null` means
+this workspace has never finished a cold bootstrap.
 
 ---
 
@@ -66,14 +102,16 @@ motion cache refresh --workspace-id <workspaceId>
 |---|---|---|
 | `--workspace-id <value>` | No | Target workspace. Omits for the current default. |
 
-**Returns:** Sync status. No creative content.
+**Returns:** Sync status. No creative content. The inline summary carries
+`bootstrapCompletedAt`, `lastIncrementalRefreshAt`, and `refreshStatus`; the returned file
+holds the full manifest.
 
 ---
 
 ### `motion cache get-creative`
 
-Pulls the complete record for one specific creative by ID. Returns every data layer in one shot
-— no section filtering is available.
+Reads one creative's stored record by ID. Returns every layer that record holds in one shot —
+no section filtering is available.
 
 ```
 motion cache get-creative --creative-id <id>
@@ -97,6 +135,22 @@ motion cache get-creative --creative-id <id> --workspace-id <workspaceId>
 | Glossary tags | Tags grouped by category: `asset-type`, `visual-format`, `messaging-angle`, `hook-tactic`, `intended-audience`, `seasonality`, `offer-type`. Each tag includes `name`, `definition`, and display colors. |
 | Transcript | `language`, `durationMs`, `text` (full), `segments[]` with `start`/`end`/`text` timestamps, `status` |
 | Summary | Six sections: `adDescription`, `adFormat`, `hookOrHeadline`, `creativeBreakdown`, `messagingAndPositioning`, `emotionalAndAudienceInsight` |
+
+**Hydration is not guaranteed — this command reads, it does not fetch.** `get-creative` asks
+the cache for what is already on disk; it will not hydrate a missing layer on demand. Every
+content layer is optional in the stored record, so an un-hydrated `adUnits`, `glossary`,
+`summary`, or `transcript` is **absent from the JSON entirely** — not present-and-empty. Two
+consequences:
+
+- A missing `transcript` key means "not hydrated yet," not "this creative has no transcript."
+  Never report that absence as a finding. Check the matching `*HydratedAt` timestamp, and when
+  it is `null`, take the ladder's live rung for that layer.
+- The inline summary is the cheap pre-check: `hasAdUnits`, `hasSummary`, and `hasTranscript`
+  say which layers landed without reading the file at all.
+
+If the creative is not in the cache at all, the command fails with
+`Motion cache creative is missing: <creativeId>`. That is one clear failure — fall through the
+ladder rather than re-running it.
 
 **Useful `jq` extractions on the returned file:**
 
@@ -128,10 +182,11 @@ jq 'keys' ./workdir/motion-cache-creative-<id>.json
 ### `motion cache export-summaries`
 
 Exports the summary corpus in bulk — one record per creative carrying identity (`creativeId`,
-format, origin, launch date, media `url`), ad metadata (`adIds`, `adNames`, `adsetNames`,
-`campaignNames`), copy (`adTexts`, `callToActions`), `landingPageUrls`, and the concatenated
-`summaryText`. Use this when a question spans the whole account: all ad names, all copy, the
-full summary corpus.
+`workspaceId`, `organizationId`, format, origin, launch date, media `url`), ad metadata
+(`adIds`, `adNames`, `adsetNames`, `campaignNames`), copy (`adTexts`, `callToActions`),
+`landingPageUrls`, the concatenated `summaryText`, a `source` of `motion-cache`, and `text` —
+the rendered blob of every field above, which is what Knoweth indexes. Use this when a
+question spans the whole account: all ad names, all copy, the full summary corpus.
 
 Export records do **not** carry transcripts or glossary tags. Those live only on the full
 creative record — find the `creativeId` here (or via search), then pull it with
@@ -205,7 +260,7 @@ motion cache search-summaries --query "bed rot" --workspace-id <workspaceId>
 | Flag | Required | Description |
 |---|---|---|
 | `--query <value>` | Yes | Search text. Matches against ad names, ad copy, and summary content. |
-| `--limit <value>` | No | Maximum number of matches to return. |
+| `--limit <value>` | No | Maximum number of matches to return. Positive integer, **max 100** — a larger value is rejected as invalid input, not clamped. |
 | `--workspace-id <value>` | No | Target workspace. Omits for the current default. |
 
 **What each match contains:**
@@ -236,9 +291,28 @@ record — use `motion cache get-creative` if you need all layers for a specific
 |---|---|
 | Is the cache built? When was it last synced? | `motion cache status` |
 | Pull in new creatives or updated summaries | `motion cache refresh` |
-| Everything about one specific creative (by ID) — incl. transcript and glossary tags | `motion cache get-creative` |
+| One specific creative (by ID) — every layer that has hydrated, incl. transcript and glossary tags | `motion cache get-creative` |
 | All ad names, all copy, full summary corpus in bulk | `motion cache export-summaries` |
 | Find a creative by name fragment, theme, hook, or copy | `motion cache search-summaries` |
+
+---
+
+## Cacheth also backs two commands outside `motion cache`
+
+The five commands above are cacheth's front door, but they are not its only consumers. Two
+`motion` commands read cacheth transparently when the sandbox cache feature is on, and switch
+to a live pull when it is off. Neither is capability-gated, so both stay in the command
+catalogue either way — what changes is the source underneath, not the command.
+
+| Command | Cache on | Cache off |
+|---|---|---|
+| `motion ai-glossary` | Reads the workspace's whole AI tag glossary — every category and value, with definitions — from cacheth. `--creative-asset-id` is **ignored**. | Falls back to the v3 creative-tags endpoint, where `--creative-asset-id` becomes **required**; without it the command fails with `creativeAssetIds is required for uncached Motion AI tag glossary reads`. |
+| `motion meta custom-conversion-metrics` | Reads the cached Meta custom-conversion definitions — the same set `motion cache status` counts as `customConversionsCount`. | Fetches the workspace's custom conversions live. |
+
+Keep the distinction straight: `ai-glossary` returns the account's tag **vocabulary** — which
+categories and values exist, and what each means. Which tags are on a *specific creative* is a
+per-creative fact, and it still comes from `motion cache get-creative`'s `glossary` layer, or
+from `motion meta insights --include-glossary` on the live rung.
 
 ---
 
@@ -254,7 +328,8 @@ a rung only when it cannot serve:
    text) — not complete records. If the matching summary-level context is already there, answer
    from it; a transcript or glossary-tag question always needs rung 3.
 2. **`motion cache search-summaries`** — active local search, no Meta API call required.
-3. **`motion cache get-creative`** — full record for a specific ID, still local, no API call.
+3. **`motion cache get-creative`** — the stored record for a specific ID, still local, no API
+   call. It serves only the layers that have hydrated; see the command's hydration note.
 4. **`motion meta insights` with the content flags** (`--summary-sections`,
    `--include-transcript`, `--include-glossary`) — the live pull from Motion/Meta.
    **Failure-only.** This rung fires when the cache cannot serve: `motion cache status`
@@ -270,6 +345,12 @@ a rung only when it cannot serve:
   the signal to move down the ladder — do not re-run the same command against a cache that is
   erroring or dead hoping it recovers mid-question. The cache gets its retry on the *next*
   question, after a refresh has had a chance to land.
+- **A partial record is a fall-through too.** Rung 3 serving a record is not the same as rung 3
+  serving the layer the answer needs. When `get-creative` returns the record but the layer is
+  absent (`transcriptHydratedAt: null` and no `transcript` key), that layer has not hydrated:
+  take rung 4 for it rather than reporting it as missing from the creative. The
+  `missing*Count` fields on `motion cache status` say up front how often this is happening
+  across the workspace.
 - **Falling through repairs, not just rescues.** On a transient failure, kick
   `motion cache refresh` in the background so the cache serves next time. The live rung
   answers one question; it never becomes the habit.

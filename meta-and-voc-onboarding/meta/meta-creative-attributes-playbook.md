@@ -57,7 +57,9 @@ Cacheth syncs each workspace's creative records from Motion automatically. A ful
   offer, funnel stage); and emotional and audience insight (emotions with intensities,
   persuasion tactics, cultural context, intended audience).
 - **Per-layer freshness timestamps:** when inventory, ad units, summary, transcript, and
-  glossary were each last hydrated. Cite these when freshness matters to an answer.
+  glossary were each last hydrated. Cite these when freshness matters to an answer — and read
+  them first, because a layer whose timestamp is `null` is absent from the record rather than
+  empty, and `get-creative` will not fetch it for you.
 
 What it does **not** hold: performance metrics or spend state. Those are always pulled live
 through the motion CLI per the Data-Query Guide.
@@ -75,9 +77,11 @@ Runneth reaches this content two ways, cheapest first:
      names, ad copy, and summary content. Each match carries `creativeId`, `adNames[]`, an
      excerpt, and a relevance score — not the full record; follow up with `get-creative` for
      that.
-   - `motion cache get-creative --creative-id <id>` — the complete record for one creative,
-     including `adUnits[].adName`. Always the full record (no section filtering); extract the
-     layer you need from the result file with `jq`.
+   - `motion cache get-creative --creative-id <id>` — the stored record for one creative,
+     including `adUnits[].adName`. No section filtering; extract the layer you need from the
+     result file with `jq`. It reads what has already hydrated rather than fetching on demand,
+     so an un-hydrated layer is simply absent — check the inline `hasAdUnits` / `hasSummary` /
+     `hasTranscript` flags before treating a missing layer as a fact about the creative.
    - `motion cache export-summaries --format jsonl` — the whole synced summary corpus, one
      record per creative, each carrying its `adNames[]` (no transcripts or AI tags — those need
      `get-creative`). `--format` is required (`duckdb` is the alternative when SQL-style queries
@@ -85,7 +89,9 @@ Runneth reaches this content two ways, cheapest first:
      path from `exportPaths.meta` on the output (or `.providers.meta.path` in the wrapper file)
      and query that per-provider file. The bulk path when the question spans the full account
      rather than a search match.
-   - `motion cache status` — when the cache last synced and how many creatives it holds.
+   - `motion cache status` — when the cache last synced, how many creatives it holds, and how
+     many are still missing ad units, summaries, or transcripts (`missingAdUnitsCount`,
+     `missingSummaryCount`, `missingTranscriptCount`) — the per-layer readiness check.
    - `motion cache refresh` — trigger a fresh sync from Motion to pull in newly launched
      creatives or updated summaries (the one cache command that reaches out to Motion).
 
@@ -130,8 +136,9 @@ never reconstruct the record by hand.
    If it errors, record the blocker and stop this step — do not loop retries against the data
    commands. If it succeeds but shows an empty or still-building cache, run
    `motion cache refresh --workspace-id <workspaceId>` and come back once the sync settles.
-   If it fails with the explicit message "Motion cache is disabled for this sandbox," do not
-   stall the decode: pull the name list live instead with `motion meta ads --grain adnames
+   If it fails with the explicit message "Motion cache is disabled for this sandbox," or the
+   `motion cache` commands are absent from the CLI catalogue entirely (the same signal — they
+   are capability-gated off), do not stall the decode: pull the name list live instead with `motion meta ads --grain adnames
    --include-associated-objects --date-range last_365d` — each row carries `adName` at the
    top level, with ad set and campaign names under `associatedObjectDetails.adSets[].name`
    and `.campaigns[].name` (ads-grain rows have no `adName`/`adsetName`/`campaignName` keys,
@@ -228,6 +235,6 @@ workspace-scoped, and every cache query runs against the resolved workspace.
 |---|---|
 | Creative lookup (passive, summary-level only) | Knoweth pre-context injection — answer from injected chunks when sufficient |
 | Creative search (active) | `motion cache search-summaries --query "<text>"` (local, no API call) |
-| One creative's full record (incl. transcript, AI tags) | `motion cache get-creative --creative-id <id>` (local, no API call) |
+| One creative's stored record (transcript, AI tags — whichever have hydrated) | `motion cache get-creative --creative-id <id>` (local, no API call) |
 | Full corpus / naming decode | `motion cache export-summaries --format jsonl`, then `jq -r '.adNames[]?'` on the per-provider file the wrapper points to (local, no API call) |
 | Cache freshness / re-sync | `motion cache status` (local) / `motion cache refresh` (syncs from Motion) |

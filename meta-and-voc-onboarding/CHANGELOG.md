@@ -4,6 +4,35 @@ Repo-side maintainer history. Never staged to customer brains. Versions are simp
 integers (`1`, `2`, ...) and bump once per package update - one version per merged
 change to the package, not per commit. Entries are newest-first.
 
+## 7 - 2026-08-21
+
+- Re-verified the Cacheth Command Reference against agent-builder `origin/staging` and
+  corrected the `motion cache get-creative` contract: the command reads what is already on
+  disk and never hydrates on demand, so an un-hydrated `adUnits`, `glossary`, `summary`, or
+  `transcript` is absent from the returned JSON rather than empty. The doc previously
+  promised a complete record every time, which taught the agent to read "no transcript key"
+  as "this creative has no transcript."
+- Documented the `hasAdUnits` / `hasSummary` / `hasTranscript` inline flags and the
+  `Motion cache creative is missing: <creativeId>` failure so a partial or absent record is
+  recognised before it becomes a wrong answer.
+- Documented what `motion cache status` actually returns: the six inline summary fields, the
+  `missing*Count` per-layer readiness signals, `creativeIdSample`, the file-only
+  `missingGlossaryCount`, and the manifest's `bootstrapCompletedAt` /
+  `lastIncrementalRefreshAt` / `nextScheduledRefreshAt`. Added the matching inline summary for
+  `motion cache refresh`.
+- Recorded that the five `motion cache` commands are capability-gated on the sandbox's
+  `MOTION_CACHE_ENABLED` flag: with the cache off they disappear from the `motion` catalogue
+  entirely, and the full disabled message is now quoted verbatim.
+- Added the two commands that read Cacheth from outside `motion cache` — `motion ai-glossary`
+  (whose `--creative-asset-id` flips from ignored to required when the cache is off) and
+  `motion meta custom-conversion-metrics` — and drew the line between the account's tag
+  vocabulary and a specific creative's tags.
+- Added `--limit`'s max of 100 on `motion cache search-summaries`, and the `workspaceId`,
+  `organizationId`, `source`, and `text` fields on `export-summaries` records.
+- Added "a partial record is a fall-through too" to the creative content layer's ladder, and
+  threaded the un-hydrated-layer trigger through the Creative Attributes playbook, the Motion
+  CLI Data-Query Guide, and the Meta ad performance analysis skill.
+
 ## 6 - 2026-08-14
 
 - Made `dashboard-design` an automatic internal handoff whenever Meta Validation builds,
